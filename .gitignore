@@ -1,0 +1,22 @@
+# Dependencies
+node_modules/
+.venv/
+__pycache__/
+*.pyc
+
+# Env / secrets
+.env
+.env.*
+!.env.example
+
+# Build output
+dist/
+build/
+.next/
+.netlify/
+
+# OS / editor
+.DS_Store
+*.log
+.idea/
+.vscode/
