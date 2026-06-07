@@ -20,3 +20,6 @@ build/
 *.log
 .idea/
 .vscode/
+
+# Redundant archive (unzipped folder is source of truth)
+Code the Future — Design System.zip

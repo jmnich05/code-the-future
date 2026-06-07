@@ -22,12 +22,36 @@ coding, with emphasis on how AI is reshaping software development. Origin materi
 - Tie every concept to a real work loop: emails, products, orders, inventory, transcripts,
   files, tickets, dashboards.
 
-## Curriculum Direction
+## Curriculum Architecture (decided 06-07-2026)
 
-- Teach Python + TypeScript + SQL together.
-- First core concepts: loops, conditionals, functions, APIs, JSON, CSVs.
-- Then the AI layer: agent loops, memory, tool use, stopping conditions, confidence
-  thresholds, human exception handling, evals.
+- **Two audience tracks per module**, same spine, different voice:
+  - **Type A — Kids, ages 8–11**, first-time learners (wonder, analogies, short sentences).
+  - **Type B — Adults new to AI**, casual ChatGPT awareness (respectful, real depth).
+- **Module format: 2 hours = 12 ten-minute sprints**, one idea per sprint, each ending in a
+  satisfying completion beat (focus the attention span, then "done, next").
+  - Kids call sprints **Missions** → **Mission Complete!** card with a collectible **badge**
+    + progress bar (Mission N of 12).
+  - Adults call sprints **Sections** → **Section Complete** checkpoint (takeaways +
+    reflection + next), professional, no gamification.
+  - Tracks share the same 12-idea spine but order differs (kids: concepts first, history late
+    & light; adults: history early as context).
+- **Three build passes per module:** (1) full copy with inline `[INTERACTIVE]`/`[CAPSTONE]`
+  markers → (2) embeddable interactive widgets for the HTML site → (3) capstone "big
+  project" = a live **OpenAI API embedded in the HTML page** where learners *create and use*
+  AI (prompts + settings like temperature). Capstone timing is flexible (can be a closing
+  session after the 2-hour core).
+- **Copy depth:** each sprint's teaching prose was expanded (~2X) to fill closer to a real
+  10 minutes; interactive markers were left untouched for Pass 2.
+- **Module 1 = "What Is AI?"** — both tracks' copy drafted in `curriculum/module-01-what-is-ai/`.
+  This reset the original module roadmap (loops/transformers path is now teacher-reference
+  in `00-concept-reference.md`, not the learner sequence).
+
+## Curriculum Content Threads (still relevant)
+
+- Teach Python + TypeScript + SQL together when the coding track begins.
+- Core concepts: loops, conditionals, functions, APIs, JSON, CSVs → then the AI layer
+  (agent loops, memory, tool use, stopping conditions, confidence thresholds, human
+  exception handling, evals).
 
 ## Concepts Already Drafted (in source thread)
 
