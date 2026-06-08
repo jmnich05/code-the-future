@@ -9,7 +9,9 @@ page — no dependency on the design-system folder path).
 - `ctf-widgets.css` — styles + brand token subset (Space Grotesk / Plus Jakarta / JetBrains
   Mono, electric-blue/teal/coral palette, rounded cards, soft shadows). Scoped under `.ctf`.
 - `ctf-widgets.js` — the engine. Hydrates any `[data-ctf-widget]` element from a JSON config.
-- `preview.html` — open this in a browser to play the six kids' widgets below.
+- `preview.html` — index linking the two complete previews below.
+- `preview-kids.html` — all 12 kids Missions, configured & playable.
+- `preview-adults.html` — all 12 adult Sections, configured & playable.
 
 ## How to embed
 
@@ -45,28 +47,42 @@ page — no dependency on the design-system folder path).
 > rather than HTML5 drag — far more reliable on tablets/touch, which is the kids' context.
 > Drag can be layered on later without changing the config format.
 
-## Coverage status — Module 1
+## Coverage status — Module 1 · ALL 24 CONFIGURED ✅
 
-Six built (in `preview.html`); the rest are config-only additions using the same six types.
+Both tracks are fully authored & playable (`preview-kids.html`, `preview-adults.html`).
+Every `data-ctf-id` below is the exact embeddable block — copy it into the lesson page.
 
-### Type A — Kids (Missions)
-| Mission | Marker | Type | Status |
-|--------:|--------|------|--------|
-| 1 | warm-up | `poll` | ✅ built |
-| 2 | follows-rules-vs-learns | `sort` | ✅ built |
-| 3 | spot the pattern | `choice` | ✅ built |
-| 4 | train your mini-AI | `sort`/`choice` | ▱ config-only |
-| 5 | pixel reveal | `reveal` | ✅ built |
-| 6 | guess the next word | `nextword` | ✅ built |
-| 7 | what does "it" mean | `attention` | ✅ built |
-| 8 | brain vs neural network | `choice` | ▱ config-only |
-| 9 | tap-through timeline | `timeline` | ✅ built |
-| 10 | is the AI right? | `choice` | ▱ config-only |
-| 11 | imagine your future | `poll` | ▱ config-only |
-| 12 | end-of-module quiz | `quiz` | ✅ built |
+### Type A — Kids (Missions) — 12/12 ✅
+| # | Marker | Type | Widget id |
+|--:|--------|------|-----------|
+| 1 | warm-up | `poll` | `kids-m1-warmup` |
+| 2 | rules vs. learns | `sort` | `kids-m2-sort` |
+| 3 | spot the pattern | `choice` | `kids-m3-pattern` |
+| 4 | good examples in | `choice` | `kids-m4-training` |
+| 5 | pixel reveal | `reveal` | `kids-m5-reveal` |
+| 6 | guess the next word | `nextword` | `kids-m6-nextword` |
+| 7 | what does "it" mean | `attention` | `kids-m7-attention` |
+| 8 | brain or machine? | `choice` | `kids-m8-brain` |
+| 9 | the story of AI | `timeline` | `kids-m9-timeline` |
+| 10 | should you trust it? | `choice` | `kids-m10-trust` |
+| 11 | what will you build? | `poll` | `kids-m11-future` |
+| 12 | end-of-module quiz | `quiz` | `kids-m12-quiz` |
 
-> "config-only" = the widget *type* exists and is proven; that mission just needs its JSON
-> config written (no new code).
+### Type B — Adults (Sections) — 12/12 ✅
+| # | Marker | Type | Widget id |
+|--:|--------|------|-----------|
+| 1 | self-check | `poll` | `adults-s1-selfcheck` |
+| 2 | rules vs. examples | `choice` | `adults-s2-rules` |
+| 3 | generalization | `choice` | `adults-s3-generalize` |
+| 4 | history part 1 | `timeline` | `adults-s4-history1` |
+| 5 | history part 2 | `timeline` | `adults-s5-history2` |
+| 6 | better analogy | `choice` | `adults-s6-different` |
+| 7 | nudge a weight | `slider` | `adults-s7-weights` |
+| 8 | predict the next token | `nextword` | `adults-s8-predict` |
+| 9 | confidence meter | `slider` | `adults-s9-confidence` |
+| 10 | where would you point it? | `poll` | `adults-s10-point` |
+| 11 | spot the limitation | `choice` | `adults-s11-limitation` |
+| 12 | consolidation quiz | `quiz` | `adults-s12-quiz` |
 
 ### Type B — Adults (Sections)
 Same engine; copy/tone swapped. All nine widget types are now built, so every adult Section

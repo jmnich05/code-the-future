@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Code the Future — Module 1 · Adults (all 12 Sections)</title>
+<link rel="stylesheet" href="ctf-widgets.css">
+<style>
+  body{ margin:0; background:#F6F8FC; font-family:'Plus Jakarta Sans',system-ui,sans-serif; color:#2A3349; }
+  .page{ max-width:720px; margin:0 auto; padding:0 16px 80px; }
+  .hero{ background:linear-gradient(160deg,#0F1B3A 0%,#070C1A 100%); color:#fff; border-radius:0 0 28px 28px; padding:40px 28px 34px; box-shadow:0 18px 40px rgba(12,19,34,.12); }
+  .hero .eyebrow{ font-family:'JetBrains Mono',monospace; font-size:12px; letter-spacing:.12em; text-transform:uppercase; color:#26C7D1; margin:0 0 10px; }
+  .hero h1{ font-family:'Space Grotesk',sans-serif; font-weight:700; letter-spacing:-.02em; font-size:2rem; line-height:1.1; margin:0 0 8px; }
+  .hero h1 .accent{ color:#3D74FF; }
+  .hero p{ margin:0; opacity:.85; max-width:48ch; }
+  .step{ font-family:'JetBrains Mono',monospace; font-size:12px; letter-spacing:.1em; text-transform:uppercase; color:#5F6B82; margin:34px 8px 2px; }
+  .toolbar{ max-width:640px; margin:8px auto 0; text-align:right; }
+  .linkbtn{ font:inherit; font-size:.85rem; background:none; border:none; color:#2A5FF0; cursor:pointer; text-decoration:underline; }
+  footer{ text-align:center; color:#8A93A8; font-size:.8rem; margin-top:50px; font-family:'JetBrains Mono',monospace; }
+</style>
+</head>
+<body>
+<div class="hero">
+  <p class="eyebrow">◆ Module 1 · What Is AI? · Type B (Adults)</p>
+  <h1>All 12 <span class="accent">Sections</span></h1>
+  <p>Every interactive element for the adult track, in order. Progress saves as you go.</p>
+</div>
+<div class="page">
+  <div class="toolbar"><button class="linkbtn" onclick="CTFWidgets.reset();location.reload()">↺ Reset my progress</button></div>
+
+  <p class="step">Section 1 · self-check</p>
+  <div class="ctf"><div data-ctf-widget="poll" data-ctf-id="adults-s1-selfcheck">
+    <script type="application/json">{
+      "eyebrow":"Section 1 · self-check","title":"How would you explain AI right now?",
+      "prompt":"Be honest — there's no wrong answer. We'll revisit this in Section 12 to see how far you've come.",
+      "options":["Software that learns from examples","A really smart chatbot","Honestly, I'm not sure yet","Kind of like magic"],
+      "freeText":true,"placeholder":"Or put it in your own words…",
+      "thanks":"Saved — we'll return to this at the end.",
+      "complete":{"badge":"Section 1 complete","sub":"Section 1 of 12","progress":8}
+    }</script>
+  </div></div>
+
+  <p class="step">Section 2 · rules vs. examples</p>
+  <div class="ctf"><div data-ctf-widget="choice" data-ctf-id="adults-s2-rules">
+    <script type="application/json">{
+      "eyebrow":"Section 2 · rules vs. examples","title":"Why hand-written rules break",
+      "prompt":"A spam filter has one rule: flag anything containing the word <span class=\"ctf-q\">“free.”</span> A spammer writes “f r e e” and “fr€€.” What happens?",
+      "options":["The rule still catches it","The spam slips through — now you need yet another rule","The email deletes itself","The filter fixes itself"],"answer":1,
+      "correctText":"Exactly.","wrongText":"Not quite —",
+      "explain":"Rules only catch what someone anticipated. A model <b>trained on examples</b> learns the underlying pattern of spam and generalizes to tricks it has never seen.",
+      "complete":{"badge":"Section 2 complete","sub":"Section 2 of 12","progress":16}
+    }</script>
+  </div></div>
+
+  <p class="step">Section 3 · generalization</p>
+  <div class="ctf"><div data-ctf-widget="choice" data-ctf-id="adults-s3-generalize">
+    <script type="application/json">{
+      "eyebrow":"Section 3 · generalization","title":"The magic word: generalization",
+      "prompt":"You've never seen a Bernese Mountain Dog before, yet you instantly know it's a dog. Why can you do that?",
+      "options":["You memorized every dog breed","You learned the <i>pattern</i> of “dog” and applied it to a new case","Someone told you in advance","All dogs look identical"],"answer":1,
+      "correctText":"Right.","wrongText":"Reconsider —",
+      "explain":"That's <b>generalization</b> — handling cases no one explicitly programmed. It's the core advantage of learned systems over rule-based ones.",
+      "complete":{"badge":"Section 3 complete","sub":"Section 3 of 12","progress":25}
+    }</script>
+  </div></div>
+
+  <p class="step">Section 4 · history, part 1</p>
+  <div class="ctf"><div data-ctf-widget="timeline" data-ctf-id="adults-s4-history1">
+    <script type="application/json">{
+      "eyebrow":"Section 4 · history, part 1","title":"The 70-year slow burn","prompt":"Tap each milestone (1950 → 2012).",
+      "steps":[
+        {"when":"1950","title":"Turing asks “Can machines think?”","body":"Alan Turing proposes the famous test and puts the dream officially on the table."},
+        {"when":"1956","title":"The field is named","body":"At a Dartmouth workshop, researchers coin “artificial intelligence” and predict human-level machines within a generation — wrong by 50+ years."},
+        {"when":"1970s–80s","title":"The AI winters","body":"Hype outruns reality; funding collapses twice. Hand-built “expert systems” prove brittle and can't scale."},
+        {"when":"All along","title":"Compute keeps doubling","body":"Moore's Law quietly stacks up the horsepower that the old ideas were waiting for."},
+        {"when":"2012","title":"AlexNet — deep learning works","body":"A neural network crushes an image contest, proving “learn from examples” works at scale. The modern era begins."}
+      ],
+      "thanks":"That's the setup — the ideas were old; the fuel finally arrived.",
+      "complete":{"badge":"Section 4 complete","sub":"Section 4 of 12","progress":33}
+    }</script>
+  </div></div>
+
+  <p class="step">Section 5 · history, part 2</p>
+  <div class="ctf"><div data-ctf-widget="timeline" data-ctf-id="adults-s5-history2">
+    <script type="application/json">{
+      "eyebrow":"Section 5 · history, part 2","title":"From breakthrough to everywhere","prompt":"Tap each milestone (2017 → today).",
+      "steps":[
+        {"when":"2017","title":"The transformer","body":"Google's “Attention Is All You Need” introduces the architecture behind essentially every modern AI."},
+        {"when":"2018–22","title":"The age of scale","body":"Bigger models trained on more data keep improving — and show abilities nobody explicitly built in (GPT-1 → GPT-3)."},
+        {"when":"Nov 2022","title":"The ChatGPT moment","body":"One chat box reaches ~100 million users in two months — the fastest-adopted consumer product to that point."},
+        {"when":"2023–now","title":"Multimodal & agentic","body":"AI now handles text, images, audio, and video together — and starts taking actions: browsing, using tools, writing and running code."}
+      ],
+      "thanks":"And here we are — the moment you're learning in.",
+      "complete":{"badge":"Section 5 complete","sub":"Section 5 of 12","progress":41}
+    }</script>
+  </div></div>
+
+  <p class="step">Section 6 · why it's different</p>
+  <div class="ctf"><div data-ctf-widget="choice" data-ctf-id="adults-s6-different">
+    <script type="application/json">{
+      "eyebrow":"Section 6 · why it's different","title":"Pick the better analogy",
+      "prompt":"Most past technology was a tool for one defined job. What's the better comparison for AI?",
+      "options":["A faster calculator","Just another new gadget","Electricity — a general-purpose force that reshapes everything","A search engine"],"answer":2,
+      "correctText":"Right.","wrongText":"Think bigger —",
+      "explain":"Economists call these <b>general-purpose technologies</b>. Like electricity, AI doesn't improve one industry — it works its way into nearly all of them.",
+      "complete":{"badge":"Section 6 complete","sub":"Section 6 of 12","progress":50}
+    }</script>
+  </div></div>
+
+  <p class="step">Section 7 · how it learns</p>
+  <div class="ctf"><div data-ctf-widget="slider" data-ctf-id="adults-s7-weights">
+    <script type="application/json">{
+      "eyebrow":"Section 7 · how it learns","title":"Nudge a weight",
+      "prompt":"Training adjusts billions of connection “weights” to fit the examples. Drag one and watch the model's guess shift.",
+      "min":0,"max":100,"value":50,"label":"one connection weight",
+      "bands":[{"max":33,"text":"The model now leans toward guessing “cat.”"},{"max":66,"text":"It's genuinely on the fence — low confidence."},{"max":100,"text":"Now it leans toward guessing “dog.”"}],
+      "complete":{"badge":"Section 7 complete","sub":"Section 7 of 12","progress":58}
+    }</script>
+  </div></div>
+
+  <p class="step">Section 8 · attention &amp; prediction</p>
+  <div class="ctf"><div data-ctf-widget="nextword" data-ctf-id="adults-s8-predict">
+    <script type="application/json">{
+      "eyebrow":"Section 8 · attention &amp; prediction","title":"Predict the next token","prompt":"A chatbot generates text by predicting the next chunk, over and over. Try it yourself first.",
+      "stem":"The capital of France is","placeholder":"Next word?","common":["Paris"],
+      "explain":"A model does exactly this — it picks the most likely next <b>token</b> given everything so far, adds it, and repeats. Scale that up and reasoning, summarizing, and creativity emerge.",
+      "complete":{"badge":"Section 8 complete","sub":"Section 8 of 12","progress":66}
+    }</script>
+  </div></div>
+
+  <p class="step">Section 9 · learning to see</p>
+  <div class="ctf"><div data-ctf-widget="slider" data-ctf-id="adults-s9-confidence">
+    <script type="application/json">{
+      "eyebrow":"Section 9 · learning to see","title":"How sure is the AI?",
+      "prompt":"AI doesn't “know” — it scores how confident it is. Drag the meter to see how its certainty reads.",
+      "min":0,"max":100,"value":62,"unit":"%","label":"model confidence",
+      "bands":[{"max":33,"text":"Low — the model is guessing. Verify before trusting."},{"max":74,"text":"Medium — plausible, but double-check anything that matters."},{"max":100,"text":"High — still not proof. Confidence is not the same as correct."}],
+      "complete":{"badge":"Section 9 complete","sub":"Section 9 of 12","progress":75}
+    }</script>
+  </div></div>
+
+  <p class="step">Section 10 · the transformation ahead</p>
+  <div class="ctf"><div data-ctf-widget="poll" data-ctf-id="adults-s10-point">
+    <script type="application/json">{
+      "eyebrow":"Section 10 · the transformation ahead","title":"Where would you point it?",
+      "prompt":"Which transformation matters most in your world? Pick one — or add your own.","columns":2,
+      "options":["Medicine & health","My job / knowledge work","Science & discovery","Education","Creativity","Everyday services"],
+      "freeText":true,"placeholder":"Or name a problem you'd aim AI at…",
+      "thanks":"Good — knowing where to aim AI is the real skill.",
+      "complete":{"badge":"Section 10 complete","sub":"Section 10 of 12","progress":83}
+    }</script>
+  </div></div>
+
+  <p class="step">Section 11 · your place in it</p>
+  <div class="ctf"><div data-ctf-widget="choice" data-ctf-id="adults-s11-limitation">
+    <script type="application/json">{
+      "eyebrow":"Section 11 · your place in it","title":"Spot the limitation",
+      "prompt":"An AI writes: <span class=\"ctf-q\">“A 2019 study by Dr. Lena Harper in the Journal of Applied Cognition found…”</span> — a specific, confident citation. What's the smart move?",
+      "options":["Quote it — it gave a specific source","Verify the study exists before trusting it — models can fabricate citations","Assume everything AI says is false","Just ask the AI if it's sure"],"answer":1,
+      "correctText":"Exactly.","wrongText":"Careful —",
+      "explain":"Confident, specific-sounding details (fake citations, invented stats) are a classic <b>hallucination</b>. Trust, but verify — that's AI literacy in one phrase.",
+      "complete":{"badge":"Section 11 complete","sub":"Section 11 of 12","progress":91}
+    }</script>
+  </div></div>
+
+  <p class="step">Section 12 · consolidation</p>
+  <div class="ctf"><div data-ctf-widget="quiz" data-ctf-id="adults-s12-quiz">
+    <script type="application/json">{
+      "eyebrow":"Section 12 · consolidation","title":"Consolidate","revisit":"adults-s1-selfcheck","revisitText":"When you started, you described AI as:",
+      "questions":[
+        {"q":"What's the core difference between AI and traditional software?","options":["AI is faster","AI learns patterns from examples instead of following written rules","AI uses more electricity","AI is always correct"],"answer":1},
+        {"q":"What does “temperature” control in the model you'll use next?","options":["How fast it types","How creative vs. predictable its output is","How much it costs","How long the answer is"],"answer":1},
+        {"q":"An AI gives a confident but possibly wrong answer. Best practice?","options":["Trust it","Trust, but verify","Never use AI","Lower the temperature"],"answer":1}
+      ],
+      "perfect":"Perfect — you're ready for the capstone.","passText":"Strong finish — revisit any you missed, then head to the capstone.",
+      "complete":{"badge":"Module 1 complete","sub":"All 12 sections done","progress":100}
+    }</script>
+  </div></div>
+
+  <footer>CODE THE FUTURE · MODULE 1 · ADULTS · 12 SECTIONS</footer>
+</div>
+<script src="ctf-widgets.js"></script>
+</body>
+</html>

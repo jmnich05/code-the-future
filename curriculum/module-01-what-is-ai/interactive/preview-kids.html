@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Code the Future — Module 1 · Kids (all 12 Missions)</title>
+<link rel="stylesheet" href="ctf-widgets.css">
+<style>
+  body{ margin:0; background:#F6F8FC; font-family:'Plus Jakarta Sans',system-ui,sans-serif; color:#2A3349; }
+  .page{ max-width:720px; margin:0 auto; padding:0 16px 80px; }
+  .hero{ background:linear-gradient(160deg,#0F1B3A 0%,#070C1A 100%); color:#fff; border-radius:0 0 28px 28px; padding:40px 28px 34px; box-shadow:0 18px 40px rgba(12,19,34,.12); }
+  .hero .eyebrow{ font-family:'JetBrains Mono',monospace; font-size:12px; letter-spacing:.12em; text-transform:uppercase; color:#26C7D1; margin:0 0 10px; }
+  .hero h1{ font-family:'Space Grotesk',sans-serif; font-weight:700; letter-spacing:-.02em; font-size:2rem; line-height:1.1; margin:0 0 8px; }
+  .hero h1 .accent{ color:#3D74FF; }
+  .hero p{ margin:0; opacity:.85; max-width:46ch; }
+  .step{ font-family:'JetBrains Mono',monospace; font-size:12px; letter-spacing:.1em; text-transform:uppercase; color:#5F6B82; margin:34px 8px 2px; }
+  .toolbar{ max-width:640px; margin:8px auto 0; text-align:right; }
+  .linkbtn{ font:inherit; font-size:.85rem; background:none; border:none; color:#2A5FF0; cursor:pointer; text-decoration:underline; }
+  footer{ text-align:center; color:#8A93A8; font-size:.8rem; margin-top:50px; font-family:'JetBrains Mono',monospace; }
+</style>
+</head>
+<body>
+<div class="hero">
+  <p class="eyebrow">◆ Module 1 · What Is AI? · Type A (Ages 8–11)</p>
+  <h1>All 12 <span class="accent">Missions</span></h1>
+  <p>Every interactive widget for the kids' track, in order. Progress saves as you go.</p>
+</div>
+<div class="page">
+  <div class="toolbar"><button class="linkbtn" onclick="CTFWidgets.reset();location.reload()">↺ Reset my progress</button></div>
+
+  <p class="step">Mission 1 · warm-up</p>
+  <div class="ctf"><div data-ctf-widget="poll" data-ctf-id="kids-m1-warmup">
+    <script type="application/json">{
+      "eyebrow":"🚀 Before we start","title":"What do you THINK AI is right now?",
+      "prompt":"There are no wrong answers! Pick one, or type your own. We'll come back to this at the end.","columns":2,
+      "options":[{"emoji":"🤖","label":"A robot that thinks"},{"emoji":"🧠","label":"A super-smart computer"},{"emoji":"✨","label":"Kind of like magic"},{"emoji":"🤷","label":"I'm not totally sure"}],
+      "freeText":true,"placeholder":"Or describe it in your own words…",
+      "thanks":"Saved! Remember your answer — you'll see it again in Mission 12.",
+      "complete":{"icon":"🎖️","badge":"Badge earned: Future Builder","sub":"Mission 1 of 12","progress":8}
+    }</script>
+  </div></div>
+
+  <p class="step">Mission 2 · meet AI</p>
+  <div class="ctf"><div data-ctf-widget="sort" data-ctf-id="kids-m2-sort">
+    <script type="application/json">{
+      "eyebrow":"Follows rules, or learns?","title":"Sort each one into the right box",
+      "prompt":"A toaster <span class=\"ctf-q\">follows rules</span>. A smart helper <span class=\"ctf-q\">learns</span>. Tap the box you think each belongs in.",
+      "buckets":["Follows rules","Learns"],
+      "items":[{"emoji":"🍞","label":"Toaster","bucket":0},{"emoji":"🧮","label":"Calculator","bucket":0},{"emoji":"💡","label":"Light switch","bucket":0},{"emoji":"🗣️","label":"Voice assistant","bucket":1},{"emoji":"🚗","label":"Self-driving car","bucket":1}],
+      "thanks":"You got them all — that's the #1 idea in AI!",
+      "complete":{"icon":"🎖️","badge":"Badge earned: AI Spotter","sub":"Mission 2 of 12","progress":16}
+    }</script>
+  </div></div>
+
+  <p class="step">Mission 3 · patterns</p>
+  <div class="ctf"><div data-ctf-widget="choice" data-ctf-id="kids-m3-pattern">
+    <script type="application/json">{
+      "eyebrow":"Spot the pattern","title":"2, 4, 6, 8, …","prompt":"You learn by spotting patterns. What comes <span class=\"ctf-q\">next</span>?",
+      "options":["9","10","12","7"],"answer":1,"correctText":"Nice pattern-finding!","wrongText":"Close!",
+      "explain":"The pattern is \"add 2 each time,\" so after 8 comes <b>10</b>. You just did what AI does — found the rule from examples.",
+      "complete":{"icon":"🎖️","badge":"Badge earned: Pattern Finder","sub":"Mission 3 of 12","progress":25}
+    }</script>
+  </div></div>
+
+  <p class="step">Mission 4 · how AI learns</p>
+  <div class="ctf"><div data-ctf-widget="choice" data-ctf-id="kids-m4-training">
+    <script type="application/json">{
+      "eyebrow":"Brain Trainer","title":"Good examples in, smart AI out",
+      "prompt":"You want an AI that knows what a <span class=\"ctf-q\">dog</span> is. But you only ever show it big fluffy golden retrievers. Then it meets a tiny Chihuahua. What might happen?",
+      "options":["It instantly knows it's a dog","It might get confused and miss it","It turns into a cat","It refuses to look"],"answer":1,
+      "correctText":"Exactly!","wrongText":"Think about the examples…",
+      "explain":"If all the examples are one kind, the AI learns a narrow pattern. Show it <b>all</b> kinds of dogs and it learns better. Good examples in, smart AI out!",
+      "complete":{"icon":"🎖️","badge":"Badge earned: Brain Trainer","sub":"Mission 4 of 12","progress":33}
+    }</script>
+  </div></div>
+
+  <p class="step">Mission 5 · teaching a computer to see</p>
+  <div class="ctf"><div data-ctf-widget="reveal" data-ctf-id="kids-m5-reveal">
+    <script type="application/json">{
+      "eyebrow":"Pixel detective","title":"What is it? Reveal to find out",
+      "prompt":"Computers see blurry patterns first, then get clearer — just like this. Tap “Reveal more,” then make your guess.",
+      "emoji":"🐱","levels":[24,16,9,4,0],"options":["A dog","A cat","A muffin","A car"],"answer":1,
+      "explain":"It's a cat! Fun fact: AI can get fooled — blurry cats, muffins, and chihuahuas can look alike to a computer, because it only reads the <b>pattern</b> of pixels.",
+      "complete":{"icon":"🎖️","badge":"Badge earned: Pixel Detective","sub":"Mission 5 of 12","progress":42}
+    }</script>
+  </div></div>
+
+  <p class="step">Mission 6 · how AI reads</p>
+  <div class="ctf"><div data-ctf-widget="nextword" data-ctf-id="kids-m6-nextword">
+    <script type="application/json">{
+      "eyebrow":"Guess the next word","title":"Finish the sentence like an AI would","prompt":"AI writes by guessing the next word. Your turn first!",
+      "stem":"Peanut butter and","placeholder":"What comes next?","common":["jelly","jam","honey"],
+      "explain":"AI does exactly this — it read tons of writing and learned which word usually comes next, then builds whole sentences one word at a time.",
+      "complete":{"icon":"🎖️","badge":"Badge earned: Word Wizard","sub":"Mission 6 of 12","progress":50}
+    }</script>
+  </div></div>
+
+  <p class="step">Mission 7 · the attention trick</p>
+  <div class="ctf"><div data-ctf-widget="attention" data-ctf-id="kids-m7-attention">
+    <script type="application/json">{
+      "eyebrow":"The attention trick","title":"What does “it” mean?","prompt":"Click the word that <span class=\"ctf-q\">it</span> is really talking about.",
+      "tokens":["The ",{"w":"dog","ref":false}," chased the ",{"w":"ball","ref":true}," because ",{"w":"it","target":true}," was bouncy."],
+      "hint":"Hint: which one is bouncy?",
+      "explain":"“It” means the <b>ball</b>, because balls are bouncy. Your brain paid <b>attention</b> to the word “bouncy” — and that's exactly the trick a transformer uses.",
+      "complete":{"icon":"🎖️","badge":"Badge earned: Attention Ace","sub":"Mission 7 of 12","progress":58}
+    }</script>
+  </div></div>
+
+  <p class="step">Mission 8 · is AI like a brain?</p>
+  <div class="ctf"><div data-ctf-widget="choice" data-ctf-id="kids-m8-brain">
+    <script type="application/json">{
+      "eyebrow":"Neuron Navigator","title":"Brain or machine?",
+      "prompt":"AI is <i>inspired</i> by the brain — but it isn't alive. Which one can <span class=\"ctf-q\">only</span> a real person (you) do?",
+      "options":["Find patterns fast","Feel happy and excited","Sort a thousand pictures","Guess the next word"],"answer":1,
+      "correctText":"Yes!","wrongText":"A computer can do that one…",
+      "explain":"AI can find patterns and guess words, but it can't actually <b>feel</b> anything. Feelings are your superpower — when a chatbot says \"I'm happy to help,\" it's just predicting friendly-sounding words.",
+      "complete":{"icon":"🎖️","badge":"Badge earned: Neuron Navigator","sub":"Mission 8 of 12","progress":66}
+    }</script>
+  </div></div>
+
+  <p class="step">Mission 9 · the story of AI</p>
+  <div class="ctf"><div data-ctf-widget="timeline" data-ctf-id="kids-m9-timeline">
+    <script type="application/json">{
+      "eyebrow":"Time traveler","title":"How did we get here?","prompt":"Tap each moment to time-travel through the story of AI.",
+      "steps":[
+        {"when":"Long ago","title":"People dreamed of thinking machines","body":"Way before computers existed, storytellers imagined metal helpers and magic minds. The dream is really old."},
+        {"when":"~80 yrs ago","title":"Computers arrive","body":"They were amazing at math and rules — but pretty bad at <i>learning</i>. AI got stuck for a long time."},
+        {"when":"1997 & 2016","title":"Beating humans at games","body":"A computer beat the world chess champion (1997), then the Go champion (2016) with a move so creative experts gasped."},
+        {"when":"~10 yrs ago","title":"Everything clicks","body":"Computers got powerful AND the internet filled with examples. Suddenly AI got <b>really</b> good at finding patterns."},
+        {"when":"A few yrs ago","title":"You can just talk to it","body":"Ask a question, get an answer. Ask for a dragon on a skateboard, watch it appear. The whole world noticed at once."},
+        {"when":"NOW","title":"You're here","body":"AI arrived recently, with a bang — and you're at the very beginning. Some of the next chapters will be written by you."}
+      ],
+      "thanks":"You traveled the whole story of AI!",
+      "complete":{"icon":"🎖️","badge":"Badge earned: Time Traveler","sub":"Mission 9 of 12","progress":75}
+    }</script>
+  </div></div>
+
+  <p class="step">Mission 10 · great at, and not</p>
+  <div class="ctf"><div data-ctf-widget="choice" data-ctf-id="kids-m10-trust">
+    <script type="application/json">{
+      "eyebrow":"Smart Boss","title":"Should you trust it?",
+      "prompt":"You ask an AI a question and it answers super confidently: <span class=\"ctf-q\">“The Moon is made of cheese!”</span> What should you do?",
+      "options":["Believe it — it sounded really sure","Double-check it with a grown-up or a real source","Get mad at the AI","Never use AI again"],"answer":1,
+      "correctText":"Boss move!","wrongText":"Sounding sure isn't the same as being right…",
+      "explain":"AI can sound 100% sure and still be totally wrong — that's called a <b>hallucination</b>. You're the boss: always double-check the important stuff.",
+      "complete":{"icon":"🎖️","badge":"Badge earned: Smart Boss","sub":"Mission 10 of 12","progress":83}
+    }</script>
+  </div></div>
+
+  <p class="step">Mission 11 · the future is yours</p>
+  <div class="ctf"><div data-ctf-widget="poll" data-ctf-id="kids-m11-future">
+    <script type="application/json">{
+      "eyebrow":"Future Maker","title":"What will YOU build?","prompt":"Pick a dream job — then imagine how AI could help you do it. Add your own if it's not here!","columns":2,
+      "options":[{"emoji":"🩺","label":"Doctor"},{"emoji":"🎮","label":"Game maker"},{"emoji":"🚀","label":"Astronaut"},{"emoji":"🎨","label":"Artist"},{"emoji":"🐾","label":"Animal scientist"},{"emoji":"💡","label":"Inventor"}],
+      "freeText":true,"placeholder":"Or type your own dream job…",
+      "thanks":"Awesome — AI will be your sidekick, but YOU bring the big ideas.",
+      "complete":{"icon":"🎖️","badge":"Badge earned: Future Maker","sub":"Mission 11 of 12","progress":91}
+    }</script>
+  </div></div>
+
+  <p class="step">Mission 12 · you did it!</p>
+  <div class="ctf"><div data-ctf-widget="quiz" data-ctf-id="kids-m12-quiz">
+    <script type="application/json">{
+      "eyebrow":"🏆 Final check","title":"Show what you know","revisit":"kids-m1-warmup","revisitText":"Back in Mission 1, you said AI was:",
+      "questions":[
+        {"q":"What makes AI different from a toaster?","options":["It's faster","It can learn from examples","It's bigger","It uses electricity"],"answer":1},
+        {"q":"How does AI mostly work?","options":["It finds patterns","It remembers everything","It guesses randomly","It asks a human"],"answer":0},
+        {"q":"When AI sounds sure but is wrong, who's in charge of checking?","options":["The AI","Nobody","You are!","The internet"],"answer":2}
+      ],
+      "perfect":"Perfect score! You officially understand what AI is. 🎉","passText":"You know your stuff — peek back at any you missed.",
+      "complete":{"icon":"🏆","badge":"Module 1 Complete: AI Explorer — Level 1!","sub":"All 12 badges earned","progress":100}
+    }</script>
+  </div></div>
+
+  <footer>CODE THE FUTURE · MODULE 1 · KIDS · 12 MISSIONS</footer>
+</div>
+<script src="ctf-widgets.js"></script>
+</body>
+</html>
