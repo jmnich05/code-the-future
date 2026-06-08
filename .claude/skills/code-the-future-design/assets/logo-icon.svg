@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="120" height="120" fill="none" role="img" aria-label="Code the Future icon">
+  <defs>
+    <linearGradient id="ctfSpark" x1="28" y1="100" x2="96" y2="28" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#3D74FF"></stop>
+      <stop offset="1" stop-color="#26C7D1"></stop>
+    </linearGradient>
+  </defs>
+  
+  <path d="M30 98 L60 68" stroke="url(#ctfSpark)" stroke-width="11" stroke-linecap="round"></path>
+  
+  <path d="M60 68 L46 40" stroke="url(#ctfSpark)" stroke-width="11" stroke-linecap="round"></path>
+  
+  <path d="M60 68 L92 32" stroke="url(#ctfSpark)" stroke-width="11" stroke-linecap="round"></path>
+  
+  <path d="M91 52 L92 32 L72 35" stroke="#FF5A38" stroke-width="11" stroke-linecap="round" stroke-linejoin="round"></path>
+  
+  <circle cx="30" cy="98" r="8" fill="#0C1322"></circle>
+  <circle cx="60" cy="68" r="8" fill="#0C1322"></circle>
+  <circle cx="46" cy="40" r="7" fill="#26C7D1"></circle>
+</svg>

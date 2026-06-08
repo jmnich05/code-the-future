@@ -1,0 +1,45 @@
+<!-- @dsCard group="Brand" viewport="700x220" name="Logo on dark + stacked" subtitle="Reversed lockup for dark surfaces and the stacked vertical form" -->
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="../styles.css">
+<style>
+  html, body { margin: 0; }
+  body {
+    font-family: var(--font-body); display: grid; grid-template-columns: 1fr 1fr;
+    min-height: 220px;
+  }
+  .panel { display: flex; align-items: center; justify-content: center; padding: var(--space-6); }
+  .dark { background: var(--gradient-night); }
+  .light { background: var(--surface-page); }
+  .h-lockup { display: flex; align-items: center; gap: 16px; }
+  .h-lockup img { width: 56px; height: 56px; }
+  .v-lockup { display: flex; flex-direction: column; align-items: center; gap: 12px; }
+  .v-lockup img { width: 60px; height: 60px; }
+  .wordmark {
+    font-family: var(--font-display); font-weight: var(--weight-bold);
+    letter-spacing: var(--tracking-tight); font-size: 30px; line-height: 1; white-space: nowrap;
+  }
+  .v-lockup .wordmark { font-size: 26px; }
+  .on-dark { color: var(--white); }
+  .on-dark .future { color: var(--teal-300); }
+  .on-light { color: var(--text-strong); }
+  .on-light .future { color: var(--color-primary); }
+</style>
+</head>
+<body>
+  <div class="panel dark">
+    <div class="h-lockup">
+      <img src="../assets/logo-icon-dark.svg" alt="icon">
+      <div class="wordmark on-dark">Code the <span class="future">Future</span></div>
+    </div>
+  </div>
+  <div class="panel light">
+    <div class="v-lockup">
+      <img src="../assets/logo-icon.svg" alt="icon">
+      <div class="wordmark on-light">Code the <span class="future">Future</span></div>
+    </div>
+  </div>
+</body>
+</html>

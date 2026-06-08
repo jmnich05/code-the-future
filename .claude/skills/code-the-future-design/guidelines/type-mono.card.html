@@ -1,0 +1,26 @@
+<!-- @dsCard group="Type" viewport="700x200" name="Mono — JetBrains Mono" subtitle="Code, labels, eyebrows — the operator voice" -->
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="../styles.css">
+<style>
+  html, body { margin: 0; }
+  body { background: var(--surface-dark); font-family: var(--font-mono); padding: var(--space-6); color: var(--text-on-dark); }
+  .eyebrow { font-size: 12px; letter-spacing: .12em; text-transform: uppercase; color: var(--teal-300); margin-bottom: 14px; }
+  pre { margin: 0; font-size: 14px; line-height: 1.7; }
+  .k { color: var(--coral-300); }
+  .s { color: var(--teal-300); }
+  .c { color: var(--ink-400); }
+  .meta { font-size: 11px; color: var(--ink-400); margin-top: 16px; }
+</style>
+</head>
+<body>
+  <div class="eyebrow">// the agent loop</div>
+<pre><span class="k">for</span> order <span class="k">in</span> orders:
+    result = agent.<span class="s">decide</span>(order)  <span class="c"># AI judgment</span>
+    <span class="k">if</span> result.confidence &lt; <span class="s">0.8</span>:
+        escalate(order)        <span class="c"># humans handle exceptions</span></pre>
+  <div class="meta">JetBrains Mono · 400 / 500 / 700 · fallback SF Mono, Consolas</div>
+</body>
+</html>

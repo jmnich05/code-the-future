@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Code the Future — Module 1 Interactive Widgets (Kids preview)</title>
+<link rel="stylesheet" href="ctf-widgets.css">
+<style>
+  /* Page chrome — uses the same brand tokens as the widgets (.ctf scope). */
+  body{ margin:0; background:var(--ink-50,#F6F8FC); font-family:'Plus Jakarta Sans',system-ui,sans-serif; color:#2A3349; }
+  .page{ max-width:720px; margin:0 auto; padding:0 16px 80px; }
+  .hero{ background:linear-gradient(160deg,#0F1B3A 0%,#070C1A 100%); color:#fff; border-radius:0 0 28px 28px;
+         padding:40px 28px 34px; margin-bottom:8px; box-shadow:0 18px 40px rgba(12,19,34,.12); }
+  .hero .eyebrow{ font-family:'JetBrains Mono',monospace; font-size:12px; letter-spacing:.12em; text-transform:uppercase; color:#26C7D1; margin:0 0 10px; }
+  .hero h1{ font-family:'Space Grotesk',sans-serif; font-weight:700; letter-spacing:-.02em; font-size:2rem; line-height:1.1; margin:0 0 8px; }
+  .hero h1 .accent{ color:#3D74FF; }
+  .hero p{ margin:0; opacity:.85; max-width:46ch; }
+  .step{ font-family:'JetBrains Mono',monospace; font-size:12px; letter-spacing:.1em; text-transform:uppercase;
+         color:#5F6B82; margin:34px 8px 2px; }
+  .toolbar{ max-width:640px; margin:8px auto 0; text-align:right; }
+  .linkbtn{ font:inherit; font-size:.85rem; background:none; border:none; color:#2A5FF0; cursor:pointer; text-decoration:underline; }
+  footer{ text-align:center; color:#8A93A8; font-size:.8rem; margin-top:50px; font-family:'JetBrains Mono',monospace; }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <p class="eyebrow">◆ Module 1 · What Is AI? · Type A (Ages 8–11)</p>
+  <h1>Interactive <span class="accent">Missions</span> — preview</h1>
+  <p>Six working widgets from Module 1, styled with the Code the Future design system. Play with them — your progress saves as you go.</p>
+</div>
+
+<div class="page">
+  <div class="toolbar"><button class="linkbtn" onclick="CTFWidgets.reset();location.reload()">↺ Reset my progress</button></div>
+
+  <!-- MISSION 1 — warm-up poll -->
+  <p class="step">Mission 1 · warm-up</p>
+  <div class="ctf"><div data-ctf-widget="poll" data-ctf-id="kids-m1-warmup">
+    <script type="application/json">{
+      "eyebrow":"🚀 Before we start",
+      "title":"What do you THINK AI is right now?",
+      "prompt":"There are no wrong answers! Pick one, or type your own. We'll come back to this at the end.",
+      "columns":2,
+      "options":[
+        {"emoji":"🤖","label":"A robot that thinks"},
+        {"emoji":"🧠","label":"A super-smart computer"},
+        {"emoji":"✨","label":"Kind of like magic"},
+        {"emoji":"🤷","label":"I'm not totally sure"}
+      ],
+      "freeText":true,
+      "placeholder":"Or describe it in your own words…",
+      "thanks":"Saved! Remember your answer — you'll see it again in Mission 12.",
+      "complete":{"icon":"🎖️","badge":"Badge earned: Future Builder","sub":"Mission 1 of 12","progress":8}
+    }</script>
+  </div></div>
+
+  <!-- MISSION 2 — sort -->
+  <p class="step">Mission 2 · meet AI</p>
+  <div class="ctf"><div data-ctf-widget="sort" data-ctf-id="kids-m2-sort">
+    <script type="application/json">{
+      "eyebrow":"Follows rules, or learns?",
+      "title":"Sort each one into the right box",
+      "prompt":"A toaster <span class=\"ctf-q\">follows rules</span>. A smart helper <span class=\"ctf-q\">learns</span>. Tap the box you think each belongs in.",
+      "buckets":["Follows rules","Learns"],
+      "items":[
+        {"emoji":"🍞","label":"Toaster","bucket":0},
+        {"emoji":"🧮","label":"Calculator","bucket":0},
+        {"emoji":"💡","label":"Light switch","bucket":0},
+        {"emoji":"🗣️","label":"Voice assistant","bucket":1},
+        {"emoji":"🚗","label":"Self-driving car","bucket":1}
+      ],
+      "thanks":"You got them all — that's the #1 idea in AI!",
+      "complete":{"icon":"🎖️","badge":"Badge earned: AI Spotter","sub":"Mission 2 of 12","progress":16}
+    }</script>
+  </div></div>
+
+  <!-- MISSION 3 — spot the pattern (choice) -->
+  <p class="step">Mission 3 · patterns</p>
+  <div class="ctf"><div data-ctf-widget="choice" data-ctf-id="kids-m3-pattern">
+    <script type="application/json">{
+      "eyebrow":"Spot the pattern",
+      "title":"2, 4, 6, 8, …",
+      "prompt":"You learn by spotting patterns. What comes <span class=\"ctf-q\">next</span>?",
+      "options":["9","10","12","7"],
+      "answer":1,
+      "correctText":"Nice pattern-finding!",
+      "wrongText":"Close!",
+      "explain":"The pattern is \"add 2 each time,\" so after 8 comes <b>10</b>. You just did what AI does — found the rule from examples.",
+      "complete":{"icon":"🎖️","badge":"Badge earned: Pattern Finder","sub":"Mission 3 of 12","progress":25}
+    }</script>
+  </div></div>
+
+  <!-- MISSION 6 — guess the next word -->
+  <p class="step">Mission 6 · how AI reads</p>
+  <div class="ctf"><div data-ctf-widget="nextword" data-ctf-id="kids-m6-nextword">
+    <script type="application/json">{
+      "eyebrow":"Guess the next word",
+      "title":"Finish the sentence like an AI would",
+      "prompt":"AI writes by guessing the next word. Your turn first!",
+      "stem":"Peanut butter and",
+      "placeholder":"What comes next?",
+      "common":["jelly","jam","honey"],
+      "explain":"AI does exactly this — it read tons of writing and learned which word usually comes next, then builds whole sentences one word at a time.",
+      "complete":{"icon":"🎖️","badge":"Badge earned: Word Wizard","sub":"Mission 6 of 12","progress":50}
+    }</script>
+  </div></div>
+
+  <!-- MISSION 7 — attention -->
+  <p class="step">Mission 7 · the attention trick</p>
+  <div class="ctf"><div data-ctf-widget="attention" data-ctf-id="kids-m7-attention">
+    <script type="application/json">{
+      "eyebrow":"The attention trick",
+      "title":"What does “it” mean?",
+      "prompt":"Click the word that <span class=\"ctf-q\">it</span> is really talking about.",
+      "tokens":["The ",{"w":"dog","ref":false}," chased the ",{"w":"ball","ref":true}," because ",{"w":"it","target":true}," was bouncy."],
+      "hint":"Hint: which one is bouncy?",
+      "explain":"“It” means the <b>ball</b>, because balls are bouncy. Your brain paid <b>attention</b> to the word “bouncy” — and that's exactly the trick a transformer uses.",
+      "complete":{"icon":"🎖️","badge":"Badge earned: Attention Ace","sub":"Mission 7 of 12","progress":58}
+    }</script>
+  </div></div>
+
+  <!-- MISSION 12 — quiz + revisit -->
+  <p class="step">Mission 12 · you did it!</p>
+  <div class="ctf"><div data-ctf-widget="quiz" data-ctf-id="kids-m12-quiz">
+    <script type="application/json">{
+      "eyebrow":"🏆 Final check",
+      "title":"Show what you know",
+      "revisit":"kids-m1-warmup",
+      "revisitText":"Back in Mission 1, you said AI was:",
+      "questions":[
+        {"q":"What makes AI different from a toaster?","options":["It's faster","It can learn from examples","It's bigger","It uses electricity"],"answer":1},
+        {"q":"How does AI mostly work?","options":["It finds patterns","It remembers everything","It guesses randomly","It asks a human"],"answer":0},
+        {"q":"When AI sounds sure but is wrong, who's in charge of checking?","options":["The AI","Nobody","You are!","The internet"],"answer":2}
+      ],
+      "perfect":"Perfect score! You officially understand what AI is. 🎉",
+      "passText":"You know your stuff — peek back at any you missed.",
+      "complete":{"icon":"🏆","badge":"Module 1 Complete: AI Explorer — Level 1!","sub":"All 12 badges earned","progress":100}
+    }</script>
+  </div></div>
+
+  <footer>CODE THE FUTURE · MODULE 1 · PASS 2 INTERACTIVE PREVIEW</footer>
+</div>
+
+<script src="ctf-widgets.js"></script>
+</body>
+</html>

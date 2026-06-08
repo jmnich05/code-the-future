@@ -1,0 +1,46 @@
+<!-- @dsCard group="Brand" viewport="700x220" name="Icon mark — variants" subtitle="Standalone mark for app icons & avatars: light, dark, mono, tile" -->
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="../styles.css">
+<style>
+  html, body { margin: 0; }
+  body {
+    background: var(--surface-page);
+    font-family: var(--font-body);
+    display: flex; align-items: center; justify-content: center;
+    gap: var(--space-7); min-height: 220px; padding: var(--space-6);
+  }
+  figure { margin: 0; display: flex; flex-direction: column; align-items: center; gap: 12px; }
+  .swatch { width: 96px; height: 96px; display: grid; place-items: center; border-radius: var(--radius-lg); }
+  .on-light { background: var(--surface-card); border: 1px solid var(--border-subtle); }
+  .on-dark  { background: var(--surface-dark); }
+  .swatch img { width: 64px; height: 64px; }
+  .tile img { width: 96px; height: 96px; border-radius: 0; }
+  .mono { color: var(--ink-900); }
+  figcaption {
+    font-family: var(--font-mono); font-size: var(--text-2xs);
+    letter-spacing: var(--tracking-wide); color: var(--text-muted); text-transform: uppercase;
+  }
+</style>
+</head>
+<body>
+  <figure>
+    <div class="swatch on-light"><img src="../assets/logo-icon.svg" alt="icon on light"></div>
+    <figcaption>On light</figcaption>
+  </figure>
+  <figure>
+    <div class="swatch on-dark"><img src="../assets/logo-icon-dark.svg" alt="icon on dark"></div>
+    <figcaption>On dark</figcaption>
+  </figure>
+  <figure>
+    <div class="swatch on-light mono"><img src="../assets/logo-icon-mono.svg" alt="mono icon"></div>
+    <figcaption>Monochrome</figcaption>
+  </figure>
+  <figure>
+    <div class="swatch tile"><img src="../assets/logo-icon-tile.svg" alt="app tile"></div>
+    <figcaption>App tile</figcaption>
+  </figure>
+</body>
+</html>

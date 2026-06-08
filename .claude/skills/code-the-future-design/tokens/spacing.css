@@ -1,0 +1,31 @@
+/* ==========================================================================
+   Code the Future — Spacing & layout tokens
+   8px base grid. Generous, breathable — camp-friendly, not cramped.
+   ========================================================================== */
+
+:root {
+  --space-0:   0;
+  --space-1:   0.25rem;  /* 4px */
+  --space-2:   0.5rem;   /* 8px */
+  --space-3:   0.75rem;  /* 12px */
+  --space-4:   1rem;     /* 16px */
+  --space-5:   1.5rem;   /* 24px */
+  --space-6:   2rem;     /* 32px */
+  --space-7:   2.5rem;   /* 40px */
+  --space-8:   3rem;     /* 48px */
+  --space-9:   4rem;     /* 64px */
+  --space-10:  5rem;     /* 80px */
+  --space-12:  6rem;     /* 96px */
+  --space-16:  8rem;     /* 128px */
+
+  /* Layout */
+  --container-sm:  640px;
+  --container-md:  840px;
+  --container-lg:  1080px;
+  --container-xl:  1280px;
+  --gutter:        var(--space-5);
+  --section-pad-y: var(--space-12);
+
+  /* Touch targets — kids/teens: never below 44px */
+  --hit-min: 44px;
+}

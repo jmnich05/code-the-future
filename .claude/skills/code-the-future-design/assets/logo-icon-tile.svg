@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 240" width="240" height="240" fill="none" role="img" aria-label="Code the Future app icon">
+  <defs>
+    <linearGradient id="ctfTile" x1="0" y1="0" x2="240" y2="240" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#0F1B3A"></stop>
+      <stop offset="1" stop-color="#070C1A"></stop>
+    </linearGradient>
+    <linearGradient id="ctfSparkT" x1="64" y1="196" x2="188" y2="60" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#5C8BFF"></stop>
+      <stop offset="1" stop-color="#54DBE3"></stop>
+    </linearGradient>
+    <radialGradient id="ctfGlow" cx="0.62" cy="0.34" r="0.6">
+      <stop offset="0" stop-color="#3D74FF" stop-opacity="0.45"></stop>
+      <stop offset="1" stop-color="#3D74FF" stop-opacity="0"></stop>
+    </radialGradient>
+  </defs>
+  <rect width="240" height="240" rx="54" fill="url(#ctfTile)"></rect>
+  <rect width="240" height="240" rx="54" fill="url(#ctfGlow)"></rect>
+  <g transform="translate(60 60) scale(1)">
+    <path d="M30 98 L60 68" stroke="url(#ctfSparkT)" stroke-width="11" stroke-linecap="round"></path>
+    <path d="M60 68 L46 40" stroke="url(#ctfSparkT)" stroke-width="11" stroke-linecap="round"></path>
+    <path d="M60 68 L92 32" stroke="url(#ctfSparkT)" stroke-width="11" stroke-linecap="round"></path>
+    <path d="M91 52 L92 32 L72 35" stroke="#FF6B4A" stroke-width="11" stroke-linecap="round" stroke-linejoin="round"></path>
+    <circle cx="30" cy="98" r="8" fill="#FFFFFF"></circle>
+    <circle cx="60" cy="68" r="8" fill="#FFFFFF"></circle>
+    <circle cx="46" cy="40" r="7" fill="#54DBE3"></circle>
+  </g>
+</svg>

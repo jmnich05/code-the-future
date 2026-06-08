@@ -1,0 +1,38 @@
+<!-- @dsCard group="Colors" viewport="700x170" name="Semantic states" subtitle="Success, warning, danger, info — drawn from the brand palette" -->
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="../styles.css">
+<style>
+  html, body { margin: 0; }
+  body { background: var(--surface-page); font-family: var(--font-body); padding: var(--space-5); display: grid; grid-template-columns: repeat(4,1fr); gap: 14px; }
+  .chip { background: var(--surface-card); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 14px; display: grid; gap: 10px; box-shadow: var(--shadow-xs); }
+  .dot { width: 26px; height: 26px; border-radius: var(--radius-full); }
+  .name { font-family: var(--font-display); font-weight: 600; font-size: 14px; color: var(--text-strong); }
+  .pill { font-family: var(--font-mono); font-size: 11px; padding: 5px 10px; border-radius: var(--radius-pill); width: fit-content; }
+</style>
+</head>
+<body>
+  <div class="chip">
+    <div class="dot" style="background:var(--color-success)"></div>
+    <div class="name">Success</div>
+    <div class="pill" style="background:var(--color-success-bg);color:var(--color-success)">On track</div>
+  </div>
+  <div class="chip">
+    <div class="dot" style="background:var(--color-warning)"></div>
+    <div class="name">Warning</div>
+    <div class="pill" style="background:var(--color-warning-bg);color:var(--amber-600)">Heads up</div>
+  </div>
+  <div class="chip">
+    <div class="dot" style="background:var(--color-danger)"></div>
+    <div class="name">Danger</div>
+    <div class="pill" style="background:var(--color-danger-bg);color:var(--color-danger)">Try again</div>
+  </div>
+  <div class="chip">
+    <div class="dot" style="background:var(--color-info)"></div>
+    <div class="name">Info</div>
+    <div class="pill" style="background:var(--color-info-bg);color:var(--color-info)">New</div>
+  </div>
+</body>
+</html>

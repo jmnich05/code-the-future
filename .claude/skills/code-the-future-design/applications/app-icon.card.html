@@ -1,0 +1,35 @@
+<!-- @dsCard group="Applications" viewport="700x300" name="App icon" subtitle="The standalone mark as an iOS/Android home-screen icon" -->
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="../styles.css">
+<style>
+  html, body { margin: 0; }
+  body { font-family: var(--font-body); display: flex; align-items: center; justify-content: center; gap: var(--space-8); min-height: 300px; background: var(--gradient-night); padding: var(--space-7); }
+  .home { display: flex; flex-direction: column; align-items: center; gap: 14px; }
+  .ios { width: 132px; height: 132px; border-radius: 30px; overflow: hidden; box-shadow: var(--shadow-xl); }
+  .ios img { width: 100%; height: 100%; display: block; }
+  .label { font-family: var(--font-body); font-weight: 600; font-size: 14px; color: #fff; }
+  .sizes { display: flex; align-items: flex-end; gap: 18px; }
+  .sizes .s { border-radius: 22%; overflow: hidden; box-shadow: var(--shadow-lg); }
+  .sizes img { display: block; width: 100%; height: 100%; }
+  .cap { font-family: var(--font-mono); font-size: 10px; color: rgba(255,255,255,.6); text-align: center; margin-top: 8px; letter-spacing: .06em; }
+</style>
+</head>
+<body>
+  <div class="home">
+    <div class="ios"><img src="../assets/logo-icon-tile.svg" alt="Code the Future app icon"></div>
+    <div class="label">Code the Future</div>
+  </div>
+  <div>
+    <div class="sizes">
+      <div class="s" style="width:88px;height:88px"><img src="../assets/logo-icon-tile.svg"></div>
+      <div class="s" style="width:60px;height:60px"><img src="../assets/logo-icon-tile.svg"></div>
+      <div class="s" style="width:40px;height:40px"><img src="../assets/logo-icon-tile.svg"></div>
+      <div class="s" style="width:28px;height:28px"><img src="../assets/logo-icon-tile.svg"></div>
+    </div>
+    <div class="cap">180 · 120 · 80 · 56 px — squircle mask, navy tile</div>
+  </div>
+</body>
+</html>
