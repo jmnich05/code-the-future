@@ -126,3 +126,8 @@ body{ margin:0; background:var(--ink-50); color:var(--ink-700); font-family:var(
   .beat p{ font-size:1.25rem; } .beat li{ font-size:1.2rem; }
   .beat.t-quote blockquote p{ font-size:1.5rem; } .beat.t-quote blockquote{ padding:28px 24px; }
 }
+
+/* --- Original concept art panel ------------------------------------------ */
+.lesson-art{ background:linear-gradient(160deg,#fff,var(--blue-50)); border:1px solid var(--ink-200); border-radius:var(--radius-xl); box-shadow:var(--shadow-md); padding:30px 30px; display:flex; align-items:center; justify-content:center; }
+.lesson-art img{ width:100%; max-width:560px; height:auto; max-height:44vh; }
+.track-kids .lesson-art{ background:radial-gradient(120% 140% at 80% 0%, var(--teal-50), #fff 60%); }

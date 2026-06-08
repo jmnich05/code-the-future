@@ -25,6 +25,10 @@
    "meta": "~10 minutes",
    "beats": [
     {
+     "type": "image",
+     "html": "<div class=\"lesson-art\"><img src=\"../assets/art/welcome.svg\" alt=\"\" loading=\"lazy\"></div>"
+    },
+    {
      "type": "text",
      "html": "<p>Right now, you are holding something amazing in your brain: curiosity.</p>"
     },
@@ -64,6 +68,10 @@
    "title": "Meet AI: What Even Is It?",
    "meta": "~10 minutes",
    "beats": [
+    {
+     "type": "image",
+     "html": "<div class=\"lesson-art\"><img src=\"../assets/art/learns.svg\" alt=\"\" loading=\"lazy\"></div>"
+    },
     {
      "type": "text",
      "html": "<p>Let's start with a normal machine. Think about a <strong>toaster</strong>.</p>"
@@ -121,6 +129,10 @@
    "meta": "~10 minutes",
    "beats": [
     {
+     "type": "image",
+     "html": "<div class=\"lesson-art\"><img src=\"../assets/art/patterns.svg\" alt=\"\" loading=\"lazy\"></div>"
+    },
+    {
      "type": "text",
      "html": "<p>Here's a riddle: how did you learn what a dog is?</p>"
     },
@@ -173,6 +185,10 @@
    "meta": "~10 minutes",
    "beats": [
     {
+     "type": "image",
+     "html": "<div class=\"lesson-art\"><img src=\"../assets/art/training.svg\" alt=\"\" loading=\"lazy\"></div>"
+    },
+    {
      "type": "text",
      "html": "<p>Here's the amazing part: <strong>AI learns almost exactly the way you learned what a dog is.</strong></p>"
     },
@@ -221,6 +237,10 @@
    "meta": "~10 minutes",
    "beats": [
     {
+     "type": "image",
+     "html": "<div class=\"lesson-art\"><img src=\"../assets/art/seeing.svg\" alt=\"\" loading=\"lazy\"></div>"
+    },
+    {
      "type": "text",
      "html": "<p>Here's one of the coolest things AI learned to do: it learned to <strong>see</strong>.</p>"
     },
@@ -260,6 +280,10 @@
    "title": "How AI Reads Words",
    "meta": "~10 minutes",
    "beats": [
+    {
+     "type": "image",
+     "html": "<div class=\"lesson-art\"><img src=\"../assets/art/words.svg\" alt=\"\" loading=\"lazy\"></div>"
+    },
     {
      "type": "text",
      "html": "<p>AI doesn't just see pictures — it's also amazing with <strong>words</strong>. This is the part you've probably seen when someone types a question to a chatbot and it answers back like a person. How in the world does it do that?</p>"
@@ -317,6 +341,10 @@
    "meta": "~10 minutes",
    "beats": [
     {
+     "type": "image",
+     "html": "<div class=\"lesson-art\"><img src=\"../assets/art/attention.svg\" alt=\"\" loading=\"lazy\"></div>"
+    },
+    {
      "type": "text",
      "html": "<p>To guess the right next word, AI uses one especially clever trick. It has a name you'll hear a lot: <strong>attention</strong>.</p>"
     },
@@ -360,6 +388,10 @@
    "title": "Is AI Like a Brain?",
    "meta": "~10 minutes",
    "beats": [
+    {
+     "type": "image",
+     "html": "<div class=\"lesson-art\"><img src=\"../assets/art/brain-net.svg\" alt=\"\" loading=\"lazy\"></div>"
+    },
     {
      "type": "image",
      "html": "<div class=\"lesson-fig\"><figure><img src=\"../assets/img/neuron-cajal.jpg\" alt=\"\" loading=\"lazy\"><figcaption><b>Real neurons</b>, drawn by Santiago Ramón y Cajal. AI's “neural networks” borrow this idea.<br><span class=\"credit\">Ramón y Cajal · public domain</span></figcaption></figure></div>"
@@ -414,6 +446,10 @@
    "beats": [
     {
      "type": "image",
+     "html": "<div class=\"lesson-art\"><img src=\"../assets/art/timeline.svg\" alt=\"\" loading=\"lazy\"></div>"
+    },
+    {
+     "type": "image",
      "html": "<div class=\"lesson-fig row\"><figure><img src=\"../assets/img/turing.jpg\" alt=\"\" loading=\"lazy\"><figcaption><b>Alan Turing</b> — in 1950 he asked, “Can machines think?”<br><span class=\"credit\">Public domain · Wikimedia Commons</span></figcaption></figure><figure><img src=\"../assets/img/eniac.jpg\" alt=\"\" loading=\"lazy\"><figcaption><b>ENIAC (1947)</b> — early computers were great at math, but couldn't learn.<br><span class=\"credit\">U.S. Army · public domain</span></figcaption></figure></div>"
     },
     {
@@ -460,6 +496,10 @@
    "title": "What AI Is Great At (and What It's Not)",
    "meta": "~10 minutes",
    "beats": [
+    {
+     "type": "image",
+     "html": "<div class=\"lesson-art\"><img src=\"../assets/art/trust.svg\" alt=\"\" loading=\"lazy\"></div>"
+    },
     {
      "type": "text",
      "html": "<p>AI is incredible. But it's not magic, and it is definitely not perfect. A smart Future Builder knows <em>both</em> what AI is great at <em>and</em> where it needs a human. Knowing the difference is what makes you the boss instead of the AI.</p>"
@@ -510,6 +550,10 @@
    "beats": [
     {
      "type": "image",
+     "html": "<div class=\"lesson-art\"><img src=\"../assets/art/future.svg\" alt=\"\" loading=\"lazy\"></div>"
+    },
+    {
+     "type": "image",
      "html": "<div class=\"lesson-fig\"><figure><img src=\"../assets/img/galaxy-nasa.jpg\" alt=\"\" loading=\"lazy\"><figcaption><b>The universe is vast.</b> Your generation will explore it with AI as a tool.<br><span class=\"credit\">NASA · public domain</span></figcaption></figure></div>"
     },
     {
@@ -548,6 +592,10 @@
    "title": "You Did It!",
    "meta": "~10 minutes",
    "beats": [
+    {
+     "type": "image",
+     "html": "<div class=\"lesson-art\"><img src=\"../assets/art/trophy.svg\" alt=\"\" loading=\"lazy\"></div>"
+    },
     {
      "type": "text",
      "html": "<p>Look how far you came. Twelve Missions ago, AI was just two mysterious letters that grown-ups said at dinner. Now? You can actually explain it. Let's pull together everything you know — and get you ready to <em>use</em> real AI yourself in the Big Mission.</p>"

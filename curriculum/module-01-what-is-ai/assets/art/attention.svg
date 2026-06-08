@@ -1,0 +1,11 @@
+<svg viewBox="0 0 800 460" xmlns="http://www.w3.org/2000/svg" role="img">
+  <defs>
+    <linearGradient id="g" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="#3D74FF"/><stop offset="1" stop-color="#26C7D1"/></linearGradient>
+    <linearGradient id="sun" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="#FF5A38"/><stop offset="1" stop-color="#FFB320"/></linearGradient>
+    <radialGradient id="glow"><stop offset="0" stop-color="#26C7D1" stop-opacity=".55"/><stop offset="1" stop-color="#26C7D1" stop-opacity="0"/></radialGradient>
+  </defs>
+  
+    <rect x="90" y="250" width="115" height="56" rx="28" fill="#EEF1F6"/><text x="147" y="287" text-anchor="middle" font-family="Space Grotesk, sans-serif" font-weight="600" font-size="24" fill="#8A93A8">The</text><rect x="220" y="250" width="115" height="56" rx="28" fill="url(#g)"/><text x="277" y="287" text-anchor="middle" font-family="Space Grotesk, sans-serif" font-weight="600" font-size="24" fill="#FFFFFF">ball</text><rect x="350" y="250" width="115" height="56" rx="28" fill="#EEF1F6"/><text x="407" y="287" text-anchor="middle" font-family="Space Grotesk, sans-serif" font-weight="600" font-size="24" fill="#8A93A8">is</text><rect x="480" y="250" width="115" height="56" rx="28" fill="url(#g)"/><text x="537" y="287" text-anchor="middle" font-family="Space Grotesk, sans-serif" font-weight="600" font-size="24" fill="#FFFFFF">it</text><rect x="610" y="250" width="115" height="56" rx="28" fill="#EEF1F6"/><text x="667" y="287" text-anchor="middle" font-family="Space Grotesk, sans-serif" font-weight="600" font-size="24" fill="#8A93A8">bouncy</text>
+    <path d="M530 250 C 500 150, 230 150, 200 250" fill="none" stroke="#FF5A38" stroke-width="6" stroke-linecap="round"/>
+    <circle cx="200" cy="250" r="9" fill="#FF5A38"/><circle cx="530" cy="250" r="9" fill="#FF5A38"/>
+</svg>

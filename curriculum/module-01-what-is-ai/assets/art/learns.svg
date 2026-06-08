@@ -1,0 +1,20 @@
+<svg viewBox="0 0 800 460" xmlns="http://www.w3.org/2000/svg" role="img">
+  <defs>
+    <linearGradient id="g" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="#3D74FF"/><stop offset="1" stop-color="#26C7D1"/></linearGradient>
+    <linearGradient id="sun" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="#FF5A38"/><stop offset="1" stop-color="#FFB320"/></linearGradient>
+    <radialGradient id="glow"><stop offset="0" stop-color="#26C7D1" stop-opacity=".55"/><stop offset="1" stop-color="#26C7D1" stop-opacity="0"/></radialGradient>
+  </defs>
+  
+    <rect x="120" y="150" width="200" height="170" rx="18" fill="#EEF1F6" stroke="#DDE2EC" stroke-width="3"/>
+    <circle cx="220" cy="235" r="46" fill="none" stroke="#8A93A8" stroke-width="14"/>
+    <g stroke="#8A93A8" stroke-width="14" stroke-linecap="round">
+      <path d="M220 175 v-22 M220 295 v22 M160 235 h-22 M280 235 h22"/>
+    </g>
+    <text x="220" y="135" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="22" fill="#8A93A8">RULES</text>
+    <path d="M360 235 h80" stroke="#0C1322" stroke-width="10" stroke-linecap="round"/>
+    <path d="M440 235 l-22 -16 v32 z" fill="#0C1322"/>
+    <circle cx="610" cy="235" r="150" fill="url(#glow)"/>
+    <path d="M560 175 q60 -36 100 8 q44 16 22 70 q14 56 -52 56 q-50 30 -86 -16 q-46 -8 -28 -64 q-16 -42 44 -54z" fill="url(#g)"/>
+    <circle cx="595" cy="215" r="9" fill="#FFFFFF"/><circle cx="640" cy="232" r="9" fill="#FFFFFF"/><circle cx="610" cy="268" r="9" fill="#FFFFFF"/>
+    <text x="610" y="120" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="22" fill="#12B2BC">LEARNS</text>
+</svg>

@@ -1,0 +1,10 @@
+<svg viewBox="0 0 800 460" xmlns="http://www.w3.org/2000/svg" role="img">
+  <defs>
+    <linearGradient id="g" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="#3D74FF"/><stop offset="1" stop-color="#26C7D1"/></linearGradient>
+    <linearGradient id="sun" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="#FF5A38"/><stop offset="1" stop-color="#FFB320"/></linearGradient>
+    <radialGradient id="glow"><stop offset="0" stop-color="#26C7D1" stop-opacity=".55"/><stop offset="1" stop-color="#26C7D1" stop-opacity="0"/></radialGradient>
+  </defs>
+  
+    <line x1="110" y1="240" x2="690" y2="240" stroke="url(#g)" stroke-width="8" stroke-linecap="round"/>
+    <circle cx="150" cy="240" r="18" fill="url(#g)"/><text x="150" y="300" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="22" fill="#0C1322">1950</text><circle cx="315" cy="240" r="18" fill="url(#g)"/><text x="315" y="300" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="22" fill="#0C1322">2012</text><circle cx="480" cy="240" r="18" fill="url(#g)"/><text x="480" y="300" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="22" fill="#0C1322">2017</text><circle cx="645" cy="240" r="18" fill="#FF5A38"/><text x="645" y="300" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="22" fill="#0C1322">now</text>
+</svg>

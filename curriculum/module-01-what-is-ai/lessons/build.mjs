@@ -37,6 +37,16 @@ const TRACKS = {
   }
 };
 
+// original concept art (assets/art/*.svg) — one per mission, by number
+const ART_MAP = {
+  kids: { 1: "welcome", 2: "learns", 3: "patterns", 4: "training", 5: "seeing", 6: "words", 7: "attention", 8: "brain-net", 9: "timeline", 10: "trust", 11: "future", 12: "trophy" },
+  adults: { 1: "welcome", 2: "learns", 3: "patterns", 4: "timeline", 5: "timeline", 6: "future", 7: "brain-net", 8: "words", 9: "seeing", 10: "training", 11: "trust", 12: "trophy" }
+};
+function artBeat(track, n) {
+  const name = ART_MAP[track] && ART_MAP[track][n];
+  return name ? { type: "image", html: `<div class="lesson-art"><img src="../assets/art/${name}.svg" alt="" loading="lazy"></div>` } : null;
+}
+
 function widgetBlocks(previewFile) {
   const html = readFileSync(join(MOD, "interactive", previewFile), "utf8");
   return html.match(/<div class="ctf"><div data-ctf-widget[\s\S]*?<\/div><\/div>/g) || [];
@@ -124,11 +134,14 @@ function buildUnit(unitText, ctx) {
   }
   if (completeBuf.length) beats.push({ type: "complete", html: completeBuf.map(blockHtml).join("") });
 
-  // image beat: insert right after the title (before content), if this unit has a figure
+  // lead visuals after the title: original concept art, then any PD photo
+  const lead = [];
+  const art = isIntro ? null : artBeat(ctx.track, ctx.n);
+  if (art) lead.push(art);
   const fig = figFor(ctx.track, heading);
-  const imageBeats = fig ? [{ type: "image", html: fig }] : [];
+  if (fig) lead.push({ type: "image", html: fig });
 
-  return { n: ctx.n, kind: isIntro ? "intro" : "unit", title: heading, meta, beats: [...imageBeats, ...beats] };
+  return { n: ctx.n, kind: isIntro ? "intro" : "unit", title: heading, meta, beats: [...lead, ...beats] };
 }
 
 function capstoneHtml(track) {

@@ -1,0 +1,14 @@
+<svg viewBox="0 0 800 460" xmlns="http://www.w3.org/2000/svg" role="img">
+  <defs>
+    <linearGradient id="g" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="#3D74FF"/><stop offset="1" stop-color="#26C7D1"/></linearGradient>
+    <linearGradient id="sun" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="#FF5A38"/><stop offset="1" stop-color="#FFB320"/></linearGradient>
+    <radialGradient id="glow"><stop offset="0" stop-color="#26C7D1" stop-opacity=".55"/><stop offset="1" stop-color="#26C7D1" stop-opacity="0"/></radialGradient>
+  </defs>
+  
+    <path d="M150 130 h500 a36 36 0 0 1 36 36 v140 a36 36 0 0 1 -36 36 h-360 l-70 64 v-64 h-70 a36 36 0 0 1 -36 -36 v-140 a36 36 0 0 1 36 -36z" fill="#FFFFFF" stroke="#DDE2EC" stroke-width="3"/>
+    <rect x="190" y="190" width="150" height="22" rx="11" fill="#DDE2EC"/>
+    <rect x="190" y="232" width="240" height="22" rx="11" fill="#DDE2EC"/>
+    <rect x="360" y="190" width="120" height="22" rx="11" fill="url(#g)"/>
+    <rect x="450" y="232" width="150" height="26" rx="13" fill="none" stroke="#FFB320" stroke-width="4" stroke-dasharray="9 7"/>
+    <path d="M450 270 h150" stroke="#FFB320" stroke-width="5" stroke-linecap="round"/>
+</svg>
