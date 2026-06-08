@@ -8,11 +8,13 @@
 <style>
   body{ margin:0; background:#F6F8FC; font-family:'Plus Jakarta Sans',system-ui,sans-serif; color:#2A3349; }
   .wrap{ max-width:760px; margin:0 auto; padding:0 16px 80px; }
-  .hero{ background:linear-gradient(160deg,#0F1B3A 0%,#070C1A 100%); color:#fff; border-radius:0 0 28px 28px; padding:40px 28px; margin-bottom:8px; }
-  .hero .eyebrow{ font-family:'JetBrains Mono',monospace; font-size:12px; letter-spacing:.12em; text-transform:uppercase; color:#26C7D1; margin:0 0 10px; }
-  .hero h1{ font-family:'Space Grotesk',sans-serif; font-weight:700; letter-spacing:-.02em; font-size:2rem; line-height:1.1; margin:0 0 8px; }
-  .hero h1 .accent{ color:#3D74FF; }
-  .hero p{ margin:0; opacity:.85; max-width:48ch; }
+  .hero{ position:relative; overflow:hidden; border-radius:0 0 32px 32px; padding:54px 32px 88px; color:#fff;
+    background:radial-gradient(130% 150% at 82% -15%, rgba(38,199,209,.30), transparent 55%), linear-gradient(160deg,#0F1B3A 0%,#070C1A 100%); }
+  .hero .eyebrow{ font-family:'JetBrains Mono',monospace; font-size:12px; letter-spacing:.14em; text-transform:uppercase; color:#26C7D1; margin:0 0 14px; }
+  .hero h1{ font-family:'Space Grotesk',sans-serif; font-weight:700; letter-spacing:-.03em; font-size:2.9rem; line-height:1.04; margin:0 0 12px; }
+  .hero h1 .accent{ background:linear-gradient(120deg,#3D74FF,#26C7D1); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent; }
+  .hero p{ margin:0; opacity:.9; font-size:1.18rem; max-width:52ch; }
+  @media (max-width:520px){ .hero h1{ font-size:2.2rem; } .hero{ padding:40px 22px 72px; } }
 </style>
 </head>
 <body>

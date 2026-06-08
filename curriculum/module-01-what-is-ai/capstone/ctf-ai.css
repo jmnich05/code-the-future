@@ -1,51 +1,140 @@
 /* ==========================================================================
-   Code the Future — Capstone styling. Reuses the widget tokens + base
-   (buttons, inputs, range, chips, feedback) and adds sandbox-specific styles.
+   Code the Future — Capstone styling (self-contained, brand-faithful).
+   No cross-folder @import: the design tokens + every component style the
+   sandbox needs are inlined so it renders correctly when deployed on its own.
+   Scoped under .ctf. Bigger, bolder, more dynamic — the brand "create & use AI."
    ========================================================================== */
-@import url('../interactive/ctf-widgets.css');
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,500&family=JetBrains+Mono:wght@400;500;700&display=swap');
 
+.ctf{
+  --blue-50:#EAF1FF; --blue-100:#D4E2FF; --blue-300:#84ABFF; --blue-500:#3D74FF; --blue-600:#2A5FF0; --blue-700:#1E45C2;
+  --teal-50:#E4FBFC; --teal-100:#C2F5F8; --teal-400:#26C7D1; --teal-500:#12B2BC; --teal-600:#0E9099; --teal-700:#0B6E76;
+  --coral-50:#FFF0EC; --coral-500:#FF5A38; --coral-600:#E8401F; --amber-400:#FFB320;
+  --ink-900:#0C1322; --ink-700:#2A3349; --ink-500:#5F6B82; --ink-400:#8A93A8; --ink-300:#BCC3D2;
+  --ink-200:#DDE2EC; --ink-100:#ECEFF5; --ink-50:#F6F8FC; --white:#FFFFFF; --space-900:#070C1A;
+  --font-display:'Space Grotesk','Futura','Trebuchet MS',system-ui,sans-serif;
+  --font-body:'Plus Jakarta Sans','Avenir Next','Segoe UI',system-ui,sans-serif;
+  --font-mono:'JetBrains Mono','SF Mono','Consolas',ui-monospace,monospace;
+  --radius-md:14px; --radius-lg:20px; --radius-xl:28px; --radius-pill:999px;
+  --shadow-md:0 8px 20px rgba(12,19,34,.09),0 2px 6px rgba(12,19,34,.06);
+  --shadow-lg:0 18px 40px rgba(12,19,34,.12),0 4px 12px rgba(12,19,34,.07);
+  --glow-blue:0 10px 34px rgba(42,95,240,.38); --ring:0 0 0 4px rgba(61,116,255,.30);
+  --grad-spark:linear-gradient(120deg,var(--blue-500) 0%,var(--teal-400) 100%);
+  --grad-btn:linear-gradient(120deg,var(--blue-600) 0%,var(--teal-600) 100%);
+  --ease-out:cubic-bezier(.22,1,.36,1); --ease-spring:cubic-bezier(.34,1.56,.64,1);
+  --hit:46px;
+  font-family:var(--font-body); color:var(--ink-700); line-height:1.55; -webkit-font-smoothing:antialiased;
+}
+.ctf *,.ctf *::before,.ctf *::after{ box-sizing:border-box; }
+
+/* --- The sandbox card ----------------------------------------------------- */
 .ctf-ai{
+  position:relative; overflow:hidden;
   background:var(--white);
   border:1px solid var(--ink-200);
-  border-radius:var(--radius-lg);
-  box-shadow:var(--shadow-md);
-  padding:26px;
-  max-width:680px;
-  margin:20px auto;
+  border-radius:var(--radius-xl);
+  box-shadow:var(--shadow-lg);
+  padding:34px 34px 36px;
+  max-width:720px; margin:-40px auto 28px;   /* pull up to overlap the hero */
 }
-.ctf-ai .ctf-title{ font-size:1.6rem; }
+.ctf-ai::before{ content:""; position:absolute; inset:0 0 auto 0; height:6px; background:var(--grad-spark); }
 
-/* preset prompt chips */
-.ctf-ai-presets{ display:flex; flex-wrap:wrap; gap:8px; margin:0 0 14px; }
-.ctf-ai-presets .ctf-chip{ font-size:.85rem; }
+.ctf-ai .ctf-eyebrow{
+  font-family:var(--font-mono); font-size:13px; font-weight:600;
+  letter-spacing:.14em; text-transform:uppercase; color:var(--teal-600);
+  margin:6px 0 10px; display:flex; align-items:center; gap:8px;
+}
+.ctf-ai .ctf-title{
+  font-family:var(--font-display); font-weight:700; letter-spacing:-.025em; line-height:1.08;
+  font-size:2.1rem; color:var(--ink-900); margin:0 0 12px;
+}
+.ctf-ai .ctf-prompt{ font-size:1.15rem; line-height:1.6; color:var(--ink-700); margin:0 0 22px; max-width:60ch; }
+.ctf-ai .ctf-prompt b{ color:var(--ink-900); }
 
-/* prompt box */
-.ctf-ai-text{ resize:vertical; min-height:84px; font-family:var(--font-body); line-height:1.5; }
+/* --- Idea chips ----------------------------------------------------------- */
+.ctf-ai-presets{ display:flex; flex-wrap:wrap; gap:10px; margin:0 0 20px; }
+.ctf-ai-presets .ctf-chip{
+  font:inherit; font-weight:600; font-size:.95rem; cursor:pointer; color:var(--ink-700);
+  background:var(--ink-50); border:2px solid var(--ink-200); border-radius:var(--radius-pill);
+  padding:10px 18px; min-height:42px; transition:all 160ms var(--ease-out);
+}
+.ctf-ai-presets .ctf-chip:hover{ border-color:var(--blue-600); color:var(--blue-700); background:var(--blue-50); transform:translateY(-2px); }
+.ctf-ai-presets .ctf-chip:focus-visible{ outline:none; box-shadow:var(--ring); }
+.ctf-ai-presets .ctf-chip:active{ transform:scale(.97); }
 
-/* temperature row (adults) */
-.ctf-ai-temprow{ margin:16px 0 4px; }
+/* --- Prompt box ----------------------------------------------------------- */
+.ctf-ai-text{
+  font:inherit; font-size:1.1rem; width:100%; resize:vertical; min-height:104px;
+  padding:18px 20px; line-height:1.55; color:var(--ink-900); background:var(--white);
+  border:2px solid var(--ink-200); border-radius:var(--radius-md);
+  transition:border-color 160ms, box-shadow 160ms;
+}
+.ctf-ai-text::placeholder{ color:var(--ink-400); }
+.ctf-ai-text:focus{ outline:none; border-color:var(--blue-600); box-shadow:var(--ring); }
+
+/* --- Temperature dial (adults) ------------------------------------------- */
+.ctf-ai-temprow{ margin:20px 0 6px; }
 .ctf-ai-templabel{
-  display:flex; justify-content:space-between; align-items:baseline; gap:10px;
-  font-family:var(--font-mono); font-size:12px; letter-spacing:.08em; text-transform:uppercase;
-  color:var(--ink-500); margin-bottom:8px;
+  display:flex; justify-content:space-between; align-items:baseline; gap:12px;
+  font-family:var(--font-mono); font-size:12px; letter-spacing:.1em; text-transform:uppercase;
+  color:var(--ink-500); margin-bottom:12px;
 }
-.ctf-ai-tempval{ text-transform:none; letter-spacing:0; font-family:var(--font-body); color:var(--blue-700); font-weight:600; }
+.ctf-ai-tempval{ text-transform:none; letter-spacing:0; font-family:var(--font-body); color:var(--blue-700); font-weight:700; font-size:.95rem; }
+.ctf-range{
+  -webkit-appearance:none; appearance:none; width:100%; height:10px; border-radius:999px; outline:none; cursor:pointer;
+  background:linear-gradient(90deg,var(--blue-500) 0%,var(--teal-400) var(--ctf-pct,58%),var(--ink-200) var(--ctf-pct,58%),var(--ink-200) 100%);
+}
+.ctf-range:focus-visible{ box-shadow:var(--ring); }
+.ctf-range::-webkit-slider-thumb{ -webkit-appearance:none; appearance:none; width:28px; height:28px; border-radius:50%;
+  background:var(--white); border:3px solid var(--blue-600); box-shadow:var(--shadow-md); transition:transform 120ms var(--ease-out); }
+.ctf-range::-webkit-slider-thumb:active{ transform:scale(1.15); }
+.ctf-range::-moz-range-thumb{ width:28px; height:28px; border-radius:50%; background:var(--white); border:3px solid var(--blue-600); box-shadow:var(--shadow-md); }
 
-/* output */
-.ctf-ai-out{
-  margin-top:16px; padding:18px 20px;
-  background:var(--ink-50); border:1px solid var(--ink-200);
-  border-radius:var(--radius-md); color:var(--ink-900);
-  font-size:1.02rem; line-height:1.6; white-space:pre-wrap; min-height:48px;
+/* --- Run button (big, bold, glowing) ------------------------------------- */
+.ctf-actions{ display:flex; gap:14px; align-items:center; margin-top:22px; flex-wrap:wrap; }
+.ctf-ai-run{
+  font:inherit; font-family:var(--font-display); font-weight:700; font-size:1.15rem; letter-spacing:-.01em;
+  cursor:pointer; color:var(--white); border:none; border-radius:var(--radius-pill);
+  padding:15px 34px; min-height:var(--hit); background:var(--grad-btn);
+  box-shadow:var(--glow-blue); transition:transform 150ms var(--ease-spring), box-shadow 150ms, filter 150ms;
 }
-.ctf-ai-status{ font-family:var(--font-mono); font-size:11px; letter-spacing:.06em; }
+.ctf-ai-run:hover{ transform:translateY(-2px); filter:brightness(1.06); box-shadow:0 14px 40px rgba(42,95,240,.46); }
+.ctf-ai-run:active{ transform:scale(.97); }
+.ctf-ai-run:focus-visible{ outline:none; box-shadow:var(--ring),var(--glow-blue); }
+.ctf-ai-run[disabled]{ opacity:.55; cursor:default; transform:none; box-shadow:none; }
+.ctf-ai-status{ font-family:var(--font-mono); font-size:11px; letter-spacing:.06em; color:var(--ink-400); }
+
+/* --- Answer panel --------------------------------------------------------- */
+.ctf-ai-out{
+  position:relative; margin-top:24px; padding:22px 24px 24px;
+  background:linear-gradient(180deg,var(--blue-50) 0%,var(--white) 70%);
+  border:1px solid var(--ink-200); border-left:5px solid var(--teal-500);
+  border-radius:var(--radius-lg); color:var(--ink-900);
+  font-size:1.18rem; line-height:1.75; white-space:pre-wrap; min-height:56px;
+  box-shadow:var(--shadow-md); animation:ctf-rise .3s var(--ease-out);
+}
+.ctf-ai-out::before{
+  content:"✦ AI"; display:inline-block; margin:0 0 12px;
+  font-family:var(--font-mono); font-size:11px; font-weight:700; letter-spacing:.16em; text-transform:uppercase;
+  color:var(--teal-700); background:var(--teal-50); border-radius:var(--radius-pill); padding:5px 12px;
+}
+@keyframes ctf-rise{ from{ opacity:0; transform:translateY(8px); } to{ opacity:1; transform:translateY(0); } }
 
 /* thinking dots */
-.ctf-ai-dots{ display:inline-flex; gap:6px; align-items:center; }
-.ctf-ai-dots i{ width:8px; height:8px; border-radius:50%; background:var(--blue-500); display:inline-block; animation:ctf-bounce 1s infinite ease-in-out; }
-.ctf-ai-dots i:nth-child(2){ animation-delay:.15s; }
-.ctf-ai-dots i:nth-child(3){ animation-delay:.3s; }
-@keyframes ctf-bounce{ 0%,80%,100%{ transform:translateY(0); opacity:.5; } 40%{ transform:translateY(-6px); opacity:1; } }
+.ctf-ai-dots{ display:inline-flex; gap:7px; align-items:center; vertical-align:middle; margin-left:4px; }
+.ctf-ai-dots i{ width:9px; height:9px; border-radius:50%; background:var(--blue-500); display:inline-block; animation:ctf-bounce 1s infinite ease-in-out; }
+.ctf-ai-dots i:nth-child(2){ animation-delay:.15s; } .ctf-ai-dots i:nth-child(3){ animation-delay:.3s; }
+@keyframes ctf-bounce{ 0%,80%,100%{ transform:translateY(0); opacity:.45; } 40%{ transform:translateY(-7px); opacity:1; } }
 
-.ctf-ai-err{ margin-top:14px; }
-.ctf-ai-err code{ font-family:var(--font-mono); font-size:.85em; background:var(--ink-100); padding:1px 5px; border-radius:5px; }
+/* --- Error feedback ------------------------------------------------------- */
+.ctf-feedback{ display:none; margin-top:18px; padding:14px 16px; border-radius:var(--radius-md); font-size:.98rem; }
+.ctf-feedback.show{ display:block; }
+.ctf-feedback.info{ background:var(--coral-50); color:var(--coral-600); border:1px solid var(--coral-500); }
+.ctf-feedback code{ font-family:var(--font-mono); font-size:.85em; background:rgba(0,0,0,.06); padding:1px 6px; border-radius:5px; }
+.ctf-muted{ color:var(--ink-500); font-size:.9rem; }
+
+@media (max-width:520px){
+  .ctf-ai{ padding:26px 20px 28px; margin-top:-28px; }
+  .ctf-ai .ctf-title{ font-size:1.7rem; }
+  .ctf-ai .ctf-prompt{ font-size:1.05rem; }
+}
