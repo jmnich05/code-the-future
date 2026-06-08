@@ -14,6 +14,21 @@ coding, with emphasis on how AI is reshaping software development. Origin materi
 - Relationship between platform and camp (is the platform the camp's LMS? a standalone
   product? both?) — TBD.
 
+## Platform Backend — Supabase (intended; build NEXT SESSION)
+
+- **Decision:** Supabase is the intended platform backend. Confirmed by Jon 06-07-2026;
+  scheduled to tackle the Supabase project **tomorrow** (next session).
+- **Current state:** the repo has **no Supabase connection** of any kind (no client, keys,
+  config, or package.json). The only live backend is the capstone's OpenAI proxy
+  (`capstone/netlify.toml` + `.env`). Learner progress today saves **only to browser
+  `localStorage`** (the widget engine's `ctf:` namespace). Nothing carried over from the
+  Codex transfer was DB-connected — that bundle was markdown only.
+- **Goal:** replace localStorage with Supabase-backed persistence — accounts/auth, saved
+  lesson progress + badges across devices, and cohorts (e.g., "Summer 2026"). Likely also
+  the home for the eventual platform proper.
+- **Touch points when we build:** the widget engine's progress save/load (`ctf-widgets.js`,
+  `ctf:` keys) and the capstone are the natural integration points to swap to Supabase.
+
 ## Durable Teaching Preferences
 
 - Lead with the answer / the concept, then the example.
