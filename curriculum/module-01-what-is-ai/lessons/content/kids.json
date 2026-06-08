@@ -1,0 +1,585 @@
+{
+ "track": "kids",
+ "cls": "track-kids",
+ "title": "What Is AI?",
+ "eyebrow": "Module 1 · Ages 8–11",
+ "unitWord": "Mission",
+ "total": 12,
+ "missions": [
+  {
+   "n": 0,
+   "kind": "intro",
+   "title": "How this module works (read this first)",
+   "meta": "",
+   "beats": [
+    {
+     "type": "text",
+     "html": "<p>You're going on <strong>12 Missions</strong>. Each one is about 10 minutes. Finish a Mission, earn a <strong>badge</strong>, and move to the next. Collect all 12 badges and you've completed your very first AI module — and then you get to the <strong>Big Mission</strong>, where you'll actually <em>use</em> real AI yourself. Ready? Let's go. 🚀</p>"
+    }
+   ]
+  },
+  {
+   "n": 1,
+   "kind": "unit",
+   "title": "Welcome, Future Builder",
+   "meta": "~10 minutes",
+   "beats": [
+    {
+     "type": "text",
+     "html": "<p>Right now, you are holding something amazing in your brain: curiosity.</p>"
+    },
+    {
+     "type": "text",
+     "html": "<p>You're about to learn about the most exciting invention humans have ever made. It's called <strong>AI</strong> — short for <strong>Artificial Intelligence</strong>. You've probably heard those words before. Maybe a grown-up said them at dinner. Maybe you saw them in a game, or a video, or on a box at the store. AI is suddenly <em>everywhere</em>, and a lot of people are talking about it — but not many people can actually explain it. By the end of today, you'll be one of the few who can.</p>"
+    },
+    {
+     "type": "text",
+     "html": "<p>Here's the part that's hard to believe but completely true: <strong>you are one of the very first kids on Earth to grow up with AI.</strong> Your grandparents didn't have it. Your parents didn't have it when they were your age — when they were 9 or 10, there was no chatbot to talk to and no app that could draw a dragon from a sentence. But you? You get to grow up right alongside it, the same way kids a hundred years ago grew up alongside the very first cars and airplanes.</p>"
+    },
+    {
+     "type": "text",
+     "html": "<p>Think about that. Being <em>first</em> is a big deal. The first people to use a new invention are the ones who figure out all the coolest things to do with it. That's going to be you.</p>"
+    },
+    {
+     "type": "text",
+     "html": "<p>So what will you actually be able to do by the end of this module? You'll be able to explain what AI is to your family. You'll understand how it learns, how it \"sees,\" and how it talks. You'll even get to <em>use</em> real AI yourself at the very end. That's why we don't call you a student here. We call you a <strong>Future Builder</strong> — because you're not just learning about the future, you're getting ready to build it.</p>"
+    },
+    {
+     "type": "text",
+     "html": "<p>One last thing before we start: you don't have to be a \"computer person\" to be amazing at this. You just have to be curious and willing to try. You already are. Let's go.</p>"
+    },
+    {
+     "type": "widget",
+     "html": "<div class=\"ctf\"><div data-ctf-widget=\"poll\" data-ctf-id=\"kids-m1-warmup\">\n    <script type=\"application/json\">{\n      \"eyebrow\":\"🚀 Before we start\",\"title\":\"What do you THINK AI is right now?\",\n      \"prompt\":\"There are no wrong answers! Pick one, or type your own. We'll come back to this at the end.\",\"columns\":2,\n      \"options\":[{\"emoji\":\"🤖\",\"label\":\"A robot that thinks\"},{\"emoji\":\"🧠\",\"label\":\"A super-smart computer\"},{\"emoji\":\"✨\",\"label\":\"Kind of like magic\"},{\"emoji\":\"🤷\",\"label\":\"I'm not totally sure\"}],\n      \"freeText\":true,\"placeholder\":\"Or describe it in your own words…\",\n      \"thanks\":\"Saved! Remember your answer — you'll see it again in Mission 12.\",\n      \"complete\":{\"icon\":\"🎖️\",\"badge\":\"Badge earned: Future Builder\",\"sub\":\"Mission 1 of 12\",\"progress\":8}\n    }</script>\n  </div></div>"
+    },
+    {
+     "type": "complete",
+     "html": "<h3>✅ Mission 1 Complete!</h3><p>Awesome start. You showed up curious — that's the #1 superpower here.</p><p>🎖️ <strong>Badge earned: Future Builder</strong><br><strong>Progress:</strong> ▰▱▱▱▱▱▱▱▱▱▱▱ (1/12)<br><strong>Next up → Mission 2: Meet AI — What Even Is It?</strong></p>"
+    }
+   ]
+  },
+  {
+   "n": 2,
+   "kind": "unit",
+   "title": "Meet AI: What Even Is It?",
+   "meta": "~10 minutes",
+   "beats": [
+    {
+     "type": "text",
+     "html": "<p>Let's start with a normal machine. Think about a <strong>toaster</strong>.</p>"
+    },
+    {
+     "type": "text",
+     "html": "<p>A toaster does exactly one thing. Push the lever, it heats up, your bread pops up. It does the <em>same exact thing</em> every single time. It can't learn. It can't get better. A toaster will never surprise you. (Unless it burns your toast. But that's still not very smart — that's just a hot machine making a mistake!)</p>"
+    },
+    {
+     "type": "text",
+     "html": "<p>Most machines are like that. A calculator. A microwave. A light switch. A toy car that only drives straight. Humans wrote down exact instructions — \"when this happens, do that\" — and the machine just follows them, forever, step by step. We call those instructions a <strong>program</strong>. Old machines can <em>only</em> do what their program says. Not one tiny bit more.</p>"
+    },
+    {
+     "type": "text",
+     "html": "<p>*<em>AI is different. AI can </em>learn<em>.</em>*</p>"
+    },
+    {
+     "type": "text",
+     "html": "<p>Instead of only following exact instructions, AI looks at <em>lots and lots of examples</em> and figures things out on its own. It can answer questions nobody typed in ahead of time. It can make a picture nobody has ever seen. It can get <em>better</em> the more it practices — just like you get better at a video game or a sport.</p>"
+    },
+    {
+     "type": "text",
+     "html": "<p>Here's a tasty way to think about it. A regular machine is like following a recipe <em>exactly</em>: do step 1, step 2, step 3, done. AI is more like a cook who has <em>tasted</em> thousands of meals and can now invent a brand-new dish on the spot.</p>"
+    },
+    {
+     "type": "quote",
+     "html": "<blockquote><p>A normal machine <strong>follows rules</strong>.</p><p>AI <strong>learns from examples</strong> — kind of like <em>you</em> do.</p></blockquote>"
+    },
+    {
+     "type": "text",
+     "html": "<p>And here's something wild: you've probably already used AI without even knowing it! Have you ever…</p>"
+    },
+    {
+     "type": "list",
+     "html": "<ul><li>Watched a video and the app suggested <em>another</em> perfect video next? That's AI.</li><li>Used a silly face filter that puts dog ears on you? That's AI.</li><li>Talked to a voice assistant like Siri or Alexa? AI.</li><li>Played a game where the bad guys seemed to <em>react</em> to what you did? Often AI.</li></ul>"
+    },
+    {
+     "type": "text",
+     "html": "<p>You've been hanging out with AI for a while. Today you finally get to understand your old friend.</p>"
+    },
+    {
+     "type": "widget",
+     "html": "<div class=\"ctf\"><div data-ctf-widget=\"sort\" data-ctf-id=\"kids-m2-sort\">\n    <script type=\"application/json\">{\n      \"eyebrow\":\"Follows rules, or learns?\",\"title\":\"Sort each one into the right box\",\n      \"prompt\":\"A toaster <span class=\\\"ctf-q\\\">follows rules</span>. A smart helper <span class=\\\"ctf-q\\\">learns</span>. Tap the box you think each belongs in.\",\n      \"buckets\":[\"Follows rules\",\"Learns\"],\n      \"items\":[{\"emoji\":\"🍞\",\"label\":\"Toaster\",\"bucket\":0},{\"emoji\":\"🧮\",\"label\":\"Calculator\",\"bucket\":0},{\"emoji\":\"💡\",\"label\":\"Light switch\",\"bucket\":0},{\"emoji\":\"🗣️\",\"label\":\"Voice assistant\",\"bucket\":1},{\"emoji\":\"🚗\",\"label\":\"Self-driving car\",\"bucket\":1}],\n      \"thanks\":\"You got them all — that's the #1 idea in AI!\",\n      \"complete\":{\"icon\":\"🎖️\",\"badge\":\"Badge earned: AI Spotter\",\"sub\":\"Mission 2 of 12\",\"progress\":16}\n    }</script>\n  </div></div>"
+    },
+    {
+     "type": "complete",
+     "html": "<h3>✅ Mission 2 Complete!</h3><p>You can now explain the single biggest idea in all of AI. Not bad for 10 minutes!</p><p>🎖️ <strong>Badge earned: AI Spotter</strong><br><strong>Progress:</strong> ▰▰▱▱▱▱▱▱▱▱▱▱ (2/12)<br><strong>Next up → Mission 3: How You Learned What a Dog Is</strong></p>"
+    }
+   ]
+  },
+  {
+   "n": 3,
+   "kind": "unit",
+   "title": "How You Learned What a Dog Is",
+   "meta": "~10 minutes",
+   "beats": [
+    {
+     "type": "text",
+     "html": "<p>Here's a riddle: how did you learn what a dog is?</p>"
+    },
+    {
+     "type": "text",
+     "html": "<p>Think about when you were really little. Nobody handed you a rulebook called <em>How To Know What A Dog Is</em>. And even if they tried, it wouldn't work! There's no simple rule like \"a dog has four legs and fur\" — because so does a cat, and a horse, and a guinea pig, and a llama. A rule like \"a dog barks\" doesn't work either, because some dogs are quiet and some birds can copy a bark. Rules are slippery!</p>"
+    },
+    {
+     "type": "text",
+     "html": "<p>So how did you <em>actually</em> learn it?</p>"
+    },
+    {
+     "type": "text",
+     "html": "<p><strong>You saw a bunch of dogs.</strong> Big ones, tiny ones, fluffy ones, spotted ones, a wiggly puppy and a sleepy old dog. Someone pointed and said \"dog!\" enough times that your brain started to notice the <em>pattern</em> of dog-ness — something about the shape, the face, the way it moves, the way it wags. Now you can see a brand-new dog you've never met before, a breed you've never seen in your life, and instantly know — <strong>dog!</strong></p>"
+    },
+    {
+     "type": "text",
+     "html": "<p>You didn't memorize every dog in the world. There are millions of dogs! You learned the <strong>pattern</strong>, and the pattern works on dogs you've never even met.</p>"
+    },
+    {
+     "type": "text",
+     "html": "<p>This is how you learn almost <em>everything</em>:</p>"
+    },
+    {
+     "type": "list",
+     "html": "<ul><li>You learned to recognize your friends' faces by seeing them lots of times.</li><li>You learned what words mean by hearing them used again and again.</li><li>You learned to ride a bike by trying, wobbling, falling, and trying again until your body found the pattern of balancing.</li></ul>"
+    },
+    {
+     "type": "text",
+     "html": "<p>Notice something important: <strong>mistakes are part of learning.</strong> You fell off the bike before you could ride it. You called a cat a \"dog\" when you were two, and someone gently corrected you. Every mistake taught your brain a little more about the pattern. Remember that — it's going to matter for AI too.</p>"
+    },
+    {
+     "type": "text",
+     "html": "<p>That word — <strong>pattern</strong> — is one of the most important words in this whole camp. Say it out loud once: <em>pattern</em>. You'll hear it a lot, because finding patterns is the secret behind almost everything AI does.</p>"
+    },
+    {
+     "type": "widget",
+     "html": "<div class=\"ctf\"><div data-ctf-widget=\"choice\" data-ctf-id=\"kids-m3-pattern\">\n    <script type=\"application/json\">{\n      \"eyebrow\":\"Spot the pattern\",\"title\":\"2, 4, 6, 8, …\",\"prompt\":\"You learn by spotting patterns. What comes <span class=\\\"ctf-q\\\">next</span>?\",\n      \"options\":[\"9\",\"10\",\"12\",\"7\"],\"answer\":1,\"correctText\":\"Nice pattern-finding!\",\"wrongText\":\"Close!\",\n      \"explain\":\"The pattern is \\\"add 2 each time,\\\" so after 8 comes <b>10</b>. You just did what AI does — found the rule from examples.\",\n      \"complete\":{\"icon\":\"🎖️\",\"badge\":\"Badge earned: Pattern Finder\",\"sub\":\"Mission 3 of 12\",\"progress\":25}\n    }</script>\n  </div></div>"
+    },
+    {
+     "type": "complete",
+     "html": "<h3>✅ Mission 3 Complete!</h3><p>You just figured out how your own brain works. That's genuinely cool.</p><p>🎖️ <strong>Badge earned: Pattern Finder</strong><br><strong>Progress:</strong> ▰▰▰▱▱▱▱▱▱▱▱▱ (3/12)<br><strong>Next up → Mission 4: AI Learns the Same Way You Do</strong></p>"
+    }
+   ]
+  },
+  {
+   "n": 4,
+   "kind": "unit",
+   "title": "AI Learns the Same Way You Do",
+   "meta": "~10 minutes",
+   "beats": [
+    {
+     "type": "text",
+     "html": "<p>Here's the amazing part: <strong>AI learns almost exactly the way you learned what a dog is.</strong></p>"
+    },
+    {
+     "type": "text",
+     "html": "<p>We show it thousands and thousands of examples, and it slowly starts to notice the patterns hiding inside them. After enough examples, it can handle things it has <em>never</em> seen before — just like you with a brand-new dog. When people teach an AI by showing it tons of examples, they call it <strong>training</strong>. It's the same word you'd use for training for a soccer game or training a puppy: practice, practice, practice until you get good.</p>"
+    },
+    {
+     "type": "text",
+     "html": "<p>The examples we show the AI have a name too: <strong>data</strong>. Pictures, words, sounds — all of it is data. So when you hear someone say \"AI needs lots of data,\" now you know they just mean \"AI needs lots of examples to learn from.\" That's it!</p>"
+    },
+    {
+     "type": "text",
+     "html": "<p>The big difference between you and an AI? <strong>Speed and size.</strong> You learned \"dog\" from maybe a few hundred dogs over a few years. A big AI might learn from <em>millions</em> of examples in a matter of days — way more than any single person could ever see in a whole lifetime. Imagine reading every book in the biggest library in the world… that's the kind of practice a big AI gets.</p>"
+    },
+    {
+     "type": "text",
+     "html": "<p>But here's a super important rule, and it connects back to Mission 3: <strong>AI is only as good as the examples it learns from.</strong> If you only ever showed an AI pictures of golden retrievers and told it \"this is a dog,\" it might get confused by a tiny chihuahua. If the examples are messy or wrong, the AI learns messy or wrong things. Grown-ups have a funny phrase for this: <em>\"garbage in, garbage out.\"</em> Good examples in, smart AI out. Bad examples in, silly mistakes out.</p>"
+    },
+    {
+     "type": "text",
+     "html": "<p>So the basic idea is the same as what's already inside your head:</p>"
+    },
+    {
+     "type": "quote",
+     "html": "<blockquote><p>See lots of examples → notice the pattern → handle something new.</p></blockquote>"
+    },
+    {
+     "type": "text",
+     "html": "<p>Next time someone says AI is \"super complicated,\" you can smile. You already know the secret: <strong>it's a really, really fast pattern finder that learns from examples.</strong></p>"
+    },
+    {
+     "type": "widget",
+     "html": "<div class=\"ctf\"><div data-ctf-widget=\"choice\" data-ctf-id=\"kids-m4-training\">\n    <script type=\"application/json\">{\n      \"eyebrow\":\"Brain Trainer\",\"title\":\"Good examples in, smart AI out\",\n      \"prompt\":\"You want an AI that knows what a <span class=\\\"ctf-q\\\">dog</span> is. But you only ever show it big fluffy golden retrievers. Then it meets a tiny Chihuahua. What might happen?\",\n      \"options\":[\"It instantly knows it's a dog\",\"It might get confused and miss it\",\"It turns into a cat\",\"It refuses to look\"],\"answer\":1,\n      \"correctText\":\"Exactly!\",\"wrongText\":\"Think about the examples…\",\n      \"explain\":\"If all the examples are one kind, the AI learns a narrow pattern. Show it <b>all</b> kinds of dogs and it learns better. Good examples in, smart AI out!\",\n      \"complete\":{\"icon\":\"🎖️\",\"badge\":\"Badge earned: Brain Trainer\",\"sub\":\"Mission 4 of 12\",\"progress\":33}\n    }</script>\n  </div></div>"
+    },
+    {
+     "type": "complete",
+     "html": "<h3>✅ Mission 4 Complete!</h3><p>You now understand how AI learns. That's something a lot of grown-ups can't explain!</p><p>🎖️ <strong>Badge earned: Brain Trainer</strong><br><strong>Progress:</strong> ▰▰▰▰▱▱▱▱▱▱▱▱ (4/12)<br><strong>Next up → Mission 5: Teaching a Computer to SEE</strong></p>"
+    }
+   ]
+  },
+  {
+   "n": 5,
+   "kind": "unit",
+   "title": "Teaching a Computer to SEE",
+   "meta": "~10 minutes",
+   "beats": [
+    {
+     "type": "text",
+     "html": "<p>Here's one of the coolest things AI learned to do: it learned to <strong>see</strong>.</p>"
+    },
+    {
+     "type": "text",
+     "html": "<p>Not with eyes — with patterns. Remember how you learned \"dog\"? We can teach a computer the same way. We show it a <em>huge</em> pile of cat photos. Just cats. Thousands and thousands of them.</p>"
+    },
+    {
+     "type": "text",
+     "html": "<p>But here's the thing: a computer doesn't see a picture the way you do. To a computer, a photo is just a giant grid of tiny colored dots called <strong>pixels</strong>. Each pixel is one little square of color. Zoom way, way in on any photo or screen and you'll see them! A single picture can have <em>millions</em> of pixels, and to the computer it's just a massive spreadsheet of color numbers. At first, it has <em>no idea</em> that grid is a cat. It's just numbers.</p>"
+    },
+    {
+     "type": "text",
+     "html": "<p>But slowly, over thousands of cat photos, it starts to notice things that show up again and again — pointy ears near the top, whiskers, round eyes, a certain furry shape. It builds its own idea of \"cat-ness\" out of the patterns in the pixels. Then we show it a <em>new</em> picture it has never seen, and ask: \"Is this a cat?\" — and it can tell us! That's called <strong>finding patterns in visual data</strong>, and it is everywhere in your life:</p>"
+    },
+    {
+     "type": "list",
+     "html": "<ul><li><strong>Face unlock</strong> on a phone — it learned the pattern of <em>your</em> face.</li><li><strong>Silly camera filters</strong> — they find your eyes and mouth, then add the dog ears or sparkles.</li><li><strong>Self-checkout</strong> machines that recognize a banana.</li><li><strong>Animal and plant apps</strong> that name a bug or a flower from a photo.</li><li><strong>Self-driving cars</strong> that spot a stop sign, a person, or a red light.</li><li><strong>Doctors' helpers</strong> that look at an X-ray and point out something a human might miss.</li></ul>"
+    },
+    {
+     "type": "text",
+     "html": "<p>Here's a fun secret, though: AI vision can be <em>fooled</em>. Show it a weird, blurry, or tricky picture and it might confidently say a muffin is a chihuahua! (Look it up — \"chihuahua or muffin\" is a real and hilarious thing.) That's because the computer never truly <em>knows</em> what a cat is. It doesn't know a cat is soft, or that it purrs. It just got amazing at spotting the <em>pattern</em> of a cat in the pixels. And it turns out that's incredibly useful — even if it's not the same as really understanding.</p>"
+    },
+    {
+     "type": "widget",
+     "html": "<div class=\"ctf\"><div data-ctf-widget=\"reveal\" data-ctf-id=\"kids-m5-reveal\">\n    <script type=\"application/json\">{\n      \"eyebrow\":\"Pixel detective\",\"title\":\"What is it? Reveal to find out\",\n      \"prompt\":\"Computers see blurry patterns first, then get clearer — just like this. Tap “Reveal more,” then make your guess.\",\n      \"emoji\":\"🐱\",\"levels\":[24,16,9,4,0],\"options\":[\"A dog\",\"A cat\",\"A muffin\",\"A car\"],\"answer\":1,\n      \"explain\":\"It's a cat! Fun fact: AI can get fooled — blurry cats, muffins, and chihuahuas can look alike to a computer, because it only reads the <b>pattern</b> of pixels.\",\n      \"complete\":{\"icon\":\"🎖️\",\"badge\":\"Badge earned: Pixel Detective\",\"sub\":\"Mission 5 of 12\",\"progress\":42}\n    }</script>\n  </div></div>"
+    },
+    {
+     "type": "complete",
+     "html": "<h3>✅ Mission 5 Complete!</h3><p>You taught a computer to see in your head. Detective work, level: expert. 🔍</p><p>🎖️ <strong>Badge earned: Pixel Detective</strong><br><strong>Progress:</strong> ▰▰▰▰▰▱▱▱▱▱▱▱ (5/12)<br><strong>Next up → Mission 6: How AI Reads Words</strong></p>"
+    }
+   ]
+  },
+  {
+   "n": 6,
+   "kind": "unit",
+   "title": "How AI Reads Words",
+   "meta": "~10 minutes",
+   "beats": [
+    {
+     "type": "text",
+     "html": "<p>AI doesn't just see pictures — it's also amazing with <strong>words</strong>. This is the part you've probably seen when someone types a question to a chatbot and it answers back like a person. How in the world does it do that?</p>"
+    },
+    {
+     "type": "text",
+     "html": "<p>Here's the surprising secret: <strong>AI is really good at guessing the next word.</strong></p>"
+    },
+    {
+     "type": "text",
+     "html": "<p>Try this. Finish this sentence in your head:</p>"
+    },
+    {
+     "type": "quote",
+     "html": "<blockquote><p><em>\"Peanut butter and ___\"</em></p></blockquote>"
+    },
+    {
+     "type": "text",
+     "html": "<p>You probably thought <strong>jelly</strong>! Your brain guessed the next word because you've heard that pattern a million times. Try another:</p>"
+    },
+    {
+     "type": "quote",
+     "html": "<blockquote><p><em>\"Twinkle, twinkle, little ___\"</em></p></blockquote>"
+    },
+    {
+     "type": "text",
+     "html": "<p>Easy — <strong>star</strong>! You didn't have to think hard. The pattern is so strong in your brain that the word just pops out.</p>"
+    },
+    {
+     "type": "text",
+     "html": "<p>AI does the same thing, just turbocharged. It read a <em>gigantic</em> amount of writing — way more than any human ever could. Stories, books, websites, conversations. From all that reading, it learned which words usually come next after other words. So when you ask it something, it doesn't have the answer memorized in a drawer somewhere. Instead, it builds its answer <strong>one word at a time</strong>, always guessing the best next word, then the next, then the next — until a whole smart-sounding sentence appears.</p>"
+    },
+    {
+     "type": "text",
+     "html": "<p>That sounds almost <em>too</em> simple, right? Just guessing the next word over and over? But here's the magic: when you guess the next word <em>billions</em> of times, and you're <em>really</em> good at it, you end up with something that can write a poem, answer a question, explain why the sky is blue, or help with homework. The simple trick, done at a giant scale, becomes something that feels almost like talking to a person.</p>"
+    },
+    {
+     "type": "text",
+     "html": "<p>One heads-up for later (Mission 10): because AI is <em>guessing</em>, it can sometimes guess wrong and say something that sounds right but isn't true. The same trick that makes it amazing also means you always have to double-check it. More on that soon!</p>"
+    },
+    {
+     "type": "widget",
+     "html": "<div class=\"ctf\"><div data-ctf-widget=\"nextword\" data-ctf-id=\"kids-m6-nextword\">\n    <script type=\"application/json\">{\n      \"eyebrow\":\"Guess the next word\",\"title\":\"Finish the sentence like an AI would\",\"prompt\":\"AI writes by guessing the next word. Your turn first!\",\n      \"stem\":\"Peanut butter and\",\"placeholder\":\"What comes next?\",\"common\":[\"jelly\",\"jam\",\"honey\"],\n      \"explain\":\"AI does exactly this — it read tons of writing and learned which word usually comes next, then builds whole sentences one word at a time.\",\n      \"complete\":{\"icon\":\"🎖️\",\"badge\":\"Badge earned: Word Wizard\",\"sub\":\"Mission 6 of 12\",\"progress\":50}\n    }</script>\n  </div></div>"
+    },
+    {
+     "type": "complete",
+     "html": "<h3>✅ Mission 6 Complete!</h3><p>Peanut butter and… <em>knowledge!</em> You just learned how chatbots actually talk.</p><p>🎖️ <strong>Badge earned: Word Wizard</strong><br><strong>Progress:</strong> ▰▰▰▰▰▰▱▱▱▱▱▱ (6/12)<br><strong>Next up → Mission 7: The Attention Trick</strong></p>"
+    }
+   ]
+  },
+  {
+   "n": 7,
+   "kind": "unit",
+   "title": "The Attention Trick",
+   "meta": "~10 minutes",
+   "beats": [
+    {
+     "type": "text",
+     "html": "<p>To guess the right next word, AI uses one especially clever trick. It has a name you'll hear a lot: <strong>attention</strong>.</p>"
+    },
+    {
+     "type": "text",
+     "html": "<p>Read this sentence: <em>\"The dog chased the ball because it was bouncy.\"</em></p>"
+    },
+    {
+     "type": "text",
+     "html": "<p>Quick — what does <strong>\"it\"</strong> mean: the dog, or the ball?</p>"
+    },
+    {
+     "type": "text",
+     "html": "<p>You just <em>knew</em> it was the ball. But how? The word \"it\" could point to either one! Your brain quietly paid <strong>attention</strong> to the word that mattered — <em>bouncy</em> — and connected it to <em>ball</em>, because balls are bouncy and dogs usually aren't. You did all that in a split second, without even trying.</p>"
+    },
+    {
+     "type": "text",
+     "html": "<p>Let's try a trickier one: <em>\"The trophy didn't fit in the suitcase because it was too big.\"</em> What was too big — the trophy or the suitcase? …The <strong>trophy</strong>! Now switch one word: <em>\"...because it was too small.\"</em> Suddenly \"it\" means the <strong>suitcase</strong>! Your brain automatically paid attention to \"big\" or \"small\" and figured out which thing it pointed to. That focusing power is what <em>attention</em> means.</p>"
+    },
+    {
+     "type": "text",
+     "html": "<p>AI does the exact same thing. When it reads, it doesn't treat every word as equally important. For each word, it quietly asks, \"which <em>other</em> words here matter most for understanding this one?\" — and pays extra attention to those. It's like having a super-fast highlighter that marks the important connections in any sentence. This is the trick that lets AI keep track of long, complicated sentences and still make sense of them.</p>"
+    },
+    {
+     "type": "text",
+     "html": "<p>This trick is so powerful that scientists gave the kind of AI that uses it a special name: a <strong>transformer</strong>. (Not the robot kind — sorry!) Transformers were invented in 2017, and they are the big breakthrough that made today's chatbots so smart. Almost every famous AI you've heard of is a transformer underneath. You just learned the secret word that powers AI all over the world — and most adults have never even heard it.</p>"
+    },
+    {
+     "type": "widget",
+     "html": "<div class=\"ctf\"><div data-ctf-widget=\"attention\" data-ctf-id=\"kids-m7-attention\">\n    <script type=\"application/json\">{\n      \"eyebrow\":\"The attention trick\",\"title\":\"What does “it” mean?\",\"prompt\":\"Click the word that <span class=\\\"ctf-q\\\">it</span> is really talking about.\",\n      \"tokens\":[\"The \",{\"w\":\"dog\",\"ref\":false},\" chased the \",{\"w\":\"ball\",\"ref\":true},\" because \",{\"w\":\"it\",\"target\":true},\" was bouncy.\"],\n      \"hint\":\"Hint: which one is bouncy?\",\n      \"explain\":\"“It” means the <b>ball</b>, because balls are bouncy. Your brain paid <b>attention</b> to the word “bouncy” — and that's exactly the trick a transformer uses.\",\n      \"complete\":{\"icon\":\"🎖️\",\"badge\":\"Badge earned: Attention Ace\",\"sub\":\"Mission 7 of 12\",\"progress\":58}\n    }</script>\n  </div></div>"
+    },
+    {
+     "type": "complete",
+     "html": "<h3>✅ Mission 7 Complete!</h3><p>You now know a secret word most adults have never heard. Keep it in your back pocket. 😎</p><p>🎖️ <strong>Badge earned: Attention Ace</strong><br><strong>Progress:</strong> ▰▰▰▰▰▰▰▱▱▱▱▱ (7/12)<br><strong>Next up → Mission 8: Is AI Like a Brain?</strong></p>"
+    }
+   ]
+  },
+  {
+   "n": 8,
+   "kind": "unit",
+   "title": "Is AI Like a Brain?",
+   "meta": "~10 minutes",
+   "beats": [
+    {
+     "type": "image",
+     "html": "<div class=\"lesson-fig\"><figure><img src=\"../assets/img/neuron-cajal.jpg\" alt=\"\" loading=\"lazy\"><figcaption><b>Real neurons</b>, drawn by Santiago Ramón y Cajal. AI's “neural networks” borrow this idea.<br><span class=\"credit\">Ramón y Cajal · public domain</span></figcaption></figure></div>"
+    },
+    {
+     "type": "text",
+     "html": "<p>Sort of! And this is one of the most amazing — and most important — parts of the whole module.</p>"
+    },
+    {
+     "type": "text",
+     "html": "<p>Inside your head is a brain made of around <strong>86 billion</strong> tiny cells called <strong>neurons</strong>. That's more neurons than there are stars you could ever count. They're all connected to each other, passing tiny electric messages around at lightning speed. When you learn something new, some of those connections get <em>stronger</em>, and the ones you don't use get weaker. That's literally what learning <em>is</em> inside you — connections changing. Every time you practice multiplication or a new song, your brain is rewiring itself a little.</p>"
+    },
+    {
+     "type": "text",
+     "html": "<p>When scientists built AI, they got inspired by that idea. They built something called a <strong>neural network</strong> — a giant web of simple connected pieces, a little bit like pretend neurons. When the AI trains, those connections change too, getting stronger or weaker to match the patterns in the data. So the <em>idea</em> of how AI learns really did come from studying us. Pretty cool that humans looked at their own brains for the blueprint!</p>"
+    },
+    {
+     "type": "text",
+     "html": "<p>But here's the most important part of this whole Mission, so read it twice: <strong>AI is NOT alive, and it is NOT a real brain.</strong></p>"
+    },
+    {
+     "type": "list",
+     "html": "<ul><li>It doesn't have feelings. It can't be happy, sad, bored, or lonely.</li><li>It doesn't have a body, or get hungry or tired.</li><li>It doesn't <em>want</em> anything. It has no dreams or wishes of its own.</li><li>It doesn't even know that <em>it</em> exists. When a chatbot says \"I think...\" it doesn't really think or feel — it's just predicting words that sound friendly.</li></ul>"
+    },
+    {
+     "type": "text",
+     "html": "<p>So when an AI writes \"I'm happy to help!\" it isn't actually happy. It learned that those are the kinds of words helpful people say, so it says them too. It's a machine that copied <em>one single idea</em> from us — learning by changing connections — and got incredibly good at it.</p>"
+    },
+    {
+     "type": "quote",
+     "html": "<blockquote><p>Your brain: ~86 billion real neurons, real feelings, a real you inside.</p><p>AI: pretend neurons, no feelings, nobody home — just a brilliant pattern machine.</p></blockquote>"
+    },
+    {
+     "type": "text",
+     "html": "<p>Same trick. <em>Very</em> different thing. Knowing this difference is one of the smartest things you can understand about AI.</p>"
+    },
+    {
+     "type": "widget",
+     "html": "<div class=\"ctf\"><div data-ctf-widget=\"choice\" data-ctf-id=\"kids-m8-brain\">\n    <script type=\"application/json\">{\n      \"eyebrow\":\"Neuron Navigator\",\"title\":\"Brain or machine?\",\n      \"prompt\":\"AI is <i>inspired</i> by the brain — but it isn't alive. Which one can <span class=\\\"ctf-q\\\">only</span> a real person (you) do?\",\n      \"options\":[\"Find patterns fast\",\"Feel happy and excited\",\"Sort a thousand pictures\",\"Guess the next word\"],\"answer\":1,\n      \"correctText\":\"Yes!\",\"wrongText\":\"A computer can do that one…\",\n      \"explain\":\"AI can find patterns and guess words, but it can't actually <b>feel</b> anything. Feelings are your superpower — when a chatbot says \\\"I'm happy to help,\\\" it's just predicting friendly-sounding words.\",\n      \"complete\":{\"icon\":\"🎖️\",\"badge\":\"Badge earned: Neuron Navigator\",\"sub\":\"Mission 8 of 12\",\"progress\":66}\n    }</script>\n  </div></div>"
+    },
+    {
+     "type": "complete",
+     "html": "<h3>✅ Mission 8 Complete!</h3><p>You can now explain how AI is like a brain <em>and</em> how it's totally different. Big brain move.</p><p>🎖️ <strong>Badge earned: Neuron Navigator</strong><br><strong>Progress:</strong> ▰▰▰▰▰▰▰▰▱▱▱▱ (8/12)<br><strong>Next up → Mission 9: The Story of AI</strong></p>"
+    }
+   ]
+  },
+  {
+   "n": 9,
+   "kind": "unit",
+   "title": "The Story of AI",
+   "meta": "~10 minutes",
+   "beats": [
+    {
+     "type": "image",
+     "html": "<div class=\"lesson-fig row\"><figure><img src=\"../assets/img/turing.jpg\" alt=\"\" loading=\"lazy\"><figcaption><b>Alan Turing</b> — in 1950 he asked, “Can machines think?”<br><span class=\"credit\">Public domain · Wikimedia Commons</span></figcaption></figure><figure><img src=\"../assets/img/eniac.jpg\" alt=\"\" loading=\"lazy\"><figcaption><b>ENIAC (1947)</b> — early computers were great at math, but couldn't learn.<br><span class=\"credit\">U.S. Army · public domain</span></figcaption></figure></div>"
+    },
+    {
+     "type": "text",
+     "html": "<p>AI feels like it showed up out of nowhere, like magic. But it actually has a long, surprising story — and it took way longer than you'd think.</p>"
+    },
+    {
+     "type": "text",
+     "html": "<p><strong>A long time ago,</strong> people dreamed about thinking machines — way before computers even existed. Storytellers wrote tales about metal people and magic helpers. The dream is really old.</p>"
+    },
+    {
+     "type": "text",
+     "html": "<p><strong>Then computers were invented,</strong> about 80 years ago, and they got faster every single year. Early computers were amazing at <em>math</em> and following <em>rules</em>, but pretty terrible at <em>learning</em>. Scientists kept trying to make them smart, and kept getting stuck. There were long stretches where lots of grown-ups gave up and said AI would <em>never</em> really work. (Good thing some people didn't listen!)</p>"
+    },
+    {
+     "type": "text",
+     "html": "<p><strong>Computers did get clever at games, though.</strong> In 1997, a computer named Deep Blue beat the best chess player in the <em>world</em>. That shocked everyone. Then in 2016, an AI beat the world champion at an even harder game called Go — and it made a move so creative that experts gasped. Games were an early sign that something big was coming.</p>"
+    },
+    {
+     "type": "text",
+     "html": "<p><strong>Then, about ten years ago, everything clicked.</strong> Two things finally came together at the same time: computers got <em>powerful</em> enough, AND the internet had filled up with billions of pictures and words for AI to learn from. Suddenly AI got <em>really, really</em> good at finding patterns — at seeing, and soon, at writing.</p>"
+    },
+    {
+     "type": "text",
+     "html": "<p><strong>And just a few years ago</strong> — around when some of you were little kids — the wildest thing happened: AI got good enough that you could just <em>talk</em> to it. Type a question, get an answer. Ask for a picture of a dragon riding a skateboard, and watch it appear in seconds. The whole world noticed all at once, and millions of people started using it faster than anything in history.</p>"
+    },
+    {
+     "type": "text",
+     "html": "<p>That's the moment we are living in <em>right now</em>. AI didn't slowly creep in over your whole life — it kind of <em>arrived</em>, recently, with a bang. And you are here for the very beginning of the story. The chapters that haven't been written yet? Some of those are going to be written by you.</p>"
+    },
+    {
+     "type": "widget",
+     "html": "<div class=\"ctf\"><div data-ctf-widget=\"timeline\" data-ctf-id=\"kids-m9-timeline\">\n    <script type=\"application/json\">{\n      \"eyebrow\":\"Time traveler\",\"title\":\"How did we get here?\",\"prompt\":\"Tap each moment to time-travel through the story of AI.\",\n      \"steps\":[\n        {\"when\":\"Long ago\",\"title\":\"People dreamed of thinking machines\",\"body\":\"Way before computers existed, storytellers imagined metal helpers and magic minds. The dream is really old.\"},\n        {\"when\":\"~80 yrs ago\",\"title\":\"Computers arrive\",\"body\":\"They were amazing at math and rules — but pretty bad at <i>learning</i>. AI got stuck for a long time.\"},\n        {\"when\":\"1997 & 2016\",\"title\":\"Beating humans at games\",\"body\":\"A computer beat the world chess champion (1997), then the Go champion (2016) with a move so creative experts gasped.\"},\n        {\"when\":\"~10 yrs ago\",\"title\":\"Everything clicks\",\"body\":\"Computers got powerful AND the internet filled with examples. Suddenly AI got <b>really</b> good at finding patterns.\"},\n        {\"when\":\"A few yrs ago\",\"title\":\"You can just talk to it\",\"body\":\"Ask a question, get an answer. Ask for a dragon on a skateboard, watch it appear. The whole world noticed at once.\"},\n        {\"when\":\"NOW\",\"title\":\"You're here\",\"body\":\"AI arrived recently, with a bang — and you're at the very beginning. Some of the next chapters will be written by you.\"}\n      ],\n      \"thanks\":\"You traveled the whole story of AI!\",\n      \"complete\":{\"icon\":\"🎖️\",\"badge\":\"Badge earned: Time Traveler\",\"sub\":\"Mission 9 of 12\",\"progress\":75}\n    }</script>\n  </div></div>"
+    },
+    {
+     "type": "complete",
+     "html": "<h3>✅ Mission 9 Complete!</h3><p>You time-traveled through the whole story of AI in 10 minutes. ⏳</p><p>🎖️ <strong>Badge earned: Time Traveler</strong><br><strong>Progress:</strong> ▰▰▰▰▰▰▰▰▰▱▱▱ (9/12)<br><strong>Next up → Mission 10: What AI Is Great At (and What It's Not)</strong></p>"
+    }
+   ]
+  },
+  {
+   "n": 10,
+   "kind": "unit",
+   "title": "What AI Is Great At (and What It's Not)",
+   "meta": "~10 minutes",
+   "beats": [
+    {
+     "type": "text",
+     "html": "<p>AI is incredible. But it's not magic, and it is definitely not perfect. A smart Future Builder knows <em>both</em> what AI is great at <em>and</em> where it needs a human. Knowing the difference is what makes you the boss instead of the AI.</p>"
+    },
+    {
+     "type": "text",
+     "html": "<p><strong>AI is great at:</strong> - Finding patterns in huge piles of words or pictures — fast. - Doing boring, repeated jobs without getting tired or bored. - Helping you brainstorm, write, draw, learn, and explore new ideas. - Being available any time to explain something a different way.</p>"
+    },
+    {
+     "type": "text",
+     "html": "<p><strong>AI is NOT good at:</strong> - <strong>Knowing what's true.</strong> Sometimes AI sounds <em>totally</em> sure but is completely wrong. It   might invent a fact, a book that doesn't exist, or a wrong answer — and say it confidently.   Grown-ups call this a <strong>\"hallucination.\"</strong> Always double-check important stuff! - <strong>Being fair automatically.</strong> Remember \"garbage in, garbage out\"? If an AI learned from   examples that were unfair, it can be unfair too, without meaning to. That's called <strong>bias</strong>. - <strong>Caring about people</strong> or knowing right from wrong. It doesn't actually care about you. - *<em>Deciding what </em>matters<em>.</em><em> That's a human job — </em>your* job.</p>"
+    },
+    {
+     "type": "text",
+     "html": "<p>Here's the most important rule in this whole camp, and we really mean it:</p>"
+    },
+    {
+     "type": "quote",
+     "html": "<blockquote><p><strong>AI is a tool, and YOU are the one in charge.</strong></p></blockquote>"
+    },
+    {
+     "type": "text",
+     "html": "<p>A tool is only as kind, as creative, and as helpful as the person holding it. A hammer can build a house or smash a window — it depends on the human. A pencil can write a kind note or a mean one. AI is the same kind of tool, just a very powerful one. So here's how to be a great boss of AI:</p>"
+    },
+    {
+     "type": "list",
+     "html": "<ol><li><strong>Double-check it.</strong> If it really matters, make sure it's true.</li><li><strong>Use it to create, not to cheat.</strong> Let it help you learn, don't let it do your thinking <em>for</em> you. Your brain is the point!</li><li><strong>Be kind and be careful.</strong> Don't share private stuff like your address or passwords, and always be respectful.</li></ol>"
+    },
+    {
+     "type": "text",
+     "html": "<p>You bring the caring, the checking, and the good choices. The AI brings the speed. Together, that's a great team — with you as the captain.</p>"
+    },
+    {
+     "type": "widget",
+     "html": "<div class=\"ctf\"><div data-ctf-widget=\"choice\" data-ctf-id=\"kids-m10-trust\">\n    <script type=\"application/json\">{\n      \"eyebrow\":\"Smart Boss\",\"title\":\"Should you trust it?\",\n      \"prompt\":\"You ask an AI a question and it answers super confidently: <span class=\\\"ctf-q\\\">“The Moon is made of cheese!”</span> What should you do?\",\n      \"options\":[\"Believe it — it sounded really sure\",\"Double-check it with a grown-up or a real source\",\"Get mad at the AI\",\"Never use AI again\"],\"answer\":1,\n      \"correctText\":\"Boss move!\",\"wrongText\":\"Sounding sure isn't the same as being right…\",\n      \"explain\":\"AI can sound 100% sure and still be totally wrong — that's called a <b>hallucination</b>. You're the boss: always double-check the important stuff.\",\n      \"complete\":{\"icon\":\"🎖️\",\"badge\":\"Badge earned: Smart Boss\",\"sub\":\"Mission 10 of 12\",\"progress\":83}\n    }</script>\n  </div></div>"
+    },
+    {
+     "type": "complete",
+     "html": "<h3>✅ Mission 10 Complete!</h3><p>Knowing when <em>not</em> to trust a computer? That's real wisdom. Boss-level unlocked.</p><p>🎖️ <strong>Badge earned: Smart Boss</strong><br><strong>Progress:</strong> ▰▰▰▰▰▰▰▰▰▰▱▱ (10/12)<br><strong>Next up → Mission 11: The Future Is Yours</strong></p>"
+    }
+   ]
+  },
+  {
+   "n": 11,
+   "kind": "unit",
+   "title": "The Future Is Yours",
+   "meta": "~10 minutes",
+   "beats": [
+    {
+     "type": "image",
+     "html": "<div class=\"lesson-fig\"><figure><img src=\"../assets/img/galaxy-nasa.jpg\" alt=\"\" loading=\"lazy\"><figcaption><b>The universe is vast.</b> Your generation will explore it with AI as a tool.<br><span class=\"credit\">NASA · public domain</span></figcaption></figure></div>"
+    },
+    {
+     "type": "text",
+     "html": "<p>Here's the exciting part. AI is going to help change almost <em>everything</em> — and you'll grow up right in the middle of it. Let's picture the world you're walking into.</p>"
+    },
+    {
+     "type": "list",
+     "html": "<ul><li><strong>Doctors</strong> will catch sicknesses earlier than ever, invent new medicines faster, and help people get better, faster. AI is already helping spot diseases in X-rays that human eyes can miss.</li><li><strong>Scientists</strong> will solve puzzles that used to take a hundred years. (One AI recently figured out the shapes of almost every protein in living things — a mystery scientists had worked on for <em>decades</em>.)</li><li><strong>Space explorers</strong> will use AI to fly farther, land safer, and study faraway planets.</li><li><strong>Artists, musicians, game makers, and storytellers</strong> will create things nobody has ever imagined — with AI as a creative sidekick.</li><li><strong>Everyday people</strong> — including you — will have a smart helper for almost anything they want to learn, make, or do.</li></ul>"
+    },
+    {
+     "type": "text",
+     "html": "<p>And here's the wildest part: some of the jobs you'll have when you grow up <strong>don't even exist yet.</strong> When your parents were kids, \"app maker\" and \"video creator\" weren't jobs! New inventions create brand-new jobs nobody could have guessed. Your generation will invent jobs we can't picture today — and you'll be perfect for them, because you'll understand AI in a way grown-ups are still catching up on.</p>"
+    },
+    {
+     "type": "text",
+     "html": "<p>But remember Mission 10: AI is the <em>tool</em>, and you are the <em>builder</em>. AI can help you make a game, but <strong>you</strong> dream up what the game is about. AI can help a doctor, but <strong>a person</strong> decides how to care for someone. AI can suggest a thousand ideas, but <strong>you</strong> pick the one that matters. The most powerful thing in the whole future isn't the AI — it's the curious, kind, creative human deciding what to do with it. That's you.</p>"
+    },
+    {
+     "type": "text",
+     "html": "<p>So get curious. Ask big questions. Dream up wild, impossible ideas — then use your new tools to start building them. The future isn't something that just happens <em>to</em> you. <strong>You're going to help build it.</strong></p>"
+    },
+    {
+     "type": "widget",
+     "html": "<div class=\"ctf\"><div data-ctf-widget=\"poll\" data-ctf-id=\"kids-m11-future\">\n    <script type=\"application/json\">{\n      \"eyebrow\":\"Future Maker\",\"title\":\"What will YOU build?\",\"prompt\":\"Pick a dream job — then imagine how AI could help you do it. Add your own if it's not here!\",\"columns\":2,\n      \"options\":[{\"emoji\":\"🩺\",\"label\":\"Doctor\"},{\"emoji\":\"🎮\",\"label\":\"Game maker\"},{\"emoji\":\"🚀\",\"label\":\"Astronaut\"},{\"emoji\":\"🎨\",\"label\":\"Artist\"},{\"emoji\":\"🐾\",\"label\":\"Animal scientist\"},{\"emoji\":\"💡\",\"label\":\"Inventor\"}],\n      \"freeText\":true,\"placeholder\":\"Or type your own dream job…\",\n      \"thanks\":\"Awesome — AI will be your sidekick, but YOU bring the big ideas.\",\n      \"complete\":{\"icon\":\"🎖️\",\"badge\":\"Badge earned: Future Maker\",\"sub\":\"Mission 11 of 12\",\"progress\":91}\n    }</script>\n  </div></div>"
+    },
+    {
+     "type": "complete",
+     "html": "<h3>✅ Mission 11 Complete!</h3><p>Your imagination is the most powerful tool in this whole room. Use it. 🌟</p><p>🎖️ <strong>Badge earned: Future Maker</strong><br><strong>Progress:</strong> ▰▰▰▰▰▰▰▰▰▰▰▱ (11/12)<br><strong>Next up → Mission 12: You Did It!</strong></p>"
+    }
+   ]
+  },
+  {
+   "n": 12,
+   "kind": "unit",
+   "title": "You Did It!",
+   "meta": "~10 minutes",
+   "beats": [
+    {
+     "type": "text",
+     "html": "<p>Look how far you came. Twelve Missions ago, AI was just two mysterious letters that grown-ups said at dinner. Now? You can actually explain it. Let's pull together everything you know — and get you ready to <em>use</em> real AI yourself in the Big Mission.</p>"
+    },
+    {
+     "type": "text",
+     "html": "<p><strong>The Big Ideas you unlocked:</strong> - <strong>AI = Artificial Intelligence</strong> — a computer that <em>learns from examples</em> instead of only   following rules (Missions 2). - AI finds <strong>patterns</strong> — the same way you learned what a dog is (Mission 3). Teaching it with   examples is called <strong>training</strong>, and the examples are called <strong>data</strong> (Mission 4). - AI can learn to <strong>see</strong> (patterns in pixels) and to use <strong>words</strong> (guessing the next word) —   Missions 5 and 6. - The clever trick behind it is <strong>attention</strong>, and that kind of AI is a <strong>transformer</strong>   (Mission 7). - AI runs on a <strong>neural network</strong> inspired by the brain — but it's <strong>not alive</strong> and has <strong>no   feelings</strong> (Mission 8). - AI took a <strong>long time</strong> to get good and only got amazing <strong>recently</strong> (Mission 9). - AI is powerful but can be <strong>wrong</strong>, so <strong>you stay the boss</strong> (Mission 10). - You're the <strong>first generation</strong> to grow up with AI, and the future is yours to build   (Mission 11).</p>"
+    },
+    {
+     "type": "text",
+     "html": "<p>Here's your challenge: tonight, explain <em>one</em> of these ideas to a grown-up in your life. If you can teach it, you really know it — and you might just teach them something new!</p>"
+    },
+    {
+     "type": "widget",
+     "html": "<div class=\"ctf\"><div data-ctf-widget=\"quiz\" data-ctf-id=\"kids-m12-quiz\">\n    <script type=\"application/json\">{\n      \"eyebrow\":\"🏆 Final check\",\"title\":\"Show what you know\",\"revisit\":\"kids-m1-warmup\",\"revisitText\":\"Back in Mission 1, you said AI was:\",\n      \"questions\":[\n        {\"q\":\"What makes AI different from a toaster?\",\"options\":[\"It's faster\",\"It can learn from examples\",\"It's bigger\",\"It uses electricity\"],\"answer\":1},\n        {\"q\":\"How does AI mostly work?\",\"options\":[\"It finds patterns\",\"It remembers everything\",\"It guesses randomly\",\"It asks a human\"],\"answer\":0},\n        {\"q\":\"When AI sounds sure but is wrong, who's in charge of checking?\",\"options\":[\"The AI\",\"Nobody\",\"You are!\",\"The internet\"],\"answer\":2}\n      ],\n      \"perfect\":\"Perfect score! You officially understand what AI is. 🎉\",\"passText\":\"You know your stuff — peek back at any you missed.\",\n      \"complete\":{\"icon\":\"🏆\",\"badge\":\"Module 1 Complete: AI Explorer — Level 1!\",\"sub\":\"All 12 badges earned\",\"progress\":100}\n    }</script>\n  </div></div>"
+    },
+    {
+     "type": "complete",
+     "html": "<h3>🏆 Module 1 Complete!</h3><p>🎖️ <strong>Badge earned: AI Explorer — Level 1!</strong><br><strong>Progress:</strong> ▰▰▰▰▰▰▰▰▰▰▰▰ (12/12) ✅</p><p>You officially understand what AI is. Most adults can't say that. Now for the best part — it's time to actually <em>use</em> AI yourself. <strong>On to the Big Mission →</strong></p>"
+    }
+   ]
+  },
+  {
+   "kind": "capstone",
+   "title": "Now use AI yourself",
+   "meta": "",
+   "beats": [
+    {
+     "type": "capstone",
+     "html": "<p class=\"cap-eyebrow\">🚀 The Big Mission</p><h2>Now use AI yourself</h2><p>You earned all 12 badges. Time for the best part — talk to a real AI.</p><a class=\"cap-btn\" href=\"../capstone/kids-big-mission.html\">Start the Big Mission →</a>"
+    }
+   ]
+  }
+ ]
+}

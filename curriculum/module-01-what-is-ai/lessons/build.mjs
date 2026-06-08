@@ -1,23 +1,20 @@
 // ==========================================================================
-// Code the Future — Lesson page builder
-// Assembles full HTML lesson pages from the curriculum markdown + the widget
-// configs (reused from the interactive preview pages) + public-domain images.
+// Code the Future — Lesson content builder
+// Converts the curriculum markdown + widget configs + images into structured
+// "beats" JSON that the full-screen lesson PLAYER renders one screen at a time.
 //
-//   node lessons/build.mjs        (run from the module-01-what-is-ai folder
-//                                   or anywhere; paths are resolved relative
-//                                   to this file)
+//   node lessons/build.mjs   →  lessons/content/kids.json, adults.json
 //
-// Output: lessons/kids.html, lessons/adults.html  (regenerate any time the
-// copy or widget configs change — no hand-edited HTML to keep in sync).
+// One beat = one focused screen. Beat types: title | text | quote | list |
+// image | widget | complete | capstone.  Node 18+, no deps.
 // ==========================================================================
-import { readFileSync, writeFileSync } from "node:fs";
+import { readFileSync, writeFileSync, mkdirSync } from "node:fs";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const MOD = join(HERE, "..");
 
-// ---- image library (public domain — see assets/img/CREDITS.md) -----------
 const IMG = {
   turing: { src: "../assets/img/turing.jpg", cap: "<b>Alan Turing</b> — in 1950 he asked, “Can machines think?”", credit: "Public domain · Wikimedia Commons" },
   eniac: { src: "../assets/img/eniac.jpg", cap: "<b>ENIAC (1947)</b> — early computers were great at math, but couldn't learn.", credit: "U.S. Army · public domain" },
@@ -25,35 +22,25 @@ const IMG = {
   galaxy: { src: "../assets/img/galaxy-nasa.jpg", cap: "<b>The universe is vast.</b> Your generation will explore it with AI as a tool.", credit: "NASA · public domain" }
 };
 
-// ---- per-track config ----------------------------------------------------
 const TRACKS = {
   kids: {
-    md: "type-a-kids.md", out: "kids.html", cls: "track-kids",
-    eyebrow: "Module 1 · What Is AI? · Ages 8–11",
-    title: 'What Is <span class="accent">AI</span>?',
-    sub: "12 Missions. Earn every badge, then use real AI yourself.",
-    pills: ["12 Missions", "~2 hours", "Ages 8–11"],
+    md: "type-a-kids.md", out: "kids.json", cls: "track-kids",
+    title: "What Is AI?", eyebrow: "Module 1 · Ages 8–11", unitWord: "Mission",
     capstone: { href: "../capstone/kids-big-mission.html", eyebrow: "🚀 The Big Mission", h: "Now use AI yourself", p: "You earned all 12 badges. Time for the best part — talk to a real AI.", btn: "Start the Big Mission →" },
     figs: { "Is AI Like a Brain": ["neuron"], "The Story of AI": ["turing", "eniac"], "The Future Is Yours": ["galaxy"] }
   },
   adults: {
-    md: "type-b-adults.md", out: "adults.html", cls: "track-adults",
-    eyebrow: "Module 1 · What Is AI? · Adults",
-    title: 'What Is <span class="accent">AI</span>?',
-    sub: "12 short sections — what AI is, how it got here, and why it matters.",
-    pills: ["12 Sections", "~2 hours", "No background needed"],
+    md: "type-b-adults.md", out: "adults.json", cls: "track-adults",
+    title: "What Is AI?", eyebrow: "Module 1 · Adults", unitWord: "Section",
     capstone: { href: "../capstone/adults-capstone.html", eyebrow: "Capstone", h: "Create & use AI", p: "You understand what AI is. Now operate one — write prompts and turn the temperature dial.", btn: "Open the capstone →" },
     figs: { "70-Year Story, Part 1": ["turing", "eniac"], "Brain Inspiration": ["neuron"], "The Transformation Ahead": ["galaxy"] }
   }
 };
 
-// ---- extract widget blocks (in order) from a preview page ----------------
 function widgetBlocks(previewFile) {
   const html = readFileSync(join(MOD, "interactive", previewFile), "utf8");
   return html.match(/<div class="ctf"><div data-ctf-widget[\s\S]*?<\/div><\/div>/g) || [];
 }
-
-// ---- inline markdown ------------------------------------------------------
 function inline(t) {
   t = t.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
   t = t.replace(/`([^`]+)`/g, "<code>$1</code>");
@@ -61,24 +48,6 @@ function inline(t) {
   t = t.replace(/\*([^*]+)\*/g, "<em>$1</em>");
   return t;
 }
-
-function figFor(track, title) {
-  const map = TRACKS[track].figs;
-  const key = Object.keys(map).find((k) => title.includes(k));
-  if (!key) return "";
-  const items = map[key].map((id) => {
-    const im = IMG[id];
-    return `<figure><img src="${im.src}" alt="" loading="lazy"><figcaption>${im.cap}<br><span class="credit">${im.credit}</span></figcaption></figure>`;
-  });
-  return `<div class="lesson-fig${items.length > 1 ? " row" : ""}">${items.join("")}</div>`;
-}
-
-function capstoneCTA(track) {
-  const c = TRACKS[track].capstone;
-  return `<div class="capstone-cta"><p class="eyebrow">${c.eyebrow}</p><h2>${c.h}</h2><p>${c.p}</p><a href="${c.href}">${c.btn}</a></div>`;
-}
-
-// split a block of lines into list items by a marker regex (handles wrap)
 function listItems(lines, marker) {
   const items = [];
   for (const ln of lines) {
@@ -87,14 +56,18 @@ function listItems(lines, marker) {
   }
   return items;
 }
-
-// render one block (array of raw lines) to HTML
-function renderBlock(lines, ctx) {
+function figFor(track, title) {
+  const map = TRACKS[track].figs;
+  const key = Object.keys(map).find((k) => title.includes(k));
+  if (!key) return null;
+  const items = map[key].map((id) => {
+    const im = IMG[id];
+    return `<figure><img src="${im.src}" alt="" loading="lazy"><figcaption>${im.cap}<br><span class="credit">${im.credit}</span></figcaption></figure>`;
+  });
+  return `<div class="lesson-fig${items.length > 1 ? " row" : ""}">${items.join("")}</div>`;
+}
+function blockHtml(lines) {
   const first = lines[0];
-  const joined = lines.join("\n");
-
-  if (/\[INTERACTIVE/.test(joined)) return ctx.nextWidget();
-  if (/\[CAPSTONE/.test(joined)) { ctx.capstoneSeen = true; return capstoneCTA(ctx.track); }
   if (/^####\s/.test(first)) return `<h4>${inline(first.replace(/^####\s/, ""))}</h4>`;
   if (/^###\s/.test(first)) return `<h3>${inline(first.replace(/^###\s/, ""))}</h3>`;
   if (/^>\s?/.test(first)) {
@@ -103,46 +76,64 @@ function renderBlock(lines, ctx) {
   }
   if (/^\d+\.\s/.test(first)) return `<ol>${listItems(lines, /^\d+\.\s/).map((i) => `<li>${inline(i)}</li>`).join("")}</ol>`;
   if (/^-\s/.test(first)) return `<ul>${listItems(lines, /^-\s/).map((i) => `<li>${inline(i)}</li>`).join("")}</ul>`;
-  if (/^```/.test(first)) { const body = lines.slice(1, lines[lines.length - 1].startsWith("```") ? -1 : undefined).join("\n"); return `<pre><code>${inline(body)}</code></pre>`; }
-  // completion meta lines (badge / progress / next / section x of 12) keep breaks
-  if (/Next →|Next up|Badge earned|Progress:|of 12 ·/.test(joined)) return `<p>${lines.map((l) => inline(l.trim())).join("<br>")}</p>`;
-  // normal paragraph — join wrapped lines
+  if (/Next →|Next up|Badge earned|Progress:|of 12 ·/.test(lines.join("\n"))) return `<p>${lines.map((l) => inline(l.trim())).join("<br>")}</p>`;
   return `<p>${inline(lines.join(" ").trim())}</p>`;
 }
-
-function isMeta(line) { return /^\*.*(minutes|of 12).*\*$/.test(line.trim()); }
-function isComplete(line) { return /^###\s/.test(line) && /complete|module \d+ complete/i.test(line); }
+function blockType(first) {
+  if (/^>\s?/.test(first)) return "quote";
+  if (/^-\s/.test(first) || /^\d+\.\s/.test(first)) return "list";
+  return "text";
+}
+const isMeta = (l) => /^\*.*(minutes|of 12).*\*$/.test(l.trim());
+const isComplete = (l) => /^###\s/.test(l) && /complete/i.test(l);
 
 function buildUnit(unitText, ctx) {
   const rawLines = unitText.split("\n").filter((l) => l.trim() !== "---");
-  const heading = rawLines[0].replace(/^##\s/, "").trim();
-  const isIntro = /how this module works/i.test(heading);
-  const rest = rawLines.slice(1);
+  const heading0 = rawLines[0].replace(/^##\s/, "").trim();
+  const isIntro = /how this module works/i.test(heading0);
+  // strip the "Mission N — " / "Section N — " prefix (the number is shown separately)
+  const heading = heading0.replace(/^(Mission|Section)\s+\d+\s*[—–-]\s*/i, "");
 
-  // group remaining lines into blocks separated by blank lines
+  // group remaining into blocks separated by blank lines
   const blocks = [];
   let buf = [];
-  for (const ln of rest) {
+  for (const ln of rawLines.slice(1)) {
     if (ln.trim() === "") { if (buf.length) { blocks.push(buf); buf = []; } }
     else buf.push(ln);
   }
   if (buf.length) blocks.push(buf);
 
-  const open = isIntro ? `<section class="lesson-intro">` : `<section class="lesson-unit">`;
-  let html = open + `<h2>${inline(heading)}</h2>`;
-  let figDone = false, inComplete = false;
+  let meta = "";
+  const beats = [];
+  let pendingHead = "";
+  let completeBuf = [];
+  let inComplete = false;
 
-  blocks.forEach((blk) => {
+  for (const blk of blocks) {
     const f0 = blk[0];
-    if (isMeta(f0)) { html += `<p class="unit-meta">${inline(f0.trim().replace(/^\*|\*$/g, ""))}</p>`; html += figFor(ctx.track, heading); figDone = true; return; }
-    if (/\[CAPSTONE/.test(blk.join("\n")) && inComplete) { html += "</div>"; inComplete = false; }
-    if (!inComplete && isComplete(f0)) { html += `<div class="unit-complete">`; inComplete = true; }
-    html += renderBlock(blk, ctx);
-  });
-  if (!figDone) { /* unit without meta line: still allow a figure right after h2 — none expected */ }
-  if (inComplete) html += "</div>";
-  html += "</section>";
-  return html;
+    const joined = blk.join("\n");
+    if (isMeta(f0)) { meta = inline(f0.trim().replace(/^\*|\*$/g, "")).replace(/\s*·\s*(Mission|Section)\s+\d+\s+of\s+\d+/i, ""); continue; }
+    if (/\[CAPSTONE/.test(joined)) { ctx.capstoneHtml = capstoneHtml(ctx.track); continue; }
+    if (inComplete) { completeBuf.push(blk); continue; }
+    if (isComplete(f0)) { inComplete = true; completeBuf.push(blk); continue; }
+    if (/\[INTERACTIVE/.test(joined)) { beats.push({ type: "widget", html: ctx.nextWidget() }); continue; }
+    if (/^####\s|^###\s/.test(f0)) { pendingHead += blockHtml(blk); continue; }
+    const html = pendingHead + blockHtml(blk);
+    beats.push({ type: blockType(f0), html });
+    pendingHead = "";
+  }
+  if (completeBuf.length) beats.push({ type: "complete", html: completeBuf.map(blockHtml).join("") });
+
+  // image beat: insert right after the title (before content), if this unit has a figure
+  const fig = figFor(ctx.track, heading);
+  const imageBeats = fig ? [{ type: "image", html: fig }] : [];
+
+  return { n: ctx.n, kind: isIntro ? "intro" : "unit", title: heading, meta, beats: [...imageBeats, ...beats] };
+}
+
+function capstoneHtml(track) {
+  const c = TRACKS[track].capstone;
+  return `<p class="cap-eyebrow">${c.eyebrow}</p><h2>${c.h}</h2><p>${c.p}</p><a class="cap-btn" href="${c.href}">${c.btn}</a>`;
 }
 
 function buildTrack(track) {
@@ -150,47 +141,27 @@ function buildTrack(track) {
   const md = readFileSync(join(MOD, cfg.md), "utf8");
   const widgets = widgetBlocks(track === "kids" ? "preview-kids.html" : "preview-adults.html");
   let wi = 0;
-  const ctx = { track, nextWidget: () => widgets[wi++] || "", capstoneSeen: false };
+  const ctx = { track, n: 0, nextWidget: () => widgets[wi++] || "", capstoneHtml: null };
 
-  // drop the leading author blockquote note + the H1, then split into units at "## "
   const body = md.replace(/^#\s.*$/m, "").replace(/^>\sTrack:[\s\S]*?(?=\n##\s)/m, "");
   const units = body.split(/\n(?=##\s)/).map((u) => u.trim()).filter((u) => u.startsWith("## "));
-  const sections = units.map((u) => buildUnit(u, ctx)).join("\n");
 
-  const pills = cfg.pills.map((p) => `<span class="pill">${p}</span>`).join("");
-  const out = `<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Code the Future — ${track === "kids" ? "What Is AI? (Kids)" : "What Is AI? (Adults)"}</title>
-<link rel="stylesheet" href="lesson.css">
-<link rel="stylesheet" href="../interactive/ctf-widgets.css">
-</head>
-<body class="${cfg.cls}">
-<div class="lesson-progress" id="progress"></div>
-<header class="lesson-hero"><div class="inner">
-  <p class="eyebrow">◆ ${cfg.eyebrow}</p>
-  <h1>${cfg.title}</h1>
-  <p>${cfg.sub}</p>
-  <div class="meta">${pills}</div>
-</div></header>
-<main class="lesson-body">
-${sections}
-<footer class="lesson-foot">CODE THE FUTURE · MODULE 1 · ${track.toUpperCase()}</footer>
-</main>
-<script>
-  var pb=document.getElementById('progress');
-  addEventListener('scroll',function(){var h=document.documentElement;var max=h.scrollHeight-h.clientHeight;pb.style.width=(max>0?(h.scrollTop/max*100):0)+'%';},{passive:true});
-</script>
-<script src="../interactive/ctf-widgets.js"></script>
-</body>
-</html>`;
-  writeFileSync(join(HERE, cfg.out), out);
-  return { track, units: units.length, widgets: wi, capstone: ctx.capstoneSeen };
+  const missions = [];
+  for (const u of units) {
+    const heading = u.split("\n")[0];
+    if (!/how this module works/i.test(heading)) ctx.n += 1;
+    missions.push(buildUnit(u, ctx));
+  }
+  if (ctx.capstoneHtml) missions.push({ kind: "capstone", title: cfg.capstone.h, meta: "", beats: [{ type: "capstone", html: ctx.capstoneHtml }] });
+
+  const data = { track, cls: cfg.cls, title: cfg.title, eyebrow: cfg.eyebrow, unitWord: cfg.unitWord, total: ctx.n, missions };
+  mkdirSync(join(HERE, "content"), { recursive: true });
+  writeFileSync(join(HERE, "content", cfg.out), JSON.stringify(data, null, 1));
+  const beatCount = missions.reduce((a, m) => a + m.beats.length, 0);
+  return { track, units: ctx.n, beats: beatCount, widgets: wi };
 }
 
 for (const t of ["kids", "adults"]) {
   const r = buildTrack(t);
-  console.log(`${r.track}: ${r.units} units · ${r.widgets} widgets injected · capstone:${r.capstone ? "yes" : "no"} → lessons/${TRACKS[t].out}`);
+  console.log(`${r.track}: ${r.units} units · ${r.beats} beats · ${r.widgets} widgets → lessons/content/${TRACKS[t].out}`);
 }
