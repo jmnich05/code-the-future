@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="robots" content="noindex, nofollow" />
+<title>Code the Future — Project Plan</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    /* Brand tokens (from Code the Future Design System) */
+    --blue-50:#EAF1FF; --blue-100:#D4E2FF; --blue-500:#3D74FF; --blue-600:#2A5FF0; --blue-700:#1E45C2;
+    --teal-50:#E4FBFC; --teal-100:#C2F5F8; --teal-400:#26C7D1; --teal-500:#12B2BC; --teal-600:#0E9099; --teal-700:#0B6E76;
+    --coral-50:#FFF0EC; --coral-100:#FFDCD2; --coral-500:#FF5A38; --coral-600:#E8401F; --coral-700:#BC3016;
+    --amber-50:#FFF7E6; --amber-100:#FFECC2; --amber-400:#FFB320; --amber-500:#F59E0B; --amber-600:#D17F00;
+    --ink-900:#0C1322; --ink-800:#161F33; --ink-700:#2A3349; --ink-600:#44506A; --ink-500:#5F6B82;
+    --ink-400:#8A93A8; --ink-300:#BCC3D2; --ink-200:#DDE2EC; --ink-100:#ECEFF5; --ink-50:#F6F8FC; --white:#fff;
+    --space-900:#070C1A; --space-800:#0A1226; --space-700:#0F1B3A; --space-600:#16264F;
+
+    --font-display:'Space Grotesk','Futura','Trebuchet MS',system-ui,sans-serif;
+    --font-body:'Plus Jakarta Sans','Avenir Next','Segoe UI',system-ui,sans-serif;
+    --font-mono:'JetBrains Mono','SF Mono','Consolas',ui-monospace,monospace;
+
+    --radius-sm:10px; --radius-md:14px; --radius-lg:20px; --radius-pill:999px;
+    --shadow-sm:0 2px 6px rgba(12,19,34,.07),0 1px 2px rgba(12,19,34,.05);
+    --shadow-md:0 8px 20px rgba(12,19,34,.09),0 2px 6px rgba(12,19,34,.06);
+    --shadow-lg:0 18px 40px rgba(12,19,34,.12),0 4px 12px rgba(12,19,34,.07);
+    --gradient-spark:linear-gradient(120deg,var(--blue-500) 0%,var(--teal-400) 100%);
+    --gradient-night:linear-gradient(160deg,var(--space-700) 0%,var(--space-900) 100%);
+  }
+
+  * { box-sizing:border-box; margin:0; padding:0; }
+  html,body { height:100%; }
+  body {
+    font-family:var(--font-body);
+    color:var(--ink-700);
+    background:var(--ink-50);
+    line-height:1.55;
+    -webkit-font-smoothing:antialiased;
+  }
+
+  /* ---- Header ---- */
+  header.app {
+    background:var(--gradient-night);
+    color:var(--ink-50);
+    padding:28px clamp(20px,4vw,48px) 26px;
+    border-bottom:1px solid rgba(255,255,255,.08);
+  }
+  .brand { display:flex; align-items:center; gap:14px; margin-bottom:18px; }
+  .brand .mark { width:44px; height:44px; display:block; flex:0 0 auto; }
+  .brand .mark svg { width:100%; height:100%; display:block; }
+  .brand .wordmark { font-family:var(--font-display); font-weight:700; font-size:24px; letter-spacing:-.02em; line-height:1; color:#fff; white-space:nowrap; }
+  .brand .wordmark span { color:var(--teal-400); }
+  h1 { font-family:var(--font-display); font-weight:700; font-size:clamp(28px,3.4vw,40px); letter-spacing:-.02em; line-height:1.05; }
+  .subtitle { color:var(--ink-300); margin-top:8px; max-width:62ch; font-size:15px; }
+  .eyebrow { font-family:var(--font-mono); font-weight:500; font-size:12px; letter-spacing:.12em; text-transform:uppercase; color:var(--teal-400); margin-bottom:10px; }
+  .meta-row { display:flex; flex-wrap:wrap; gap:10px 22px; margin-top:18px; font-size:13px; color:var(--ink-300); font-family:var(--font-mono); }
+  .meta-row b { color:#fff; font-weight:500; }
+
+  /* ---- Toolbar ---- */
+  .toolbar {
+    position:sticky; top:0; z-index:20;
+    background:rgba(246,248,252,.86); backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--ink-200);
+    padding:14px clamp(20px,4vw,48px);
+    display:flex; flex-wrap:wrap; align-items:center; gap:16px 24px;
+  }
+  .filter-group { display:flex; align-items:center; gap:8px; }
+  .filter-group .lbl { font-family:var(--font-mono); font-size:11px; letter-spacing:.1em; text-transform:uppercase; color:var(--ink-500); margin-right:2px; }
+  .chip-btn {
+    font-family:var(--font-body); font-size:13px; font-weight:600;
+    border:1px solid var(--ink-200); background:var(--white); color:var(--ink-600);
+    padding:6px 14px; border-radius:var(--radius-pill); cursor:pointer;
+    transition:all .15s cubic-bezier(.22,1,.36,1);
+  }
+  .chip-btn:hover { border-color:var(--ink-300); color:var(--ink-800); }
+  .chip-btn.active { background:var(--ink-900); border-color:var(--ink-900); color:#fff; }
+  .chip-btn.jon.active { background:var(--blue-600); border-color:var(--blue-600); }
+  .chip-btn.kenya.active { background:var(--teal-600); border-color:var(--teal-600); }
+  .chip-btn.unassigned.active { background:var(--ink-500); border-color:var(--ink-500); }
+
+  .legend { display:flex; flex-wrap:wrap; gap:6px 14px; align-items:center; margin-left:auto; }
+  .legend .item { display:flex; align-items:center; gap:6px; font-size:12px; color:var(--ink-500); }
+  .legend .swatch { width:11px; height:11px; border-radius:4px; }
+
+  /* ---- Board ---- */
+  .board {
+    display:grid;
+    grid-template-columns:repeat(5,minmax(270px,1fr));
+    gap:16px;
+    padding:22px clamp(20px,4vw,48px) 60px;
+    align-items:start;
+    overflow-x:auto;
+  }
+  .column { background:var(--ink-100); border-radius:var(--radius-lg); padding:6px 6px 12px; min-height:120px; }
+  .col-head {
+    display:flex; align-items:center; gap:8px;
+    padding:14px 14px 12px;
+  }
+  .col-head .dot { width:9px; height:9px; border-radius:50%; }
+  .col-head h2 { font-family:var(--font-display); font-size:14px; font-weight:600; letter-spacing:.02em; color:var(--ink-800); text-transform:uppercase; }
+  .col-head .count {
+    margin-left:auto; font-family:var(--font-mono); font-size:12px; font-weight:500;
+    color:var(--ink-500); background:var(--white); border:1px solid var(--ink-200);
+    min-width:24px; text-align:center; padding:2px 7px; border-radius:var(--radius-pill);
+  }
+  /* column accent dots */
+  .column[data-col="backlog"] .dot { background:var(--ink-400); }
+  .column[data-col="todo"] .dot { background:var(--blue-500); }
+  .column[data-col="inprogress"] .dot { background:var(--amber-400); }
+  .column[data-col="blocked"] .dot { background:var(--coral-500); }
+  .column[data-col="done"] .dot { background:var(--teal-500); }
+
+  .cards { display:flex; flex-direction:column; gap:10px; padding:0 6px; min-height:24px; }
+
+  /* ---- Card ---- */
+  .card {
+    background:var(--white); border:1px solid var(--ink-200); border-radius:var(--radius-md);
+    padding:13px 14px 12px; box-shadow:var(--shadow-sm); cursor:grab;
+    transition:box-shadow .15s ease, transform .15s ease, border-color .15s ease;
+  }
+  .card:hover { box-shadow:var(--shadow-md); border-color:var(--ink-300); }
+  .card.dragging { opacity:.5; }
+  .card .tags { display:flex; flex-wrap:wrap; gap:6px; margin-bottom:9px; }
+  .ws-tag {
+    font-family:var(--font-mono); font-size:10.5px; font-weight:500; letter-spacing:.04em;
+    padding:3px 8px; border-radius:var(--radius-pill); text-transform:uppercase;
+  }
+  .ws-curriculum { background:var(--blue-50); color:var(--blue-700); }
+  .ws-platform   { background:var(--teal-50); color:var(--teal-700); }
+  .ws-brand      { background:#F3ECFF; color:#6D28D9; }
+  .ws-ops        { background:var(--amber-50); color:var(--amber-600); }
+  .ws-marketing  { background:var(--coral-50); color:var(--coral-700); }
+
+  .card h3 { font-family:var(--font-body); font-size:14.5px; font-weight:600; color:var(--ink-900); line-height:1.3; margin-bottom:6px; }
+  .card .desc { font-size:12.5px; color:var(--ink-500); margin-bottom:11px; }
+
+  .card .blocker {
+    display:flex; align-items:flex-start; gap:6px;
+    font-size:12px; color:var(--coral-700); background:var(--coral-50);
+    border:1px solid var(--coral-100); border-radius:var(--radius-sm);
+    padding:6px 9px; margin-bottom:11px; line-height:1.4;
+  }
+  .card .blocker svg { flex:0 0 auto; margin-top:1px; }
+
+  .card-foot { display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+  .owner { display:flex; align-items:center; gap:6px; }
+  .avatar {
+    width:22px; height:22px; border-radius:50%; display:grid; place-items:center;
+    font-family:var(--font-display); font-size:11px; font-weight:700; color:#fff;
+  }
+  .avatar.jon { background:var(--blue-600); }
+  .avatar.kenya { background:var(--teal-600); }
+  .avatar.unassigned { background:var(--ink-300); color:var(--ink-600); }
+  .owner .name { font-size:12px; font-weight:600; color:var(--ink-700); }
+  .owner .name.tbd { color:var(--ink-400); font-weight:500; font-style:italic; }
+  .eta {
+    margin-left:auto; display:flex; align-items:center; gap:5px;
+    font-family:var(--font-mono); font-size:11.5px; color:var(--ink-500);
+  }
+  .eta.tbd { color:var(--ink-400); }
+  .eta.soon { color:var(--coral-600); font-weight:600; }
+  .eta svg { opacity:.7; }
+
+  .empty-hint { font-size:12px; color:var(--ink-400); text-align:center; padding:14px 8px; font-style:italic; }
+
+  /* ---- Footer note ---- */
+  .note {
+    margin:0 clamp(20px,4vw,48px) 48px; padding:18px 20px;
+    background:var(--white); border:1px solid var(--ink-200); border-left:3px solid var(--blue-500);
+    border-radius:var(--radius-md); font-size:13.5px; color:var(--ink-600); box-shadow:var(--shadow-sm);
+  }
+  .note b { color:var(--ink-900); }
+  .note .q { margin-top:10px; }
+  .note ol { margin:8px 0 0 20px; }
+  .note li { margin-bottom:5px; }
+
+  @media (max-width:920px){ .board{ grid-template-columns:repeat(5,280px); } }
+</style>
+</head>
+<body>
+
+<header class="app">
+  <div class="brand">
+    <div class="mark">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" fill="none" role="img" aria-label="Code the Future icon">
+        <defs>
+          <linearGradient id="ctfSparkD" x1="28" y1="100" x2="96" y2="28" gradientUnits="userSpaceOnUse">
+            <stop offset="0" stop-color="#5C8BFF"></stop>
+            <stop offset="1" stop-color="#54DBE3"></stop>
+          </linearGradient>
+        </defs>
+        <path d="M30 98 L60 68" stroke="url(#ctfSparkD)" stroke-width="11" stroke-linecap="round"></path>
+        <path d="M60 68 L46 40" stroke="url(#ctfSparkD)" stroke-width="11" stroke-linecap="round"></path>
+        <path d="M60 68 L92 32" stroke="url(#ctfSparkD)" stroke-width="11" stroke-linecap="round"></path>
+        <path d="M91 52 L92 32 L72 35" stroke="#FF6B4A" stroke-width="11" stroke-linecap="round" stroke-linejoin="round"></path>
+        <circle cx="30" cy="98" r="8" fill="#FFFFFF"></circle>
+        <circle cx="60" cy="68" r="8" fill="#FFFFFF"></circle>
+        <circle cx="46" cy="40" r="7" fill="#54DBE3"></circle>
+      </svg>
+    </div>
+    <div class="wordmark">Code the <span>Future</span></div>
+  </div>
+  <div class="eyebrow">Project Plan · Deliverables Board</div>
+  <h1>What we're building, who owns it, what's in the way</h1>
+  <p class="subtitle">A living Kanban to dock every deliverable across the platform and the 2026 summer camp. Drag cards between columns as work moves. Tell me the updates and I'll keep this in sync.</p>
+  <div class="meta-row">
+    <span>Owners: <b>Jon</b> · <b>Kenya</b> <span style="color:var(--ink-400)">(client + partner)</span></span>
+    <span>Camp target: <b>Summer 2026</b></span>
+    <span>Pricing: <b>$75 / module · $300 all four</b></span>
+    <span>Snapshot: <b>Jun 7, 2026</b></span>
+  </div>
+</header>
+
+<div class="toolbar">
+  <div class="filter-group">
+    <span class="lbl">Owner</span>
+    <button class="chip-btn active" data-owner="all">All</button>
+    <button class="chip-btn jon" data-owner="jon">Jon</button>
+    <button class="chip-btn kenya" data-owner="kenya">Kenya</button>
+    <button class="chip-btn unassigned" data-owner="unassigned">Unassigned</button>
+  </div>
+  <div class="legend">
+    <span class="item"><span class="swatch ws-curriculum" style="background:var(--blue-100)"></span>Curriculum</span>
+    <span class="item"><span class="swatch ws-platform" style="background:var(--teal-100)"></span>Platform</span>
+    <span class="item"><span class="swatch" style="background:#E3D5FF"></span>Brand &amp; Design</span>
+    <span class="item"><span class="swatch" style="background:var(--amber-100)"></span>Camp Ops</span>
+    <span class="item"><span class="swatch" style="background:var(--coral-100)"></span>Marketing &amp; Enrollment</span>
+  </div>
+</div>
+
+<main class="board" id="board">
+
+  <!-- BACKLOG -->
+  <section class="column" data-col="backlog">
+    <div class="col-head"><span class="dot"></span><h2>Backlog</h2><span class="count">0</span></div>
+    <div class="cards">
+
+      <article class="card" data-owner="unassigned">
+        <div class="tags"><span class="ws-tag ws-marketing">Marketing</span></div>
+        <h3>Post-camp → platform funnel</h3>
+        <p class="desc">Convert summer camp families into ongoing platform users. Email capture, follow-up sequence, offer.</p>
+        <div class="card-foot">
+          <div class="owner"><span class="avatar unassigned">?</span><span class="name tbd">Unassigned</span></div>
+          <span class="eta tbd">TBD</span>
+        </div>
+      </article>
+
+    </div>
+  </section>
+
+  <!-- TO DO -->
+  <section class="column" data-col="todo">
+    <div class="col-head"><span class="dot"></span><h2>To Do</h2><span class="count">0</span></div>
+    <div class="cards">
+
+      <article class="card" data-owner="both">
+        <div class="tags"><span class="ws-tag ws-ops">Camp Ops</span></div>
+        <h3>Jon &amp; Kenya check-in</h3>
+        <p class="desc">Sync on progress and next steps. Time TBD — possibly at Michelle's house.</p>
+        <div class="card-foot">
+          <div class="owner">
+            <span class="avatar jon">J</span><span class="avatar kenya" style="margin-left:-6px;box-shadow:0 0 0 2px #fff">K</span>
+            <span class="name">Jon &amp; Kenya</span>
+          </div>
+          <span class="eta soon"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>Tue Jun 9, eve</span>
+        </div>
+      </article>
+
+      <article class="card" data-owner="kenya">
+        <div class="tags"><span class="ws-tag ws-ops">Camp Ops</span></div>
+        <h3>Rent library space for the weekly module</h3>
+        <p class="desc">Scope renting the local library to host the recurring one-hour, hands-on module every week.</p>
+        <div class="card-foot">
+          <div class="owner"><span class="avatar kenya">K</span><span class="name">Kenya</span></div>
+          <span class="eta tbd">TBD</span>
+        </div>
+      </article>
+
+      <article class="card" data-owner="jon">
+        <div class="tags"><span class="ws-tag ws-curriculum">Curriculum</span></div>
+        <h3>Develop the library 1-hour hands-on curriculum</h3>
+        <p class="desc">A walkthrough of what each weekly one-hour library session will cover.</p>
+        <div class="card-foot">
+          <div class="owner"><span class="avatar jon">J</span><span class="name">Jon</span></div>
+          <span class="eta tbd">TBD</span>
+        </div>
+      </article>
+
+      <article class="card" data-owner="kenya">
+        <div class="tags"><span class="ws-tag ws-ops">Camp Ops</span></div>
+        <h3>Research possible grants</h3>
+        <p class="desc">Identify and evaluate grant opportunities that could help fund the program.</p>
+        <div class="card-foot">
+          <div class="owner"><span class="avatar kenya">K</span><span class="name">Kenya</span></div>
+          <span class="eta tbd">TBD</span>
+        </div>
+      </article>
+
+      <article class="card" data-owner="kenya">
+        <div class="tags"><span class="ws-tag ws-marketing">Enrollment</span></div>
+        <h3>Coordinate parents' schedules (initial)</h3>
+        <p class="desc">Line up and coordinate participating parents' schedules to get the weekly sessions off the ground.</p>
+        <div class="card-foot">
+          <div class="owner"><span class="avatar kenya">K</span><span class="name">Kenya</span></div>
+          <span class="eta tbd">TBD</span>
+        </div>
+      </article>
+
+      <article class="card" data-owner="jon">
+        <div class="tags"><span class="ws-tag ws-platform">Platform</span></div>
+        <h3>Set up OpenAI API keys for in-module AI</h3>
+        <p class="desc">Wire up OpenAI keys so each module ends with an embedded, hands-on exercise where students actually use OpenAI inside the HTML platform.</p>
+        <div class="card-foot">
+          <div class="owner"><span class="avatar jon">J</span><span class="name">Jon</span></div>
+          <span class="eta tbd">TBD</span>
+        </div>
+      </article>
+
+      <article class="card" data-owner="jon">
+        <div class="tags"><span class="ws-tag ws-ops">Camp Ops</span></div>
+        <h3>Order swag for the hands-on sessions</h3>
+        <p class="desc">Fun giveaways for the kids — camp t-shirts, stickers, fidget toys, and other items to hand out.</p>
+        <div class="card-foot">
+          <div class="owner"><span class="avatar jon">J</span><span class="name">Jon</span></div>
+          <span class="eta tbd">TBD</span>
+        </div>
+      </article>
+
+      <article class="card" data-owner="jon">
+        <div class="tags"><span class="ws-tag ws-marketing">Marketing</span></div>
+        <h3>Press release — announce the summer program</h3>
+        <p class="desc">Draft and send a press release to local media, the local library, and the Louisville AI Office announcing the project and what we're doing this summer.</p>
+        <div class="card-foot">
+          <div class="owner"><span class="avatar jon">J</span><span class="name">Jon</span></div>
+          <span class="eta tbd">TBD</span>
+        </div>
+      </article>
+
+      <article class="card" data-owner="jon">
+        <div class="tags"><span class="ws-tag ws-marketing">Enrollment</span></div>
+        <h3>Check in with all signed-up parents</h3>
+        <p class="desc">Reach out to every parent who has signed up and introduce the brand, the platform, and myself.</p>
+        <div class="card-foot">
+          <div class="owner"><span class="avatar jon">J</span><span class="name">Jon</span></div>
+          <span class="eta tbd">TBD</span>
+        </div>
+      </article>
+
+      <article class="card" data-owner="jon">
+        <div class="tags"><span class="ws-tag ws-marketing">Enrollment</span></div>
+        <h3>Parent meeting — walk through the camp</h3>
+        <p class="desc">Meet the parents next weekend: explain how the camp is organized, show them the platform, and introduce myself.</p>
+        <div class="card-foot">
+          <div class="owner"><span class="avatar jon">J</span><span class="name">Jon</span></div>
+          <span class="eta soon"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>Jun 13–14</span>
+        </div>
+      </article>
+
+    </div>
+  </section>
+
+  <!-- IN PROGRESS -->
+  <section class="column" data-col="inprogress">
+    <div class="col-head"><span class="dot"></span><h2>In Progress</h2><span class="count">0</span></div>
+    <div class="cards">
+
+      <article class="card" data-owner="jon">
+        <div class="tags"><span class="ws-tag ws-platform">Platform</span></div>
+        <h3>Build v1 of the platform</h3>
+        <p class="desc">Ship the first working version of the Code the Future platform — the shell the curriculum modules plug into.</p>
+        <div class="card-foot">
+          <div class="owner"><span class="avatar jon">J</span><span class="name">Jon</span></div>
+          <span class="eta soon"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>Sun Jun 14</span>
+        </div>
+      </article>
+
+      <article class="card" data-owner="jon">
+        <div class="tags"><span class="ws-tag ws-curriculum">Curriculum</span></div>
+        <h3>Curriculum dev — Modules 1–2 + interactive activities</h3>
+        <p class="desc">Build out Modules 1 and 2, including the hands-on interactive activities. Separate track from the platform itself.</p>
+        <div class="card-foot">
+          <div class="owner"><span class="avatar jon">J</span><span class="name">Jon</span></div>
+          <span class="eta soon"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>By Jun 13–14</span>
+        </div>
+      </article>
+
+      <article class="card" data-owner="jon">
+        <div class="tags"><span class="ws-tag ws-marketing">Marketing</span></div>
+        <h3>Sales &amp; marketing website (video + platform demo)</h3>
+        <p class="desc">Public site with a video and a demo of what the platform looks like — built to share with parents.</p>
+        <div class="card-foot">
+          <div class="owner"><span class="avatar jon">J</span><span class="name">Jon</span></div>
+          <span class="eta soon"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>Sun Jun 14</span>
+        </div>
+      </article>
+
+    </div>
+  </section>
+
+  <!-- BLOCKED -->
+  <section class="column" data-col="blocked">
+    <div class="col-head"><span class="dot"></span><h2>Blocked</h2><span class="count">0</span></div>
+    <div class="cards">
+
+    </div>
+  </section>
+
+  <!-- DONE -->
+  <section class="column" data-col="done">
+    <div class="col-head"><span class="dot"></span><h2>Done</h2><span class="count">0</span></div>
+    <div class="cards">
+
+      <article class="card" data-owner="jon">
+        <div class="tags"><span class="ws-tag ws-ops">Camp Ops</span></div>
+        <h3>Payment processing set up</h3>
+        <p class="desc">Payments run through the Ánimo platform using QuickBooks — already configured and ready.</p>
+        <div class="card-foot">
+          <div class="owner"><span class="avatar jon">J</span><span class="name">Jon</span></div>
+          <span class="eta"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Done</span>
+        </div>
+      </article>
+
+      <article class="card" data-owner="jon">
+        <div class="tags"><span class="ws-tag ws-ops">Camp Ops</span></div>
+        <h3>Camp pricing set — $75 per module</h3>
+        <p class="desc">$75 per module across 4 modules — $300 total for the full program.</p>
+        <div class="card-foot">
+          <div class="owner"><span class="avatar jon">J</span><span class="name">Jon</span></div>
+          <span class="eta"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Done</span>
+        </div>
+      </article>
+
+      <article class="card" data-owner="jon">
+        <div class="tags"><span class="ws-tag ws-brand">Brand &amp; Design</span></div>
+        <h3>Brand &amp; design system + brand sheet</h3>
+        <p class="desc">Full token set, components, UI kits, logo assets, brand sheet. Committed to the repo.</p>
+        <div class="card-foot">
+          <div class="owner"><span class="avatar jon">J</span><span class="name">Jon</span></div>
+          <span class="eta"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Done</span>
+        </div>
+      </article>
+
+      <article class="card" data-owner="jon">
+        <div class="tags"><span class="ws-tag ws-curriculum">Curriculum</span></div>
+        <h3>Module 1 — "What is AI" (kids + adults)</h3>
+        <p class="desc">First module drafted in both the Type-A (kids) and Type-B (adults) tracks, plus concept reference.</p>
+        <div class="card-foot">
+          <div class="owner"><span class="avatar jon">J</span><span class="name">Jon</span></div>
+          <span class="eta"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Done</span>
+        </div>
+      </article>
+
+      <article class="card" data-owner="jon">
+        <div class="tags"><span class="ws-tag ws-platform">Platform</span></div>
+        <h3>Project scaffold &amp; repo setup</h3>
+        <p class="desc">Repo structure, CLAUDE.md / AGENTS.md / MEMORY.md, docs source, curriculum + design folders.</p>
+        <div class="card-foot">
+          <div class="owner"><span class="avatar jon">J</span><span class="name">Jon</span></div>
+          <span class="eta"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Done</span>
+        </div>
+      </article>
+
+    </div>
+  </section>
+
+</main>
+
+<div class="note">
+  <b>How to use this board.</b> Drag any card between columns as work moves (changes are live in the page, not saved to a file — tell me the updates and I'll re-generate this so it persists). Filter by owner with the chips up top.
+  <div class="q"><b>Still open:</b> camp dates, venue &amp; capacity, plus ETAs for the library rental, grants, swag, press release, and parent outreach. Tell me and I'll fill them in.</div>
+</div>
+
+<script>
+  // Live counts
+  function refreshCounts(){
+    document.querySelectorAll('.column').forEach(col=>{
+      const visible=[...col.querySelectorAll('.card')].filter(c=>c.style.display!=='none').length;
+      col.querySelector('.count').textContent=visible;
+      const cards=col.querySelector('.cards');
+      let hint=cards.querySelector('.empty-hint');
+      if(visible===0){ if(!hint){ hint=document.createElement('div'); hint.className='empty-hint'; hint.textContent='No cards'; cards.appendChild(hint);} }
+      else if(hint){ hint.remove(); }
+    });
+  }
+
+  // Owner filter
+  document.querySelectorAll('.chip-btn').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      document.querySelectorAll('.chip-btn').forEach(b=>b.classList.remove('active'));
+      btn.classList.add('active');
+      const owner=btn.dataset.owner;
+      document.querySelectorAll('.card').forEach(card=>{
+        const o=card.dataset.owner;
+        const show=owner==='all'||o===owner||(o==='both'&&(owner==='jon'||owner==='kenya'));
+        card.style.display=show?'':'none';
+      });
+      refreshCounts();
+    });
+  });
+
+  // Drag & drop (non-persistent)
+  let dragged=null;
+  document.querySelectorAll('.card').forEach(card=>{
+    card.setAttribute('draggable','true');
+    card.addEventListener('dragstart',()=>{ dragged=card; card.classList.add('dragging'); });
+    card.addEventListener('dragend',()=>{ card.classList.remove('dragging'); dragged=null; refreshCounts(); });
+  });
+  document.querySelectorAll('.cards').forEach(zone=>{
+    zone.addEventListener('dragover',e=>{
+      e.preventDefault();
+      const after=[...zone.querySelectorAll('.card:not(.dragging)')].reduce((closest,child)=>{
+        const box=child.getBoundingClientRect();
+        const offset=e.clientY-box.top-box.height/2;
+        return (offset<0&&offset>closest.offset)?{offset,element:child}:closest;
+      },{offset:-Infinity}).element;
+      if(!dragged)return;
+      if(after) zone.insertBefore(dragged,after); else zone.appendChild(dragged);
+    });
+  });
+
+  refreshCounts();
+</script>
+
+</body>
+</html>
