@@ -14,20 +14,26 @@ coding, with emphasis on how AI is reshaping software development. Origin materi
 - Relationship between platform and camp (is the platform the camp's LMS? a standalone
   product? both?) — TBD.
 
-## Platform Backend — Supabase (intended; build NEXT SESSION)
+## Platform Backend — Supabase (scaffolded 06-08-2026)
 
-- **Decision:** Supabase is the intended platform backend. Confirmed by Jon 06-07-2026;
-  scheduled to tackle the Supabase project **tomorrow** (next session).
-- **Current state:** the repo has **no Supabase connection** of any kind (no client, keys,
-  config, or package.json). The only live backend is the capstone's OpenAI proxy
-  (`capstone/netlify.toml` + `.env`). Learner progress today saves **only to browser
-  `localStorage`** (the widget engine's `ctf:` namespace). Nothing carried over from the
-  Codex transfer was DB-connected — that bundle was markdown only.
-- **Goal:** replace localStorage with Supabase-backed persistence — accounts/auth, saved
-  lesson progress + badges across devices, and cohorts (e.g., "Summer 2026"). Likely also
-  the home for the eventual platform proper.
-- **Touch points when we build:** the widget engine's progress save/load (`ctf-widgets.js`,
-  `ctf:` keys) and the capstone are the natural integration points to swap to Supabase.
+- **Project:** ref `zlchimvgtpxojssblhlf` · `https://zlchimvgtpxojssblhlf.supabase.co`.
+- **Auth model (decided):** **anonymous + cohort codes** — kids start with no email/PII
+  (COPPA-minded); camp/classes join via a code; cohort staff can read members' progress.
+  Adults/parents can attach email later.
+- **Schema (in `supabase/migrations/`):** `profiles, cohorts, cohort_members,
+  lesson_progress, widget_responses, badges, events` — **RLS on every table** (learners own
+  their rows via `auth.uid()`; staff read their cohort via SECURITY DEFINER helpers).
+  `join_cohort(code)` RPC; auto-profile trigger on signup; pilot cohort `FUTURE26` seeded.
+- **Apply:** via Supabase **CLI** (`supabase login` → `link --project-ref …` → `db push`).
+  CLI is installed (brew). Login is interactive → Jon runs it, OR drops the DB password in
+  `supabase/.env` (gitignored) for me to push.
+- **Client lib:** `platform/lib/ctf-db.js` (`window.CTFDB`) — anonymous-first; methods for
+  progress/widget-responses/badges/cohort/profile/events; **no-ops gracefully** if not
+  configured (player still works on localStorage). Config: copy `config.example.js` →
+  `config.js` (gitignored) with the anon key.
+- **STILL TODO:** (1) push migrations to the project; (2) add anon key to `config.js`;
+  (3) wire the player + widgets to call `CTFDB` instead of (or alongside) `localStorage`.
+- Note: the capstone OpenAI proxy is separate and unaffected.
 
 ## Durable Teaching Preferences
 
