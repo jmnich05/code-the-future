@@ -46,6 +46,26 @@ coding, with emphasis on how AI is reshaping software development. Origin materi
   This reset the original module roadmap (loops/transformers path is now teacher-reference
   in `00-concept-reference.md`, not the learner sequence).
 
+## Module 1 status — all 3 passes complete (06-07-2026)
+
+- **Pass 1 (copy):** ✅ both tracks, 12 sprints each, ~2X expanded.
+- **Pass 2 (widgets):** ✅ `interactive/` — vanilla-JS engine (`ctf-widgets.js/css`),
+  9 widget types (poll, sort, choice, nextword, attention, quiz, timeline, reveal, slider).
+  Drop-in via `<div data-ctf-widget>`. All Module 1 markers map to an existing type →
+  remaining work is JSON config only. Preview: `interactive/preview.html`.
+- **Pass 3 (capstone):** ✅ `capstone/` — kids "Big Mission" + adults "Capstone" OpenAI
+  sandbox. **Key stays server-side** via a proxy (`netlify/functions/ai.js`); browser calls
+  `/api/ai`. Local testing via `server/dev-server.mjs` + gitignored `capstone/.env`.
+  Default model `gpt-4o-mini`. Adults get a temperature dial.
+- **Reusable infra:** the widget engine + capstone proxy are module-agnostic — future
+  modules reuse them; only copy + JSON configs change.
+
+## Tooling / brand
+
+- Design system installed as a **local Claude skill** at `.claude/skills/code-the-future-design/`
+  (gitignored; canonical copy committed at repo root "Code the Future — Design System/").
+  Widgets/capstone copy the design tokens so they're brand-faithful and embeddable anywhere.
+
 ## Curriculum Content Threads (still relevant)
 
 - Teach Python + TypeScript + SQL together when the coding track begins.
