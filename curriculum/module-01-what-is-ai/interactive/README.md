@@ -55,26 +55,29 @@ Six built (in `preview.html`); the rest are config-only additions using the same
 | 1 | warm-up | `poll` | ✅ built |
 | 2 | follows-rules-vs-learns | `sort` | ✅ built |
 | 3 | spot the pattern | `choice` | ✅ built |
-| 4 | train your mini-AI | `sort`/`choice` | ▱ planned |
-| 5 | pixel reveal | (custom image) | ▱ planned |
+| 4 | train your mini-AI | `sort`/`choice` | ▱ config-only |
+| 5 | pixel reveal | `reveal` | ✅ built |
 | 6 | guess the next word | `nextword` | ✅ built |
 | 7 | what does "it" mean | `attention` | ✅ built |
-| 8 | brain vs neural network | `choice` | ▱ planned |
-| 9 | tap-through timeline | (timeline) | ▱ planned |
-| 10 | is the AI right? | `choice` | ▱ planned |
-| 11 | imagine your future | `poll` | ▱ planned |
+| 8 | brain vs neural network | `choice` | ▱ config-only |
+| 9 | tap-through timeline | `timeline` | ✅ built |
+| 10 | is the AI right? | `choice` | ▱ config-only |
+| 11 | imagine your future | `poll` | ▱ config-only |
 | 12 | end-of-module quiz | `quiz` | ✅ built |
 
+> "config-only" = the widget *type* exists and is proven; that mission just needs its JSON
+> config written (no new code).
+
 ### Type B — Adults (Sections)
-Same engine; copy/tone swapped. `poll` (S1 self-assessment), `choice` (S2/S3 rules-vs-
-examples, S6 compare, S11 spot-the-limitation), `nextword` (S8 predict), `quiz` (S12).
-Timeline (S4/S5), weight-tuning (S7), and confidence-meter (S9) need two small custom
-widget types — planned next.
+Same engine; copy/tone swapped. All nine widget types are now built, so every adult Section
+is config-only: `poll` (S1 self-assessment), `choice` (S2/S3 rules-vs-examples, S6 compare,
+S11 spot-the-limitation), `timeline` (S4/S5 history), `slider` (S7 weight-tuning, S9
+confidence — demoed in `preview.html`), `nextword` (S8 predict), `quiz` (S12).
 
-## Still to build (new widget types)
+## Widget types — all 9 built ✅
 
-- `timeline` — scrollable/tap-through milestones (kids M9, adults S4/S5).
-- `reveal` — progressive un-blur of an image (kids M5 pixel reveal).
-- `slider` — drag a value and watch output change (adults S7 weight-tuning; S9 confidence).
+`poll · sort · choice · nextword · attention · quiz · timeline · reveal · slider`
 
-These are additive — existing widgets and configs don't change.
+Every Module 1 marker (both tracks) maps to one of these. Remaining work is **config only**
+— writing each marker's JSON — plus the **capstone** (separate; see `../capstone/`). No new
+widget code is required.

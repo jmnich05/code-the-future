@@ -195,3 +195,39 @@
 /* --- Saved-answer note (poll revisit) --- */
 .ctf-saved{ font-size:.9rem; color:var(--ink-500); margin-top:12px; font-style:italic; }
 .ctf-muted{ color:var(--ink-500); font-size:.9rem; }
+
+/* --- Timeline ------------------------------------------------------------- */
+.ctf-timeline{ position:relative; margin:4px 0 0; padding-left:8px; }
+.ctf-tl-item{ position:relative; padding:0 0 4px 26px; border-left:2px solid var(--ink-200); }
+.ctf-tl-item:last-child{ border-left-color:transparent; }
+.ctf-tl-dot{ position:absolute; left:-7px; top:14px; width:12px; height:12px; border-radius:50%;
+  background:var(--white); border:3px solid var(--teal-500); }
+.ctf-tl-item.open .ctf-tl-dot{ background:var(--teal-500); box-shadow:0 0 0 4px var(--teal-50); }
+.ctf-tl-head{ font:inherit; width:100%; text-align:left; cursor:pointer; background:none; border:none;
+  padding:8px 0; display:flex; align-items:baseline; gap:10px; min-height:var(--hit-min); }
+.ctf-tl-head:focus-visible{ outline:none; box-shadow:var(--ring); border-radius:8px; }
+.ctf-tl-when{ font-family:var(--font-mono); font-size:12px; letter-spacing:.06em; color:var(--blue-600); white-space:nowrap; }
+.ctf-tl-title{ font-family:var(--font-display); font-weight:600; color:var(--ink-900); }
+.ctf-tl-caret{ margin-left:auto; font-family:var(--font-mono); font-weight:700; color:var(--ink-400); font-size:1.1rem; }
+.ctf-tl-body{ max-height:0; overflow:hidden; opacity:0; transition:max-height .3s var(--ease-out), opacity .3s, padding .3s; font-size:.95rem; }
+.ctf-tl-item.open .ctf-tl-body{ max-height:240px; opacity:1; padding:0 0 12px; }
+
+/* --- Reveal (un-blur) ----------------------------------------------------- */
+.ctf-reveal-stage{ display:flex; align-items:center; justify-content:center; height:200px;
+  background:var(--gradient-night); border-radius:var(--radius-md); overflow:hidden; margin-bottom:14px; }
+.ctf-reveal-emoji{ font-size:120px; line-height:1; transition:filter .4s var(--ease-out); user-select:none; }
+.ctf-reveal-img{ max-width:100%; max-height:100%; object-fit:cover; transition:filter .4s var(--ease-out); }
+
+/* --- Slider --------------------------------------------------------------- */
+.ctf-slider-row{ padding:10px 2px 4px; }
+.ctf-range{ -webkit-appearance:none; appearance:none; width:100%; height:8px; border-radius:999px; outline:none;
+  background:linear-gradient(90deg, var(--blue-500) 0%, var(--teal-400) var(--ctf-pct,50%), var(--ink-200) var(--ctf-pct,50%), var(--ink-200) 100%); }
+.ctf-range:focus-visible{ box-shadow:var(--ring); }
+.ctf-range::-webkit-slider-thumb{ -webkit-appearance:none; appearance:none; width:26px; height:26px; border-radius:50%;
+  background:var(--white); border:3px solid var(--blue-600); box-shadow:var(--shadow-md); cursor:pointer; transition:transform 120ms var(--ease-out); }
+.ctf-range::-webkit-slider-thumb:active{ transform:scale(1.12); }
+.ctf-range::-moz-range-thumb{ width:26px; height:26px; border-radius:50%; background:var(--white); border:3px solid var(--blue-600); box-shadow:var(--shadow-md); cursor:pointer; }
+.ctf-slider-out{ text-align:center; margin-top:10px; }
+.ctf-slider-val{ font-family:var(--font-display); font-weight:700; font-size:1.6rem; color:var(--ink-900); }
+.ctf-slider-band{ margin-top:8px; display:inline-block; background:var(--blue-50); color:var(--blue-700);
+  border-radius:var(--radius-pill); padding:6px 16px; font-weight:600; font-size:.95rem; }

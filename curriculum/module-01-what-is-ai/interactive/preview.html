@@ -90,6 +90,22 @@
     }</script>
   </div></div>
 
+  <!-- MISSION 5 — pixel reveal -->
+  <p class="step">Mission 5 · teaching a computer to see</p>
+  <div class="ctf"><div data-ctf-widget="reveal" data-ctf-id="kids-m5-reveal">
+    <script type="application/json">{
+      "eyebrow":"Pixel detective",
+      "title":"What is it? Reveal to find out",
+      "prompt":"Computers see blurry patterns first, then get clearer — just like this. Tap “Reveal more,” then make your guess.",
+      "emoji":"🐱",
+      "levels":[24,16,9,4,0],
+      "options":["A dog","A cat","A muffin","A car"],
+      "answer":1,
+      "explain":"It's a cat! Fun fact: AI can get fooled — blurry cats, muffins, and chihuahuas can look alike to a computer, because it only reads the <b>pattern</b> of pixels.",
+      "complete":{"icon":"🎖️","badge":"Badge earned: Pixel Detective","sub":"Mission 5 of 12","progress":42}
+    }</script>
+  </div></div>
+
   <!-- MISSION 6 — guess the next word -->
   <p class="step">Mission 6 · how AI reads</p>
   <div class="ctf"><div data-ctf-widget="nextword" data-ctf-id="kids-m6-nextword">
@@ -119,6 +135,26 @@
     }</script>
   </div></div>
 
+  <!-- MISSION 9 — the story of AI (timeline) -->
+  <p class="step">Mission 9 · the story of AI</p>
+  <div class="ctf"><div data-ctf-widget="timeline" data-ctf-id="kids-m9-timeline">
+    <script type="application/json">{
+      "eyebrow":"Time traveler",
+      "title":"How did we get here?",
+      "prompt":"Tap each moment to time-travel through the story of AI.",
+      "steps":[
+        {"when":"Long ago","title":"People dreamed of thinking machines","body":"Way before computers existed, storytellers imagined metal helpers and magic minds. The dream is really old."},
+        {"when":"~80 yrs ago","title":"Computers arrive","body":"They were amazing at math and rules — but pretty bad at <i>learning</i>. AI got stuck for a long time."},
+        {"when":"1997 & 2016","title":"Beating humans at games","body":"A computer beat the world chess champion (1997), then the Go champion (2016) with a move so creative experts gasped."},
+        {"when":"~10 yrs ago","title":"Everything clicks","body":"Computers got powerful AND the internet filled with examples. Suddenly AI got <b>really</b> good at finding patterns."},
+        {"when":"A few yrs ago","title":"You can just talk to it","body":"Ask a question, get an answer. Ask for a dragon on a skateboard, watch it appear. The whole world noticed at once."},
+        {"when":"NOW","title":"You're here","body":"AI arrived recently, with a bang — and you're at the very beginning. Some of the next chapters will be written by you."}
+      ],
+      "thanks":"You traveled the whole story of AI!",
+      "complete":{"icon":"🎖️","badge":"Badge earned: Time Traveler","sub":"Mission 9 of 12","progress":75}
+    }</script>
+  </div></div>
+
   <!-- MISSION 12 — quiz + revisit -->
   <p class="step">Mission 12 · you did it!</p>
   <div class="ctf"><div data-ctf-widget="quiz" data-ctf-id="kids-m12-quiz">
@@ -135,6 +171,23 @@
       "perfect":"Perfect score! You officially understand what AI is. 🎉",
       "passText":"You know your stuff — peek back at any you missed.",
       "complete":{"icon":"🏆","badge":"Module 1 Complete: AI Explorer — Level 1!","sub":"All 12 badges earned","progress":100}
+    }</script>
+  </div></div>
+
+  <!-- BONUS — slider type (shown with adult framing) -->
+  <p class="step">Bonus · slider type (adults · Section 9 confidence meter)</p>
+  <div class="ctf"><div data-ctf-widget="slider" data-ctf-id="adults-s9-confidence">
+    <script type="application/json">{
+      "eyebrow":"Patterns, not understanding",
+      "title":"How sure is the AI?",
+      "prompt":"AI doesn't “know” — it scores how confident it is. Drag the meter to see how its certainty reads.",
+      "min":0,"max":100,"value":62,"unit":"%","label":"model confidence",
+      "bands":[
+        {"max":33,"text":"Low — the model is guessing. Verify before trusting."},
+        {"max":74,"text":"Medium — plausible, but double-check anything that matters."},
+        {"max":100,"text":"High — still not proof. Confidence is not the same as correct."}
+      ],
+      "complete":{"icon":"✓","badge":"Section explored","sub":"Adults · Section 9 of 12","progress":75}
     }</script>
   </div></div>
 

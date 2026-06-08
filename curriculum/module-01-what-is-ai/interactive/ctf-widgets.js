@@ -271,8 +271,104 @@
     }
   }
 
+  // =========================================================================
+  // TIMELINE — tap each milestone to reveal its detail. Done when all opened.
+  // =========================================================================
+  function renderTimeline(root, cfg, id) {
+    root.innerHTML = header(cfg);
+    var steps = cfg.steps || [], opened = 0;
+    var wrap = el('div', 'ctf-timeline');
+    steps.forEach(function (s) {
+      var item = el('div', 'ctf-tl-item');
+      item.innerHTML =
+        '<span class="ctf-tl-dot"></span>' +
+        '<button class="ctf-tl-head"><span class="ctf-tl-when">' + esc(s.when || '') + '</span>' +
+        '<span class="ctf-tl-title">' + esc(s.title || '') + '</span><span class="ctf-tl-caret">+</span></button>' +
+        '<div class="ctf-tl-body">' + (s.body || '') + '</div>';
+      var head = item.querySelector('.ctf-tl-head');
+      head.addEventListener('click', function () {
+        var isOpen = item.classList.toggle('open');
+        head.querySelector('.ctf-tl-caret').textContent = isOpen ? '–' : '+';
+        if (isOpen && !item.getAttribute('data-seen')) { item.setAttribute('data-seen', '1'); opened++; if (opened === steps.length) finish(); }
+      });
+      wrap.appendChild(item);
+    });
+    root.appendChild(wrap);
+    var fb = el('div', 'ctf-feedback good'); fb.textContent = cfg.thanks || 'You explored the whole story!'; root.appendChild(fb);
+    var done = completionCard(cfg); if (done) root.appendChild(done);
+    function finish() { fb.classList.add('show'); reveal(done, (cfg.complete && cfg.complete.progress) || 100); markDone(id); }
+  }
+
+  // =========================================================================
+  // REVEAL — progressively un-blur an image/emoji; optional guess (choice).
+  // =========================================================================
+  function renderReveal(root, cfg, id) {
+    root.innerHTML = header(cfg);
+    var levels = cfg.levels || [22, 14, 8, 3, 0], idx = 0;
+    var stage = el('div', 'ctf-reveal-stage');
+    var inner = cfg.src ? el('img', 'ctf-reveal-img') : el('div', 'ctf-reveal-emoji', esc(cfg.emoji || '🐱'));
+    if (cfg.src) { inner.src = cfg.src; inner.alt = ''; }
+    inner.style.filter = 'blur(' + levels[0] + 'px)';
+    stage.appendChild(inner); root.appendChild(stage);
+    var actions = el('div', 'ctf-actions');
+    var btn = el('button', 'ctf-btn', 'Reveal more'); actions.appendChild(btn); root.appendChild(actions);
+    var answered = false, opts = null;
+    if (cfg.options) {
+      opts = el('div', 'ctf-options cols-2');
+      cfg.options.forEach(function (o, i) {
+        var b = el('button', 'ctf-opt', '<span>' + esc(o) + '</span><span class="mark"></span>');
+        b.addEventListener('click', function () {
+          if (answered) return; answered = true;
+          var correct = i === cfg.answer;
+          opts.querySelectorAll('.ctf-opt').forEach(function (x, xi) { x.disabled = true; if (xi === cfg.answer) { x.classList.add('is-correct'); x.querySelector('.mark').textContent = '✓'; } });
+          if (!correct) { b.classList.add('is-wrong'); b.querySelector('.mark').textContent = '✕'; }
+          inner.style.filter = 'blur(0px)';
+          fb.className = 'ctf-feedback show ' + (correct ? 'good' : 'info');
+          fb.innerHTML = (correct ? '<b>Yes!</b> ' : '<b>It was a ' + esc(cfg.options[cfg.answer]) + '!</b> ') + (cfg.explain || '');
+          reveal(done, (cfg.complete && cfg.complete.progress) || 100); markDone(id);
+        });
+        opts.appendChild(b);
+      });
+      root.appendChild(opts);
+    }
+    var fb = el('div', 'ctf-feedback'); root.appendChild(fb);
+    var done = completionCard(cfg); if (done) root.appendChild(done);
+    btn.addEventListener('click', function () {
+      if (idx < levels.length - 1) { idx++; inner.style.filter = 'blur(' + levels[idx] + 'px)'; }
+      if (idx >= levels.length - 1) {
+        btn.disabled = true; btn.textContent = 'Fully revealed';
+        if (!cfg.options) { fb.className = 'ctf-feedback show good'; fb.innerHTML = cfg.explain || 'The clearer it gets, the more pattern there is to read.'; reveal(done, (cfg.complete && cfg.complete.progress) || 100); markDone(id); }
+      }
+    });
+  }
+
+  // =========================================================================
+  // SLIDER — drag a value and watch the output change (weights, confidence).
+  // =========================================================================
+  function renderSlider(root, cfg, id) {
+    root.innerHTML = header(cfg);
+    var min = cfg.min != null ? cfg.min : 0, max = cfg.max != null ? cfg.max : 100;
+    var input = el('input', 'ctf-range'); input.type = 'range'; input.min = min; input.max = max; input.step = cfg.step || 1;
+    input.value = cfg.value != null ? cfg.value : Math.round((min + max) / 2);
+    var row = el('div', 'ctf-slider-row'); row.appendChild(input); root.appendChild(row);
+    var readout = el('div', 'ctf-slider-out'); root.appendChild(readout);
+    var moved = false;
+    var done = completionCard(cfg);
+    function band(v) { if (!cfg.bands) return ''; for (var i = 0; i < cfg.bands.length; i++) { if (v <= cfg.bands[i].max) return cfg.bands[i].text; } return cfg.bands[cfg.bands.length - 1].text; }
+    function update() {
+      var v = Number(input.value), pct = (v - min) / (max - min) * 100;
+      input.style.setProperty('--ctf-pct', pct + '%');
+      readout.innerHTML = '<span class="ctf-slider-val">' + esc(v + (cfg.unit || '')) + '</span>' +
+        (cfg.label ? ' <span class="ctf-muted">' + esc(cfg.label) + '</span>' : '') +
+        (band(v) ? '<div class="ctf-slider-band">' + band(v) + '</div>' : '');
+    }
+    input.addEventListener('input', function () { update(); if (!moved) { moved = true; reveal(done, (cfg.complete && cfg.complete.progress) || 100); markDone(id); } });
+    update();
+    if (done) root.appendChild(done);
+  }
+
   // ---- registry + boot ----------------------------------------------------
-  var RENDERERS = { poll: renderPoll, sort: renderSort, choice: renderChoice, nextword: renderNextWord, attention: renderAttention, quiz: renderQuiz };
+  var RENDERERS = { poll: renderPoll, sort: renderSort, choice: renderChoice, nextword: renderNextWord, attention: renderAttention, quiz: renderQuiz, timeline: renderTimeline, reveal: renderReveal, slider: renderSlider };
 
   function hydrate(node) {
     if (node.getAttribute('data-ctf-ready')) return;
