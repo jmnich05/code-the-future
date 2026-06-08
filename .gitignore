@@ -23,3 +23,7 @@ build/
 
 # Redundant archive (unzipped folder is source of truth)
 Code the Future — Design System.zip
+
+# Local Claude Code config, tooling, and installed skills (not repo assets;
+# the design system is canonical at "Code the Future — Design System/")
+.claude/
