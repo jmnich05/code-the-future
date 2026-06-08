@@ -1,0 +1,14 @@
+# Deploy capstone/ as a Netlify site (or merge these settings into the main site).
+# Set OPENAI_API_KEY (and optionally OPENAI_MODEL) in:
+#   Netlify → Site configuration → Environment variables.
+# The key lives only here on the server — it is never sent to the browser.
+
+[build]
+  publish = "."
+  functions = "netlify/functions"
+
+# Browser calls /api/ai; Netlify routes it to the serverless function.
+[[redirects]]
+  from = "/api/ai"
+  to = "/.netlify/functions/ai"
+  status = 200
