@@ -19,7 +19,10 @@ const IMG = {
   turing: { src: "../assets/img/turing.jpg", cap: "<b>Alan Turing</b> — in 1950 he asked, “Can machines think?”", credit: "Public domain · Wikimedia Commons" },
   eniac: { src: "../assets/img/eniac.jpg", cap: "<b>ENIAC (1947)</b> — early computers were great at math, but couldn't learn.", credit: "U.S. Army · public domain" },
   neuron: { src: "../assets/img/neuron-cajal.jpg", cap: "<b>Real neurons</b>, drawn by Santiago Ramón y Cajal. AI's “neural networks” borrow this idea.", credit: "Ramón y Cajal · public domain" },
-  galaxy: { src: "../assets/img/galaxy-nasa.jpg", cap: "<b>The universe is vast.</b> Your generation will explore it with AI as a tool.", credit: "NASA · public domain" }
+  galaxy: { src: "../assets/img/galaxy-nasa.jpg", cap: "<b>The universe is vast.</b> Your generation will explore it with AI as a tool.", credit: "NASA · public domain" },
+  ada: { src: "../assets/img/ada-lovelace.jpg", cap: "<b>Ada Lovelace</b> — wrote the first computer program in the 1840s, a century before computers existed.", credit: "Public domain · Wikimedia Commons" },
+  rover: { src: "../assets/img/mars-rover-nasa.jpg", cap: "<b>A robot on Mars.</b> NASA's Curiosity rover took this selfie — built by people who once sat where you are.", credit: "NASA/JPL-Caltech · public domain" },
+  deepfield: { src: "../assets/img/deep-field-nasa.jpg", cap: "<b>Thousands of galaxies</b> in one tiny patch of sky — discovery is just getting started.", credit: "NASA/ESA Hubble · public domain" }
 };
 
 const TRACKS = {
@@ -27,13 +30,13 @@ const TRACKS = {
     md: "type-a-kids.md", out: "kids.json", cls: "track-kids",
     title: "What Is AI?", eyebrow: "Module 1 · Ages 8–11", unitWord: "Mission",
     capstone: { href: "../capstone/kids-big-mission.html", eyebrow: "🚀 The Big Mission", h: "Now use AI yourself", p: "You earned all 12 badges. Time for the best part — talk to a real AI.", btn: "Start the Big Mission →" },
-    figs: { "Is AI Like a Brain": ["neuron"], "The Story of AI": ["turing", "eniac"], "The Future Is Yours": ["galaxy"] }
+    figs: { "Is AI Like a Brain": ["neuron"], "The Story of AI": ["ada", "turing"], "What AI Is Great At": ["eniac"], "The Future Is Yours": ["rover", "galaxy"], "You Did It": ["deepfield"] }
   },
   adults: {
     md: "type-b-adults.md", out: "adults.json", cls: "track-adults",
     title: "What Is AI?", eyebrow: "Module 1 · Adults", unitWord: "Section",
     capstone: { href: "../capstone/adults-capstone.html", eyebrow: "Capstone", h: "Create & use AI", p: "You understand what AI is. Now operate one — write prompts and turn the temperature dial.", btn: "Open the capstone →" },
-    figs: { "70-Year Story, Part 1": ["turing", "eniac"], "Brain Inspiration": ["neuron"], "The Transformation Ahead": ["galaxy"] }
+    figs: { "70-Year Story, Part 1": ["turing", "eniac"], "Brain Inspiration": ["neuron"], "The Transformation Ahead": ["rover", "galaxy"], "Your Place in It": ["ada"], "Consolidation": ["deepfield"] }
   }
 };
 

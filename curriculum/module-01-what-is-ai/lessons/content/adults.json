@@ -406,7 +406,7 @@
     },
     {
      "type": "image",
-     "html": "<div class=\"lesson-fig\"><figure><img src=\"../assets/img/galaxy-nasa.jpg\" alt=\"\" loading=\"lazy\"><figcaption><b>The universe is vast.</b> Your generation will explore it with AI as a tool.<br><span class=\"credit\">NASA · public domain</span></figcaption></figure></div>"
+     "html": "<div class=\"lesson-fig row\"><figure><img src=\"../assets/img/mars-rover-nasa.jpg\" alt=\"\" loading=\"lazy\"><figcaption><b>A robot on Mars.</b> NASA's Curiosity rover took this selfie — built by people who once sat where you are.<br><span class=\"credit\">NASA/JPL-Caltech · public domain</span></figcaption></figure><figure><img src=\"../assets/img/galaxy-nasa.jpg\" alt=\"\" loading=\"lazy\"><figcaption><b>The universe is vast.</b> Your generation will explore it with AI as a tool.<br><span class=\"credit\">NASA · public domain</span></figcaption></figure></div>"
     },
     {
      "type": "text",
@@ -439,6 +439,10 @@
     {
      "type": "image",
      "html": "<div class=\"lesson-art\"><img src=\"../assets/art/trust.svg\" alt=\"\" loading=\"lazy\"></div>"
+    },
+    {
+     "type": "image",
+     "html": "<div class=\"lesson-fig\"><figure><img src=\"../assets/img/ada-lovelace.jpg\" alt=\"\" loading=\"lazy\"><figcaption><b>Ada Lovelace</b> — wrote the first computer program in the 1840s, a century before computers existed.<br><span class=\"credit\">Public domain · Wikimedia Commons</span></figcaption></figure></div>"
     },
     {
      "type": "text",
@@ -479,6 +483,10 @@
     {
      "type": "image",
      "html": "<div class=\"lesson-art\"><img src=\"../assets/art/trophy.svg\" alt=\"\" loading=\"lazy\"></div>"
+    },
+    {
+     "type": "image",
+     "html": "<div class=\"lesson-fig\"><figure><img src=\"../assets/img/deep-field-nasa.jpg\" alt=\"\" loading=\"lazy\"><figcaption><b>Thousands of galaxies</b> in one tiny patch of sky — discovery is just getting started.<br><span class=\"credit\">NASA/ESA Hubble · public domain</span></figcaption></figure></div>"
     },
     {
      "type": "text",

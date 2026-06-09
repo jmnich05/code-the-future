@@ -3,162 +3,288 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Code the Future — Cohort Board (wireframe)</title>
+<title>Code the Future — Cohort Board</title>
 <link rel="stylesheet" href="app.css">
 <style>
   body{ background:var(--ink-50); }
-  .ribbon{ background:var(--amber-400); color:var(--ink-900); text-align:center; font-family:var(--font-mono); font-size:11px; letter-spacing:.12em; text-transform:uppercase; padding:6px; }
   .bar{ background:var(--grad-night); color:#fff; }
   .bar .wrap{ display:flex; align-items:center; gap:14px; padding:16px 20px; max-width:1200px; }
-  .bar .brand{ font-family:var(--font-display); font-weight:700; }
+  .bar .brand{ font-family:var(--font-display); font-weight:700; white-space:nowrap; }
   .bar .brand .accent{ color:var(--teal-400); }
-  .bar .cohort{ margin-left:8px; background:rgba(255,255,255,.1); border:1px solid rgba(255,255,255,.18); border-radius:var(--radius-pill); padding:6px 14px; font-size:.85rem; }
+  .bar a.brand{ color:#fff; text-decoration:none; }
+  .bar .cohort{ background:rgba(255,255,255,.1); border:1px solid rgba(255,255,255,.18); border-radius:var(--radius-pill); padding:6px 14px; font-size:.85rem; }
   .bar .me{ margin-left:auto; display:flex; align-items:center; gap:10px; font-size:.9rem; }
+  .bar .me a{ color:#cfe0ff; text-decoration:none; }
   .layout{ max-width:1200px; margin:22px auto; padding:0 20px; display:grid; grid-template-columns:220px 1fr 260px; gap:22px; align-items:start; }
-  @media (max-width:980px){ .layout{ grid-template-columns:1fr; } .side-right{ display:none; } .channels{ display:flex; flex-wrap:wrap; gap:8px; } }
+  @media (max-width:980px){ .layout{ grid-template-columns:1fr; } .side-right{ display:none; } }
   .panel{ background:var(--white); border:1px solid var(--ink-200); border-radius:var(--radius-lg); box-shadow:var(--shadow-sm); }
   .panel-h{ font-family:var(--font-mono); font-size:11px; letter-spacing:.1em; text-transform:uppercase; color:var(--ink-500); padding:16px 16px 8px; }
-
-  /* channels */
   .chan{ display:flex; align-items:center; gap:10px; padding:11px 14px; border-radius:12px; cursor:pointer; font-weight:600; color:var(--ink-700); }
   .chan:hover{ background:var(--ink-50); }
   .chan.active{ background:var(--blue-50); color:var(--blue-700); }
-  .chan .n{ margin-left:auto; font-size:.75rem; background:var(--ink-100); color:var(--ink-500); border-radius:999px; padding:2px 8px; }
   .teacher-cta{ margin:10px; background:var(--grad-spark); color:#fff; border-radius:var(--radius-md); padding:14px; }
   .teacher-cta b{ display:block; font-family:var(--font-display); }
   .teacher-cta button{ margin-top:8px; font:inherit; font-weight:700; border:none; background:#fff; color:var(--blue-700); border-radius:999px; padding:8px 14px; cursor:pointer; }
-
-  /* composer */
-  .composer{ display:flex; gap:12px; padding:16px; align-items:center; }
-  .composer .fake-input{ flex:1; background:var(--ink-50); border:1px solid var(--ink-200); border-radius:var(--radius-pill); padding:13px 18px; color:var(--ink-400); }
+  .composer{ display:flex; gap:12px; padding:16px; align-items:flex-start; border-bottom:1px solid var(--ink-100); }
+  .composer textarea{ flex:1; font:inherit; background:var(--ink-50); border:1px solid var(--ink-200); border-radius:var(--radius-md); padding:12px 16px; min-height:48px; resize:vertical; }
+  .composer textarea:focus{ outline:none; border-color:var(--blue-600); }
   .composer .post{ font:inherit; font-family:var(--font-display); font-weight:700; color:#fff; background:linear-gradient(120deg,var(--blue-600),var(--teal-600)); border:none; border-radius:999px; padding:11px 20px; cursor:pointer; }
-
-  /* posts */
   .post-card{ padding:18px; }
   .post-card + .post-card{ border-top:1px solid var(--ink-100); }
   .post-card.pinned{ border:2px solid var(--amber-400); border-radius:var(--radius-lg); margin:14px; background:#FFFCF4; }
-  .pinrow{ font-family:var(--font-mono); font-size:10px; letter-spacing:.1em; text-transform:uppercase; color:var(--amber-400); margin-bottom:8px; }
+  .pinrow{ font-family:var(--font-mono); font-size:10px; letter-spacing:.1em; text-transform:uppercase; color:#C68A00; margin-bottom:8px; }
   .ph{ display:flex; align-items:center; gap:12px; }
   .ph .who{ font-weight:700; color:var(--ink-900); }
   .ph .who .role{ font-family:var(--font-mono); font-size:10px; letter-spacing:.06em; text-transform:uppercase; background:var(--blue-600); color:#fff; border-radius:999px; padding:2px 8px; margin-left:6px; }
   .ph .when{ margin-left:auto; font-size:.8rem; color:var(--ink-400); }
-  .pbody{ margin:12px 0 12px 0; font-size:1.05rem; color:var(--ink-800,#161F33); }
-  .pimg{ height:160px; border-radius:var(--radius-md); background:var(--grad-night); display:flex; align-items:center; justify-content:center; color:#cfe0ff; font-family:var(--font-mono); font-size:12px; margin:10px 0; }
-  .react{ display:flex; gap:8px; align-items:center; }
+  .pbody{ margin:12px 0; font-size:1.05rem; color:var(--ink-700); white-space:pre-wrap; }
+  .react{ display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
   .react .r{ border:1px solid var(--ink-200); background:var(--white); border-radius:999px; padding:5px 11px; font-size:.85rem; cursor:pointer; }
   .react .r:hover{ border-color:var(--blue-600); }
-  .react .replies{ margin-left:auto; font-size:.85rem; color:var(--ink-500); }
-
-  /* members */
+  .react .r.mine{ border-color:var(--blue-600); background:var(--blue-50); }
+  .react .replies{ margin-left:auto; font-size:.85rem; color:var(--blue-700); cursor:pointer; background:none; border:none; font-weight:600; }
+  .comments{ display:none; margin-top:12px; border-top:1px dashed var(--ink-200); padding-top:12px; }
+  .comments.open{ display:block; }
+  .comment{ display:flex; gap:10px; margin-bottom:10px; }
+  .comment .cb{ background:var(--ink-50); border-radius:12px; padding:8px 12px; font-size:.95rem; flex:1; }
+  .comment .cb b{ color:var(--ink-900); margin-right:6px; }
+  .crow{ display:flex; gap:8px; }
+  .crow input{ flex:1; font:inherit; border:1px solid var(--ink-200); border-radius:999px; padding:9px 14px; }
+  .crow input:focus{ outline:none; border-color:var(--blue-600); }
+  .crow button{ font:inherit; font-weight:700; border:none; background:var(--blue-600); color:#fff; border-radius:999px; padding:8px 16px; cursor:pointer; }
   .members{ display:grid; grid-template-columns:repeat(4,1fr); gap:10px; padding:14px; }
   .member{ text-align:center; }
   .member .avatar.sm{ width:46px; height:46px; margin:0 auto; }
   .member .mn{ font-size:.7rem; color:var(--ink-500); margin-top:4px; display:block; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
-  .teacher-card{ display:flex; align-items:center; gap:12px; padding:14px; }
-  .teacher-card .avatar.sm{ width:52px; height:52px; }
-  .teacher-card b{ color:var(--ink-900); } .teacher-card span{ font-size:.8rem; color:var(--ink-500); }
+  .empty{ text-align:center; color:var(--ink-400); padding:40px 20px; }
+  .demo-tag{ font-family:var(--font-mono); font-size:10px; letter-spacing:.1em; text-transform:uppercase; color:var(--ink-400); background:var(--ink-100); border-radius:999px; padding:3px 10px; }
+  /* join overlay */
+  .overlay{ position:fixed; inset:0; background:rgba(7,12,26,.7); display:none; align-items:center; justify-content:center; z-index:40; padding:20px; }
+  .overlay.open{ display:flex; }
+  .joincard{ background:#fff; border-radius:var(--radius-xl); padding:34px; max-width:440px; width:100%; text-align:center; box-shadow:var(--shadow-lg); }
+  .joincard h2{ margin:.3em 0; }
+  .joincard .input{ text-align:center; font-family:var(--font-mono); font-size:1.3rem; letter-spacing:.2em; text-transform:uppercase; margin:14px 0; }
 </style>
 </head>
 <body>
-<div class="ribbon">Wireframe · concept — the cohort communication board</div>
 <div class="bar"><div class="wrap" style="margin:0 auto">
-  <span class="brand">Code the <span class="accent">Future</span></span>
-  <span class="cohort">◆ Summer 2026 — Pilot</span>
-  <span class="me"><span class="avatar sm" id="meAv"></span> PixelFox</span>
+  <a class="brand" href="index.html">Code the <span class="accent">Future</span></a>
+  <span class="cohort" id="cohortName">◆ Cohort Board</span>
+  <span class="me"><span class="avatar sm" id="meAv"></span> <a href="profile.html" id="meName">Me</a></span>
 </div></div>
 
 <div class="layout">
-  <!-- LEFT: channels -->
   <div>
     <div class="panel">
       <div class="panel-h">Channels</div>
-      <div style="padding:6px">
-        <div class="chan active">📣 Announcements <span class="n">3</span></div>
-        <div class="chan">💬 General <span class="n">24</span></div>
-        <div class="chan">🏆 Show &amp; Tell <span class="n">11</span></div>
-        <div class="chan">❓ Help &amp; Questions <span class="n">7</span></div>
-      </div>
+      <div style="padding:6px" id="channels"></div>
       <div class="teacher-cta">
         <b>Message Mr. Jon</b>
-        <small>Your guide for Summer 2026.</small>
-        <div><button>Start a chat →</button></div>
+        <small>Your guide this summer.</small>
+        <div><button onclick="document.querySelector('[data-ch=help]').click()">Ask in Help →</button></div>
       </div>
     </div>
   </div>
 
-  <!-- CENTER: feed -->
   <div class="panel">
     <div class="composer">
       <span class="avatar sm" id="meAv2"></span>
-      <div class="fake-input">Share something with your cohort…</div>
-      <button class="post">Post</button>
+      <textarea id="composeBody" maxlength="2000" placeholder="Share something with your cohort…"></textarea>
+      <button class="post" id="composePost">Post</button>
     </div>
-
-    <!-- pinned teacher announcement -->
-    <div class="post-card pinned">
-      <div class="pinrow">📌 Pinned · from your teacher</div>
-      <div class="ph"><span class="avatar sm" id="jonAv"></span>
-        <span class="who">Mr. Jon <span class="role">Teacher</span></span>
-        <span class="when">2h ago</span></div>
-      <div class="pbody">Welcome to <b>Summer 2026!</b> 🎉 This week we're finishing <b>Module 1 — What Is AI?</b> Reply with your favorite Mission and one thing that surprised you. I'll feature a few on Friday!</div>
-      <div class="react"><span class="r">🎉 18</span><span class="r">🔥 9</span><span class="r">＋</span><span class="replies">12 replies</span></div>
-    </div>
-
-    <!-- posts -->
-    <div class="post-card">
-      <div class="ph"><span class="avatar sm" data-av='{"bg":"lilac","color":"violet","face":"star","acc":"crown"}'></span>
-        <span class="who">Nova</span><span class="when">1h ago</span></div>
-      <div class="pbody">Just earned the <b>Attention Ace</b> badge! 🧠 The "what does <i>it</i> mean" trick honestly blew my mind.</div>
-      <div class="react"><span class="r">🧠 7</span><span class="r">👏 5</span><span class="r">＋</span><span class="replies">3 replies</span></div>
-    </div>
-
-    <div class="post-card">
-      <div class="ph"><span class="avatar sm" data-av='{"bg":"peach","color":"coral","face":"cool","acc":"headphones"}'></span>
-        <span class="who">PixelFox</span><span class="when">40m ago</span></div>
-      <div class="pbody">Used the Big Mission AI playground to write a story about a skateboarding dragon 🐉🛹 — posting it in Show &amp; Tell!</div>
-      <div class="pimg">[ image / project preview ]</div>
-      <div class="react"><span class="r">😂 14</span><span class="r">🐉 6</span><span class="r">＋</span><span class="replies">5 replies</span></div>
-    </div>
-
-    <div class="post-card">
-      <div class="ph"><span class="avatar sm" data-av='{"bg":"mint","color":"green","face":"happy","acc":"glasses"}'></span>
-        <span class="who">Sam</span><span class="when">today</span></div>
-      <div class="pbody">Question for ❓Help: does AI actually <i>think</i>, or just guess the next word? 🤔</div>
-      <div class="react"><span class="r">👍 4</span><span class="r">＋</span><span class="replies">Mr. Jon replied</span></div>
-    </div>
+    <div id="feed"><div class="empty">Loading…</div></div>
   </div>
 
-  <!-- RIGHT: members -->
   <div class="side-right">
-    <div class="panel" style="margin-bottom:18px">
-      <div class="panel-h">Your teacher</div>
-      <div class="teacher-card"><span class="avatar sm" id="jonAv2"></span>
-        <div><b>Mr. Jon</b><br><span>Louisville · online</span></div></div>
-    </div>
     <div class="panel">
-      <div class="panel-h">Cohort · 14 builders</div>
+      <div class="panel-h" id="memberCount">Cohort</div>
       <div class="members" id="members"></div>
     </div>
   </div>
 </div>
 
+<div class="overlay" id="joinOverlay">
+  <div class="joincard">
+    <p class="eyebrow">◆ Join your cohort</p>
+    <h2>Enter your cohort code</h2>
+    <p class="muted">Your teacher gave you a short code — type it to join the board.</p>
+    <input class="input" id="joinCode" maxlength="12" placeholder="FUTURE26">
+    <div><button class="btn" id="joinGo">Join →</button></div>
+    <p class="muted" id="joinErr" style="color:var(--coral-600);min-height:1.2em;margin-top:10px"></p>
+  </div>
+</div>
+
+<script src="lib/config.js"></script>
 <script src="lib/avatar.js"></script>
+<script type="module">
+  import { CTFDB } from "./lib/ctf-db.js";
+  CTFDB.init().then(function(){ window.dispatchEvent(new Event("ctfdb:ready")); });
+</script>
 <script>
 (function(){
   var A = window.CTFAvatar;
-  // render any element with data-av
-  document.querySelectorAll('[data-av]').forEach(function(el){ el.innerHTML = A.render(JSON.parse(el.getAttribute('data-av'))); });
-  var me = {bg:"peach",color:"coral",face:"cool",acc:"headphones"};
-  document.getElementById('meAv').innerHTML = A.render(me);
-  document.getElementById('meAv2').innerHTML = A.render(me);
-  var jon = {bg:"night",color:"blue",face:"happy",acc:"cap"};
-  document.getElementById('jonAv').innerHTML = A.render(jon);
-  document.getElementById('jonAv2').innerHTML = A.render(jon);
-  // member grid — varied avatars
-  var names = ["Ari","Mia","Leo","Kai","Zoe","Eli","Ivy","Max","Ren","Tae","Bea","Jude"];
-  document.getElementById('members').innerHTML = names.map(function(n){
-    return '<div class="member"><span class="avatar sm">'+A.render(A.random())+'</span><span class="mn">'+n+'</span></div>';
-  }).join('');
+  var CHANNELS = [
+    { key:"announcements", label:"📣 Announcements" },
+    { key:"general", label:"💬 General" },
+    { key:"show_tell", label:"🏆 Show & Tell" },
+    { key:"help", label:"❓ Help & Questions" }
+  ];
+  var EMOJIS = ["🎉","🔥","🧠","👏"];
+  var state = { cohort:null, channel:"general", me:null, myRole:"learner", posts:[] };
+
+  function esc(s){ return String(s==null?"":s).replace(/[&<>"]/g, function(c){ return ({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"})[c]; }); }
+  function ago(ts){ var s=(Date.now()-new Date(ts).getTime())/1000; if(s<60)return"just now"; if(s<3600)return Math.floor(s/60)+"m ago"; if(s<86400)return Math.floor(s/3600)+"h ago"; return Math.floor(s/86400)+"d ago"; }
+  function av(cfg){ return A.render(cfg && Object.keys(cfg).length ? cfg : A.DEFAULT); }
+
+  function renderChannels(){
+    document.getElementById("channels").innerHTML = CHANNELS.map(function(c){
+      return '<div class="chan'+(state.channel===c.key?" active":"")+'" data-ch="'+c.key+'">'+c.label+'</div>';
+    }).join("");
+    document.querySelectorAll(".chan").forEach(function(el){
+      el.onclick = function(){ state.channel = el.getAttribute("data-ch"); renderChannels(); loadPosts(); };
+    });
+  }
+
+  // demo content shown when a channel is empty (so the board never looks dead)
+  var DEMO = {
+    announcements: [{ demo:true, pinned:true, who:"Mr. Jon", role:"Teacher", avatar:{bg:"night",color:"blue",face:"happy",acc:"cap"}, when:"sample",
+      body:"Welcome to Summer 2026! 🎉 This week we're finishing Module 1 — What Is AI? Reply with your favorite Mission and one thing that surprised you." }],
+    general: [{ demo:true, who:"Nova", avatar:{bg:"lilac",color:"violet",face:"star",acc:"crown"}, when:"sample",
+      body:"Just earned the Attention Ace badge! 🧠 The \"what does it mean\" trick honestly blew my mind." }],
+    show_tell: [{ demo:true, who:"PixelFox", avatar:{bg:"peach",color:"coral",face:"cool",acc:"headphones"}, when:"sample",
+      body:"Used the Big Mission AI playground to write a story about a skateboarding dragon 🐉🛹" }],
+    help: [{ demo:true, who:"Sam", avatar:{bg:"mint",color:"green",face:"happy",acc:"glasses"}, when:"sample",
+      body:"Does AI actually think, or just guess the next word? 🤔" }]
+  };
+
+  function postCard(p){
+    var prof = p.profiles || {};
+    var mine = state.me && p.author_id === state.me;
+    var rx = {};
+    (p.post_reactions||[]).forEach(function(r){ rx[r.emoji] = rx[r.emoji] || {n:0,mine:false}; rx[r.emoji].n++; if(state.me && r.user_id===state.me) rx[r.emoji].mine=true; });
+    var chips = EMOJIS.map(function(e){
+      var d = rx[e]; return '<button class="r'+(d&&d.mine?" mine":"")+'" data-react="'+e+'" data-post="'+p.id+'">'+e+(d?" "+d.n:"")+'</button>';
+    }).join("");
+    var nComments = (p.post_comments||[]).length;
+    return '<div class="post-card'+(p.pinned?" pinned":"")+'">'+
+      (p.pinned?'<div class="pinrow">📌 Pinned · from your teacher</div>':"")+
+      '<div class="ph"><span class="avatar sm">'+av(prof.avatar)+'</span>'+
+      '<span class="who">'+esc(prof.display_name||"Explorer")+(p.isStaff?' <span class="role">Teacher</span>':"")+'</span>'+
+      '<span class="when">'+ago(p.created_at)+'</span></div>'+
+      '<div class="pbody">'+esc(p.body)+'</div>'+
+      '<div class="react">'+chips+'<button class="replies" data-comments="'+p.id+'">'+(nComments?nComments+" replies":"Reply")+'</button></div>'+
+      '<div class="comments" id="c-'+p.id+'"><div class="clist"></div>'+
+      '<div class="crow"><input maxlength="1000" placeholder="Write a reply…"><button data-send="'+p.id+'">Send</button></div></div>'+
+      '</div>';
+  }
+
+  function demoCard(d){
+    return '<div class="post-card'+(d.pinned?" pinned":"")+'">'+
+      (d.pinned?'<div class="pinrow">📌 Pinned · from your teacher</div>':"")+
+      '<div class="ph"><span class="avatar sm">'+A.render(d.avatar)+'</span>'+
+      '<span class="who">'+esc(d.who)+(d.role?' <span class="role">'+d.role+'</span>':"")+'</span>'+
+      '<span class="when"><span class="demo-tag">example</span></span></div>'+
+      '<div class="pbody">'+esc(d.body)+'</div></div>';
+  }
+
+  async function loadPosts(){
+    var feed = document.getElementById("feed");
+    if (!state.cohort){ feed.innerHTML = '<div class="empty">Join a cohort to see the board.</div>'; return; }
+    var posts = await window.CTFDB.listPosts(state.cohort.id, state.channel);
+    state.posts = posts;
+    var staffIds = state.staffIds || {};
+    posts.forEach(function(p){ p.isStaff = !!staffIds[p.author_id]; });
+    var html = posts.map(postCard).join("");
+    var demos = (DEMO[state.channel]||[]).map(demoCard).join("");
+    feed.innerHTML = (html || "") + (posts.length < 2 ? demos : "");
+    if (!html && !demos) feed.innerHTML = '<div class="empty">Nothing here yet — be the first to post!</div>';
+    bindFeed();
+  }
+
+  function bindFeed(){
+    document.querySelectorAll("[data-react]").forEach(function(b){
+      b.onclick = async function(){ await window.CTFDB.toggleReaction(b.getAttribute("data-post"), b.getAttribute("data-react")); loadPosts(); };
+    });
+    document.querySelectorAll("[data-comments]").forEach(function(b){
+      b.onclick = async function(){
+        var id = b.getAttribute("data-comments");
+        var box = document.getElementById("c-"+id);
+        box.classList.toggle("open");
+        if (box.classList.contains("open")){
+          var cs = await window.CTFDB.listComments(id);
+          box.querySelector(".clist").innerHTML = cs.map(function(c){
+            var pr = c.profiles||{};
+            return '<div class="comment"><span class="avatar sm" style="width:34px;height:34px">'+av(pr.avatar)+'</span><div class="cb"><b>'+esc(pr.display_name||"Explorer")+'</b>'+esc(c.body)+'</div></div>';
+          }).join("");
+        }
+      };
+    });
+    document.querySelectorAll("[data-send]").forEach(function(b){
+      b.onclick = async function(){
+        var id = b.getAttribute("data-send");
+        var input = b.parentNode.querySelector("input");
+        var t = input.value.trim(); if(!t) return;
+        await window.CTFDB.addComment(id, t); input.value="";
+        var box = document.getElementById("c-"+id);
+        box.classList.remove("open");
+        document.querySelector('[data-comments="'+id+'"]').click();
+      };
+    });
+  }
+
+  async function loadMembers(){
+    if (!state.cohort) return;
+    var ms = await window.CTFDB.listMembers(state.cohort.id);
+    state.staffIds = {}; ms.forEach(function(m){ if(m.role==="staff") state.staffIds[m.user_id]=true; });
+    document.getElementById("memberCount").textContent = "Cohort · " + ms.length + (ms.length===1?" builder":" builders");
+    document.getElementById("members").innerHTML = ms.map(function(m){
+      var pr = m.profiles||{};
+      return '<div class="member"><span class="avatar sm">'+av(pr.avatar)+'</span><span class="mn">'+esc(pr.display_name||"Explorer")+'</span></div>';
+    }).join("");
+  }
+
+  async function boot(){
+    var D = window.CTFDB;
+    if (!D || !D.enabled){ document.getElementById("feed").innerHTML = '<div class="empty">Connecting…</div>'; return; }
+    state.me = D.user.id;
+    var p = await D.getProfile();
+    if (p && !p.onboarded){ location.href = "onboarding.html"; return; }
+    if (p){ document.getElementById("meName").textContent = p.display_name || "Me";
+      document.getElementById("meAv").innerHTML = av(p.avatar);
+      document.getElementById("meAv2").innerHTML = av(p.avatar); }
+    var cohorts = await D.myCohorts();
+    if (!cohorts.length){ document.getElementById("joinOverlay").classList.add("open"); renderChannels(); return; }
+    state.cohort = cohorts[0];
+    state.myRole = cohorts[0].role;
+    document.getElementById("cohortName").textContent = "◆ " + state.cohort.name;
+    renderChannels();
+    await loadMembers();
+    await loadPosts();
+  }
+
+  document.getElementById("composePost").onclick = async function(){
+    var ta = document.getElementById("composeBody");
+    var t = ta.value.trim(); if(!t || !state.cohort) return;
+    var ch = state.channel === "announcements" && state.myRole !== "staff" ? "general" : state.channel;
+    var r = await window.CTFDB.createPost(state.cohort.id, ch, t, false);
+    if (r.error){ alert("Couldn't post: " + r.error); return; }
+    ta.value = ""; if (ch !== state.channel){ state.channel = ch; renderChannels(); }
+    loadPosts();
+  };
+
+  document.getElementById("joinGo").onclick = async function(){
+    var code = document.getElementById("joinCode").value.trim();
+    if (!code) return;
+    var r = await window.CTFDB.joinCohort(code);
+    if (r.error){ document.getElementById("joinErr").textContent = "Hmm — that code didn't work."; return; }
+    document.getElementById("joinOverlay").classList.remove("open");
+    boot();
+  };
+
+  document.getElementById("meAv").innerHTML = av(null);
+  document.getElementById("meAv2").innerHTML = av(null);
+  if (window.CTFDB && window.CTFDB.enabled) boot();
+  else window.addEventListener("ctfdb:ready", boot, { once:true });
 })();
 </script>
 </body>

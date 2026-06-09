@@ -113,9 +113,70 @@ async function logEvent(kind, props = {}) {
   await sb.from("events").insert({ user_id: uid(), kind, props });
 }
 
+// ---- cohort board ---------------------------------------------------------
+async function myCohorts() {
+  if (!ok()) return [];
+  const { data } = await sb.from("cohort_members").select("role, cohorts(id,name,join_code,track)").eq("user_id", uid());
+  return (data || []).map((r) => ({ role: r.role, ...r.cohorts }));
+}
+
+async function profilesById(ids) {
+  const uniq = [...new Set(ids)].filter(Boolean);
+  if (!uniq.length) return {};
+  const { data } = await sb.from("profiles").select("id, display_name, avatar").in("id", uniq);
+  const map = {};
+  (data || []).forEach((p) => { map[p.id] = p; });
+  return map;
+}
+
+async function listMembers(cohortId) {
+  if (!ok()) return [];
+  const { data } = await sb.from("cohort_members").select("user_id, role").eq("cohort_id", cohortId);
+  const profs = await profilesById((data || []).map((m) => m.user_id));
+  return (data || []).map((m) => ({ ...m, profiles: profs[m.user_id] || null }));
+}
+
+async function listPosts(cohortId, channel) {
+  if (!ok()) return [];
+  let q = sb.from("posts")
+    .select("id, channel, body, pinned, created_at, author_id, post_reactions(emoji, user_id), post_comments(id)")
+    .eq("cohort_id", cohortId).order("pinned", { ascending: false }).order("created_at", { ascending: false }).limit(50);
+  if (channel) q = q.eq("channel", channel);
+  const { data, error } = await q;
+  if (error) { console.warn("[CTFDB] listPosts:", error.message); return []; }
+  const profs = await profilesById((data || []).map((p) => p.author_id));
+  return (data || []).map((p) => ({ ...p, profiles: profs[p.author_id] || null }));
+}
+
+async function createPost(cohortId, channel, body, pinned = false) {
+  if (!ok()) return { error: "not-connected" };
+  const { data, error } = await sb.from("posts").insert({ cohort_id: cohortId, author_id: uid(), channel, body, pinned }).select().maybeSingle();
+  return error ? { error: error.message } : { post: data };
+}
+
+async function toggleReaction(postId, emoji) {
+  if (!ok()) return;
+  const { error } = await sb.from("post_reactions").insert({ post_id: postId, user_id: uid(), emoji });
+  if (error) await sb.from("post_reactions").delete().match({ post_id: postId, user_id: uid(), emoji });
+}
+
+async function listComments(postId) {
+  if (!ok()) return [];
+  const { data } = await sb.from("post_comments").select("id, body, created_at, author_id").eq("post_id", postId).order("created_at");
+  const profs = await profilesById((data || []).map((c) => c.author_id));
+  return (data || []).map((c) => ({ ...c, profiles: profs[c.author_id] || null }));
+}
+
+async function addComment(postId, body) {
+  if (!ok()) return { error: "not-connected" };
+  const { data, error } = await sb.from("post_comments").insert({ post_id: postId, author_id: uid(), body }).select().maybeSingle();
+  return error ? { error: error.message } : { comment: data };
+}
+
 export const CTFDB = {
   init, saveProgress, getProgress, saveWidgetResponse, getWidgetResponse,
   awardBadge, listBadges, joinCohort, getProfile, updateProfile, logEvent,
+  myCohorts, listMembers, listPosts, createPost, toggleReaction, listComments, addComment,
   get user() { return user; }, get enabled() { return enabled; }
 };
 if (typeof window !== "undefined") window.CTFDB = CTFDB;

@@ -9,6 +9,9 @@ Wikimedia Commons. Attribution kept as good practice even where not legally requ
 | `eniac.jpg` | ENIAC, the early electronic computer (1947) | U.S. Army photo, via Wikimedia Commons | Public domain (US federal work) |
 | `neuron-cajal.jpg` | Neuron drawing (Purkinje cell) | Santiago Ramón y Cajal (d. 1934), via Wikimedia Commons | Public domain |
 | `galaxy-nasa.jpg` | Spiral galaxy NGC 4414 | NASA/Hubble, via Wikimedia Commons | Public domain (NASA) |
+| `ada-lovelace.jpg` | Ada Lovelace portrait (1840) | Margaret Sarah Carpenter (d. 1872), via Wikimedia Commons | Public domain |
+| `mars-rover-nasa.jpg` | Curiosity rover self-portrait on Mars | NASA/JPL-Caltech, via Wikimedia Commons | Public domain (NASA) |
+| `deep-field-nasa.jpg` | Hubble Ultra Deep Field | NASA/ESA Hubble, via Wikimedia Commons | Public domain (NASA) |
 
 ## Sourcing policy (read before adding images)
 

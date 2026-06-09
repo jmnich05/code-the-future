@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Code the Future — Home</title>
+<link rel="stylesheet" href="app.css">
+<style>
+  .hero{ position:relative; overflow:hidden; color:#fff; padding:48px 0 96px;
+    background:radial-gradient(130% 150% at 82% -15%, rgba(38,199,209,.30), transparent 55%), var(--grad-night); }
+  .hero .wrap{ display:flex; align-items:center; gap:18px; flex-wrap:wrap; }
+  .hero .brand{ font-family:var(--font-display); font-weight:700; font-size:1.15rem; }
+  .hero .brand .accent{ color:var(--teal-400); }
+  .hero nav{ margin-left:auto; display:flex; gap:18px; }
+  .hero nav a{ color:#cfe0ff; text-decoration:none; font-weight:600; font-size:.95rem; }
+  .hero .big{ margin-top:46px; }
+  .hero h1{ color:#fff; font-size:3rem; line-height:1.05; letter-spacing:-.03em; }
+  .hero h1 .accent{ background:linear-gradient(120deg,#3D74FF,#26C7D1); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent; }
+  .hero p.sub{ opacity:.88; font-size:1.15rem; max-width:54ch; }
+  @media (max-width:560px){ .hero h1{ font-size:2.1rem; } }
+
+  .deck{ margin-top:-56px; display:grid; grid-template-columns:1.4fr 1fr 1fr; gap:18px; }
+  @media (max-width:900px){ .deck{ grid-template-columns:1fr; } }
+  .tile{ background:var(--white); border:1px solid var(--ink-200); border-radius:var(--radius-xl); box-shadow:var(--shadow-lg); padding:26px; display:flex; flex-direction:column; gap:10px; text-decoration:none; color:var(--ink-700); transition:transform .15s var(--ease-out), box-shadow .15s; }
+  .tile:hover{ transform:translateY(-3px); }
+  .tile h2{ font-size:1.4rem; }
+  .tile .eyebrow{ margin:0; }
+  .tile .go{ margin-top:auto; font-family:var(--font-display); font-weight:700; color:var(--blue-700); }
+  .tile.primary{ background:var(--grad-spark); color:#fff; border:none; }
+  .tile.primary h2, .tile.primary .go{ color:#fff; }
+  .tile.primary .eyebrow{ color:#E4FBFC; }
+  .progressbar{ height:8px; background:rgba(255,255,255,.3); border-radius:999px; overflow:hidden; }
+  .progressbar > i{ display:block; height:100%; background:#fff; border-radius:999px; }
+  .tile .meta{ font-size:.92rem; opacity:.92; }
+  .me-row{ display:flex; align-items:center; gap:12px; }
+  .me-row .avatar.sm{ width:54px; height:54px; }
+  .me-row b{ color:var(--ink-900); font-family:var(--font-display); font-size:1.15rem; }
+  .tile.primary .me-row b{ color:#fff; }
+  .badgecount{ font-size:.9rem; }
+
+  .tracks{ margin:34px 0 60px; display:grid; grid-template-columns:1fr 1fr; gap:18px; }
+  @media (max-width:700px){ .tracks{ grid-template-columns:1fr; } }
+  .track{ border-radius:var(--radius-lg); padding:22px; border:1px solid var(--ink-200); background:var(--white); box-shadow:var(--shadow-sm); display:flex; gap:16px; align-items:center; text-decoration:none; color:var(--ink-700); transition:transform .15s; }
+  .track:hover{ transform:translateY(-2px); }
+  .track .ic{ font-size:2rem; }
+  .track b{ display:block; color:var(--ink-900); font-family:var(--font-display); font-size:1.1rem; }
+  .track span{ font-size:.9rem; color:var(--ink-500); }
+  footer{ text-align:center; color:var(--ink-400); font-family:var(--font-mono); font-size:11px; letter-spacing:.08em; padding:0 0 40px; }
+</style>
+</head>
+<body>
+<div class="hero">
+  <div class="wrap">
+    <span class="brand">◆ Code the <span class="accent">Future</span></span>
+    <nav>
+      <a href="board.html">Board</a>
+      <a href="profile.html">Profile</a>
+      <a href="../curriculum/module-01-what-is-ai/lessons/index.html">Lessons</a>
+    </nav>
+  </div>
+  <div class="wrap big">
+    <div>
+      <p class="eyebrow" style="color:#26C7D1">Summer 2026 · Louisville, KY</p>
+      <h1>Learn to build <span class="accent">what's next.</span></h1>
+      <p class="sub">AI literacy and modern coding — the way the work actually happens. Pick up where you left off, check the cohort board, or customize your character.</p>
+    </div>
+  </div>
+</div>
+
+<div class="wrap">
+  <div class="deck">
+    <a class="tile primary" href="../curriculum/module-01-what-is-ai/lessons/index.html" id="continueTile">
+      <p class="eyebrow">Continue learning</p>
+      <h2 id="contTitle">Module 1 — What Is AI?</h2>
+      <div class="progressbar"><i id="contBar" style="width:0%"></i></div>
+      <span class="meta" id="contMeta">Start your first Mission →</span>
+      <span class="go" id="contGo">Start →</span>
+    </a>
+    <a class="tile" href="profile.html">
+      <p class="eyebrow">My profile</p>
+      <div class="me-row"><span class="avatar sm" id="homeAv"></span><div><b id="homeName">Explorer</b><div class="badgecount muted" id="homeBadges">&nbsp;</div></div></div>
+      <span class="go">Customize your character →</span>
+    </a>
+    <a class="tile" href="board.html">
+      <p class="eyebrow">Cohort board</p>
+      <h2 style="font-size:1.2rem" id="boardTitle">Say hi to your cohort</h2>
+      <span class="meta muted">Announcements, Show &amp; Tell, and help from Mr. Jon.</span>
+      <span class="go">Open the board →</span>
+    </a>
+  </div>
+
+  <div class="tracks">
+    <a class="track" href="../curriculum/module-01-what-is-ai/lessons/player.html?track=kids">
+      <span class="ic">🚀</span>
+      <div><b>Kids · 12 Missions</b><span>Ages 8–11 · earn all 12 badges, then use real AI</span></div>
+    </a>
+    <a class="track" href="../curriculum/module-01-what-is-ai/lessons/player.html?track=adults">
+      <span class="ic">◆</span>
+      <div><b>Adults · 12 Sections</b><span>New to AI · what it is, how it works, why it matters</span></div>
+    </a>
+  </div>
+  <footer>CODE THE FUTURE · MODULE 1 · V1 PREVIEW</footer>
+</div>
+
+<script src="lib/config.js"></script>
+<script src="lib/avatar.js"></script>
+<script type="module">
+  import { CTFDB } from "./lib/ctf-db.js";
+  CTFDB.init().then(function(){ window.dispatchEvent(new Event("ctfdb:ready")); });
+</script>
+<script>
+(function(){
+  var A = window.CTFAvatar;
+  document.getElementById("homeAv").innerHTML = A.render(A.DEFAULT);
+  // local-first paint
+  try { var lp = JSON.parse(localStorage.getItem("ctf:profile")||"null");
+    if (lp){ document.getElementById("homeName").textContent = lp.display_name||"Explorer";
+      if (lp.avatar) document.getElementById("homeAv").innerHTML = A.render(lp.avatar); } } catch(e){}
+
+  async function boot(){
+    var D = window.CTFDB; if (!D || !D.enabled) return;
+    var p = await D.getProfile();
+    if (p && !p.onboarded){ location.href = "onboarding.html"; return; }   // new users → character creation
+    if (p){
+      document.getElementById("homeName").textContent = p.display_name || "Explorer";
+      if (p.avatar && Object.keys(p.avatar).length) document.getElementById("homeAv").innerHTML = A.render(p.avatar);
+    }
+    var badges = await D.listBadges();
+    document.getElementById("homeBadges").textContent = badges.length + (badges.length===1?" badge":" badges") + " earned";
+    // continue-learning tile from cloud progress (kids first, else adults)
+    var kids = await D.getProgress("module-01-what-is-ai","kids");
+    var adults = await D.getProgress("module-01-what-is-ai","adults");
+    var best = (kids && (!adults || new Date(kids.updated_at) > new Date(adults.updated_at))) ? {t:"kids",p:kids} : (adults ? {t:"adults",p:adults} : null);
+    if (best){
+      var TOTALS = { kids: 141, adults: 113 };  // steps incl. titles (approx for bar only)
+      var pct = Math.min(100, Math.round(best.p.position / TOTALS[best.t] * 100));
+      document.getElementById("contBar").style.width = pct + "%";
+      document.getElementById("contMeta").textContent = (best.t==="kids"?"Kids track":"Adults track") + " · " + pct + "% through";
+      document.getElementById("contGo").textContent = "Continue →";
+      document.getElementById("continueTile").href = "../curriculum/module-01-what-is-ai/lessons/player.html?track=" + best.t;
+    }
+    var cohorts = await D.myCohorts();
+    if (cohorts.length) document.getElementById("boardTitle").textContent = cohorts[0].name;
+  }
+  if (window.CTFDB && window.CTFDB.enabled) boot();
+  else window.addEventListener("ctfdb:ready", boot, { once:true });
+})();
+</script>
+</body>
+</html>
