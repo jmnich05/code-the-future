@@ -36,8 +36,16 @@ coding, with emphasis on how AI is reshaping software development. Origin materi
   `20260608170040` + `…41` on remote. Note: Supabase applies migration statements WITHOUT a
   wrapping transaction, and SQL-language functions validate at creation — so order tables
   before SQL helpers; the init migration is written idempotently (clean-slate drops on top).
-- **Branching:** not enabled (it's a **Pro-plan** feature — preview branches = paid compute,
-  which is why it's not visible on Free). Not needed — we deploy migrations via the CLI.
+- **GitHub integration now CORRECT + ACTIVE (06-08-2026):** the Supabase project's GitHub
+  integration was initially pointed at the WRONG repo (`Code-the-Future-Louisv…`); Jon
+  re-pointed it to `jmnich05/code-the-future`. Confirmed working — a **"Supabase Preview"**
+  check (Supabase app) now posts `success` on `main`. Branching is available (Pro plan).
+- **Migration workflow GOING FORWARD = GitHub PR flow** (NOT CLI `db push` anymore — don't
+  mix the two or migration history desyncs): create migration on a branch → open PR
+  (Supabase spins a preview DB, runs + validates the migration, posts a check) → merge to
+  `main` (deploys to production). The 2 existing migrations are already applied & tracked,
+  so they're in sync; the success check confirms no drift. CLI stays installed for local
+  use, but production migrations route through PRs now.
 - **WIRED & VERIFIED 06-08-2026:** player + widgets persist to Supabase (local-first +
   cloud sync). `platform/lib/config.js` holds the anon key (gitignored). `player.html` loads
   config + `ctf-db.js` (ESM) and inits anonymous auth; `player.js` saves position, awards
