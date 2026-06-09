@@ -96,6 +96,12 @@ async function joinCohort(code) {
   return { cohort: data };
 }
 
+async function getProfile() {
+  if (!ok()) return null;
+  const { data } = await sb.from("profiles").select("*").eq("id", uid()).maybeSingle();
+  return data;
+}
+
 async function updateProfile(fields) {
   if (!ok()) return null;
   const { data } = await sb.from("profiles").update(fields).eq("id", uid()).select().maybeSingle();
@@ -109,7 +115,7 @@ async function logEvent(kind, props = {}) {
 
 export const CTFDB = {
   init, saveProgress, getProgress, saveWidgetResponse, getWidgetResponse,
-  awardBadge, listBadges, joinCohort, updateProfile, logEvent,
+  awardBadge, listBadges, joinCohort, getProfile, updateProfile, logEvent,
   get user() { return user; }, get enabled() { return enabled; }
 };
 if (typeof window !== "undefined") window.CTFDB = CTFDB;

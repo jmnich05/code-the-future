@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Code the Future — Create your character</title>
+<link rel="stylesheet" href="app.css">
+<style>
+  .ob{ width:100%; max-width:760px; padding:34px 30px 30px; }
+  .ob .head{ text-align:center; margin-bottom:8px; }
+  .ob h1{ font-size:2.4rem; margin:.2em 0; }
+  .ob h1 .accent{ background:var(--grad-spark); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent; }
+  .ob .stage{ display:grid; grid-template-columns:240px 1fr; gap:28px; align-items:start; margin-top:22px; }
+  @media (max-width:680px){ .ob .stage{ grid-template-columns:1fr; justify-items:center; } }
+  .ob .previewcol{ text-align:center; }
+  .ob .name-row{ display:flex; gap:10px; margin-top:18px; }
+  .ob .actions{ margin-top:26px; display:flex; gap:12px; align-items:center; justify-content:flex-end; }
+  .surprise{ font:inherit; font-weight:600; cursor:pointer; background:none; border:none; color:var(--blue-700); }
+</style>
+</head>
+<body>
+<div class="center">
+  <div class="card ob">
+    <div class="head">
+      <p class="eyebrow">◆ Welcome to Code the Future</p>
+      <h1>Create your <span class="accent">character</span></h1>
+      <p class="muted">Pick a name and build your buddy. You can change it anytime.</p>
+    </div>
+    <div class="stage">
+      <div class="previewcol">
+        <div class="avatar lg" id="preview"></div>
+        <div style="margin-top:12px"><button class="surprise" id="surprise">🎲 Surprise me</button></div>
+      </div>
+      <div>
+        <div class="field"><label>Display name</label>
+          <input class="input" id="name" maxlength="20" placeholder="e.g. PixelFox, Nova, Sam…" autocomplete="off"></div>
+        <div id="picker" style="margin-top:18px"></div>
+      </div>
+    </div>
+    <div class="actions">
+      <span class="muted" id="status" style="margin-right:auto;font-size:.9rem"></span>
+      <button class="btn" id="go">Start exploring →</button>
+    </div>
+  </div>
+</div>
+
+<script src="lib/config.js"></script>
+<script src="lib/avatar.js"></script>
+<script src="profile.js"></script>
+<script type="module">
+  import { CTFDB } from "./lib/ctf-db.js";
+  CTFDB.init().then(function(){ window.dispatchEvent(new Event("ctfdb:ready")); });
+</script>
+<script>
+(function(){
+  var cfg = window.CTFAvatar.DEFAULT, name = "";
+  var builder = window.CTFBuilder.mount({
+    preview: document.getElementById("preview"),
+    picker: document.getElementById("picker"),
+    config: cfg,
+    onChange: function(c){ cfg = c; }
+  });
+  document.getElementById("surprise").onclick = function(){ builder.randomize(); };
+  document.getElementById("name").addEventListener("input", function(e){ name = e.target.value.trim(); });
+
+  document.getElementById("go").onclick = async function(){
+    var btn = this; btn.disabled = true;
+    cfg = builder.config();
+    var profile = { display_name: name || "Explorer", avatar: cfg, onboarded: true };
+    try { localStorage.setItem("ctf:profile", JSON.stringify(profile)); } catch(e){}
+    var st = document.getElementById("status");
+    if (window.CTFDB && window.CTFDB.enabled) { await window.CTFDB.updateProfile(profile); window.CTFDB.logEvent("onboarded", {}); }
+    else { st.textContent = "Saved on this device (cloud sync will catch up)."; }
+    location.href = "profile.html";
+  };
+})();
+</script>
+</body>
+</html>

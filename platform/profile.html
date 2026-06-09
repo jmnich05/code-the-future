@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Code the Future — My Profile</title>
+<link rel="stylesheet" href="app.css">
+<style>
+  .top{ background:var(--grad-night); color:#fff; padding:18px 0 72px; }
+  .top .wrap{ display:flex; align-items:center; gap:14px; }
+  .top .brand{ font-family:var(--font-display); font-weight:700; }
+  .top .brand .accent{ color:var(--teal-400); }
+  .top .spacer{ margin-left:auto; }
+  .top a{ color:#cfe0ff; text-decoration:none; font-weight:600; font-size:.95rem; }
+  .pcard{ margin-top:-40px; padding:30px; display:grid; grid-template-columns:220px 1fr; gap:28px; align-items:start; }
+  @media (max-width:680px){ .pcard{ grid-template-columns:1fr; justify-items:center; text-align:center; } }
+  .pname{ font-size:2.2rem; }
+  .stats{ display:flex; gap:10px; flex-wrap:wrap; margin:14px 0; }
+  .stat{ background:var(--ink-50); border:1px solid var(--ink-200); border-radius:var(--radius-md); padding:12px 16px; min-width:92px; }
+  .stat b{ font-family:var(--font-display); font-size:1.5rem; color:var(--ink-900); display:block; }
+  .stat span{ font-family:var(--font-mono); font-size:10px; letter-spacing:.08em; text-transform:uppercase; color:var(--ink-500); }
+  .section-h{ font-family:var(--font-mono); font-size:11px; letter-spacing:.1em; text-transform:uppercase; color:var(--ink-500); margin:22px 0 10px; }
+  .edit-panel{ display:none; margin-top:18px; border-top:1px solid var(--ink-200); padding-top:20px; }
+  .edit-panel.open{ display:block; }
+  .edit-grid{ display:grid; grid-template-columns:200px 1fr; gap:24px; align-items:start; }
+  @media (max-width:680px){ .edit-grid{ grid-template-columns:1fr; justify-items:center; } }
+  .row{ display:flex; gap:10px; flex-wrap:wrap; align-items:center; }
+</style>
+</head>
+<body>
+<div class="top"><div class="wrap">
+  <span class="brand">Code the <span class="accent">Future</span></span>
+  <span class="spacer"></span>
+  <a href="../curriculum/module-01-what-is-ai/lessons/index.html">Continue learning →</a>
+</div></div>
+
+<div class="wrap">
+  <div class="card pcard">
+    <div style="text-align:center">
+      <div class="avatar lg" id="avatar"></div>
+    </div>
+    <div style="width:100%">
+      <p class="eyebrow" id="cohort">◆ Code the Future</p>
+      <h1 class="pname" id="pname">…</h1>
+      <p class="muted" id="tagline" style="margin:.3em 0 0"></p>
+      <div class="stats" id="stats"></div>
+      <div class="row">
+        <button class="btn" id="editBtn">✏️ Edit character</button>
+        <button class="btn ghost" id="joinBtn">Join a cohort</button>
+      </div>
+
+      <div class="section-h">Badges</div>
+      <div class="badge-row" id="badges"><span class="muted">No badges yet — start a lesson!</span></div>
+
+      <div class="edit-panel" id="edit">
+        <div class="edit-grid">
+          <div style="text-align:center">
+            <div class="avatar" id="editPreview"></div>
+            <div style="margin-top:10px"><button class="surprise" id="surprise" style="font:inherit;font-weight:600;cursor:pointer;background:none;border:none;color:var(--blue-700)">🎲 Surprise me</button></div>
+          </div>
+          <div>
+            <div class="field"><label>Display name</label><input class="input" id="editName" maxlength="20"></div>
+            <div class="field" style="margin-top:12px"><label>About me (short)</label><input class="input" id="editTag" maxlength="60" placeholder="Future builder. Loves space + robots."></div>
+            <div id="picker" style="margin-top:16px"></div>
+            <div class="row" style="margin-top:18px;justify-content:flex-end">
+              <button class="btn ghost" id="cancelBtn">Cancel</button>
+              <button class="btn" id="saveBtn">Save</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div style="height:60px"></div>
+</div>
+
+<script src="lib/config.js"></script>
+<script src="lib/avatar.js"></script>
+<script src="profile.js"></script>
+<script type="module">
+  import { CTFDB } from "./lib/ctf-db.js";
+  CTFDB.init().then(function(){ window.dispatchEvent(new Event("ctfdb:ready")); });
+</script>
+<script>
+(function(){
+  var A = window.CTFAvatar;
+  var profile = { display_name:"Explorer", avatar:A.DEFAULT, tagline:"" };
+  var badges = [];
+  var builder = null;
+
+  function localProfile(){ try { return JSON.parse(localStorage.getItem("ctf:profile")||"null"); } catch(e){ return null; } }
+  function prettyBadge(k){ var m=k.match(/-m(\d+)$/); if(m) return (k.indexOf("kids")===0?"Mission ":"Section ")+m[1]; if(/complete$/.test(k)) return "Module Complete"; return k; }
+
+  function paint(){
+    document.getElementById("avatar").innerHTML = A.render(profile.avatar||A.DEFAULT);
+    document.getElementById("pname").textContent = profile.display_name || "Explorer";
+    document.getElementById("tagline").textContent = profile.tagline || "";
+    var bd = document.getElementById("badges");
+    if (badges.length) bd.innerHTML = badges.map(function(b){ return '<span class="badge-chip"><span class="ic"></span>'+prettyBadge(b)+'</span>'; }).join("");
+    document.getElementById("stats").innerHTML =
+      '<div class="stat"><b>'+badges.length+'</b><span>Badges</span></div>';
+  }
+
+  function openEditor(){
+    document.getElementById("editName").value = profile.display_name||"";
+    document.getElementById("editTag").value = profile.tagline||"";
+    builder = window.CTFBuilder.mount({
+      preview: document.getElementById("editPreview"),
+      picker: document.getElementById("picker"),
+      config: profile.avatar||A.DEFAULT,
+      onChange: function(){}
+    });
+    document.getElementById("edit").classList.add("open");
+    document.getElementById("edit").scrollIntoView({behavior:"smooth", block:"nearest"});
+  }
+  document.getElementById("editBtn").onclick = openEditor;
+  document.getElementById("cancelBtn").onclick = function(){ document.getElementById("edit").classList.remove("open"); };
+  document.getElementById("surprise").onclick = function(){ if(builder) builder.randomize(); };
+  document.getElementById("joinBtn").onclick = function(){ var c = prompt("Enter your cohort code:"); if(c && window.CTFDB && window.CTFDB.enabled){ window.CTFDB.joinCohort(c).then(function(r){ alert(r.error ? ("Hmm: "+r.error) : ("Joined "+ (r.cohort? r.cohort.name : "cohort")+"!")); }); } };
+
+  document.getElementById("saveBtn").onclick = async function(){
+    var btn=this; btn.disabled=true;
+    profile.display_name = document.getElementById("editName").value.trim() || "Explorer";
+    profile.tagline = document.getElementById("editTag").value.trim();
+    profile.avatar = builder.config();
+    try { localStorage.setItem("ctf:profile", JSON.stringify(profile)); } catch(e){}
+    if (window.CTFDB && window.CTFDB.enabled) await window.CTFDB.updateProfile({ display_name:profile.display_name, tagline:profile.tagline, avatar:profile.avatar });
+    document.getElementById("edit").classList.remove("open");
+    btn.disabled=false; paint();
+  };
+
+  async function load(){
+    var lp = localProfile(); if (lp) profile = Object.assign(profile, lp);
+    paint();
+    if (window.CTFDB && window.CTFDB.enabled){
+      var p = await window.CTFDB.getProfile();
+      if (p){
+        if (!p.onboarded && !(lp && lp.onboarded)) { location.href = "onboarding.html"; return; }
+        profile.display_name = p.display_name || profile.display_name;
+        profile.avatar = (p.avatar && Object.keys(p.avatar).length) ? p.avatar : profile.avatar;
+        profile.tagline = p.tagline || profile.tagline;
+      } else if (!lp) { location.href = "onboarding.html"; return; }
+      badges = (await window.CTFDB.listBadges()).map(function(b){ return b.badge_key; });
+      paint();
+    } else if (!lp) {
+      // not configured and no local profile → onboard
+      location.href = "onboarding.html"; return;
+    }
+  }
+  if (window.CTFDB && window.CTFDB.enabled) load();
+  else window.addEventListener("ctfdb:ready", load, { once:true });
+  // also paint immediately from local for snappiness
+  (function(){ var lp=localProfile(); if(lp){ profile=Object.assign(profile,lp); paint(); } })();
+})();
+</script>
+</body>
+</html>

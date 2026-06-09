@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Code the Future — Cohort Board (wireframe)</title>
+<link rel="stylesheet" href="app.css">
+<style>
+  body{ background:var(--ink-50); }
+  .ribbon{ background:var(--amber-400); color:var(--ink-900); text-align:center; font-family:var(--font-mono); font-size:11px; letter-spacing:.12em; text-transform:uppercase; padding:6px; }
+  .bar{ background:var(--grad-night); color:#fff; }
+  .bar .wrap{ display:flex; align-items:center; gap:14px; padding:16px 20px; max-width:1200px; }
+  .bar .brand{ font-family:var(--font-display); font-weight:700; }
+  .bar .brand .accent{ color:var(--teal-400); }
+  .bar .cohort{ margin-left:8px; background:rgba(255,255,255,.1); border:1px solid rgba(255,255,255,.18); border-radius:var(--radius-pill); padding:6px 14px; font-size:.85rem; }
+  .bar .me{ margin-left:auto; display:flex; align-items:center; gap:10px; font-size:.9rem; }
+  .layout{ max-width:1200px; margin:22px auto; padding:0 20px; display:grid; grid-template-columns:220px 1fr 260px; gap:22px; align-items:start; }
+  @media (max-width:980px){ .layout{ grid-template-columns:1fr; } .side-right{ display:none; } .channels{ display:flex; flex-wrap:wrap; gap:8px; } }
+  .panel{ background:var(--white); border:1px solid var(--ink-200); border-radius:var(--radius-lg); box-shadow:var(--shadow-sm); }
+  .panel-h{ font-family:var(--font-mono); font-size:11px; letter-spacing:.1em; text-transform:uppercase; color:var(--ink-500); padding:16px 16px 8px; }
+
+  /* channels */
+  .chan{ display:flex; align-items:center; gap:10px; padding:11px 14px; border-radius:12px; cursor:pointer; font-weight:600; color:var(--ink-700); }
+  .chan:hover{ background:var(--ink-50); }
+  .chan.active{ background:var(--blue-50); color:var(--blue-700); }
+  .chan .n{ margin-left:auto; font-size:.75rem; background:var(--ink-100); color:var(--ink-500); border-radius:999px; padding:2px 8px; }
+  .teacher-cta{ margin:10px; background:var(--grad-spark); color:#fff; border-radius:var(--radius-md); padding:14px; }
+  .teacher-cta b{ display:block; font-family:var(--font-display); }
+  .teacher-cta button{ margin-top:8px; font:inherit; font-weight:700; border:none; background:#fff; color:var(--blue-700); border-radius:999px; padding:8px 14px; cursor:pointer; }
+
+  /* composer */
+  .composer{ display:flex; gap:12px; padding:16px; align-items:center; }
+  .composer .fake-input{ flex:1; background:var(--ink-50); border:1px solid var(--ink-200); border-radius:var(--radius-pill); padding:13px 18px; color:var(--ink-400); }
+  .composer .post{ font:inherit; font-family:var(--font-display); font-weight:700; color:#fff; background:linear-gradient(120deg,var(--blue-600),var(--teal-600)); border:none; border-radius:999px; padding:11px 20px; cursor:pointer; }
+
+  /* posts */
+  .post-card{ padding:18px; }
+  .post-card + .post-card{ border-top:1px solid var(--ink-100); }
+  .post-card.pinned{ border:2px solid var(--amber-400); border-radius:var(--radius-lg); margin:14px; background:#FFFCF4; }
+  .pinrow{ font-family:var(--font-mono); font-size:10px; letter-spacing:.1em; text-transform:uppercase; color:var(--amber-400); margin-bottom:8px; }
+  .ph{ display:flex; align-items:center; gap:12px; }
+  .ph .who{ font-weight:700; color:var(--ink-900); }
+  .ph .who .role{ font-family:var(--font-mono); font-size:10px; letter-spacing:.06em; text-transform:uppercase; background:var(--blue-600); color:#fff; border-radius:999px; padding:2px 8px; margin-left:6px; }
+  .ph .when{ margin-left:auto; font-size:.8rem; color:var(--ink-400); }
+  .pbody{ margin:12px 0 12px 0; font-size:1.05rem; color:var(--ink-800,#161F33); }
+  .pimg{ height:160px; border-radius:var(--radius-md); background:var(--grad-night); display:flex; align-items:center; justify-content:center; color:#cfe0ff; font-family:var(--font-mono); font-size:12px; margin:10px 0; }
+  .react{ display:flex; gap:8px; align-items:center; }
+  .react .r{ border:1px solid var(--ink-200); background:var(--white); border-radius:999px; padding:5px 11px; font-size:.85rem; cursor:pointer; }
+  .react .r:hover{ border-color:var(--blue-600); }
+  .react .replies{ margin-left:auto; font-size:.85rem; color:var(--ink-500); }
+
+  /* members */
+  .members{ display:grid; grid-template-columns:repeat(4,1fr); gap:10px; padding:14px; }
+  .member{ text-align:center; }
+  .member .avatar.sm{ width:46px; height:46px; margin:0 auto; }
+  .member .mn{ font-size:.7rem; color:var(--ink-500); margin-top:4px; display:block; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .teacher-card{ display:flex; align-items:center; gap:12px; padding:14px; }
+  .teacher-card .avatar.sm{ width:52px; height:52px; }
+  .teacher-card b{ color:var(--ink-900); } .teacher-card span{ font-size:.8rem; color:var(--ink-500); }
+</style>
+</head>
+<body>
+<div class="ribbon">Wireframe · concept — the cohort communication board</div>
+<div class="bar"><div class="wrap" style="margin:0 auto">
+  <span class="brand">Code the <span class="accent">Future</span></span>
+  <span class="cohort">◆ Summer 2026 — Pilot</span>
+  <span class="me"><span class="avatar sm" id="meAv"></span> PixelFox</span>
+</div></div>
+
+<div class="layout">
+  <!-- LEFT: channels -->
+  <div>
+    <div class="panel">
+      <div class="panel-h">Channels</div>
+      <div style="padding:6px">
+        <div class="chan active">📣 Announcements <span class="n">3</span></div>
+        <div class="chan">💬 General <span class="n">24</span></div>
+        <div class="chan">🏆 Show &amp; Tell <span class="n">11</span></div>
+        <div class="chan">❓ Help &amp; Questions <span class="n">7</span></div>
+      </div>
+      <div class="teacher-cta">
+        <b>Message Mr. Jon</b>
+        <small>Your guide for Summer 2026.</small>
+        <div><button>Start a chat →</button></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CENTER: feed -->
+  <div class="panel">
+    <div class="composer">
+      <span class="avatar sm" id="meAv2"></span>
+      <div class="fake-input">Share something with your cohort…</div>
+      <button class="post">Post</button>
+    </div>
+
+    <!-- pinned teacher announcement -->
+    <div class="post-card pinned">
+      <div class="pinrow">📌 Pinned · from your teacher</div>
+      <div class="ph"><span class="avatar sm" id="jonAv"></span>
+        <span class="who">Mr. Jon <span class="role">Teacher</span></span>
+        <span class="when">2h ago</span></div>
+      <div class="pbody">Welcome to <b>Summer 2026!</b> 🎉 This week we're finishing <b>Module 1 — What Is AI?</b> Reply with your favorite Mission and one thing that surprised you. I'll feature a few on Friday!</div>
+      <div class="react"><span class="r">🎉 18</span><span class="r">🔥 9</span><span class="r">＋</span><span class="replies">12 replies</span></div>
+    </div>
+
+    <!-- posts -->
+    <div class="post-card">
+      <div class="ph"><span class="avatar sm" data-av='{"bg":"lilac","color":"violet","face":"star","acc":"crown"}'></span>
+        <span class="who">Nova</span><span class="when">1h ago</span></div>
+      <div class="pbody">Just earned the <b>Attention Ace</b> badge! 🧠 The "what does <i>it</i> mean" trick honestly blew my mind.</div>
+      <div class="react"><span class="r">🧠 7</span><span class="r">👏 5</span><span class="r">＋</span><span class="replies">3 replies</span></div>
+    </div>
+
+    <div class="post-card">
+      <div class="ph"><span class="avatar sm" data-av='{"bg":"peach","color":"coral","face":"cool","acc":"headphones"}'></span>
+        <span class="who">PixelFox</span><span class="when">40m ago</span></div>
+      <div class="pbody">Used the Big Mission AI playground to write a story about a skateboarding dragon 🐉🛹 — posting it in Show &amp; Tell!</div>
+      <div class="pimg">[ image / project preview ]</div>
+      <div class="react"><span class="r">😂 14</span><span class="r">🐉 6</span><span class="r">＋</span><span class="replies">5 replies</span></div>
+    </div>
+
+    <div class="post-card">
+      <div class="ph"><span class="avatar sm" data-av='{"bg":"mint","color":"green","face":"happy","acc":"glasses"}'></span>
+        <span class="who">Sam</span><span class="when">today</span></div>
+      <div class="pbody">Question for ❓Help: does AI actually <i>think</i>, or just guess the next word? 🤔</div>
+      <div class="react"><span class="r">👍 4</span><span class="r">＋</span><span class="replies">Mr. Jon replied</span></div>
+    </div>
+  </div>
+
+  <!-- RIGHT: members -->
+  <div class="side-right">
+    <div class="panel" style="margin-bottom:18px">
+      <div class="panel-h">Your teacher</div>
+      <div class="teacher-card"><span class="avatar sm" id="jonAv2"></span>
+        <div><b>Mr. Jon</b><br><span>Louisville · online</span></div></div>
+    </div>
+    <div class="panel">
+      <div class="panel-h">Cohort · 14 builders</div>
+      <div class="members" id="members"></div>
+    </div>
+  </div>
+</div>
+
+<script src="lib/avatar.js"></script>
+<script>
+(function(){
+  var A = window.CTFAvatar;
+  // render any element with data-av
+  document.querySelectorAll('[data-av]').forEach(function(el){ el.innerHTML = A.render(JSON.parse(el.getAttribute('data-av'))); });
+  var me = {bg:"peach",color:"coral",face:"cool",acc:"headphones"};
+  document.getElementById('meAv').innerHTML = A.render(me);
+  document.getElementById('meAv2').innerHTML = A.render(me);
+  var jon = {bg:"night",color:"blue",face:"happy",acc:"cap"};
+  document.getElementById('jonAv').innerHTML = A.render(jon);
+  document.getElementById('jonAv2').innerHTML = A.render(jon);
+  // member grid — varied avatars
+  var names = ["Ari","Mia","Leo","Kai","Zoe","Eli","Ivy","Max","Ren","Tae","Bea","Jude"];
+  document.getElementById('members').innerHTML = names.map(function(n){
+    return '<div class="member"><span class="avatar sm">'+A.render(A.random())+'</span><span class="mn">'+n+'</span></div>';
+  }).join('');
+})();
+</script>
+</body>
+</html>

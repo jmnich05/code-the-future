@@ -40,12 +40,13 @@ coding, with emphasis on how AI is reshaping software development. Origin materi
   integration was initially pointed at the WRONG repo (`Code-the-Future-Louisv…`); Jon
   re-pointed it to `jmnich05/code-the-future`. Confirmed working — a **"Supabase Preview"**
   check (Supabase app) now posts `success` on `main`. Branching is available (Pro plan).
-- **Migration workflow GOING FORWARD = GitHub PR flow** (NOT CLI `db push` anymore — don't
-  mix the two or migration history desyncs): create migration on a branch → open PR
-  (Supabase spins a preview DB, runs + validates the migration, posts a check) → merge to
-  `main` (deploys to production). The 2 existing migrations are already applied & tracked,
-  so they're in sync; the success check confirms no drift. CLI stays installed for local
-  use, but production migrations route through PRs now.
+- **Migration deploy REALITY (corrected 06-09-2026):** the GitHub integration is connected
+  but does **NOT** auto-apply migrations. On PR #2 the "Supabase Preview" check **skipped**
+  (preview branches not enabled), and merging to `main` did **not** deploy to production
+  (verified: the new column was missing until we ran CLI `db push`). So the actual apply
+  mechanism is still **CLI `supabase db push`** (creds in `supabase/.env`). PRs are good for
+  review, but you must `db push` to apply. **Write migrations idempotently** (`add ... if not
+  exists`, clean-slate drops) so CLI and any future integration deploy can't conflict.
 - **WIRED & VERIFIED 06-08-2026:** player + widgets persist to Supabase (local-first +
   cloud sync). `platform/lib/config.js` holds the anon key (gitignored). `player.html` loads
   config + `ctf-db.js` (ESM) and inits anonymous auth; `player.js` saves position, awards
@@ -63,6 +64,25 @@ coding, with emphasis on how AI is reshaping software development. Origin materi
   public-safe — RLS guards data) or inject it via a Netlify build step. Local works today.
 - Paths assume the site is served from the REPO ROOT (Netlify does; `player.html` uses
   `../../../platform/lib/...`). For local preview, serve the repo root, not the module dir.
+
+## Platform screens (06-09-2026)
+
+- **Production config:** `platform/lib/config.js` is now COMMITTED (anon key is public-safe /
+  RLS-guarded) so the live Netlify site connects. `config.example.js` stays as the template.
+- **Composable avatar** (`platform/lib/avatar.js`, `window.CTFAvatar`): a friendly "buddy"
+  from swappable parts (bg, color, face, accessory), original SVG, saved as JSON in
+  `profiles.avatar` (jsonb). `profiles` gained `avatar, accent, tagline, onboarded` (migration
+  `…113942_profile_customization`).
+- **Onboarding** `platform/onboarding.html` — "Create your character" (name + avatar builder +
+  Surprise me) → saves to Supabase via `CTFDB.updateProfile`, sets `onboarded`. New users land
+  here. Verified: a built character persisted to `profiles.avatar` and reloaded on the profile.
+- **Profile** `platform/profile.html` — Roblox-style: big avatar, name, tagline, badges (from
+  `badges`), "Join a cohort" (calls `join_cohort` RPC), and an inline editor reusing the
+  builder (`platform/profile.js` = `window.CTFBuilder`). Saves to Supabase + localStorage.
+- **Cohort board** `platform/board.html` — **WIREFRAME/concept** only (no DB yet): channels,
+  pinned teacher (Mr. Jon) announcement, posts w/ reactions+replies, members grid (avatars).
+  Front-and-center cohort↔teacher comms. NEXT: design the schema (posts/comments/reactions/
+  channels) + wire it.
 - Note: the capstone OpenAI proxy is separate and unaffected.
 
 ## Durable Teaching Preferences
