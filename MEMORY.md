@@ -79,10 +79,24 @@ coding, with emphasis on how AI is reshaping software development. Origin materi
 - **Profile** `platform/profile.html` — Roblox-style: big avatar, name, tagline, badges (from
   `badges`), "Join a cohort" (calls `join_cohort` RPC), and an inline editor reusing the
   builder (`platform/profile.js` = `window.CTFBuilder`). Saves to Supabase + localStorage.
-- **Cohort board** `platform/board.html` — **WIREFRAME/concept** only (no DB yet): channels,
-  pinned teacher (Mr. Jon) announcement, posts w/ reactions+replies, members grid (avatars).
-  Front-and-center cohort↔teacher comms. NEXT: design the schema (posts/comments/reactions/
-  channels) + wire it.
+- **Cohort board** `platform/board.html` — **LIVE on Supabase (06-09-2026)**: posts,
+  comments, reactions tables + RLS (migration `…221000_board.sql`, applied). Channels
+  (announcements=staff-only post, general, show_tell, help), compose, emoji reactions,
+  replies, member roster, join-cohort overlay (FUTURE26), example posts fill empty channels.
+  Verified live: join → post → react → reply round-tripped under RLS.
+- **PostgREST embed gotcha:** posts/comments/members FKs point at `auth.users`, NOT
+  `profiles`, so `select("profiles:author_id(...)")` embedding FAILS. `ctf-db.js` does a
+  second `profiles .in(id,…)` query and joins client-side. Keep this pattern (or repoint
+  FKs at profiles in a future migration).
+- **Home hub** `platform/index.html` — continue-learning tile (cloud progress %), profile
+  card, board card, both track links. **New users auto-route to onboarding** (profile.
+  onboarded=false → redirect). Root `/index.html` redirects to the platform home.
+- **V1 DEMO STATE (client meeting 06-09):** home → onboarding → profile → board → lessons
+  all live + persisting. Module 1 content final: kids 130 beats / adults 102, 17 image
+  beats each (PD: Turing, ENIAC, Cajal, Ada Lovelace, Curiosity rover, Hubble deep field,
+  NGC 4414 + 12 original SVGs). **Netlify site has Password Protection enabled** (401) —
+  Jon's Netlify setting; fine for private demo, disable in Netlify → Site protection when
+  ready for public.
 - Note: the capstone OpenAI proxy is separate and unaffected.
 
 ## Durable Teaching Preferences
