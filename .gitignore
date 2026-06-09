@@ -29,5 +29,4 @@ Code the Future — Design System.zip
 .claude/
 
 # Local Supabase client config (anon key) + CLI env
-platform/lib/config.js
 supabase/.env
