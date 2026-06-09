@@ -19,7 +19,7 @@
   .hero p.sub{ opacity:.88; font-size:1.15rem; max-width:54ch; }
   @media (max-width:560px){ .hero h1{ font-size:2.1rem; } }
 
-  .deck{ margin-top:-56px; display:grid; grid-template-columns:1.4fr 1fr 1fr; gap:18px; }
+  .deck{ position:relative; z-index:2; margin-top:-56px; display:grid; grid-template-columns:1.4fr 1fr 1fr; gap:18px; }
   @media (max-width:900px){ .deck{ grid-template-columns:1fr; } }
   .tile{ background:var(--white); border:1px solid var(--ink-200); border-radius:var(--radius-xl); box-shadow:var(--shadow-lg); padding:26px; display:flex; flex-direction:column; gap:10px; text-decoration:none; color:var(--ink-700); transition:transform .15s var(--ease-out), box-shadow .15s; }
   .tile:hover{ transform:translateY(-3px); }
