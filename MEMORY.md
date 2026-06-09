@@ -31,8 +31,15 @@ coding, with emphasis on how AI is reshaping software development. Origin materi
   progress/widget-responses/badges/cohort/profile/events; **no-ops gracefully** if not
   configured (player still works on localStorage). Config: copy `config.example.js` →
   `config.js` (gitignored) with the anon key.
-- **STILL TODO:** (1) push migrations to the project; (2) add anon key to `config.js`;
-  (3) wire the player + widgets to call `CTFDB` instead of (or alongside) `localStorage`.
+- **Migrations APPLIED 06-08-2026** via CLI `supabase db push` (creds in gitignored
+  `supabase/.env`: access token + DB password). `migration list --linked` confirms
+  `20260608170040` + `…41` on remote. Note: Supabase applies migration statements WITHOUT a
+  wrapping transaction, and SQL-language functions validate at creation — so order tables
+  before SQL helpers; the init migration is written idempotently (clean-slate drops on top).
+- **Branching:** not enabled (it's a **Pro-plan** feature — preview branches = paid compute,
+  which is why it's not visible on Free). Not needed — we deploy migrations via the CLI.
+- **STILL TODO:** (1) add anon key to `platform/lib/config.js`; (2) wire the player + widgets
+  to call `CTFDB` instead of (or alongside) `localStorage`.
 - Note: the capstone OpenAI proxy is separate and unaffected.
 
 ## Durable Teaching Preferences
