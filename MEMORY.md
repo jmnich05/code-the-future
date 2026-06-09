@@ -38,8 +38,23 @@ coding, with emphasis on how AI is reshaping software development. Origin materi
   before SQL helpers; the init migration is written idempotently (clean-slate drops on top).
 - **Branching:** not enabled (it's a **Pro-plan** feature — preview branches = paid compute,
   which is why it's not visible on Free). Not needed — we deploy migrations via the CLI.
-- **STILL TODO:** (1) add anon key to `platform/lib/config.js`; (2) wire the player + widgets
-  to call `CTFDB` instead of (or alongside) `localStorage`.
+- **WIRED & VERIFIED 06-08-2026:** player + widgets persist to Supabase (local-first +
+  cloud sync). `platform/lib/config.js` holds the anon key (gitignored). `player.html` loads
+  config + `ctf-db.js` (ESM) and inits anonymous auth; `player.js` saves position, awards
+  per-mission badges (`<track>-m<n>`) + a module-complete badge, logs events, and resumes
+  from cloud progress on a fresh device; `ctf-widgets.js` saves widget responses on
+  completion. Verified against the live DB (progress, badges, widget response, event all
+  round-tripped under RLS).
+- **Anonymous sign-ins ENABLED** on the project (was off by default; flipped via Management
+  API: `PATCH /v1/projects/{ref}/config/auth {external_anonymous_users_enabled:true}`).
+- **Multi-client gotcha:** only ONE Supabase client per page (shared GoTrue storage key) —
+  spinning up extra clients corrupts the session/deadlocks. The app uses the single
+  `window.CTFDB`.
+- **PROD CONFIG TODO:** `config.js` is gitignored, so the Netlify build won't have the anon
+  key → Supabase disabled in production until we either commit `config.js` (anon key is
+  public-safe — RLS guards data) or inject it via a Netlify build step. Local works today.
+- Paths assume the site is served from the REPO ROOT (Netlify does; `player.html` uses
+  `../../../platform/lib/...`). For local preview, serve the repo root, not the module dir.
 - Note: the capstone OpenAI proxy is separate and unaffected.
 
 ## Durable Teaching Preferences

@@ -9,7 +9,13 @@
 </head>
 <body>
 <div class="player" id="player"></div>
+<!-- optional Supabase config (gitignored); if absent, the player runs local-only -->
+<script src="../../../platform/lib/config.js"></script>
 <script src="../interactive/ctf-widgets.js"></script>
+<script type="module">
+  import { CTFDB } from "../../../platform/lib/ctf-db.js";
+  CTFDB.init().then(function () { window.dispatchEvent(new Event("ctfdb:ready")); });
+</script>
 <script src="player.js"></script>
 </body>
 </html>

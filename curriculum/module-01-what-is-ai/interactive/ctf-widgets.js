@@ -46,7 +46,13 @@
     var bar = card.querySelector('.ctf-progress > i');
     if (bar) setTimeout(function () { bar.style.width = (pct || 100) + '%'; }, 60);
   }
-  function markDone(id) { if (id) save(id + ':done', true); }
+  function markDone(id) {
+    if (!id) return;
+    save(id + ':done', true);
+    var ans = load(id + ':answer'), score = load(id + ':score');
+    var resp = {}; if (ans) resp.answer = ans; if (score != null) resp.score = score;
+    if (window.CTFDB && window.CTFDB.enabled) window.CTFDB.saveWidgetResponse(id, { response: resp, isComplete: true });
+  }
 
   // =========================================================================
   // POLL — pick an option (and/or free text). Saves the answer; can revisit.

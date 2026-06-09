@@ -9,8 +9,23 @@
   var TRACK = qs.get("track") === "adults" ? "adults" : "kids";
   var POSKEY = "ctf:pos:" + TRACK;
 
+  var MODULE = "module-01-what-is-ai";
   var stage, label, fill, backBtn, nextBtn, hint;
-  var DATA, STEPS = [], pos = 0, animating = false, revealTimer = null;
+  var DATA, STEPS = [], pos = 0, animating = false, revealTimer = null, hadLocalPos = false;
+
+  // ---- Supabase sync (optional; no-ops if CTFDB unconfigured) -------------
+  function db() { return (window.CTFDB && window.CTFDB.enabled) ? window.CTFDB : null; }
+  function cloudSaveProgress() { var d = db(); if (d) d.saveProgress(MODULE, TRACK, pos, pos >= STEPS.length - 1); }
+  function onDbReady() {
+    var d = db(); if (!d) return;
+    if (!hadLocalPos) {
+      d.getProgress(MODULE, TRACK).then(function (rp) {
+        if (rp && typeof rp.position === "number" && rp.position > pos && rp.position < STEPS.length) { pos = rp.position; render(); }
+        cloudSaveProgress();
+      });
+    } else { cloudSaveProgress(); }
+    d.logEvent("lesson_open", { module: MODULE, track: TRACK, pos: pos });
+  }
 
   function el(t, c, h) { var n = document.createElement("t" === t ? "div" : t); n = document.createElement(t); if (c) n.className = c; if (h != null) n.innerHTML = h; return n; }
 
@@ -72,9 +87,14 @@
     } else {
       type = step.b.type;
       beat.className = "beat t-" + type;
-      if (type === "complete") beat.innerHTML = '<div class="wrap">' + step.b.html + "</div>";
-      else if (type === "capstone") beat.innerHTML = '<div class="inner">' + step.b.html + "</div>";
-      else beat.innerHTML = step.b.html;
+      if (type === "complete") {
+        beat.innerHTML = '<div class="wrap">' + step.b.html + "</div>";
+        var dd = db();
+        if (dd && step.m && step.m.n) { dd.awardBadge(TRACK + "-m" + step.m.n, { module: MODULE, track: TRACK }); dd.logEvent("mission_complete", { module: MODULE, track: TRACK, n: step.m.n }); }
+      } else if (type === "capstone") {
+        beat.innerHTML = '<div class="inner">' + step.b.html + "</div>";
+        var dc = db(); if (dc) dc.awardBadge(TRACK + "-" + MODULE + "-complete", { module: MODULE, track: TRACK });
+      } else beat.innerHTML = step.b.html;
     }
 
     stage.innerHTML = "";
@@ -117,7 +137,7 @@
   }
   function prev() { if (pos > 0) { pos--; render(); finishReveal(); } }
 
-  function save() { try { localStorage.setItem(POSKEY, String(pos)); } catch (e) {} }
+  function save() { try { localStorage.setItem(POSKEY, String(pos)); } catch (e) {} cloudSaveProgress(); }
   function esc(s) { return String(s).replace(/[&<>]/g, function (c) { return ({ "&": "&amp;", "<": "&lt;", ">": "&gt;" })[c]; }); }
 
   // ---- boot ---------------------------------------------------------------
@@ -162,9 +182,13 @@
     document.title = "Code the Future — " + (TRACK === "kids" ? "What Is AI? (Kids)" : "What Is AI? (Adults)");
     STEPS = flatten(data);
     build();
-    var saved = parseInt(localStorage.getItem(POSKEY) || "0", 10);
+    var savedRaw = localStorage.getItem(POSKEY);
+    hadLocalPos = savedRaw !== null && location.hash !== "#restart";
+    var saved = parseInt(savedRaw || "0", 10);
     pos = (location.hash === "#restart" || isNaN(saved) || saved < 0 || saved >= STEPS.length) ? 0 : saved;
     render();
+    // Supabase may finish initializing after this script runs:
+    if (db()) onDbReady(); else window.addEventListener("ctfdb:ready", onDbReady, { once: true });
   }).catch(function (e) {
     document.getElementById("player").innerHTML = '<div style="padding:40px;font-family:sans-serif">Could not load lesson content. Run <code>node lessons/build.mjs</code> and serve the module folder.</div>';
   });
