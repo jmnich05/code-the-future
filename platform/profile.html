@@ -76,6 +76,7 @@
 
 <script src="lib/config.js"></script>
 <script src="lib/avatar.js"></script>
+<script src="lib/filter.js"></script>
 <script src="profile.js"></script>
 <script type="module">
   import { CTFDB } from "./lib/ctf-db.js";
@@ -119,9 +120,13 @@
   document.getElementById("joinBtn").onclick = function(){ var c = prompt("Enter your cohort code:"); if(c && window.CTFDB && window.CTFDB.enabled){ window.CTFDB.joinCohort(c).then(function(r){ alert(r.error ? ("Hmm: "+r.error) : ("Joined "+ (r.cohort? r.cohort.name : "cohort")+"!")); }); } };
 
   document.getElementById("saveBtn").onclick = async function(){
-    var btn=this; btn.disabled=true;
-    profile.display_name = document.getElementById("editName").value.trim() || "Explorer";
-    profile.tagline = document.getElementById("editTag").value.trim();
+    var btn=this;
+    var nm = document.getElementById("editName").value.trim();
+    var tg = document.getElementById("editTag").value.trim();
+    if (!window.CTFFilter.isClean(nm + " " + tg)){ alert(window.CTFFilter.message()); return; }
+    btn.disabled=true;
+    profile.display_name = nm || "Explorer";
+    profile.tagline = tg;
     profile.avatar = builder.config();
     try { localStorage.setItem("ctf:profile", JSON.stringify(profile)); } catch(e){}
     if (window.CTFDB && window.CTFDB.enabled) await window.CTFDB.updateProfile({ display_name:profile.display_name, tagline:profile.tagline, avatar:profile.avatar });

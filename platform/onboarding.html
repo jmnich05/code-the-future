@@ -46,6 +46,7 @@
 
 <script src="lib/config.js"></script>
 <script src="lib/avatar.js"></script>
+<script src="lib/filter.js"></script>
 <script src="profile.js"></script>
 <script type="module">
   import { CTFDB } from "./lib/ctf-db.js";
@@ -64,7 +65,12 @@
   document.getElementById("name").addEventListener("input", function(e){ name = e.target.value.trim(); });
 
   document.getElementById("go").onclick = async function(){
-    var btn = this; btn.disabled = true;
+    var btn = this;
+    if (name && !window.CTFFilter.isClean(name)){
+      document.getElementById("status").textContent = window.CTFFilter.message();
+      document.getElementById("name").focus(); return;
+    }
+    btn.disabled = true;
     cfg = builder.config();
     var profile = { display_name: name || "Explorer", avatar: cfg, onboarded: true };
     try { localStorage.setItem("ctf:profile", JSON.stringify(profile)); } catch(e){}

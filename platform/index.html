@@ -102,7 +102,7 @@
   <div class="inner">
     <nav class="top">
       <span class="brand">◆ Code the <span class="accent">Future</span></span>
-      <span class="links"><a href="board.html">Board</a><a href="profile.html">Profile</a><a href="../curriculum/module-01-what-is-ai/lessons/index.html">Lessons</a></span>
+      <span class="links"><a href="board.html">Board</a><a href="profile.html">Profile</a><a href="../curriculum/module-01-what-is-ai/lessons/player.html?track=kids">Lessons</a></span>
     </nav>
     <div class="headline">
       <p class="eyebrow">SUMMER 2026 · AI CAMP FOR KIDS</p>
@@ -140,7 +140,7 @@
 </div>
 
 <div class="deck">
-  <a class="tile primary" href="../curriculum/module-01-what-is-ai/lessons/index.html" id="continueTile">
+  <a class="tile primary" href="../curriculum/module-01-what-is-ai/lessons/player.html?track=kids" id="continueTile">
     <p class="eyebrow">Continue learning</p>
     <h2 id="contTitle">Module 1 — What Is AI?</h2>
     <div class="progressbar"><i id="contBar" style="width:0%"></i></div>
@@ -160,14 +160,10 @@
   </a>
 </div>
 
-<div class="tracks">
+<div class="tracks" style="grid-template-columns:1fr">
   <a class="track" href="../curriculum/module-01-what-is-ai/lessons/player.html?track=kids">
     <span class="ic">🚀</span>
-    <div><b>Kids · 12 Missions</b><span>Ages 8–11 · earn all 12 badges, then use real AI</span></div>
-  </a>
-  <a class="track" href="../curriculum/module-01-what-is-ai/lessons/player.html?track=adults">
-    <span class="ic">◆</span>
-    <div><b>Adults · 12 Sections</b><span>New to AI · what it is, how it works, why it matters</span></div>
+    <div><b>Module 1 · What Is AI? · 12 Missions</b><span>Ages 8–11 · earn all 12 badges, then use real AI in the Big Mission</span></div>
   </a>
 </div>
 <footer>CODE THE FUTURE · LOUISVILLE · V1</footer>
@@ -293,15 +289,12 @@
     var badges = await D.listBadges();
     document.getElementById("homeBadges").textContent = badges.length + (badges.length===1?" badge":" badges") + " earned";
     var kids = await D.getProgress("module-01-what-is-ai","kids");
-    var adults = await D.getProgress("module-01-what-is-ai","adults");
-    var best = (kids && (!adults || new Date(kids.updated_at) > new Date(adults.updated_at))) ? {t:"kids",p:kids} : (adults ? {t:"adults",p:adults} : null);
-    if (best){
-      var TOTALS = { kids: 143, adults: 115 };
-      var pct = Math.min(100, Math.round(best.p.position / TOTALS[best.t] * 100));
+    if (kids){
+      var pct = Math.min(100, Math.round(kids.position / 143 * 100));
       document.getElementById("contBar").style.width = pct + "%";
-      document.getElementById("contMeta").textContent = (best.t==="kids"?"Kids track":"Adults track") + " · " + pct + "% through";
+      document.getElementById("contMeta").textContent = pct + "% through · keep going!";
       document.getElementById("contGo").textContent = "Continue →";
-      document.getElementById("continueTile").href = "../curriculum/module-01-what-is-ai/lessons/player.html?track=" + best.t;
+      document.getElementById("continueTile").href = "../curriculum/module-01-what-is-ai/lessons/player.html?track=kids";
     }
     var cohorts = await D.myCohorts();
     if (cohorts.length){

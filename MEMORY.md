@@ -89,6 +89,22 @@ coding, with emphasis on how AI is reshaping software development. Origin materi
   "Online now" avatar strip on home + board, green dots on the roster. Works with anon auth.
 - Board/home link: home presence strip links to `board.html#chat` (opens chat view).
 
+## Safety + cohort scope (06-10-2026)
+
+- **Profanity filter, defense in depth:** DB triggers (migration `…150000_profanity_filter.sql`,
+  applied) on `posts`, `post_comments`, `messages`, AND `profiles` (names/taglines) — raise
+  `PROFANITY_BLOCKED`; matching = lowercase + leetspeak normalize → word-boundary list +
+  collapsed-substring list (catches "f u c k", "5h1t", "b1tch"; passes "classic assistant").
+  Client mirror `platform/lib/filter.js` (`window.CTFFilter`) gives instant kid-friendly
+  rejections ("Our robots only deliver kind words! 🤖💙") — wired into board compose/replies/
+  chat + onboarding/profile names. Verified: client blocks, DB blocks direct-API bypass,
+  clean text flows. To extend the word list: edit BOTH the migration (new migration) and
+  filter.js.
+- **First cohort = KIDS ONLY (8–11).** Adult path hidden, NOT deleted (content/json/player
+  all intact): home links → kids player directly, home tracks row kids-only, lessons +
+  capstone choosers show adults dimmed "coming soon". To re-enable: restore the two chooser
+  cards + home tracks/links. Jon reviewing Module 1 content next; expect feedback edits.
+
 ## Platform screens (06-09-2026)
 
 - **Production config:** `platform/lib/config.js` is now COMMITTED (anon key is public-safe /

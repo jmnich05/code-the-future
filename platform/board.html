@@ -186,6 +186,7 @@
 
 <script src="lib/config.js"></script>
 <script src="lib/avatar.js"></script>
+<script src="lib/filter.js"></script>
 <script src="faq.js"></script>
 <script type="module">
   import { CTFDB } from "./lib/ctf-db.js";
@@ -302,7 +303,10 @@
       b.onclick = async function(){
         var id = b.getAttribute("data-send"), input = b.parentNode.querySelector("input");
         var t = input.value.trim(); if(!t) return;
-        await window.CTFDB.addComment(id, t); input.value="";
+        if (!window.CTFFilter.isClean(t)){ alert(window.CTFFilter.message()); return; }
+        var r = await window.CTFDB.addComment(id, t);
+        if (r.error){ alert(window.CTFFilter.isProfanityError(r.error) ? window.CTFFilter.message() : "Couldn't reply: " + r.error); return; }
+        input.value="";
         var box = document.getElementById("c-"+id); box.classList.remove("open");
         document.querySelector('[data-comments="'+id+'"]').click();
       };
@@ -311,9 +315,13 @@
   document.getElementById("composePost").onclick = async function(){
     var ta = document.getElementById("composeBody");
     var t = ta.value.trim(); if(!t || !state.cohort) return;
+    if (!window.CTFFilter.isClean(t)){ alert(window.CTFFilter.message()); return; }
     var ch = state.channel === "announcements" && state.myRole !== "staff" ? "general" : state.channel;
     var r = await window.CTFDB.createPost(state.cohort.id, ch, t, false);
-    if (r.error){ alert("Couldn't post: " + r.error); return; }
+    if (r.error){
+      alert(window.CTFFilter.isProfanityError(r.error) ? window.CTFFilter.message() : "Couldn't post: " + r.error);
+      return;
+    }
     ta.value = ""; if (ch !== state.channel){ state.channel = ch; }
     setView("feed"); loadPosts();
   };
@@ -342,9 +350,13 @@
   async function sendChat(){
     var input = document.getElementById("chatText");
     var t = input.value.trim(); if (!t || !state.cohort) return;
-    input.value = "";
+    if (!window.CTFFilter.isClean(t)){
+      input.value = ""; input.placeholder = window.CTFFilter.message(); return;
+    }
+    input.value = ""; input.placeholder = "Say something nice…";
     var r = await window.CTFDB.sendMessage(state.cohort.id, t);
-    if (r.error) alert("Couldn't send: " + r.error);
+    if (r.error && window.CTFFilter.isProfanityError(r.error)) input.placeholder = window.CTFFilter.message();
+    else if (r.error) alert("Couldn't send: " + r.error);
   }
   document.getElementById("chatSend").onclick = sendChat;
   document.getElementById("chatText").addEventListener("keydown", function(e){ if (e.key === "Enter") sendChat(); });
