@@ -12,7 +12,7 @@
   .hero{ position:relative; min-height:78vh; display:flex; flex-direction:column; color:#fff; overflow:hidden; background:#070C1A; }
   .hero .photo{ position:absolute; inset:0; background-size:cover; background-position:center 30%; }
   .hero .shade{ position:absolute; inset:0; background:
-    linear-gradient(180deg, rgba(7,12,26,.72) 0%, rgba(7,12,26,.10) 30%, rgba(7,12,26,.05) 55%, rgba(7,12,26,.82) 100%); }
+    linear-gradient(180deg, rgba(7,12,26,.80) 0%, rgba(7,12,26,.55) 34%, rgba(7,12,26,.12) 62%, rgba(7,12,26,.30) 100%); }
   .hero .inner{ position:relative; z-index:2; display:flex; flex-direction:column; flex:1; width:100%; max-width:1200px; margin:0 auto; padding:22px 24px 40px; }
   .hero nav.top{ display:flex; align-items:center; gap:16px; }
   .hero .brand{ font-family:var(--font-display); font-weight:700; font-size:1.2rem; text-shadow:0 2px 12px rgba(0,0,0,.4); }
@@ -20,7 +20,7 @@
   .hero nav.top .links{ margin-left:auto; display:flex; gap:8px; }
   .hero nav.top .links a{ color:#fff; text-decoration:none; font-weight:700; font-size:.95rem; background:rgba(7,12,26,.45); border:1px solid rgba(255,255,255,.25); border-radius:999px; padding:9px 18px; backdrop-filter:blur(8px); }
   .hero nav.top .links a:hover{ background:rgba(42,95,240,.65); }
-  .hero .headline{ margin-top:auto; text-align:center; padding-bottom:8px; }
+  .hero .headline{ margin-top:clamp(20px, 5vh, 56px); text-align:center; padding-bottom:8px; }
   .hero .eyebrow{ color:#8DEAEF; text-shadow:0 1px 8px rgba(0,0,0,.5); }
   .hero h1{ color:#fff; font-size:clamp(2.6rem, 7vw, 5rem); line-height:.98; letter-spacing:-.03em; margin:.1em 0; text-shadow:0 4px 26px rgba(0,0,0,.55); }
   .hero h1 .accent{ background:linear-gradient(120deg,#5C8BFF,#26C7D1); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent; filter:drop-shadow(0 4px 16px rgba(0,0,0,.5)); }
@@ -225,7 +225,10 @@
       var r = await fetch("/api/image", { method:"POST", headers:{ "Content-Type":"application/json" }, body: JSON.stringify({ prompt: prompt }) });
       var d = await r.json();
       clearInterval(waitTimer); genBtn.disabled = false;
-      if (!r.ok || d.error){ statusEl.textContent = "🙈 " + (d.error || "Something went wrong — try again!"); return; }
+      if (!r.ok || d.error){
+        if (d.detail) console.warn("[remix] OpenAI error detail:", d.detail);
+        statusEl.textContent = "🙈 " + (d.error || "Something went wrong — try again!"); return;
+      }
       lastImage = d.image;
       statusEl.textContent = "🎉 Look what you made!";
       document.getElementById("previewImg").src = lastImage;
