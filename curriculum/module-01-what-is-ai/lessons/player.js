@@ -153,7 +153,7 @@
   function build() {
     var root = document.getElementById("player");
     root.innerHTML =
-      '<div class="p-top"><a class="p-exit" href="index.html">✕ Exit</a><span class="p-label" id="pLabel"></span><span class="p-track"><i id="pFill"></i></span></div>' +
+      '<div class="p-top"><a class="p-exit" href="../../../platform/index.html">✕ Exit</a><span class="p-label" id="pLabel"></span><span class="p-track"><i id="pFill"></i></span></div>' +
       '<div class="p-stage" id="pStage"></div>' +
       '<div class="p-bottom"><button class="p-back" id="pBack">‹ Back</button><span class="p-hint" id="pHint"></span><button class="p-next" id="pNext">Continue →</button></div>';
     stage = document.getElementById("pStage");
