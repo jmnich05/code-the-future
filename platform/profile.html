@@ -120,6 +120,7 @@
       preview: document.getElementById("editPreview"),
       picker: document.getElementById("picker"),
       config: profile.avatar||A.DEFAULT,
+      unlocked: A.unlockedFromBadges(badges),
       onChange: function(){}
     });
     document.getElementById("edit").classList.add("open");

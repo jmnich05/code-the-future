@@ -13,11 +13,33 @@
   var stage, label, fill, backBtn, nextBtn, hint;
   var DATA, STEPS = [], pos = 0, animating = false, revealTimer = null, hadLocalPos = false;
   var ttsAudio = null, speaking = false;
+  var audioOn = false; try { audioOn = localStorage.getItem("ctf:audio") === "1"; } catch (e) {}
   function stopSpeaking() {
     if (ttsAudio) { try { ttsAudio.pause(); } catch (e) {} ttsAudio = null; }
     speaking = false;
-    var vb = document.getElementById("pVoice");
-    if (vb) { vb.textContent = "🔊"; vb.title = "Read this to me"; }
+    syncAudioBtn();
+  }
+  function syncAudioBtn() {
+    var b = document.getElementById("pAudio");
+    if (!b) return;
+    b.classList.toggle("on", audioOn);
+    b.innerHTML = audioOn ? (speaking ? "🔊 Reading… <small>tap to turn off</small>" : "🔊 Audio learning <b>ON</b>") : "🔈 Turn on audio learning";
+  }
+  async function speakBeat() {
+    var b = stage.querySelector(".beat"); if (!b) return;
+    var text = (b.innerText || b.textContent || "").replace(/\s+/g, " ").trim().slice(0, 900);
+    if (!text) return;   // image/art beats have nothing to read
+    try {
+      var r = await fetch("/api/tts", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ text: text }) });
+      if (!r.ok || !audioOn) return;
+      var blob = await r.blob();
+      stopSpeaking();
+      if (!audioOn) return;
+      ttsAudio = new Audio(URL.createObjectURL(blob));
+      speaking = true; syncAudioBtn();
+      ttsAudio.onended = function () { speaking = false; syncAudioBtn(); };
+      ttsAudio.play().catch(function () { speaking = false; syncAudioBtn(); });
+    } catch (e) {}
   }
 
   // ---- Supabase sync (optional; no-ops if CTFDB unconfigured) -------------
@@ -103,8 +125,11 @@
       if (type === "complete") {
         var medal = "";
         if (window.CTFBadge && step.m && step.m.n) {
+          var rw = window.CTFAvatar && window.CTFAvatar.REWARDS && window.CTFAvatar.REWARDS[step.m.n];
           medal = '<div class="badge-medal">' + window.CTFBadge.render(step.m.n) +
-            '<div class="badge-name">' + window.CTFBadge.NAMES[step.m.n - 1] + '</div></div>';
+            '<div class="badge-name">' + window.CTFBadge.NAMES[step.m.n - 1] + '</div>' +
+            (rw ? '<div class="badge-gift">🎁 New gear unlocked: <b>' + rw.emoji + " " + rw.label + '</b> — try it on your character!</div>' : '') +
+            '</div>';
         }
         beat.innerHTML = medal + '<div class="wrap">' + step.b.html + "</div>";
         confetti();
@@ -125,6 +150,8 @@
     var dur = applyReveal(beat, type);
     animating = true; clearTimeout(revealTimer);
     revealTimer = setTimeout(function () { animating = false; syncControls(); }, dur);
+
+    if (audioOn) speakBeat();   // audio learning: read each screen aloud
 
     save();
     syncControls();
@@ -192,9 +219,9 @@
   function build() {
     var root = document.getElementById("player");
     root.innerHTML =
-      '<div class="p-top"><a class="p-exit" href="../../../platform/index.html">✕ Exit</a><span class="p-label" id="pLabel"></span><button class="p-voice" id="pVoice" title="Read this to me">🔊</button><span class="p-track"><i id="pFill"></i></span></div>' +
+      '<div class="p-top"><a class="p-exit" href="../../../platform/index.html">✕ Exit</a><span class="p-label" id="pLabel"></span><span class="p-track"><i id="pFill"></i></span></div>' +
       '<div class="p-stage" id="pStage"></div>' +
-      '<div class="p-bottom"><button class="p-back" id="pBack">‹ Back</button><span class="p-hint" id="pHint"></span><button class="p-next" id="pNext">Continue →</button></div>';
+      '<div class="p-bottom"><button class="p-back" id="pBack">‹ Back</button><button class="p-audio" id="pAudio"></button><span class="p-hint" id="pHint"></span><button class="p-next" id="pNext">Continue →</button></div>';
     stage = document.getElementById("pStage");
     label = document.getElementById("pLabel");
     fill = document.getElementById("pFill");
@@ -205,30 +232,14 @@
     nextBtn.addEventListener("click", next);
     backBtn.addEventListener("click", prev);
 
-    // "Read to me" — ElevenLabs TTS via /api/tts (accessibility)
-    var voiceBtn = document.getElementById("pVoice");
-    voiceBtn.addEventListener("click", async function () {
-      if (speaking) { stopSpeaking(); return; }
-      var b = stage.querySelector(".beat"); if (!b) return;
-      finishReveal();
-      var text = (b.innerText || b.textContent || "").replace(/\s+/g, " ").trim().slice(0, 900);
-      if (!text) return;
-      voiceBtn.textContent = "…"; voiceBtn.disabled = true;
-      try {
-        var r = await fetch("/api/tts", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ text: text }) });
-        voiceBtn.disabled = false;
-        if (!r.ok) {
-          var e = {}; try { e = await r.json(); } catch (x) {}
-          voiceBtn.textContent = "🔇"; voiceBtn.title = e.error || "Voice not available yet";
-          setTimeout(function () { voiceBtn.textContent = "🔊"; voiceBtn.title = "Read this to me"; }, 2600);
-          return;
-        }
-        var blob = await r.blob();
-        ttsAudio = new Audio(URL.createObjectURL(blob));
-        speaking = true; voiceBtn.textContent = "⏹";
-        ttsAudio.onended = function () { stopSpeaking(); };
-        ttsAudio.play();
-      } catch (err) { voiceBtn.disabled = false; voiceBtn.textContent = "🔊"; }
+    // "Audio learning" toggle — ElevenLabs reads each screen aloud while ON
+    var audioBtn = document.getElementById("pAudio");
+    syncAudioBtn();
+    audioBtn.addEventListener("click", function () {
+      audioOn = !audioOn;
+      try { localStorage.setItem("ctf:audio", audioOn ? "1" : "0"); } catch (e) {}
+      if (audioOn) { finishReveal(); speakBeat(); } else { stopSpeaking(); }
+      syncAudioBtn();
     });
     stage.addEventListener("click", function (e) {
       if (e.target.closest("a,button,input,textarea,select,.ctf")) return;

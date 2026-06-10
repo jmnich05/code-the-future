@@ -72,3 +72,23 @@ h1,h2,h3{ font-family:var(--font-display); color:var(--ink-900); letter-spacing:
 
 .muted{ color:var(--ink-500); }
 .tagchip{ font-family:var(--font-mono); font-size:11px; letter-spacing:.06em; text-transform:uppercase; background:var(--ink-100); color:var(--ink-500); border-radius:var(--radius-pill); padding:6px 12px; }
+
+/* --- Living avatars: idle bob + blink (v2 avatar groups) ------------------- */
+.ctf-avatar-svg .av-all{ transform-box:fill-box; transform-origin:50% 65%; animation:av-bob 3.4s ease-in-out infinite; }
+.ctf-avatar-svg .av-eyes{ transform-box:fill-box; transform-origin:center; animation:av-blink 4.8s ease-in-out infinite; }
+@keyframes av-bob{ 0%,100%{ transform:translateY(0) } 50%{ transform:translateY(-4px) } }
+@keyframes av-blink{ 0%,91%,100%{ transform:scaleY(1) } 94%,96%{ transform:scaleY(.12) } }
+/* hover = excited wiggle (profile, bubbles, roster) */
+.avatar:hover .av-all, .obubble:hover .av-all, .member:hover .av-all{ animation:av-excited .55s ease-in-out infinite; }
+@keyframes av-excited{ 0%,100%{ transform:translateY(0) rotate(0) } 25%{ transform:translateY(-6px) rotate(-4deg) } 75%{ transform:translateY(-6px) rotate(4deg) } }
+@media (prefers-reduced-motion: reduce){
+  .ctf-avatar-svg .av-all, .ctf-avatar-svg .av-eyes,
+  .avatar:hover .av-all, .obubble:hover .av-all, .member:hover .av-all{ animation:none; }
+}
+
+/* --- Locked accessory swatches (mission rewards) --------------------------- */
+.swatch.locked{ position:relative; opacity:.55; }
+.swatch.locked::after{ content:"🔒"; position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+  font-size:1.1rem; background:rgba(246,248,252,.55); border-radius:11px; }
+.swatch.locked:hover{ transform:none; }
+.unlock-hint{ font-size:.85rem; color:var(--coral-600); min-height:1.3em; margin-top:10px; font-weight:600; }

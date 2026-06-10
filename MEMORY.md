@@ -89,6 +89,25 @@ coding, with emphasis on how AI is reshaping software development. Origin materi
   "Online now" avatar strip on home + board, green dots on the roster. Works with anon auth.
 - Board/home link: home presence strip links to `board.html#chat` (opens chat view).
 
+## Polish round (06-11-2026): audio toggle, art badges, gear rewards, living avatars
+
+- **Audio learning toggle** replaced the top-bar 🔊: bottom-bar pill "🔈 Turn on audio
+  learning" ↔ "🔊 Audio learning ON" — when ON it auto-reads EVERY beat on render
+  (continuous mode), persisted `ctf:audio`. Image/art beats no-op. Verified live.
+- **Generated badge art:** `scripts/gen-badges.mjs` made 12 themed gpt-image-1 badges
+  (transparent PNG, kid-sticker style, per-mission themes) → `platform/assets/badges/
+  badge-N.png` (sips'd to 512px, ~270KB ea). `CTFBadge.render` = <img> with hidden SVG
+  fallback (onerror). Gotchas: gpt-image rate-limits per minute (single worker + 12s
+  spacing + retry on 429/500); rerun script to regenerate (skips existing files).
+- **Gear rewards:** every mission unlocks an avatar accessory — `CTFAvatar.REWARDS`
+  (m1 cape … m12 laurel; 12 new SVG accessories, cape/jetpack render behind body).
+  Unlocks derive from badge keys (`unlockedFromBadges`) — no schema change. Builder
+  (profile.js) shows 🔒 swatches + "unlocks when you finish Mission N!" hint; player
+  completion shows "🎁 New gear unlocked: X". Onboarding = base 6 only.
+- **Living avatars:** avatar.js v2 wraps body in `.av-all` (idle bob) and eyes in
+  `.av-eyes` (periodic blink); hover = excited wiggle. Pure CSS in app.css,
+  reduced-motion aware. All avatars everywhere are now animated.
+
 ## Night build #2 (06-10-2026 late): DMs, badge medals, read-to-me
 
 - **DMs (Roblox-style):** `messages.recipient_id` (null = cohort chat) — migration
