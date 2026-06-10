@@ -65,6 +65,30 @@ coding, with emphasis on how AI is reshaping software development. Origin materi
 - Paths assume the site is served from the REPO ROOT (Netlify does; `player.html` uses
   `../../../platform/lib/...`). For local preview, serve the repo root, not the module dir.
 
+## Evening build (06-09-2026, post-demo)
+
+- **Production APIs at repo root now:** `netlify.toml` (root) + `netlify/functions/{ai,image}.js`
+  with `/api/ai` + `/api/image` redirects — so the capstone AND the new image studio work on
+  the live Netlify site. **Jon must set `OPENAI_API_KEY` in Netlify env vars** or both 500.
+  Local dev: `node scripts/dev.mjs` (port 8160, serves repo root + both APIs, reads
+  `capstone/.env`).
+- **OpenAI images gotchas (learned live):** this account has **`gpt-image-1` only — `dall-e-3`
+  does not exist** for it; `response_format` param is rejected (b64 returned by default);
+  valid landscape size `1536x1024`, quality `low|medium|high|auto`. Function handles both
+  b64_json and url responses. ~22s/gen at medium.
+- **Homepage = photo hero + remix studio:** Jon's AI Louisville artwork
+  (`platform/assets/hero-louisville.jpg`, optimized from `assets/*.png`) full-bleed, "Code
+  the Future / LOUISVILLE" headline, coral CTA. Below: **🎨 Remix studio** — kid prompts →
+  `/api/image` → preview → "Make it my homepage" (canvas-compressed to ~180KB JPEG →
+  `localStorage ctf:hero`; "use original" resets). Verified end-to-end incl. persistence.
+- **Board is full-service now:** channels + **📖 FAQ & AI Dictionary** (`platform/faq.js` —
+  20 kid-voiced Q&As: platform how-tos + AI terms for 8–11) + **💬 Live Chat**
+  (`messages` table, migration `…013000_chat.sql`, realtime publication; RLS = cohort
+  members; persistent so staff can review). Chat verified live via postgres_changes.
+- **Presence:** `CTFDB.joinPresence(cohortId, info, onSync)` (Supabase Realtime presence) —
+  "Online now" avatar strip on home + board, green dots on the roster. Works with anon auth.
+- Board/home link: home presence strip links to `board.html#chat` (opens chat view).
+
 ## Platform screens (06-09-2026)
 
 - **Production config:** `platform/lib/config.js` is now COMMITTED (anon key is public-safe /

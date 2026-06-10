@@ -3,42 +3,87 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Code the Future — Home</title>
+<title>Code the Future — Louisville</title>
 <link rel="stylesheet" href="app.css">
 <style>
-  .hero{ position:relative; overflow:hidden; color:#fff; padding:48px 0 96px;
-    background:radial-gradient(130% 150% at 82% -15%, rgba(38,199,209,.30), transparent 55%), var(--grad-night); }
-  .hero .wrap{ display:flex; align-items:center; gap:18px; flex-wrap:wrap; }
-  .hero .brand{ font-family:var(--font-display); font-weight:700; font-size:1.15rem; }
-  .hero .brand .accent{ color:var(--teal-400); }
-  .hero nav{ margin-left:auto; display:flex; gap:18px; }
-  .hero nav a{ color:#cfe0ff; text-decoration:none; font-weight:600; font-size:.95rem; }
-  .hero .big{ margin-top:46px; }
-  .hero h1{ color:#fff; font-size:3rem; line-height:1.05; letter-spacing:-.03em; }
-  .hero h1 .accent{ background:linear-gradient(120deg,#3D74FF,#26C7D1); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent; }
-  .hero p.sub{ opacity:.88; font-size:1.15rem; max-width:54ch; }
-  @media (max-width:560px){ .hero h1{ font-size:2.1rem; } }
+  body{ background:var(--ink-50); }
 
-  .deck{ position:relative; z-index:2; margin-top:-56px; display:grid; grid-template-columns:1.4fr 1fr 1fr; gap:18px; }
+  /* ---- photo hero ---- */
+  .hero{ position:relative; min-height:78vh; display:flex; flex-direction:column; color:#fff; overflow:hidden; background:#070C1A; }
+  .hero .photo{ position:absolute; inset:0; background-size:cover; background-position:center 30%; }
+  .hero .shade{ position:absolute; inset:0; background:
+    linear-gradient(180deg, rgba(7,12,26,.72) 0%, rgba(7,12,26,.10) 30%, rgba(7,12,26,.05) 55%, rgba(7,12,26,.82) 100%); }
+  .hero .inner{ position:relative; z-index:2; display:flex; flex-direction:column; flex:1; width:100%; max-width:1200px; margin:0 auto; padding:22px 24px 40px; }
+  .hero nav.top{ display:flex; align-items:center; gap:16px; }
+  .hero .brand{ font-family:var(--font-display); font-weight:700; font-size:1.2rem; text-shadow:0 2px 12px rgba(0,0,0,.4); }
+  .hero .brand .accent{ color:var(--teal-400); }
+  .hero nav.top .links{ margin-left:auto; display:flex; gap:8px; }
+  .hero nav.top .links a{ color:#fff; text-decoration:none; font-weight:700; font-size:.95rem; background:rgba(7,12,26,.45); border:1px solid rgba(255,255,255,.25); border-radius:999px; padding:9px 18px; backdrop-filter:blur(8px); }
+  .hero nav.top .links a:hover{ background:rgba(42,95,240,.65); }
+  .hero .headline{ margin-top:auto; text-align:center; padding-bottom:8px; }
+  .hero .eyebrow{ color:#8DEAEF; text-shadow:0 1px 8px rgba(0,0,0,.5); }
+  .hero h1{ color:#fff; font-size:clamp(2.6rem, 7vw, 5rem); line-height:.98; letter-spacing:-.03em; margin:.1em 0; text-shadow:0 4px 26px rgba(0,0,0,.55); }
+  .hero h1 .accent{ background:linear-gradient(120deg,#5C8BFF,#26C7D1); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent; filter:drop-shadow(0 4px 16px rgba(0,0,0,.5)); }
+  .hero h1 .lou{ display:block; font-size:clamp(1.4rem, 3.6vw, 2.6rem); letter-spacing:.28em; color:#FFB320; text-shadow:0 3px 14px rgba(0,0,0,.6); margin-top:.25em; }
+  .hero p.sub{ font-size:clamp(1rem, 2vw, 1.25rem); max-width:60ch; margin:14px auto 22px; opacity:.96; text-shadow:0 2px 10px rgba(0,0,0,.6); }
+  .hero .cta-row{ display:flex; gap:12px; justify-content:center; flex-wrap:wrap; }
+  .hero .cta{ font-family:var(--font-display); font-weight:700; font-size:1.15rem; text-decoration:none; color:#fff; border-radius:999px; padding:16px 34px;
+    background:linear-gradient(120deg,var(--coral-500),var(--amber-400)); box-shadow:0 12px 36px rgba(255,90,56,.45); transition:transform .15s var(--ease-spring); }
+  .hero .cta:hover{ transform:translateY(-3px) scale(1.02); }
+  .hero .cta.alt{ background:rgba(7,12,26,.5); border:2px solid rgba(255,255,255,.45); box-shadow:none; backdrop-filter:blur(8px); }
+  .remix-tag{ position:absolute; z-index:2; top:86px; right:22px; background:rgba(7,12,26,.55); border:1px solid rgba(255,255,255,.25); color:#fff; border-radius:999px; padding:7px 14px; font-size:.8rem; backdrop-filter:blur(8px); display:none; align-items:center; gap:8px; }
+  .remix-tag button{ font:inherit; background:none; border:none; color:#8DEAEF; cursor:pointer; padding:0; font-weight:700; }
+
+  /* ---- online now ---- */
+  .online{ display:none; align-items:center; gap:6px; margin:0 auto; max-width:1200px; padding:14px 24px 0; flex-wrap:wrap; }
+  .online .dotlbl{ font-family:var(--font-mono); font-size:11px; letter-spacing:.1em; text-transform:uppercase; color:var(--ink-500); display:flex; align-items:center; gap:7px; margin-right:6px; }
+  .online .dotlbl::before{ content:""; width:9px; height:9px; border-radius:50%; background:#2FBF71; box-shadow:0 0 0 4px rgba(47,191,113,.18); animation:pulse 2s infinite; }
+  @keyframes pulse{ 50%{ box-shadow:0 0 0 7px rgba(47,191,113,.08); } }
+  .online .obubble{ display:flex; align-items:center; gap:6px; background:var(--white); border:1px solid var(--ink-200); border-radius:999px; padding:4px 12px 4px 4px; font-weight:700; font-size:.85rem; color:var(--ink-900); box-shadow:var(--shadow-sm); }
+  .online .obubble .avatar.sm{ width:30px; height:30px; border-radius:9px; }
+  .online a.chatlink{ font-weight:700; font-size:.85rem; color:var(--blue-700); text-decoration:none; background:var(--blue-50); border-radius:999px; padding:8px 14px; }
+
+  /* ---- remix studio ---- */
+  .studio-wrap{ max-width:1200px; margin:26px auto 0; padding:0 24px; }
+  .studio{ position:relative; border-radius:var(--radius-xl); overflow:hidden; background:var(--grad-night); color:#fff; box-shadow:var(--shadow-lg); padding:34px 30px; }
+  .studio::before{ content:""; position:absolute; inset:0; background:radial-gradient(120% 150% at 85% -20%, rgba(255,179,32,.25), transparent 55%), radial-gradient(120% 150% at 10% 120%, rgba(61,116,255,.3), transparent 55%); pointer-events:none; }
+  .studio > *{ position:relative; }
+  .studio .eyebrow{ color:var(--amber-400); }
+  .studio h2{ color:#fff; font-size:clamp(1.6rem, 3.4vw, 2.3rem); margin:.15em 0 .3em; }
+  .studio p.lead{ opacity:.9; max-width:62ch; margin:0 0 18px; }
+  .chips{ display:flex; flex-wrap:wrap; gap:10px; margin-bottom:16px; }
+  .chips button{ font:inherit; font-weight:600; font-size:.92rem; cursor:pointer; color:#fff; background:rgba(255,255,255,.10); border:1px solid rgba(255,255,255,.25); border-radius:999px; padding:10px 16px; transition:all .14s; }
+  .chips button:hover{ background:rgba(255,255,255,.22); transform:translateY(-2px); }
+  .studio .row{ display:flex; gap:12px; flex-wrap:wrap; }
+  .studio input{ flex:1; min-width:240px; font:inherit; font-size:1.05rem; color:var(--ink-900); background:#fff; border:none; border-radius:999px; padding:15px 22px; }
+  .studio input:focus{ outline:3px solid rgba(38,199,209,.6); }
+  .studio .gen{ font-family:var(--font-display); font-weight:700; font-size:1.1rem; cursor:pointer; color:#0C1322; border:none; border-radius:999px; padding:15px 30px;
+    background:linear-gradient(120deg,var(--amber-400),#FFD980); box-shadow:0 10px 30px rgba(255,179,32,.4); transition:transform .14s var(--ease-spring); }
+  .studio .gen:hover{ transform:translateY(-2px); }
+  .studio .gen[disabled]{ opacity:.6; transform:none; cursor:default; }
+  .studio .status{ margin-top:14px; font-family:var(--font-mono); font-size:.85rem; color:#8DEAEF; min-height:1.4em; }
+  .preview{ display:none; margin-top:20px; }
+  .preview img{ width:100%; border-radius:var(--radius-lg); box-shadow:var(--shadow-lg); display:block; }
+  .preview .actions{ display:flex; gap:12px; margin-top:14px; flex-wrap:wrap; }
+  .preview .use{ font-family:var(--font-display); font-weight:700; font-size:1.05rem; cursor:pointer; color:#fff; border:none; border-radius:999px; padding:13px 26px; background:linear-gradient(120deg,var(--blue-600),var(--teal-600)); }
+  .preview .again{ font:inherit; font-weight:600; cursor:pointer; color:#fff; background:none; border:2px solid rgba(255,255,255,.35); border-radius:999px; padding:11px 22px; }
+
+  /* ---- deck + tracks (kept) ---- */
+  .deck{ position:relative; z-index:2; margin:26px auto 0; max-width:1200px; padding:0 24px; display:grid; grid-template-columns:1.4fr 1fr 1fr; gap:18px; }
   @media (max-width:900px){ .deck{ grid-template-columns:1fr; } }
-  .tile{ background:var(--white); border:1px solid var(--ink-200); border-radius:var(--radius-xl); box-shadow:var(--shadow-lg); padding:26px; display:flex; flex-direction:column; gap:10px; text-decoration:none; color:var(--ink-700); transition:transform .15s var(--ease-out), box-shadow .15s; }
+  .tile{ background:var(--white); border:1px solid var(--ink-200); border-radius:var(--radius-xl); box-shadow:var(--shadow-md); padding:26px; display:flex; flex-direction:column; gap:10px; text-decoration:none; color:var(--ink-700); transition:transform .15s var(--ease-out); }
   .tile:hover{ transform:translateY(-3px); }
   .tile h2{ font-size:1.4rem; }
-  .tile .eyebrow{ margin:0; }
   .tile .go{ margin-top:auto; font-family:var(--font-display); font-weight:700; color:var(--blue-700); }
   .tile.primary{ background:var(--grad-spark); color:#fff; border:none; }
-  .tile.primary h2, .tile.primary .go{ color:#fff; }
+  .tile.primary h2,.tile.primary .go{ color:#fff; }
   .tile.primary .eyebrow{ color:#E4FBFC; }
   .progressbar{ height:8px; background:rgba(255,255,255,.3); border-radius:999px; overflow:hidden; }
   .progressbar > i{ display:block; height:100%; background:#fff; border-radius:999px; }
-  .tile .meta{ font-size:.92rem; opacity:.92; }
   .me-row{ display:flex; align-items:center; gap:12px; }
   .me-row .avatar.sm{ width:54px; height:54px; }
   .me-row b{ color:var(--ink-900); font-family:var(--font-display); font-size:1.15rem; }
-  .tile.primary .me-row b{ color:#fff; }
-  .badgecount{ font-size:.9rem; }
-
-  .tracks{ margin:34px 0 60px; display:grid; grid-template-columns:1fr 1fr; gap:18px; }
+  .tracks{ max-width:1200px; margin:22px auto 60px; padding:0 24px; display:grid; grid-template-columns:1fr 1fr; gap:18px; }
   @media (max-width:700px){ .tracks{ grid-template-columns:1fr; } }
   .track{ border-radius:var(--radius-lg); padding:22px; border:1px solid var(--ink-200); background:var(--white); box-shadow:var(--shadow-sm); display:flex; gap:16px; align-items:center; text-decoration:none; color:var(--ink-700); transition:transform .15s; }
   .track:hover{ transform:translateY(-2px); }
@@ -49,58 +94,83 @@
 </style>
 </head>
 <body>
+
 <div class="hero">
-  <div class="wrap">
-    <span class="brand">◆ Code the <span class="accent">Future</span></span>
-    <nav>
-      <a href="board.html">Board</a>
-      <a href="profile.html">Profile</a>
-      <a href="../curriculum/module-01-what-is-ai/lessons/index.html">Lessons</a>
+  <div class="photo" id="heroPhoto" style="background-image:url('assets/hero-louisville.jpg')"></div>
+  <div class="shade"></div>
+  <div class="remix-tag" id="remixTag"><span>✨ Your AI remix</span><button id="resetHero">use original</button></div>
+  <div class="inner">
+    <nav class="top">
+      <span class="brand">◆ Code the <span class="accent">Future</span></span>
+      <span class="links"><a href="board.html">Board</a><a href="profile.html">Profile</a><a href="../curriculum/module-01-what-is-ai/lessons/index.html">Lessons</a></span>
     </nav>
-  </div>
-  <div class="wrap big">
-    <div>
-      <p class="eyebrow" style="color:#26C7D1">Summer 2026 · Louisville, KY</p>
-      <h1>Learn to build <span class="accent">what's next.</span></h1>
-      <p class="sub">AI literacy and modern coding — the way the work actually happens. Pick up where you left off, check the cohort board, or customize your character.</p>
+    <div class="headline">
+      <p class="eyebrow">SUMMER 2026 · AI CAMP FOR KIDS</p>
+      <h1>Code the <span class="accent">Future</span><span class="lou">LOUISVILLE</span></h1>
+      <p class="sub">Learn what AI really is, build with it, and team up with your cohort — in the city you call home.</p>
+      <div class="cta-row">
+        <a class="cta" href="../curriculum/module-01-what-is-ai/lessons/player.html?track=kids">🚀 Start Mission 1</a>
+        <a class="cta alt" href="#studio">🎨 Remix this picture</a>
+      </div>
     </div>
   </div>
 </div>
 
-<div class="wrap">
-  <div class="deck">
-    <a class="tile primary" href="../curriculum/module-01-what-is-ai/lessons/index.html" id="continueTile">
-      <p class="eyebrow">Continue learning</p>
-      <h2 id="contTitle">Module 1 — What Is AI?</h2>
-      <div class="progressbar"><i id="contBar" style="width:0%"></i></div>
-      <span class="meta" id="contMeta">Start your first Mission →</span>
-      <span class="go" id="contGo">Start →</span>
-    </a>
-    <a class="tile" href="profile.html">
-      <p class="eyebrow">My profile</p>
-      <div class="me-row"><span class="avatar sm" id="homeAv"></span><div><b id="homeName">Explorer</b><div class="badgecount muted" id="homeBadges">&nbsp;</div></div></div>
-      <span class="go">Customize your character →</span>
-    </a>
-    <a class="tile" href="board.html">
-      <p class="eyebrow">Cohort board</p>
-      <h2 style="font-size:1.2rem" id="boardTitle">Say hi to your cohort</h2>
-      <span class="meta muted">Announcements, Show &amp; Tell, and help from Mr. Jon.</span>
-      <span class="go">Open the board →</span>
-    </a>
-  </div>
+<div class="online" id="online"></div>
 
-  <div class="tracks">
-    <a class="track" href="../curriculum/module-01-what-is-ai/lessons/player.html?track=kids">
-      <span class="ic">🚀</span>
-      <div><b>Kids · 12 Missions</b><span>Ages 8–11 · earn all 12 badges, then use real AI</span></div>
-    </a>
-    <a class="track" href="../curriculum/module-01-what-is-ai/lessons/player.html?track=adults">
-      <span class="ic">◆</span>
-      <div><b>Adults · 12 Sections</b><span>New to AI · what it is, how it works, why it matters</span></div>
-    </a>
+<div class="studio-wrap" id="studio">
+  <div class="studio">
+    <p class="eyebrow">◆ Your first AI superpower</p>
+    <h2>Remix this picture — make it YOURS</h2>
+    <p class="lead">That picture up top? An AI imagined it. Now it's your turn: describe what Louisville should look like in <b>your</b> future, and the AI will paint it. Your creation becomes the picture on YOUR homepage.</p>
+    <div class="chips" id="chips"></div>
+    <div class="row">
+      <input id="remixPrompt" maxlength="300" placeholder="Describe your Louisville of the future…">
+      <button class="gen" id="genBtn">✨ Paint it!</button>
+    </div>
+    <div class="status" id="genStatus"></div>
+    <div class="preview" id="preview">
+      <img id="previewImg" alt="Your AI-generated Louisville">
+      <div class="actions">
+        <button class="use" id="useBtn">🌟 Make it my homepage</button>
+        <button class="again" id="againBtn">Try another idea</button>
+      </div>
+    </div>
   </div>
-  <footer>CODE THE FUTURE · MODULE 1 · V1 PREVIEW</footer>
 </div>
+
+<div class="deck">
+  <a class="tile primary" href="../curriculum/module-01-what-is-ai/lessons/index.html" id="continueTile">
+    <p class="eyebrow">Continue learning</p>
+    <h2 id="contTitle">Module 1 — What Is AI?</h2>
+    <div class="progressbar"><i id="contBar" style="width:0%"></i></div>
+    <span id="contMeta" style="font-size:.92rem;opacity:.92">Start your first Mission →</span>
+    <span class="go" id="contGo">Start →</span>
+  </a>
+  <a class="tile" href="profile.html">
+    <p class="eyebrow">My profile</p>
+    <div class="me-row"><span class="avatar sm" id="homeAv"></span><div><b id="homeName">Explorer</b><div class="muted" id="homeBadges" style="font-size:.9rem">&nbsp;</div></div></div>
+    <span class="go">Customize your character →</span>
+  </a>
+  <a class="tile" href="board.html">
+    <p class="eyebrow">Cohort board</p>
+    <h2 style="font-size:1.2rem" id="boardTitle">Say hi to your cohort</h2>
+    <span class="muted" style="font-size:.92rem">Announcements, Show &amp; Tell, FAQs, and live chat.</span>
+    <span class="go">Open the board →</span>
+  </a>
+</div>
+
+<div class="tracks">
+  <a class="track" href="../curriculum/module-01-what-is-ai/lessons/player.html?track=kids">
+    <span class="ic">🚀</span>
+    <div><b>Kids · 12 Missions</b><span>Ages 8–11 · earn all 12 badges, then use real AI</span></div>
+  </a>
+  <a class="track" href="../curriculum/module-01-what-is-ai/lessons/player.html?track=adults">
+    <span class="ic">◆</span>
+    <div><b>Adults · 12 Sections</b><span>New to AI · what it is, how it works, why it matters</span></div>
+  </a>
+</div>
+<footer>CODE THE FUTURE · LOUISVILLE · V1</footer>
 
 <script src="lib/config.js"></script>
 <script src="lib/avatar.js"></script>
@@ -111,28 +181,122 @@
 <script>
 (function(){
   var A = window.CTFAvatar;
+
+  // ---- hero image: their remix (localStorage) or the original ----
+  var HERO_KEY = "ctf:hero";
+  function applyHero(){
+    var custom = null;
+    try { custom = localStorage.getItem(HERO_KEY); } catch(e){}
+    if (custom){
+      document.getElementById("heroPhoto").style.backgroundImage = "url('" + custom + "')";
+      document.getElementById("remixTag").style.display = "flex";
+    }
+  }
+  applyHero();
+  document.getElementById("resetHero").onclick = function(){
+    try { localStorage.removeItem(HERO_KEY); } catch(e){}
+    document.getElementById("heroPhoto").style.backgroundImage = "url('assets/hero-louisville.jpg')";
+    document.getElementById("remixTag").style.display = "none";
+  };
+
+  // ---- remix studio ----
+  var IDEAS = [
+    "A friendly dragon flying over the Big Four Bridge",
+    "Make it snow in Louisville with robots sledding",
+    "Robots and kids playing basketball by the river",
+    "Turn the whole skyline into a candy city",
+    "Hot air balloons shaped like animals over the city",
+    "Louisville at night with glowing rainbow fireflies"
+  ];
+  var WAIT_MSGS = ["Mixing the paint…","Teaching the robots to draw…","Adding Louisville sparkle…","Almost there — big art takes a minute…"];
+  var chipsEl = document.getElementById("chips");
+  IDEAS.forEach(function(t){
+    var b = document.createElement("button"); b.textContent = "💡 " + t;
+    b.onclick = function(){ document.getElementById("remixPrompt").value = t; document.getElementById("remixPrompt").focus(); };
+    chipsEl.appendChild(b);
+  });
+
+  var genBtn = document.getElementById("genBtn"), statusEl = document.getElementById("genStatus");
+  var waitTimer = null, lastImage = null;
+
+  async function generate(){
+    var prompt = document.getElementById("remixPrompt").value.trim();
+    if (!prompt){ document.getElementById("remixPrompt").focus(); return; }
+    genBtn.disabled = true; document.getElementById("preview").style.display = "none";
+    var i = 0; statusEl.textContent = WAIT_MSGS[0];
+    waitTimer = setInterval(function(){ i = (i+1) % WAIT_MSGS.length; statusEl.textContent = WAIT_MSGS[i]; }, 4000);
+    try {
+      var r = await fetch("/api/image", { method:"POST", headers:{ "Content-Type":"application/json" }, body: JSON.stringify({ prompt: prompt }) });
+      var d = await r.json();
+      clearInterval(waitTimer); genBtn.disabled = false;
+      if (!r.ok || d.error){ statusEl.textContent = "🙈 " + (d.error || "Something went wrong — try again!"); return; }
+      lastImage = d.image;
+      statusEl.textContent = "🎉 Look what you made!";
+      document.getElementById("previewImg").src = lastImage;
+      document.getElementById("preview").style.display = "block";
+      if (window.CTFDB && window.CTFDB.enabled) window.CTFDB.logEvent("hero_remix", { prompt: prompt });
+    } catch(e){
+      clearInterval(waitTimer); genBtn.disabled = false;
+      statusEl.textContent = "🙈 Couldn't reach the art robot — is the server running?";
+    }
+  }
+  genBtn.onclick = generate;
+  document.getElementById("remixPrompt").addEventListener("keydown", function(e){ if (e.key === "Enter") generate(); });
+  document.getElementById("useBtn").onclick = function(){
+    if (!lastImage) return;
+    // compress to a JPEG that fits comfortably in localStorage
+    var img = new Image();
+    img.onload = function(){
+      var w = Math.min(1280, img.width), h = Math.round(img.height * (w / img.width));
+      var c = document.createElement("canvas"); c.width = w; c.height = h;
+      c.getContext("2d").drawImage(img, 0, 0, w, h);
+      var jpeg = c.toDataURL("image/jpeg", 0.82);
+      try { localStorage.setItem(HERO_KEY, jpeg); } catch(e){ /* still applies this session */ }
+      document.getElementById("heroPhoto").style.backgroundImage = "url('" + jpeg + "')";
+      document.getElementById("remixTag").style.display = "flex";
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    };
+    img.src = lastImage;
+  };
+  document.getElementById("againBtn").onclick = function(){
+    document.getElementById("preview").style.display = "none";
+    document.getElementById("remixPrompt").value = ""; document.getElementById("remixPrompt").focus();
+  };
+
+  // ---- profile / progress / cohort / presence ----
   document.getElementById("homeAv").innerHTML = A.render(A.DEFAULT);
-  // local-first paint
   try { var lp = JSON.parse(localStorage.getItem("ctf:profile")||"null");
     if (lp){ document.getElementById("homeName").textContent = lp.display_name||"Explorer";
       if (lp.avatar) document.getElementById("homeAv").innerHTML = A.render(lp.avatar); } } catch(e){}
 
+  function renderOnline(online, myId, cohortName){
+    var el = document.getElementById("online");
+    var others = online; // include self — kids love seeing themselves online
+    if (!others.length){ el.style.display = "none"; return; }
+    el.style.display = "flex";
+    el.innerHTML = '<span class="dotlbl">Online now · ' + others.length + '</span>' +
+      others.slice(0,10).map(function(o){
+        return '<span class="obubble"><span class="avatar sm">' + A.render(o.avatar || A.DEFAULT) + '</span>' +
+          (o.name || "Explorer") + (o.user_id === myId ? " (you)" : "") + '</span>';
+      }).join("") +
+      '<a class="chatlink" href="board.html#chat">💬 Live chat →</a>';
+  }
+
   async function boot(){
     var D = window.CTFDB; if (!D || !D.enabled) return;
     var p = await D.getProfile();
-    if (p && !p.onboarded){ location.href = "onboarding.html"; return; }   // new users → character creation
+    if (p && !p.onboarded){ location.href = "onboarding.html"; return; }
     if (p){
       document.getElementById("homeName").textContent = p.display_name || "Explorer";
       if (p.avatar && Object.keys(p.avatar).length) document.getElementById("homeAv").innerHTML = A.render(p.avatar);
     }
     var badges = await D.listBadges();
     document.getElementById("homeBadges").textContent = badges.length + (badges.length===1?" badge":" badges") + " earned";
-    // continue-learning tile from cloud progress (kids first, else adults)
     var kids = await D.getProgress("module-01-what-is-ai","kids");
     var adults = await D.getProgress("module-01-what-is-ai","adults");
     var best = (kids && (!adults || new Date(kids.updated_at) > new Date(adults.updated_at))) ? {t:"kids",p:kids} : (adults ? {t:"adults",p:adults} : null);
     if (best){
-      var TOTALS = { kids: 141, adults: 113 };  // steps incl. titles (approx for bar only)
+      var TOTALS = { kids: 143, adults: 115 };
       var pct = Math.min(100, Math.round(best.p.position / TOTALS[best.t] * 100));
       document.getElementById("contBar").style.width = pct + "%";
       document.getElementById("contMeta").textContent = (best.t==="kids"?"Kids track":"Adults track") + " · " + pct + "% through";
@@ -140,7 +304,13 @@
       document.getElementById("continueTile").href = "../curriculum/module-01-what-is-ai/lessons/player.html?track=" + best.t;
     }
     var cohorts = await D.myCohorts();
-    if (cohorts.length) document.getElementById("boardTitle").textContent = cohorts[0].name;
+    if (cohorts.length){
+      document.getElementById("boardTitle").textContent = cohorts[0].name;
+      // presence: announce myself + render who's online
+      D.joinPresence(cohorts[0].id,
+        { name: (p && p.display_name) || "Explorer", avatar: (p && p.avatar) || null },
+        function(online){ renderOnline(online, D.user.id, cohorts[0].name); });
+    }
   }
   if (window.CTFDB && window.CTFDB.enabled) boot();
   else window.addEventListener("ctfdb:ready", boot, { once:true });

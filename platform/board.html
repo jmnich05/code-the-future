@@ -15,16 +15,28 @@
   .bar .cohort{ background:rgba(255,255,255,.1); border:1px solid rgba(255,255,255,.18); border-radius:var(--radius-pill); padding:6px 14px; font-size:.85rem; }
   .bar .me{ margin-left:auto; display:flex; align-items:center; gap:10px; font-size:.9rem; }
   .bar .me a{ color:#cfe0ff; text-decoration:none; }
-  .layout{ max-width:1200px; margin:22px auto; padding:0 20px; display:grid; grid-template-columns:220px 1fr 260px; gap:22px; align-items:start; }
+
+  /* online presence strip */
+  .presence{ max-width:1200px; margin:14px auto 0; padding:0 20px; display:none; align-items:center; gap:6px; flex-wrap:wrap; }
+  .presence .dotlbl{ font-family:var(--font-mono); font-size:11px; letter-spacing:.1em; text-transform:uppercase; color:var(--ink-500); display:flex; align-items:center; gap:7px; margin-right:6px; }
+  .presence .dotlbl::before{ content:""; width:9px; height:9px; border-radius:50%; background:#2FBF71; box-shadow:0 0 0 4px rgba(47,191,113,.18); animation:pulse 2s infinite; }
+  @keyframes pulse{ 50%{ box-shadow:0 0 0 7px rgba(47,191,113,.08); } }
+  .presence .obubble{ display:flex; align-items:center; gap:6px; background:var(--white); border:1px solid var(--ink-200); border-radius:999px; padding:4px 12px 4px 4px; font-weight:700; font-size:.85rem; color:var(--ink-900); box-shadow:var(--shadow-sm); }
+  .presence .obubble .avatar.sm{ width:30px; height:30px; border-radius:9px; }
+
+  .layout{ max-width:1200px; margin:18px auto; padding:0 20px; display:grid; grid-template-columns:220px 1fr 260px; gap:22px; align-items:start; }
   @media (max-width:980px){ .layout{ grid-template-columns:1fr; } .side-right{ display:none; } }
   .panel{ background:var(--white); border:1px solid var(--ink-200); border-radius:var(--radius-lg); box-shadow:var(--shadow-sm); }
   .panel-h{ font-family:var(--font-mono); font-size:11px; letter-spacing:.1em; text-transform:uppercase; color:var(--ink-500); padding:16px 16px 8px; }
   .chan{ display:flex; align-items:center; gap:10px; padding:11px 14px; border-radius:12px; cursor:pointer; font-weight:600; color:var(--ink-700); }
   .chan:hover{ background:var(--ink-50); }
   .chan.active{ background:var(--blue-50); color:var(--blue-700); }
+  .chan .live{ margin-left:auto; width:9px; height:9px; border-radius:50%; background:#2FBF71; }
   .teacher-cta{ margin:10px; background:var(--grad-spark); color:#fff; border-radius:var(--radius-md); padding:14px; }
   .teacher-cta b{ display:block; font-family:var(--font-display); }
   .teacher-cta button{ margin-top:8px; font:inherit; font-weight:700; border:none; background:#fff; color:var(--blue-700); border-radius:999px; padding:8px 14px; cursor:pointer; }
+
+  /* feed (posts) */
   .composer{ display:flex; gap:12px; padding:16px; align-items:flex-start; border-bottom:1px solid var(--ink-100); }
   .composer textarea{ flex:1; font:inherit; background:var(--ink-50); border:1px solid var(--ink-200); border-radius:var(--radius-md); padding:12px 16px; min-height:48px; resize:vertical; }
   .composer textarea:focus{ outline:none; border-color:var(--blue-600); }
@@ -53,11 +65,42 @@
   .crow input:focus{ outline:none; border-color:var(--blue-600); }
   .crow button{ font:inherit; font-weight:700; border:none; background:var(--blue-600); color:#fff; border-radius:999px; padding:8px 16px; cursor:pointer; }
   .members{ display:grid; grid-template-columns:repeat(4,1fr); gap:10px; padding:14px; }
-  .member{ text-align:center; }
+  .member{ text-align:center; position:relative; }
   .member .avatar.sm{ width:46px; height:46px; margin:0 auto; }
   .member .mn{ font-size:.7rem; color:var(--ink-500); margin-top:4px; display:block; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .member .on{ position:absolute; top:-2px; right:8px; width:11px; height:11px; border-radius:50%; background:#2FBF71; border:2px solid #fff; display:none; }
+  .member.online .on{ display:block; }
   .empty{ text-align:center; color:var(--ink-400); padding:40px 20px; }
   .demo-tag{ font-family:var(--font-mono); font-size:10px; letter-spacing:.1em; text-transform:uppercase; color:var(--ink-400); background:var(--ink-100); border-radius:999px; padding:3px 10px; }
+
+  /* FAQ */
+  .faq-section{ padding:8px 18px 18px; }
+  .faq-h{ font-family:var(--font-display); font-weight:700; font-size:1.15rem; color:var(--ink-900); margin:16px 0 6px; display:flex; align-items:center; gap:8px; }
+  details.faq{ border:1px solid var(--ink-200); border-radius:var(--radius-md); margin:8px 0; background:var(--ink-50); overflow:hidden; }
+  details.faq summary{ cursor:pointer; font-weight:700; color:var(--ink-900); padding:13px 16px; list-style:none; display:flex; align-items:center; gap:10px; }
+  details.faq summary::-webkit-details-marker{ display:none; }
+  details.faq summary::after{ content:"+"; margin-left:auto; font-family:var(--font-mono); font-weight:700; color:var(--blue-600); font-size:1.1rem; }
+  details.faq[open] summary::after{ content:"–"; }
+  details.faq[open]{ background:var(--white); border-color:var(--blue-100,#D4E2FF); }
+  details.faq .a{ padding:0 16px 14px; color:var(--ink-700); font-size:.98rem; line-height:1.6; }
+  details.faq .a b{ color:var(--ink-900); }
+
+  /* live chat */
+  .chatbox{ display:flex; flex-direction:column; height:62vh; }
+  .chat-msgs{ flex:1; overflow-y:auto; padding:16px; display:flex; flex-direction:column; gap:10px; }
+  .cmsg{ display:flex; gap:10px; align-items:flex-end; max-width:85%; }
+  .cmsg .avatar.sm{ width:34px; height:34px; flex:none; }
+  .cmsg .bubble{ background:var(--ink-100); border-radius:16px 16px 16px 4px; padding:9px 14px; font-size:.98rem; }
+  .cmsg .bubble .nm{ display:block; font-size:.72rem; font-weight:700; color:var(--teal-700); margin-bottom:2px; }
+  .cmsg.mine{ align-self:flex-end; flex-direction:row-reverse; }
+  .cmsg.mine .bubble{ background:var(--blue-600); color:#fff; border-radius:16px 16px 4px 16px; }
+  .cmsg.mine .bubble .nm{ display:none; }
+  .chat-input{ display:flex; gap:10px; padding:14px; border-top:1px solid var(--ink-100); }
+  .chat-input input{ flex:1; font:inherit; font-size:1rem; border:2px solid var(--ink-200); border-radius:999px; padding:12px 18px; }
+  .chat-input input:focus{ outline:none; border-color:var(--blue-600); }
+  .chat-input button{ font-family:var(--font-display); font-weight:700; font-size:1rem; border:none; color:#fff; background:linear-gradient(120deg,var(--blue-600),var(--teal-600)); border-radius:999px; padding:12px 24px; cursor:pointer; }
+  .chat-note{ font-size:.78rem; color:var(--ink-400); text-align:center; padding:0 14px 12px; }
+
   /* join overlay */
   .overlay{ position:fixed; inset:0; background:rgba(7,12,26,.7); display:none; align-items:center; justify-content:center; z-index:40; padding:20px; }
   .overlay.open{ display:flex; }
@@ -73,26 +116,53 @@
   <span class="me"><span class="avatar sm" id="meAv"></span> <a href="profile.html" id="meName">Me</a></span>
 </div></div>
 
+<div class="presence" id="presence"></div>
+
 <div class="layout">
   <div>
     <div class="panel">
       <div class="panel-h">Channels</div>
       <div style="padding:6px" id="channels"></div>
+      <div class="panel-h">More</div>
+      <div style="padding:6px">
+        <div class="chan" data-view="chat">💬 Live Chat <span class="live"></span></div>
+        <div class="chan" data-view="faq">📖 FAQ &amp; AI Dictionary</div>
+      </div>
       <div class="teacher-cta">
         <b>Message Mr. Jon</b>
         <small>Your guide this summer.</small>
-        <div><button onclick="document.querySelector('[data-ch=help]').click()">Ask in Help →</button></div>
+        <div><button id="askJon">Ask in Help →</button></div>
       </div>
     </div>
   </div>
 
-  <div class="panel">
-    <div class="composer">
-      <span class="avatar sm" id="meAv2"></span>
-      <textarea id="composeBody" maxlength="2000" placeholder="Share something with your cohort…"></textarea>
-      <button class="post" id="composePost">Post</button>
+  <div class="panel" id="centerPanel">
+    <!-- FEED -->
+    <div id="viewFeed">
+      <div class="composer">
+        <span class="avatar sm" id="meAv2"></span>
+        <textarea id="composeBody" maxlength="2000" placeholder="Share something with your cohort…"></textarea>
+        <button class="post" id="composePost">Post</button>
+      </div>
+      <div id="feed"><div class="empty">Loading…</div></div>
     </div>
-    <div id="feed"><div class="empty">Loading…</div></div>
+
+    <!-- LIVE CHAT -->
+    <div id="viewChat" style="display:none">
+      <div class="chatbox">
+        <div class="chat-msgs" id="chatMsgs"><div class="empty">Connecting to chat…</div></div>
+        <div class="chat-input">
+          <input id="chatText" maxlength="500" placeholder="Say something nice…">
+          <button id="chatSend">Send</button>
+        </div>
+        <div class="chat-note">Be kind! 💙 Mr. Jon can see all chat messages.</div>
+      </div>
+    </div>
+
+    <!-- FAQ -->
+    <div id="viewFaq" style="display:none">
+      <div class="faq-section" id="faqContent"></div>
+    </div>
   </div>
 
   <div class="side-right">
@@ -116,6 +186,7 @@
 
 <script src="lib/config.js"></script>
 <script src="lib/avatar.js"></script>
+<script src="faq.js"></script>
 <script type="module">
   import { CTFDB } from "./lib/ctf-db.js";
   CTFDB.init().then(function(){ window.dispatchEvent(new Event("ctfdb:ready")); });
@@ -130,85 +201,93 @@
     { key:"help", label:"❓ Help & Questions" }
   ];
   var EMOJIS = ["🎉","🔥","🧠","👏"];
-  var state = { cohort:null, channel:"general", me:null, myRole:"learner", posts:[] };
+  var state = { cohort:null, channel:"general", view:"feed", me:null, myRole:"learner", onlineIds:{}, chatChannel:null };
 
   function esc(s){ return String(s==null?"":s).replace(/[&<>"]/g, function(c){ return ({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"})[c]; }); }
   function ago(ts){ var s=(Date.now()-new Date(ts).getTime())/1000; if(s<60)return"just now"; if(s<3600)return Math.floor(s/60)+"m ago"; if(s<86400)return Math.floor(s/3600)+"h ago"; return Math.floor(s/86400)+"d ago"; }
   function av(cfg){ return A.render(cfg && Object.keys(cfg).length ? cfg : A.DEFAULT); }
 
-  function renderChannels(){
+  // ---- views ----
+  function setView(v){
+    state.view = v;
+    document.getElementById("viewFeed").style.display = v==="feed" ? "" : "none";
+    document.getElementById("viewChat").style.display = v==="chat" ? "" : "none";
+    document.getElementById("viewFaq").style.display = v==="faq" ? "" : "none";
+    renderNav();
+    if (v==="faq") renderFaq();
+    if (v==="chat") initChat();
+  }
+  function renderNav(){
     document.getElementById("channels").innerHTML = CHANNELS.map(function(c){
-      return '<div class="chan'+(state.channel===c.key?" active":"")+'" data-ch="'+c.key+'">'+c.label+'</div>';
+      return '<div class="chan'+(state.view==="feed" && state.channel===c.key?" active":"")+'" data-ch="'+c.key+'">'+c.label+'</div>';
     }).join("");
-    document.querySelectorAll(".chan").forEach(function(el){
-      el.onclick = function(){ state.channel = el.getAttribute("data-ch"); renderChannels(); loadPosts(); };
+    document.querySelectorAll("[data-ch]").forEach(function(el){
+      el.onclick = function(){ state.channel = el.getAttribute("data-ch"); setView("feed"); loadPosts(); };
+    });
+    document.querySelectorAll("[data-view]").forEach(function(el){
+      el.classList.toggle("active", state.view === el.getAttribute("data-view"));
+      el.onclick = function(){ setView(el.getAttribute("data-view")); };
     });
   }
+  document.getElementById("askJon").onclick = function(){ state.channel="help"; setView("feed"); loadPosts(); };
 
-  // demo content shown when a channel is empty (so the board never looks dead)
-  var DEMO = {
-    announcements: [{ demo:true, pinned:true, who:"Mr. Jon", role:"Teacher", avatar:{bg:"night",color:"blue",face:"happy",acc:"cap"}, when:"sample",
-      body:"Welcome to Summer 2026! 🎉 This week we're finishing Module 1 — What Is AI? Reply with your favorite Mission and one thing that surprised you." }],
-    general: [{ demo:true, who:"Nova", avatar:{bg:"lilac",color:"violet",face:"star",acc:"crown"}, when:"sample",
-      body:"Just earned the Attention Ace badge! 🧠 The \"what does it mean\" trick honestly blew my mind." }],
-    show_tell: [{ demo:true, who:"PixelFox", avatar:{bg:"peach",color:"coral",face:"cool",acc:"headphones"}, when:"sample",
-      body:"Used the Big Mission AI playground to write a story about a skateboarding dragon 🐉🛹" }],
-    help: [{ demo:true, who:"Sam", avatar:{bg:"mint",color:"green",face:"happy",acc:"glasses"}, when:"sample",
-      body:"Does AI actually think, or just guess the next word? 🤔" }]
-  };
-
-  function postCard(p){
-    var prof = p.profiles || {};
-    var mine = state.me && p.author_id === state.me;
-    var rx = {};
-    (p.post_reactions||[]).forEach(function(r){ rx[r.emoji] = rx[r.emoji] || {n:0,mine:false}; rx[r.emoji].n++; if(state.me && r.user_id===state.me) rx[r.emoji].mine=true; });
-    var chips = EMOJIS.map(function(e){
-      var d = rx[e]; return '<button class="r'+(d&&d.mine?" mine":"")+'" data-react="'+e+'" data-post="'+p.id+'">'+e+(d?" "+d.n:"")+'</button>';
+  // ---- FAQ ----
+  function renderFaq(){
+    var F = window.CTF_FAQ;
+    document.getElementById("faqContent").innerHTML = F.map(function(group){
+      return '<div class="faq-h">'+group.icon+' '+esc(group.title)+'</div>' +
+        group.items.map(function(q){
+          return '<details class="faq"><summary>'+esc(q.q)+'</summary><div class="a">'+q.a+'</div></details>';
+        }).join("");
     }).join("");
-    var nComments = (p.post_comments||[]).length;
-    return '<div class="post-card'+(p.pinned?" pinned":"")+'">'+
-      (p.pinned?'<div class="pinrow">📌 Pinned · from your teacher</div>':"")+
-      '<div class="ph"><span class="avatar sm">'+av(prof.avatar)+'</span>'+
-      '<span class="who">'+esc(prof.display_name||"Explorer")+(p.isStaff?' <span class="role">Teacher</span>':"")+'</span>'+
-      '<span class="when">'+ago(p.created_at)+'</span></div>'+
-      '<div class="pbody">'+esc(p.body)+'</div>'+
-      '<div class="react">'+chips+'<button class="replies" data-comments="'+p.id+'">'+(nComments?nComments+" replies":"Reply")+'</button></div>'+
-      '<div class="comments" id="c-'+p.id+'"><div class="clist"></div>'+
-      '<div class="crow"><input maxlength="1000" placeholder="Write a reply…"><button data-send="'+p.id+'">Send</button></div></div>'+
-      '</div>';
   }
 
+  // ---- demo posts when a channel is empty ----
+  var DEMO = {
+    announcements: [{ pinned:true, who:"Mr. Jon", role:"Teacher", avatar:{bg:"night",color:"blue",face:"happy",acc:"cap"},
+      body:"Welcome to Summer 2026! 🎉 This week we're finishing Module 1 — What Is AI? Reply with your favorite Mission and one thing that surprised you." }],
+    general: [{ who:"Nova", avatar:{bg:"lilac",color:"violet",face:"star",acc:"crown"},
+      body:"Just earned the Attention Ace badge! 🧠 The \"what does it mean\" trick honestly blew my mind." }],
+    show_tell: [{ who:"PixelFox", avatar:{bg:"peach",color:"coral",face:"cool",acc:"headphones"},
+      body:"Used the Big Mission AI playground to write a story about a skateboarding dragon 🐉🛹" }],
+    help: [{ who:"Sam", avatar:{bg:"mint",color:"green",face:"happy",acc:"glasses"},
+      body:"Does AI actually think, or just guess the next word? 🤔" }]
+  };
   function demoCard(d){
-    return '<div class="post-card'+(d.pinned?" pinned":"")+'">'+
-      (d.pinned?'<div class="pinrow">📌 Pinned · from your teacher</div>':"")+
-      '<div class="ph"><span class="avatar sm">'+A.render(d.avatar)+'</span>'+
-      '<span class="who">'+esc(d.who)+(d.role?' <span class="role">'+d.role+'</span>':"")+'</span>'+
-      '<span class="when"><span class="demo-tag">example</span></span></div>'+
-      '<div class="pbody">'+esc(d.body)+'</div></div>';
+    return '<div class="post-card'+(d.pinned?" pinned":"")+'">'+(d.pinned?'<div class="pinrow">📌 Pinned · from your teacher</div>':"")+
+      '<div class="ph"><span class="avatar sm">'+A.render(d.avatar)+'</span><span class="who">'+esc(d.who)+(d.role?' <span class="role">'+d.role+'</span>':"")+'</span>'+
+      '<span class="when"><span class="demo-tag">example</span></span></div><div class="pbody">'+esc(d.body)+'</div></div>';
+  }
+  function postCard(p){
+    var prof = p.profiles || {};
+    var rx = {};
+    (p.post_reactions||[]).forEach(function(r){ rx[r.emoji] = rx[r.emoji] || {n:0,mine:false}; rx[r.emoji].n++; if(state.me && r.user_id===state.me) rx[r.emoji].mine=true; });
+    var chips = EMOJIS.map(function(e){ var d = rx[e]; return '<button class="r'+(d&&d.mine?" mine":"")+'" data-react="'+e+'" data-post="'+p.id+'">'+e+(d?" "+d.n:"")+'</button>'; }).join("");
+    var n = (p.post_comments||[]).length;
+    return '<div class="post-card'+(p.pinned?" pinned":"")+'">'+(p.pinned?'<div class="pinrow">📌 Pinned · from your teacher</div>':"")+
+      '<div class="ph"><span class="avatar sm">'+av(prof.avatar)+'</span><span class="who">'+esc(prof.display_name||"Explorer")+(p.isStaff?' <span class="role">Teacher</span>':"")+'</span>'+
+      '<span class="when">'+ago(p.created_at)+'</span></div><div class="pbody">'+esc(p.body)+'</div>'+
+      '<div class="react">'+chips+'<button class="replies" data-comments="'+p.id+'">'+(n?n+" replies":"Reply")+'</button></div>'+
+      '<div class="comments" id="c-'+p.id+'"><div class="clist"></div><div class="crow"><input maxlength="1000" placeholder="Write a reply…"><button data-send="'+p.id+'">Send</button></div></div></div>';
   }
 
   async function loadPosts(){
     var feed = document.getElementById("feed");
     if (!state.cohort){ feed.innerHTML = '<div class="empty">Join a cohort to see the board.</div>'; return; }
     var posts = await window.CTFDB.listPosts(state.cohort.id, state.channel);
-    state.posts = posts;
-    var staffIds = state.staffIds || {};
-    posts.forEach(function(p){ p.isStaff = !!staffIds[p.author_id]; });
+    posts.forEach(function(p){ p.isStaff = !!(state.staffIds||{})[p.author_id]; });
     var html = posts.map(postCard).join("");
-    var demos = (DEMO[state.channel]||[]).map(demoCard).join("");
-    feed.innerHTML = (html || "") + (posts.length < 2 ? demos : "");
-    if (!html && !demos) feed.innerHTML = '<div class="empty">Nothing here yet — be the first to post!</div>';
+    var demos = posts.length < 2 ? (DEMO[state.channel]||[]).map(demoCard).join("") : "";
+    feed.innerHTML = (html + demos) || '<div class="empty">Nothing here yet — be the first to post!</div>';
     bindFeed();
   }
-
   function bindFeed(){
     document.querySelectorAll("[data-react]").forEach(function(b){
       b.onclick = async function(){ await window.CTFDB.toggleReaction(b.getAttribute("data-post"), b.getAttribute("data-react")); loadPosts(); };
     });
     document.querySelectorAll("[data-comments]").forEach(function(b){
       b.onclick = async function(){
-        var id = b.getAttribute("data-comments");
-        var box = document.getElementById("c-"+id);
+        var id = b.getAttribute("data-comments"), box = document.getElementById("c-"+id);
         box.classList.toggle("open");
         if (box.classList.contains("open")){
           var cs = await window.CTFDB.listComments(id);
@@ -221,14 +300,69 @@
     });
     document.querySelectorAll("[data-send]").forEach(function(b){
       b.onclick = async function(){
-        var id = b.getAttribute("data-send");
-        var input = b.parentNode.querySelector("input");
+        var id = b.getAttribute("data-send"), input = b.parentNode.querySelector("input");
         var t = input.value.trim(); if(!t) return;
         await window.CTFDB.addComment(id, t); input.value="";
-        var box = document.getElementById("c-"+id);
-        box.classList.remove("open");
+        var box = document.getElementById("c-"+id); box.classList.remove("open");
         document.querySelector('[data-comments="'+id+'"]').click();
       };
+    });
+  }
+  document.getElementById("composePost").onclick = async function(){
+    var ta = document.getElementById("composeBody");
+    var t = ta.value.trim(); if(!t || !state.cohort) return;
+    var ch = state.channel === "announcements" && state.myRole !== "staff" ? "general" : state.channel;
+    var r = await window.CTFDB.createPost(state.cohort.id, ch, t, false);
+    if (r.error){ alert("Couldn't post: " + r.error); return; }
+    ta.value = ""; if (ch !== state.channel){ state.channel = ch; }
+    setView("feed"); loadPosts();
+  };
+
+  // ---- live chat ----
+  var chatInited = false;
+  function chatBubble(m){
+    var pr = m.profiles||{};
+    var mine = state.me && m.author_id === state.me;
+    return '<div class="cmsg'+(mine?" mine":"")+'"><span class="avatar sm">'+av(pr.avatar)+'</span>'+
+      '<div class="bubble"><span class="nm">'+esc(pr.display_name||"Explorer")+'</span>'+esc(m.body)+'</div></div>';
+  }
+  async function initChat(){
+    if (!state.cohort || chatInited) return;
+    chatInited = true;
+    var box = document.getElementById("chatMsgs");
+    var msgs = await window.CTFDB.listMessages(state.cohort.id);
+    box.innerHTML = msgs.length ? msgs.map(chatBubble).join("") : '<div class="empty">No messages yet — say hi! 👋</div>';
+    box.scrollTop = box.scrollHeight;
+    window.CTFDB.onNewMessage(state.cohort.id, function(m){
+      if (box.querySelector(".empty")) box.innerHTML = "";
+      box.insertAdjacentHTML("beforeend", chatBubble(m));
+      box.scrollTop = box.scrollHeight;
+    });
+  }
+  async function sendChat(){
+    var input = document.getElementById("chatText");
+    var t = input.value.trim(); if (!t || !state.cohort) return;
+    input.value = "";
+    var r = await window.CTFDB.sendMessage(state.cohort.id, t);
+    if (r.error) alert("Couldn't send: " + r.error);
+  }
+  document.getElementById("chatSend").onclick = sendChat;
+  document.getElementById("chatText").addEventListener("keydown", function(e){ if (e.key === "Enter") sendChat(); });
+
+  // ---- presence ----
+  function renderPresence(online){
+    state.onlineIds = {}; online.forEach(function(o){ state.onlineIds[o.user_id] = true; });
+    var el = document.getElementById("presence");
+    if (!online.length){ el.style.display="none"; } else {
+      el.style.display = "flex";
+      el.innerHTML = '<span class="dotlbl">Online now · '+online.length+'</span>' +
+        online.slice(0,12).map(function(o){
+          return '<span class="obubble"><span class="avatar sm">'+av(o.avatar)+'</span>'+esc(o.name||"Explorer")+(o.user_id===state.me?" (you)":"")+'</span>';
+        }).join("");
+    }
+    // green dots on roster
+    document.querySelectorAll(".member").forEach(function(m){
+      m.classList.toggle("online", !!state.onlineIds[m.getAttribute("data-uid")]);
     });
   }
 
@@ -239,7 +373,7 @@
     document.getElementById("memberCount").textContent = "Cohort · " + ms.length + (ms.length===1?" builder":" builders");
     document.getElementById("members").innerHTML = ms.map(function(m){
       var pr = m.profiles||{};
-      return '<div class="member"><span class="avatar sm">'+av(pr.avatar)+'</span><span class="mn">'+esc(pr.display_name||"Explorer")+'</span></div>';
+      return '<div class="member" data-uid="'+m.user_id+'"><span class="on"></span><span class="avatar sm">'+av(pr.avatar)+'</span><span class="mn">'+esc(pr.display_name||"Explorer")+'</span></div>';
     }).join("");
   }
 
@@ -253,24 +387,15 @@
       document.getElementById("meAv").innerHTML = av(p.avatar);
       document.getElementById("meAv2").innerHTML = av(p.avatar); }
     var cohorts = await D.myCohorts();
-    if (!cohorts.length){ document.getElementById("joinOverlay").classList.add("open"); renderChannels(); return; }
+    if (!cohorts.length){ document.getElementById("joinOverlay").classList.add("open"); renderNav(); return; }
     state.cohort = cohorts[0];
     state.myRole = cohorts[0].role;
     document.getElementById("cohortName").textContent = "◆ " + state.cohort.name;
-    renderChannels();
+    renderNav();
     await loadMembers();
-    await loadPosts();
+    D.joinPresence(state.cohort.id, { name:(p&&p.display_name)||"Explorer", avatar:(p&&p.avatar)||null }, renderPresence);
+    if (location.hash === "#chat") setView("chat"); else await loadPosts();
   }
-
-  document.getElementById("composePost").onclick = async function(){
-    var ta = document.getElementById("composeBody");
-    var t = ta.value.trim(); if(!t || !state.cohort) return;
-    var ch = state.channel === "announcements" && state.myRole !== "staff" ? "general" : state.channel;
-    var r = await window.CTFDB.createPost(state.cohort.id, ch, t, false);
-    if (r.error){ alert("Couldn't post: " + r.error); return; }
-    ta.value = ""; if (ch !== state.channel){ state.channel = ch; renderChannels(); }
-    loadPosts();
-  };
 
   document.getElementById("joinGo").onclick = async function(){
     var code = document.getElementById("joinCode").value.trim();
@@ -283,6 +408,7 @@
 
   document.getElementById("meAv").innerHTML = av(null);
   document.getElementById("meAv2").innerHTML = av(null);
+  renderNav();
   if (window.CTFDB && window.CTFDB.enabled) boot();
   else window.addEventListener("ctfdb:ready", boot, { once:true });
 })();

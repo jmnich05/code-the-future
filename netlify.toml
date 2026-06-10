@@ -1,0 +1,18 @@
+# Code the Future — production site (repo root).
+# Set OPENAI_API_KEY (and optionally OPENAI_MODEL / OPENAI_IMAGE_MODEL) in:
+#   Netlify → Site configuration → Environment variables.
+# Keys live only on the server — never shipped to the browser.
+
+[build]
+  publish = "."
+  functions = "netlify/functions"
+
+[[redirects]]
+  from = "/api/ai"
+  to = "/.netlify/functions/ai"
+  status = 200
+
+[[redirects]]
+  from = "/api/image"
+  to = "/.netlify/functions/image"
+  status = 200

@@ -173,10 +173,56 @@ async function addComment(postId, body) {
   return error ? { error: error.message } : { comment: data };
 }
 
+// ---- presence (who's online) + live chat (Supabase Realtime) -------------
+let presenceChannel = null;
+
+function joinPresence(cohortId, info, onSync) {
+  if (!ok()) return null;
+  if (presenceChannel) { sb.removeChannel(presenceChannel); presenceChannel = null; }
+  presenceChannel = sb.channel("presence:cohort:" + cohortId, { config: { presence: { key: uid() } } });
+  presenceChannel.on("presence", { event: "sync" }, () => {
+    const state = presenceChannel.presenceState();
+    const online = Object.keys(state).map((k) => ({ user_id: k, ...(state[k][0] || {}) }));
+    onSync(online);
+  });
+  presenceChannel.subscribe(async (status) => {
+    if (status === "SUBSCRIBED") await presenceChannel.track(info || {});
+  });
+  return presenceChannel;
+}
+
+async function listMessages(cohortId, limit = 50) {
+  if (!ok()) return [];
+  const { data } = await sb.from("messages").select("id, body, created_at, author_id").eq("cohort_id", cohortId).order("created_at", { ascending: false }).limit(limit);
+  const msgs = (data || []).reverse();
+  const profs = await profilesById(msgs.map((m) => m.author_id));
+  return msgs.map((m) => ({ ...m, profiles: profs[m.author_id] || null }));
+}
+
+async function sendMessage(cohortId, body) {
+  if (!ok()) return { error: "not-connected" };
+  const { data, error } = await sb.from("messages").insert({ cohort_id: cohortId, author_id: uid(), body }).select().maybeSingle();
+  return error ? { error: error.message } : { message: data };
+}
+
+function onNewMessage(cohortId, cb) {
+  if (!ok()) return null;
+  const ch = sb.channel("chat:cohort:" + cohortId)
+    .on("postgres_changes", { event: "INSERT", schema: "public", table: "messages", filter: "cohort_id=eq." + cohortId },
+      async (payload) => {
+        const m = payload.new;
+        const profs = await profilesById([m.author_id]);
+        cb({ ...m, profiles: profs[m.author_id] || null });
+      })
+    .subscribe();
+  return ch;
+}
+
 export const CTFDB = {
   init, saveProgress, getProgress, saveWidgetResponse, getWidgetResponse,
   awardBadge, listBadges, joinCohort, getProfile, updateProfile, logEvent,
   myCohorts, listMembers, listPosts, createPost, toggleReaction, listComments, addComment,
+  joinPresence, listMessages, sendMessage, onNewMessage,
   get user() { return user; }, get enabled() { return enabled; }
 };
 if (typeof window !== "undefined") window.CTFDB = CTFDB;
