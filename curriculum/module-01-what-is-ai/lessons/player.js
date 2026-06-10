@@ -12,11 +12,70 @@
   var MODULE = "module-01-what-is-ai";
   var stage, label, fill, backBtn, nextBtn, hint;
   var DATA, STEPS = [], pos = 0, animating = false, revealTimer = null, hadLocalPos = false;
+  // ---- drip pacing: 3 parts, unlocked on days 0 / +2 / +4 ------------------
+  var PARTS = [
+    { n: 1, first: 1, last: 4, offset: 0 },
+    { n: 2, first: 5, last: 8, offset: 2 },
+    { n: 3, first: 9, last: 12, offset: 4 }
+  ];
+  var paceBypass = false, paceAnchor = null;
+  try {
+    if (new URLSearchParams(location.search).get("unlock") === "all") localStorage.setItem("ctf:unlockall", "1");
+    paceBypass = localStorage.getItem("ctf:unlockall") === "1";
+    paceAnchor = localStorage.getItem("ctf:firstplay");
+    if (!paceAnchor) { paceAnchor = new Date().toISOString().slice(0, 10); localStorage.setItem("ctf:firstplay", paceAnchor); }
+  } catch (e) { paceAnchor = new Date().toISOString().slice(0, 10); }
+  function stepMission(st) {
+    if (!st || !st.m) return null;
+    if (st.m.n) return st.m.n;
+    if (st.m.kind === "capstone") return 12;   // capstone unlocks with Part 3
+    return null;                                // intro: always open
+  }
+  function partOf(m) { for (var i = 0; i < PARTS.length; i++) if (m >= PARTS[i].first && m <= PARTS[i].last) return PARTS[i]; return PARTS[0]; }
+  function unlockDate(part) { var d = new Date(paceAnchor + "T00:00:00"); d.setDate(d.getDate() + part.offset); return d; }
+  function isLocked(m) {
+    if (paceBypass || !m) return false;
+    return new Date() < unlockDate(partOf(m));
+  }
+  function unlockLabel(part) {
+    var d = unlockDate(part);
+    var days = Math.ceil((d - new Date()) / 86400000);
+    var wd = d.toLocaleDateString("en-US", { weekday: "long" });
+    return { weekday: wd, days: days };
+  }
+  function lastUnlockedIndex() {
+    for (var i = STEPS.length - 1; i >= 0; i--) {
+      var mn = stepMission(STEPS[i]);
+      if (!mn || !isLocked(mn)) return i;
+    }
+    return 0;
+  }
+  function reclampForLocks() {
+    var mn = stepMission(STEPS[pos]);
+    if (mn && isLocked(mn)) { pos = lastUnlockedIndex(); render(); }
+  }
+  function showLock(part) {
+    stopSpeaking();
+    var u = unlockLabel(part);
+    stage.innerHTML =
+      '<div class="beat t-lock revealed"><div class="lock-card">' +
+      '<div class="lock-ico">🔒</div>' +
+      '<h2>Part ' + part.n + ' unlocks ' + (u.days <= 1 ? "tomorrow" : "on " + u.weekday) + '!</h2>' +
+      '<p>Amazing work today, Future Builder! 🎉 Your brain needs time to let all those new ideas settle in — that\'s real learning.</p>' +
+      '<p class="lock-sub">Missions ' + part.first + '–' + part.last + ' open ' + (u.days <= 1 ? "tomorrow" : u.weekday) + '. Until then: replay any mission, remix your homepage, customize your character, or say hi on the board!</p>' +
+      '<a class="lock-btn" href="../../../platform/index.html">🏠 Back to home</a>' +
+      '</div></div>';
+    nextBtn.style.display = "none";
+    hint.textContent = "";
+    label.textContent = "Part " + part.n + " · locked";
+  }
+
   var ttsAudio = null, speaking = false;
   var audioOn = false; try { audioOn = localStorage.getItem("ctf:audio") === "1"; } catch (e) {}
   function stopSpeaking() {
     if (ttsAudio) { try { ttsAudio.pause(); } catch (e) {} ttsAudio = null; }
     speaking = false;
+    if (window.CTFMusic) window.CTFMusic.duck(false);
     syncAudioBtn();
   }
   function syncAudioBtn() {
@@ -37,8 +96,9 @@
       if (!audioOn) return;
       ttsAudio = new Audio(URL.createObjectURL(blob));
       speaking = true; syncAudioBtn();
-      ttsAudio.onended = function () { speaking = false; syncAudioBtn(); };
-      ttsAudio.play().catch(function () { speaking = false; syncAudioBtn(); });
+      if (window.CTFMusic) window.CTFMusic.duck(true);
+      ttsAudio.onended = function () { speaking = false; if (window.CTFMusic) window.CTFMusic.duck(false); syncAudioBtn(); };
+      ttsAudio.play().catch(function () { speaking = false; if (window.CTFMusic) window.CTFMusic.duck(false); syncAudioBtn(); });
     } catch (e) {}
   }
 
@@ -47,6 +107,14 @@
   function cloudSaveProgress() { var d = db(); if (d) d.saveProgress(MODULE, TRACK, pos, pos >= STEPS.length - 1); }
   function onDbReady() {
     var d = db(); if (!d) return;
+    // pacing anchor + staff bypass come from the cohort
+    d.myCohorts().then(function (cs) {
+      if (cs && cs.length) {
+        if (cs[0].role === "staff") paceBypass = true;
+        if (cs[0].starts_on) paceAnchor = cs[0].starts_on;
+        reclampForLocks();
+      }
+    });
     // if we're sitting on a complete beat that rendered before DB init, award now
     var st = STEPS[pos];
     if (st && st.kind === "beat" && st.b.type === "complete" && st.m && st.m.n) {
@@ -54,7 +122,12 @@
     }
     if (!hadLocalPos) {
       d.getProgress(MODULE, TRACK).then(function (rp) {
-        if (rp && typeof rp.position === "number" && rp.position > pos && rp.position < STEPS.length) { pos = rp.position; render(); }
+        if (rp && typeof rp.position === "number" && rp.position > pos && rp.position < STEPS.length) {
+          pos = rp.position;
+          var mn = stepMission(STEPS[pos]);
+          if (mn && isLocked(mn)) pos = lastUnlockedIndex();
+          render();
+        }
         cloudSaveProgress();
       });
     } else { cloudSaveProgress(); }
@@ -179,7 +252,11 @@
 
   function next() {
     if (animating) { finishReveal(); return; }
-    if (pos < STEPS.length - 1) { pos++; render(); }
+    if (pos < STEPS.length - 1) {
+      var nxm = stepMission(STEPS[pos + 1]);
+      if (nxm && isLocked(nxm)) { showLock(partOf(nxm)); return; }
+      pos++; render();
+    }
   }
   function prev() { if (pos > 0) { pos--; render(); finishReveal(); } }
 
@@ -221,7 +298,24 @@
     root.innerHTML =
       '<div class="p-top"><a class="p-exit" href="../../../platform/index.html">✕ Exit</a><span class="p-label" id="pLabel"></span><span class="p-track"><i id="pFill"></i></span></div>' +
       '<div class="p-stage" id="pStage"></div>' +
-      '<div class="p-bottom"><button class="p-back" id="pBack">‹ Back</button><button class="p-audio" id="pAudio"></button><span class="p-hint" id="pHint"></span><button class="p-next" id="pNext">Continue →</button></div>';
+      '<div class="p-bottom"><button class="p-back" id="pBack">‹ Back</button><button class="p-audio" id="pAudio"></button><button class="p-music" id="pMusic">🎵</button><span class="p-hint" id="pHint"></span><button class="p-next" id="pNext">Continue →</button></div>' +
+      '<div class="music-dock" id="musicDock">' +
+        '<div class="md-head">🎵 Study Beats <span class="md-sub">made by code, remixed by you</span></div>' +
+        '<button class="md-play" id="mdPlay">▶ Play beats</button>' +
+        '<div class="md-row"><span class="md-lbl">Vibe</span>' +
+          '<button class="md-chip" data-vibe="chill">😌 Chill</button>' +
+          '<button class="md-chip" data-vibe="space">🌌 Space</button>' +
+          '<button class="md-chip" data-vibe="sunny">🌞 Sunny</button></div>' +
+        '<div class="md-row"><span class="md-lbl">Speed</span>' +
+          '<button class="md-chip" data-tempo="68">🐢 Slow</button>' +
+          '<button class="md-chip" data-tempo="76">🚶 Chill</button>' +
+          '<button class="md-chip" data-tempo="88">🏃 Upbeat</button></div>' +
+        '<div class="md-row"><span class="md-lbl">Layers</span>' +
+          '<button class="md-chip" data-layer="vinyl">📀 Vinyl</button>' +
+          '<button class="md-chip" data-layer="rain">🌧️ Rain</button></div>' +
+        '<button class="md-remix" id="mdRemix">🎲 Remix the beat!</button>' +
+        '<div class="md-note">The computer generates this music from patterns — every remix is brand new. That\'s generative AI thinking!</div>' +
+      '</div>';
     stage = document.getElementById("pStage");
     label = document.getElementById("pLabel");
     fill = document.getElementById("pFill");
@@ -231,6 +325,40 @@
 
     nextBtn.addEventListener("click", next);
     backBtn.addEventListener("click", prev);
+
+    // 🎵 Study beats dock
+    var musicBtn = document.getElementById("pMusic");
+    var dock = document.getElementById("musicDock");
+    function syncMusic() {
+      var M = window.CTFMusic; if (!M) return;
+      musicBtn.classList.toggle("on", M.state.on);
+      musicBtn.textContent = M.state.on ? "🎵" : "🎵";
+      document.getElementById("mdPlay").textContent = M.state.on ? "⏸ Pause beats" : "▶ Play beats";
+      dock.querySelectorAll("[data-vibe]").forEach(function (c) { c.classList.toggle("sel", c.getAttribute("data-vibe") === M.state.vibe); });
+      dock.querySelectorAll("[data-tempo]").forEach(function (c) { c.classList.toggle("sel", +c.getAttribute("data-tempo") === M.state.tempo); });
+      dock.querySelectorAll("[data-layer]").forEach(function (c) {
+        var k = c.getAttribute("data-layer"); c.classList.toggle("sel", !!M.state[k]);
+      });
+    }
+    if (window.CTFMusic) {
+      window.CTFMusic.onchange = syncMusic;
+      musicBtn.addEventListener("click", function () { dock.classList.toggle("open"); syncMusic(); });
+      document.getElementById("mdPlay").addEventListener("click", function () { window.CTFMusic.toggle(); });
+      document.getElementById("mdRemix").addEventListener("click", function () {
+        window.CTFMusic.remix();
+        this.textContent = "🎲 Remixed! Again?";
+        if (!window.CTFMusic.state.on) window.CTFMusic.start();
+      });
+      dock.querySelectorAll("[data-vibe]").forEach(function (c) { c.addEventListener("click", function () { window.CTFMusic.setVibe(c.getAttribute("data-vibe")); }); });
+      dock.querySelectorAll("[data-tempo]").forEach(function (c) { c.addEventListener("click", function () { window.CTFMusic.setTempo(+c.getAttribute("data-tempo")); }); });
+      dock.querySelectorAll("[data-layer]").forEach(function (c) { c.addEventListener("click", function () {
+        var k = c.getAttribute("data-layer"); window.CTFMusic.setLayer(k, !window.CTFMusic.state[k]);
+      }); });
+      document.addEventListener("click", function (e) {
+        if (dock.classList.contains("open") && !dock.contains(e.target) && e.target !== musicBtn) dock.classList.remove("open");
+      });
+      syncMusic();
+    } else { musicBtn.style.display = "none"; }
 
     // "Audio learning" toggle — ElevenLabs reads each screen aloud while ON
     var audioBtn = document.getElementById("pAudio");
@@ -262,6 +390,8 @@
     hadLocalPos = savedRaw !== null && location.hash !== "#restart";
     var saved = parseInt(savedRaw || "0", 10);
     pos = (location.hash === "#restart" || isNaN(saved) || saved < 0 || saved >= STEPS.length) ? 0 : saved;
+    var mn0 = stepMission(STEPS[pos]);
+    if (mn0 && isLocked(mn0)) pos = lastUnlockedIndex();
     render();
     // Supabase may finish initializing after this script runs:
     if (db()) onDbReady(); else window.addEventListener("ctfdb:ready", onDbReady, { once: true });

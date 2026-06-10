@@ -59,7 +59,10 @@ const server = createServer(async (req, res) => {
       const r = await fetch("https://api.openai.com/v1/chat/completions", {
         method: "POST", headers: { "Content-Type": "application/json", Authorization: "Bearer " + key },
         body: JSON.stringify({ model: process.env.OPENAI_MODEL || "gpt-4o-mini", temperature, max_tokens: mode === "kids" ? 220 : 400,
-          messages: [{ role: "system", content: SYSTEM[mode] }, { role: "user", content: prompt }] })
+          messages: [{ role: "system", content: SYSTEM[mode] }, { role: "user", content:
+            (typeof body.image === "string" && body.image.startsWith("data:image/") && body.image.length < 2_000_000)
+              ? [{ type: "text", text: prompt }, { type: "image_url", image_url: { url: body.image, detail: "low" } }]
+              : prompt }] })
       });
       if (!r.ok) return send(res, 502, { error: "OpenAI request failed (" + r.status + ")." });
       const data = await r.json();

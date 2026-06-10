@@ -175,3 +175,40 @@ body{ margin:0; background:var(--ink-50); color:var(--ink-700); font-family:var(
   border:1px solid var(--amber-400); border-radius:999px; display:inline-block; padding:9px 18px;
   animation:medal-rise .5s .5s var(--ease-out) both; }
 .badge-gift b{ color:var(--ink-900); }
+
+/* --- Study beats (music dock) ----------------------------------------------- */
+.p-music{ font:inherit; font-size:1.05rem; cursor:pointer; background:var(--white); border:2px solid var(--ink-200);
+  border-radius:999px; width:44px; height:44px; display:inline-flex; align-items:center; justify-content:center;
+  transition:all .15s var(--ease-out); flex:none; }
+.p-music:hover{ border-color:var(--blue-500); transform:scale(1.06); }
+.p-music.on{ border-color:var(--teal-500); background:var(--teal-50); animation:music-pulse 1.6s ease-in-out infinite; }
+@keyframes music-pulse{ 0%,100%{ box-shadow:0 0 0 0 rgba(18,178,188,.35); } 50%{ box-shadow:0 0 0 8px rgba(18,178,188,0); } }
+.music-dock{ position:fixed; bottom:86px; left:50%; transform:translateX(-50%) translateY(12px); opacity:0; pointer-events:none;
+  width:min(420px, calc(100vw - 32px)); background:var(--grad-night); color:#fff; border-radius:var(--radius-xl);
+  box-shadow:var(--shadow-lg); padding:20px; z-index:30; transition:all .22s var(--ease-out); }
+.music-dock.open{ opacity:1; pointer-events:auto; transform:translateX(-50%) translateY(0); }
+.md-head{ font-family:var(--font-display); font-weight:700; font-size:1.15rem; margin-bottom:4px; }
+.md-sub{ font-family:var(--font-mono); font-size:10px; letter-spacing:.08em; text-transform:uppercase; color:#8DEAEF; margin-left:8px; }
+.md-play{ font:inherit; font-family:var(--font-display); font-weight:700; font-size:1.05rem; cursor:pointer; color:#0C1322; border:none;
+  border-radius:999px; padding:12px 22px; margin:10px 0 6px; width:100%; background:linear-gradient(120deg,var(--amber-400),#FFD980); }
+.md-row{ display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin-top:10px; }
+.md-lbl{ font-family:var(--font-mono); font-size:10px; letter-spacing:.1em; text-transform:uppercase; color:#8A93A8; width:46px; flex:none; }
+.md-chip{ font:inherit; font-weight:600; font-size:.85rem; cursor:pointer; color:#fff; background:rgba(255,255,255,.08);
+  border:1px solid rgba(255,255,255,.22); border-radius:999px; padding:7px 13px; transition:all .14s; }
+.md-chip:hover{ background:rgba(255,255,255,.18); }
+.md-chip.sel{ background:var(--blue-600); border-color:var(--blue-500); }
+.md-remix{ font:inherit; font-family:var(--font-display); font-weight:700; font-size:1rem; cursor:pointer; color:#fff; border:none;
+  border-radius:999px; padding:11px 20px; margin-top:14px; width:100%; background:linear-gradient(120deg,var(--coral-500),var(--amber-400));
+  transition:transform .14s var(--ease-spring); }
+.md-remix:hover{ transform:scale(1.02); }
+.md-note{ font-size:.78rem; color:#BCC3D2; margin-top:10px; line-height:1.45; }
+
+/* --- Drip-pacing lock screen ------------------------------------------------ */
+.beat.t-lock{ max-width:560px; text-align:center; }
+.lock-card{ background:var(--grad-night); color:#fff; border-radius:var(--radius-xl); padding:44px 36px; box-shadow:var(--shadow-lg); }
+.lock-ico{ font-size:3.4rem; animation:medal-pop .6s var(--ease-spring) both; }
+.lock-card h2{ color:#fff; font-size:2rem; margin:.4em 0 .3em; }
+.lock-card p{ font-size:1.15rem; opacity:.92; margin:.4em auto; max-width:44ch; }
+.lock-card .lock-sub{ font-size:.98rem; opacity:.75; }
+.lock-btn{ display:inline-block; margin-top:18px; text-decoration:none; font-family:var(--font-display); font-weight:700; font-size:1.05rem;
+  color:#fff; background:linear-gradient(120deg,var(--blue-600),var(--teal-600)); border-radius:999px; padding:14px 30px; }

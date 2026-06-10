@@ -520,8 +520,253 @@
     });
   }
 
+  // =========================================================================
+  // DRAW — kid draws on a canvas, then the REAL AI (vision) guesses it.
+  // The whole computer-vision lesson, in their own hands.
+  // =========================================================================
+  function renderDraw(root, cfg, id) {
+    root.innerHTML = header(cfg);
+    var wrap = el('div', 'ctf-draw');
+    wrap.innerHTML =
+      '<canvas class="ctf-draw-canvas" width="480" height="340"></canvas>' +
+      '<div class="ctf-draw-tools">' +
+        ['#0C1322', '#2A5FF0', '#12B2BC', '#FF5A38', '#FFB320', '#2FBF71', '#7C5CFF'].map(function (c, i) {
+          return '<button class="ctf-draw-color' + (i === 0 ? ' sel' : '') + '" data-c="' + c + '" style="background:' + c + '"></button>';
+        }).join('') +
+        '<button class="ctf-draw-tool" data-size="big">●</button>' +
+        '<button class="ctf-draw-tool" data-erase="1">🧽</button>' +
+        '<button class="ctf-draw-tool" data-clear="1">🗑️</button>' +
+      '</div>';
+    root.appendChild(wrap);
+    var actions = el('div', 'ctf-actions');
+    var guessBtn = el('button', 'ctf-btn', cfg.button || '🤖 Ask the AI to guess!');
+    actions.appendChild(guessBtn); root.appendChild(actions);
+    var fb = el('div', 'ctf-feedback'); root.appendChild(fb);
+    var done = completionCard(cfg); if (done) root.appendChild(done);
+
+    var canvas = wrap.querySelector('canvas'), g = canvas.getContext('2d');
+    g.fillStyle = '#FFFFFF'; g.fillRect(0, 0, canvas.width, canvas.height);
+    g.lineCap = 'round'; g.lineJoin = 'round';
+    var color = '#0C1322', size = 6, erasing = false, drawing = false, last = null, strokes = 0;
+
+    function pos(e) {
+      var r = canvas.getBoundingClientRect();
+      var t = e.touches ? e.touches[0] : e;
+      return { x: (t.clientX - r.left) * (canvas.width / r.width), y: (t.clientY - r.top) * (canvas.height / r.height) };
+    }
+    function down(e) { drawing = true; last = pos(e); strokes++; e.preventDefault(); }
+    function move(e) {
+      if (!drawing) return;
+      var p = pos(e);
+      g.strokeStyle = erasing ? '#FFFFFF' : color;
+      g.lineWidth = erasing ? 26 : size;
+      g.beginPath(); g.moveTo(last.x, last.y); g.lineTo(p.x, p.y); g.stroke();
+      last = p; e.preventDefault();
+    }
+    function up() { drawing = false; }
+    canvas.addEventListener('mousedown', down); canvas.addEventListener('mousemove', move); window.addEventListener('mouseup', up);
+    canvas.addEventListener('touchstart', down, { passive: false }); canvas.addEventListener('touchmove', move, { passive: false }); canvas.addEventListener('touchend', up);
+
+    wrap.querySelectorAll('.ctf-draw-color').forEach(function (b) {
+      b.addEventListener('click', function () {
+        erasing = false; color = b.getAttribute('data-c');
+        wrap.querySelectorAll('.ctf-draw-color').forEach(function (x) { x.classList.remove('sel'); });
+        b.classList.add('sel');
+      });
+    });
+    wrap.querySelector('[data-size]').addEventListener('click', function () { size = size === 6 ? 14 : 6; this.textContent = size === 6 ? '●' : '⬤'; });
+    wrap.querySelector('[data-erase]').addEventListener('click', function () { erasing = true; });
+    wrap.querySelector('[data-clear]').addEventListener('click', function () { g.fillStyle = '#FFFFFF'; g.fillRect(0, 0, canvas.width, canvas.height); strokes = 0; });
+
+    var guesses = 0;
+    guessBtn.addEventListener('click', function () {
+      if (strokes < 1) { fb.className = 'ctf-feedback show info'; fb.innerHTML = 'Draw something first! 🎨'; return; }
+      guessBtn.disabled = true; guessBtn.textContent = '🤖 Looking at your art…';
+      var image = canvas.toDataURL('image/jpeg', 0.7);
+      fetch('/api/ai', { method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ mode: 'kids', image: image,
+          prompt: cfg.aiPrompt || "We are playing a drawing guessing game! Look at this child's drawing and guess what it shows. Answer in ONE short, excited sentence like \"Is it a ... ?\" then say one nice thing about the drawing." }) })
+        .then(function (r) { return r.json().then(function (d) { return { ok: r.ok, d: d }; }); })
+        .then(function (res) {
+          guessBtn.disabled = false; guessBtn.textContent = '🤖 Guess again!';
+          guesses++;
+          fb.className = 'ctf-feedback show good';
+          fb.innerHTML = (res.ok && res.d.text) ? '<b>🤖 AI says:</b> ' + esc(res.d.text) +
+            '<br><span class="ctf-muted">The AI never saw YOUR drawing before — it found the patterns in your pixels, just like you learned!</span>'
+            : '🙈 ' + esc((res.d && res.d.error) || 'The AI got shy — try again!');
+          if (res.ok) { reveal(done, (cfg.complete && cfg.complete.progress) || 100); markDone(id); }
+        })
+        .catch(function () { guessBtn.disabled = false; guessBtn.textContent = cfg.button || '🤖 Ask the AI to guess!'; fb.className = 'ctf-feedback show info'; fb.innerHTML = '🙈 Couldn\'t reach the AI — is the internet ok?'; });
+    });
+  }
+
+  // =========================================================================
+  // WORDCHAIN — build a sentence one word at a time, seeing how LIKELY each
+  // choice is. Exactly how a language model writes.
+  // =========================================================================
+  function renderWordChain(root, cfg, id) {
+    root.innerHTML = header(cfg);
+    var sentenceEl = el('div', 'ctf-stem ctf-chain-sentence');
+    root.appendChild(sentenceEl);
+    var stepLbl = el('p', 'ctf-roundlbl'); root.appendChild(stepLbl);
+    var optsEl = el('div', 'ctf-options'); root.appendChild(optsEl);
+    var fb = el('div', 'ctf-feedback'); root.appendChild(fb);
+    var done = completionCard(cfg); if (done) root.appendChild(done);
+
+    var words = [cfg.start || 'The robot'];
+    var stepIdx = 0;
+    var likelinessSum = 0;
+
+    function renderStep() {
+      sentenceEl.innerHTML = esc(words.join(' ')) + ' <span class="blank">?</span>';
+      var st = cfg.steps[stepIdx];
+      stepLbl.textContent = 'Pick word ' + (stepIdx + 1) + ' of ' + cfg.steps.length;
+      optsEl.innerHTML = '';
+      st.options.forEach(function (o) {
+        var b = el('button', 'ctf-opt ctf-chain-opt',
+          '<span>' + esc(o.w) + '</span><span class="ctf-chain-bar"><i style="width:' + o.p + '%"></i></span><span class="ctf-chain-pct">' + o.p + '%</span>');
+        b.addEventListener('click', function () {
+          words.push(o.w); likelinessSum += o.p;
+          stepIdx++;
+          if (stepIdx < cfg.steps.length) renderStep();
+          else finish();
+        });
+        optsEl.appendChild(b);
+      });
+    }
+    function finish() {
+      sentenceEl.innerHTML = '“' + esc(words.join(' ')) + '”';
+      stepLbl.textContent = '';
+      optsEl.innerHTML = '';
+      var avg = Math.round(likelinessSum / cfg.steps.length);
+      fb.className = 'ctf-feedback show good';
+      fb.innerHTML = '<b>You wrote a sentence the AI way — one word at a time!</b><br>' +
+        (avg >= 60
+          ? 'You mostly picked the <b>most likely</b> words (' + avg + '%) — that\'s exactly what an AI does on its careful setting.'
+          : 'You picked <b>surprising</b> words (' + avg + '% likely) — that\'s what an AI does when its creativity dial is turned UP!') +
+        (cfg.explain ? '<br>' + cfg.explain : '');
+      reveal(done, (cfg.complete && cfg.complete.progress) || 100); markDone(id);
+    }
+    renderStep();
+  }
+
+  // =========================================================================
+  // ORDER — tap the steps in the right order. Wrong picks shake and reset.
+  // =========================================================================
+  function renderOrder(root, cfg, id) {
+    root.innerHTML = header(cfg);
+    var items = cfg.items || [];
+    // display order: rotate so it's never pre-solved
+    var disp = items.map(function (t, i) { return { t: t, i: i }; });
+    disp = disp.slice(2).concat(disp.slice(0, 2));
+    var seq = el('div', 'ctf-order-seq'); root.appendChild(seq);
+    var pool = el('div', 'ctf-options'); root.appendChild(pool);
+    var fb = el('div', 'ctf-feedback'); root.appendChild(fb);
+    var done = completionCard(cfg); if (done) root.appendChild(done);
+    var nextExpected = 0;
+
+    function renderSeq() {
+      seq.innerHTML = items.slice(0, nextExpected).map(function (t, i) {
+        return '<span class="ctf-order-chip">' + (i + 1) + '. ' + esc(t) + '</span>';
+      }).join('') || '<span class="ctf-muted">Tap the FIRST step…</span>';
+    }
+    disp.forEach(function (d) {
+      var b = el('button', 'ctf-opt', '<span>' + esc(d.t) + '</span><span class="mark"></span>');
+      b.addEventListener('click', function () {
+        if (b.disabled) return;
+        if (d.i === nextExpected) {
+          nextExpected++; b.disabled = true; b.classList.add('is-correct'); b.querySelector('.mark').textContent = nextExpected;
+          renderSeq();
+          if (nextExpected === items.length) {
+            fb.className = 'ctf-feedback show good';
+            fb.innerHTML = '<b>Perfect order!</b> ' + (cfg.explain || '');
+            reveal(done, (cfg.complete && cfg.complete.progress) || 100); markDone(id);
+          }
+        } else {
+          b.classList.add('is-wrong'); setTimeout(function () { b.classList.remove('is-wrong'); }, 450);
+        }
+      });
+      pool.appendChild(b);
+    });
+    renderSeq();
+  }
+
+  // =========================================================================
+  // NEURON — strengthen connections (weights!) to light the output. You only
+  // have a few strength points — spend them on the connections that matter.
+  // =========================================================================
+  function renderNeuron(root, cfg, id) {
+    root.innerHTML = header(cfg);
+    var points = cfg.points || 4;
+    // fixed tiny net: 2 inputs → 2 hidden → 1 output; 6 edges
+    var nodes = { a: [70, 70], b: [70, 210], h1: [240, 70], h2: [240, 210], out: [410, 140] };
+    var edges = [["a", "h1"], ["a", "h2"], ["b", "h1"], ["b", "h2"], ["h1", "out"], ["h2", "out"]];
+    var strength = edges.map(function () { return 0; });
+
+    var box = el('div', 'ctf-neuron');
+    box.innerHTML = '<svg viewBox="0 0 480 280" class="ctf-neuron-svg"></svg>' +
+      '<div class="ctf-neuron-hud"><span class="ctf-neuron-pts"></span><button class="ctf-btn ctf-neuron-send">⚡ Send the signal!</button></div>';
+    root.appendChild(box);
+    var fb = el('div', 'ctf-feedback'); root.appendChild(fb);
+    var done = completionCard(cfg); if (done) root.appendChild(done);
+    var svg = box.querySelector('svg'), ptsEl = box.querySelector('.ctf-neuron-pts');
+
+    function used() { return strength.reduce(function (a, b) { return a + b; }, 0); }
+    function draw(lit) {
+      lit = lit || {};
+      svg.innerHTML =
+        edges.map(function (e, i) {
+          var p1 = nodes[e[0]], p2 = nodes[e[1]];
+          return '<line data-e="' + i + '" x1="' + p1[0] + '" y1="' + p1[1] + '" x2="' + p2[0] + '" y2="' + p2[1] + '"' +
+            ' stroke="' + (lit['e' + i] ? '#FFB320' : (strength[i] ? '#2A5FF0' : '#DDE2EC')) + '"' +
+            ' stroke-width="' + (3 + strength[i] * 5) + '" stroke-linecap="round" style="cursor:pointer"/>';
+        }).join('') +
+        Object.keys(nodes).map(function (k) {
+          var p = nodes[k], isOut = k === 'out', isIn = k === 'a' || k === 'b';
+          return '<circle cx="' + p[0] + '" cy="' + p[1] + '" r="' + (isOut ? 30 : 22) + '" fill="' +
+            (lit[k] ? '#FFB320' : isIn ? '#12B2BC' : isOut ? '#0F1B3A' : '#2A5FF0') + '"' +
+            (isOut && lit[k] ? ' style="filter:drop-shadow(0 0 14px #FFB320)"' : '') + '/>' +
+            (isOut ? '<text x="' + p[0] + '" y="' + (p[1] + 5) + '" text-anchor="middle" font-size="14" font-weight="700" fill="#fff">' + (lit[k] ? '💡' : 'OUT') + '</text>' : '');
+        }).join('');
+      ptsEl.textContent = 'Strength points left: ' + (points - used());
+      svg.querySelectorAll('line').forEach(function (ln) {
+        ln.addEventListener('click', function () {
+          var i = +ln.getAttribute('data-e');
+          if (strength[i] < 2 && used() < points) strength[i]++;
+          else strength[i] = 0;
+          draw();
+        });
+      });
+    }
+    box.querySelector('.ctf-neuron-send').addEventListener('click', function () {
+      // a path lights if every edge on it has strength >= 1
+      var s = {}; edges.forEach(function (e, i) { s[e[0] + ">" + e[1]] = strength[i]; });
+      var lit = { a: 1, b: 1 };
+      var litEdges = {};
+      ["h1", "h2"].forEach(function (h) {
+        if (s["a>" + h] || s["b>" + h]) {
+          lit[h] = 1;
+          if (s["a>" + h]) litEdges["e" + edges.findIndex(function (e) { return e[0] === "a" && e[1] === h; })] = 1;
+          if (s["b>" + h]) litEdges["e" + edges.findIndex(function (e) { return e[0] === "b" && e[1] === h; })] = 1;
+        }
+      });
+      var outOk = false;
+      ["h1", "h2"].forEach(function (h) {
+        if (lit[h] && s[h + ">out"]) { outOk = true; litEdges["e" + edges.findIndex(function (e) { return e[0] === h && e[1] === "out"; })] = 1; }
+      });
+      if (outOk) lit.out = 1;
+      draw(Object.assign(lit, litEdges));
+      fb.className = 'ctf-feedback show ' + (outOk ? 'good' : 'info');
+      fb.innerHTML = outOk
+        ? '<b>💡 The output lit up!</b> You just set the <b>weights</b> — the strong connections decide where the signal flows. That\'s what training tunes, billions of times.'
+        : 'No light yet! The signal needs a <b>complete path</b>: strengthen a connection INTO a middle neuron and one FROM it to the output.';
+      if (outOk) { reveal(done, (cfg.complete && cfg.complete.progress) || 100); markDone(id); }
+    });
+    draw();
+  }
+
   // ---- registry + boot ----------------------------------------------------
-  var RENDERERS = { poll: renderPoll, sort: renderSort, choice: renderChoice, nextword: renderNextWord, attention: renderAttention, quiz: renderQuiz, timeline: renderTimeline, reveal: renderReveal, slider: renderSlider, trainer: renderTrainer, match: renderMatch };
+  var RENDERERS = { poll: renderPoll, sort: renderSort, choice: renderChoice, nextword: renderNextWord, attention: renderAttention, quiz: renderQuiz, timeline: renderTimeline, reveal: renderReveal, slider: renderSlider, trainer: renderTrainer, match: renderMatch, draw: renderDraw, wordchain: renderWordChain, order: renderOrder, neuron: renderNeuron };
 
   function hydrate(node) {
     if (node.getAttribute('data-ctf-ready')) return;

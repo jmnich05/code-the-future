@@ -284,6 +284,7 @@
       (online.length > 1 ? '<span class="muted" style="font-size:.8rem">tap a friend to chat!</span>' : '');
   }
 
+  var cohortsCache = null;
   async function boot(){
     var D = window.CTFDB; if (!D || !D.enabled) return;
     var p = await D.getProfile();
@@ -295,6 +296,7 @@
     var badges = await D.listBadges();
     document.getElementById("homeBadges").textContent = badges.length + (badges.length===1?" badge":" badges") + " earned";
     // continue tile: resolve cloud/local position → actual Mission number + title
+    cohortsCache = await D.myCohorts();
     var kids = await D.getProgress("module-01-what-is-ai","kids");
     var localPos = 0; try { localPos = parseInt(localStorage.getItem("ctf:pos:kids")||"0",10)||0; } catch(e){}
     var pos = Math.max((kids && kids.position) || 0, localPos);
@@ -316,9 +318,32 @@
           document.getElementById("contMeta").textContent = "All 12 badges earned · replay any Mission";
           document.getElementById("contGo").textContent = "Replay →";
         } else if (cur && cur.n){
-          document.getElementById("contTitle").textContent = "Mission " + cur.n + " — " + cur.title;
-          document.getElementById("contMeta").textContent = pct + "% through Module 1 · jump back in!";
-          document.getElementById("contGo").textContent = "Resume Mission " + cur.n + " →";
+          var showN = cur.n, showTitle = cur.title, lockedNote = "";
+          // drip pacing: clamp the tile to the unlocked region + note the next unlock
+          try {
+            var PARTS = [{n:1,first:1,last:4,offset:0},{n:2,first:5,last:8,offset:2},{n:3,first:9,last:12,offset:4}];
+            var anchor = (cohortsCache && cohortsCache[0] && cohortsCache[0].starts_on) || localStorage.getItem("ctf:firstplay");
+            var isStaff = cohortsCache && cohortsCache[0] && cohortsCache[0].role === "staff";
+            var bypass = localStorage.getItem("ctf:unlockall") === "1" || isStaff;
+            if (!bypass && anchor){
+              var now = new Date();
+              var unlockedLast = 4;
+              PARTS.forEach(function(p){ var d = new Date(anchor + "T00:00:00"); d.setDate(d.getDate() + p.offset); if (now >= d) unlockedLast = p.last; });
+              var nextPart = PARTS.filter(function(p){ return p.first > unlockedLast; })[0];
+              if (nextPart){
+                var ud = new Date(anchor + "T00:00:00"); ud.setDate(ud.getDate() + nextPart.offset);
+                lockedNote = " · Part " + nextPart.n + " unlocks " + ud.toLocaleDateString("en-US",{weekday:"long"}) + "!";
+              }
+              if (cur.n > unlockedLast){
+                showN = unlockedLast;
+                var clampStep = steps.filter(function(s){ return s.n === unlockedLast; })[0];
+                showTitle = clampStep ? clampStep.title : "";
+              }
+            }
+          } catch(e){}
+          document.getElementById("contTitle").textContent = "Mission " + showN + " — " + showTitle;
+          document.getElementById("contMeta").textContent = pct + "% through Module 1 · jump back in!" + lockedNote;
+          document.getElementById("contGo").textContent = "Resume Mission " + showN + " →";
         } else {
           document.getElementById("contMeta").textContent = "Just getting started — " + pct + "%";
           document.getElementById("contGo").textContent = "Continue →";
@@ -328,7 +353,7 @@
       }
       document.getElementById("continueTile").href = "../curriculum/module-01-what-is-ai/lessons/player.html?track=kids";
     }
-    var cohorts = await D.myCohorts();
+    var cohorts = cohortsCache || [];
     if (cohorts.length){
       document.getElementById("boardTitle").textContent = cohorts[0].name;
       // presence: announce myself + render who's online

@@ -116,7 +116,7 @@ async function logEvent(kind, props = {}) {
 // ---- cohort board ---------------------------------------------------------
 async function myCohorts() {
   if (!ok()) return [];
-  const { data } = await sb.from("cohort_members").select("role, cohorts(id,name,join_code,track)").eq("user_id", uid());
+  const { data } = await sb.from("cohort_members").select("role, cohorts(id,name,join_code,track,starts_on)").eq("user_id", uid());
   return (data || []).map((r) => ({ role: r.role, ...r.cohorts }));
 }
 

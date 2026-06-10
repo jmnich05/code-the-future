@@ -233,6 +233,10 @@
      "html": "<div class=\"ctf\"><div data-ctf-widget=\"trainer\" data-ctf-id=\"kids-m4-training\">\n    <script type=\"application/json\">{\n      \"eyebrow\":\"Brain Trainer\",\"title\":\"Train your very own AI!\",\n      \"prompt\":\"This baby AI knows NOTHING. Teach it cats vs. dogs by labeling these pictures — then watch it try brand-new ones. <span class=\\\"ctf-q\\\">Teach carefully…</span> it learns exactly what you show it!\",\n      \"classes\":[{\"key\":\"cat\",\"label\":\"Cat 🐱\"},{\"key\":\"dog\",\"label\":\"Dog 🐶\"}],\n      \"train\":[\n        {\"emoji\":\"😺\",\"cls\":\"cat\"},{\"emoji\":\"🐶\",\"cls\":\"dog\"},{\"emoji\":\"🐈\",\"cls\":\"cat\"},\n        {\"emoji\":\"🦮\",\"cls\":\"dog\"},{\"emoji\":\"😸\",\"cls\":\"cat\"},{\"emoji\":\"🐕\",\"cls\":\"dog\"}\n      ],\n      \"test\":[\n        {\"emoji\":\"🐈‍⬛\",\"cls\":\"cat\",\"like\":0},{\"emoji\":\"🐩\",\"cls\":\"dog\",\"like\":1},{\"emoji\":\"😻\",\"cls\":\"cat\",\"like\":4}\n      ],\n      \"winText\":\"Great teaching = a smart AI. Good examples in, smart AI out — that's training!\",\n      \"loseText\":\"See that? The AI copied YOUR labels — even the oops. AI is only as good as its examples. (Replay the Mission to try again!)\",\n      \"complete\":{\"icon\":\"🎖️\",\"badge\":\"Badge earned: Brain Trainer\",\"sub\":\"Mission 4 of 12\",\"progress\":33}\n    }</script>\n  </div></div>"
     },
     {
+     "type": "widget",
+     "html": "<div class=\"ctf\"><div data-ctf-widget=\"order\" data-ctf-id=\"kids-m4-order\">\n    <script type=\"application/json\">{\n      \"eyebrow\":\"One more challenge\",\"title\":\"Put AI training in the right order\",\n      \"prompt\":\"You just trained an AI! Now prove you know the recipe — tap the steps in order, from first to last.\",\n      \"items\":[\n        \"Collect lots of examples\",\n        \"Label them (this one's a cat, this one's a dog)\",\n        \"Train the AI on all those examples\",\n        \"Test it on brand-NEW pictures\",\n        \"Use it — and keep teaching it to get better!\"\n      ],\n      \"explain\":\"That's the real recipe AI builders use every day: collect → label → train → test → use.\",\n      \"complete\":{\"icon\":\"🎖️\",\"badge\":\"Bonus: Training Expert!\",\"sub\":\"Mission 4 of 12\",\"progress\":33}\n    }</script>\n  </div></div>"
+    },
+    {
      "type": "complete",
      "html": "<h3>✅ Mission 4 Complete!</h3><p>You now understand how AI learns. That's something a lot of grown-ups can't explain!</p><p>🎖️ <strong>Badge earned: Brain Trainer</strong><br><strong>Progress:</strong> ▰▰▰▰▱▱▱▱▱▱▱▱ (4/12)<br><strong>Next up → Mission 5: Teaching a Computer to SEE</strong></p>"
     }
@@ -279,6 +283,10 @@
     {
      "type": "widget",
      "html": "<div class=\"ctf\"><div data-ctf-widget=\"reveal\" data-ctf-id=\"kids-m5-reveal\">\n    <script type=\"application/json\">{\n      \"eyebrow\":\"Pixel detective\",\"title\":\"What is it? Reveal to find out\",\n      \"prompt\":\"Computers see blurry patterns first, then get clearer — just like this. Tap “Reveal more,” then make your guess.\",\n      \"emoji\":\"🐱\",\"levels\":[24,16,9,4,0],\"options\":[\"A dog\",\"A cat\",\"A muffin\",\"A car\"],\"answer\":1,\n      \"explain\":\"It's a cat! Fun fact: AI can get fooled — blurry cats, muffins, and chihuahuas can look alike to a computer, because it only reads the <b>pattern</b> of pixels.\",\n      \"complete\":{\"icon\":\"🎖️\",\"badge\":\"Badge earned: Pixel Detective\",\"sub\":\"Mission 5 of 12\",\"progress\":42}\n    }</script>\n  </div></div>"
+    },
+    {
+     "type": "widget",
+     "html": "<div class=\"ctf\"><div data-ctf-widget=\"draw\" data-ctf-id=\"kids-m5-draw\">\n    <script type=\"application/json\">{\n      \"eyebrow\":\"🎨 The real deal\",\"title\":\"Draw something — a REAL AI will guess it!\",\n      \"prompt\":\"This is actual computer vision, live. Draw anything — an animal, a rocket, your house — then ask the AI to look at your pixels and guess.\",\n      \"button\":\"🤖 Ask the AI to guess!\",\n      \"complete\":{\"icon\":\"🎖️\",\"badge\":\"Bonus: AI Art Tester!\",\"sub\":\"Mission 5 of 12\",\"progress\":42}\n    }</script>\n  </div></div>"
     },
     {
      "type": "complete",
@@ -342,7 +350,7 @@
     },
     {
      "type": "widget",
-     "html": "<div class=\"ctf\"><div data-ctf-widget=\"nextword\" data-ctf-id=\"kids-m6-nextword\">\n    <script type=\"application/json\">{\n      \"eyebrow\":\"Guess the next word\",\"title\":\"Finish the sentence like an AI would\",\"prompt\":\"AI writes by guessing the next word. Three rounds — they get harder!\",\n      \"placeholder\":\"What comes next?\",\n      \"rounds\":[\n        {\"stem\":\"Peanut butter and\",\"common\":[\"jelly\",\"jam\",\"honey\"],\"explain\":\"Easy one — you've heard that pattern a million times, just like AI has.\"},\n        {\"stem\":\"Twinkle, twinkle, little\",\"common\":[\"star\"],\"explain\":\"Songs are super-strong patterns. AI learns them from reading, not singing!\"},\n        {\"stem\":\"The dragon opened its giant\",\"common\":[\"mouth\",\"wings\",\"eyes\",\"jaws\"],\"explain\":\"Trickier! More than one word fits — so AI picks the MOST LIKELY one. That's why its answers can change each time.\"}\n      ],\n      \"complete\":{\"icon\":\"🎖️\",\"badge\":\"Badge earned: Word Wizard\",\"sub\":\"Mission 6 of 12\",\"progress\":50}\n    }</script>\n  </div></div>"
+     "html": "<div class=\"ctf\"><div data-ctf-widget=\"wordchain\" data-ctf-id=\"kids-m6-wordchain\">\n    <script type=\"application/json\">{\n      \"eyebrow\":\"Be the AI\",\"title\":\"Write a sentence the AI way — one word at a time\",\n      \"prompt\":\"An AI picks each next word by how <span class=\\\"ctf-q\\\">likely</span> it is. The bars show the odds. Pick the safe word… or the wild one!\",\n      \"start\":\"The dragon\",\n      \"steps\":[\n        {\"options\":[{\"w\":\"flew\",\"p\":58},{\"w\":\"danced\",\"p\":27},{\"w\":\"sneezed\",\"p\":15}]},\n        {\"options\":[{\"w\":\"over\",\"p\":62},{\"w\":\"under\",\"p\":23},{\"w\":\"inside\",\"p\":15}]},\n        {\"options\":[{\"w\":\"the city\",\"p\":55},{\"w\":\"a rainbow\",\"p\":28},{\"w\":\"a volcano\",\"p\":17}]},\n        {\"options\":[{\"w\":\"at sunset.\",\"p\":57},{\"w\":\"with sprinkles.\",\"p\":24},{\"w\":\"on a skateboard.\",\"p\":19}]}\n      ],\n      \"explain\":\"Chatbots do this billions of times — picking likely words makes careful sentences, picking surprising ones makes wild creative ones!\",\n      \"complete\":{\"icon\":\"🎖️\",\"badge\":\"Badge earned: Word Wizard\",\"sub\":\"Mission 6 of 12\",\"progress\":50}\n    }</script>\n  </div></div>"
     },
     {
      "type": "complete",
@@ -447,6 +455,10 @@
     {
      "type": "video",
      "html": "<div class=\"lesson-video\"><div class=\"vframe\"><iframe src=\"https://www.youtube-nocookie.com/embed/JrXazCEACVo?rel=0&modestbranding=1\" title=\"How Neural Networks Work\" loading=\"lazy\" allow=\"accelerometer; encrypted-media; picture-in-picture; web-share\" allowfullscreen></iframe></div><p class=\"vcap\">🍿 Video break! Inside a neural network — the pretend brain you just learned about.<br><span class=\"vcredit\">“How Neural Networks Work” · Code.org · YouTube</span></p></div>"
+    },
+    {
+     "type": "widget",
+     "html": "<div class=\"ctf\"><div data-ctf-widget=\"neuron\" data-ctf-id=\"kids-m8-neuron\">\n    <script type=\"application/json\">{\n      \"eyebrow\":\"Be the trainer\",\"title\":\"Light up the neural network!\",\n      \"prompt\":\"A signal wants to travel from the teal inputs to the OUT bulb — but it can only flow through <span class=\\\"ctf-q\\\">strong connections</span>. Tap the lines to strengthen them (tap again to reset). You only have a few strength points — spend them wisely, then send the signal!\",\n      \"points\":4,\n      \"complete\":{\"icon\":\"🎖️\",\"badge\":\"Bonus: Network Electrician!\",\"sub\":\"Mission 8 of 12\",\"progress\":66}\n    }</script>\n  </div></div>"
     },
     {
      "type": "widget",

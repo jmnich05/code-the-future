@@ -206,6 +206,8 @@ Next time someone says AI is "super complicated," you can smile. You already kno
 
 `[INTERACTIVE: "train your own mini-AI" — feed the helper a few example pictures, then test it on a new one and watch it guess.]`
 
+`[INTERACTIVE: put the steps of training an AI in the right order.]`
+
 ### ✅ Mission 4 Complete!
 **You just unlocked:**
 - Teaching an AI with examples is called **training**; the examples are called **data**.
@@ -254,6 +256,8 @@ the *pattern* of a cat in the pixels. And it turns out that's incredibly useful 
 not the same as really understanding.
 
 `[INTERACTIVE: pixel reveal — start with a blurry, pixelated image and let the learner un-blur it step by step, guessing what it is as more pattern appears.]`
+
+`[INTERACTIVE: draw anything you want — then a REAL AI looks at your pixels and guesses what you drew.]`
 
 ### ✅ Mission 5 Complete!
 **You just unlocked:**
@@ -405,6 +409,8 @@ single idea* from us — learning by changing connections — and got incredibly
 
 Same trick. *Very* different thing. Knowing this difference is one of the smartest things you
 can understand about AI.
+
+`[INTERACTIVE: light up the neural network — strengthen the right connections to make the signal reach the output.]`
 
 `[INTERACTIVE: side-by-side — tap a "real brain" and a "neural network" to see what's the same and what's totally different.]`
 

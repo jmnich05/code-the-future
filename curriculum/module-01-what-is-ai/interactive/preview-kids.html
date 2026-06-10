@@ -87,6 +87,23 @@
     }</script>
   </div></div>
 
+  <p class="step">Mission 4b · training steps in order</p>
+  <div class="ctf"><div data-ctf-widget="order" data-ctf-id="kids-m4-order">
+    <script type="application/json">{
+      "eyebrow":"One more challenge","title":"Put AI training in the right order",
+      "prompt":"You just trained an AI! Now prove you know the recipe — tap the steps in order, from first to last.",
+      "items":[
+        "Collect lots of examples",
+        "Label them (this one's a cat, this one's a dog)",
+        "Train the AI on all those examples",
+        "Test it on brand-NEW pictures",
+        "Use it — and keep teaching it to get better!"
+      ],
+      "explain":"That's the real recipe AI builders use every day: collect → label → train → test → use.",
+      "complete":{"icon":"🎖️","badge":"Bonus: Training Expert!","sub":"Mission 4 of 12","progress":33}
+    }</script>
+  </div></div>
+
   <p class="step">Mission 5 · teaching a computer to see</p>
   <div class="ctf"><div data-ctf-widget="reveal" data-ctf-id="kids-m5-reveal">
     <script type="application/json">{
@@ -98,16 +115,29 @@
     }</script>
   </div></div>
 
-  <p class="step">Mission 6 · how AI reads</p>
-  <div class="ctf"><div data-ctf-widget="nextword" data-ctf-id="kids-m6-nextword">
+  <p class="step">Mission 5b · draw for the AI</p>
+  <div class="ctf"><div data-ctf-widget="draw" data-ctf-id="kids-m5-draw">
     <script type="application/json">{
-      "eyebrow":"Guess the next word","title":"Finish the sentence like an AI would","prompt":"AI writes by guessing the next word. Three rounds — they get harder!",
-      "placeholder":"What comes next?",
-      "rounds":[
-        {"stem":"Peanut butter and","common":["jelly","jam","honey"],"explain":"Easy one — you've heard that pattern a million times, just like AI has."},
-        {"stem":"Twinkle, twinkle, little","common":["star"],"explain":"Songs are super-strong patterns. AI learns them from reading, not singing!"},
-        {"stem":"The dragon opened its giant","common":["mouth","wings","eyes","jaws"],"explain":"Trickier! More than one word fits — so AI picks the MOST LIKELY one. That's why its answers can change each time."}
+      "eyebrow":"🎨 The real deal","title":"Draw something — a REAL AI will guess it!",
+      "prompt":"This is actual computer vision, live. Draw anything — an animal, a rocket, your house — then ask the AI to look at your pixels and guess.",
+      "button":"🤖 Ask the AI to guess!",
+      "complete":{"icon":"🎖️","badge":"Bonus: AI Art Tester!","sub":"Mission 5 of 12","progress":42}
+    }</script>
+  </div></div>
+
+  <p class="step">Mission 6 · how AI reads</p>
+  <div class="ctf"><div data-ctf-widget="wordchain" data-ctf-id="kids-m6-wordchain">
+    <script type="application/json">{
+      "eyebrow":"Be the AI","title":"Write a sentence the AI way — one word at a time",
+      "prompt":"An AI picks each next word by how <span class=\"ctf-q\">likely</span> it is. The bars show the odds. Pick the safe word… or the wild one!",
+      "start":"The dragon",
+      "steps":[
+        {"options":[{"w":"flew","p":58},{"w":"danced","p":27},{"w":"sneezed","p":15}]},
+        {"options":[{"w":"over","p":62},{"w":"under","p":23},{"w":"inside","p":15}]},
+        {"options":[{"w":"the city","p":55},{"w":"a rainbow","p":28},{"w":"a volcano","p":17}]},
+        {"options":[{"w":"at sunset.","p":57},{"w":"with sprinkles.","p":24},{"w":"on a skateboard.","p":19}]}
       ],
+      "explain":"Chatbots do this billions of times — picking likely words makes careful sentences, picking surprising ones makes wild creative ones!",
       "complete":{"icon":"🎖️","badge":"Badge earned: Word Wizard","sub":"Mission 6 of 12","progress":50}
     }</script>
   </div></div>
@@ -125,6 +155,16 @@
          "explain":"The <b>trophy</b> was too big! Now flip it: if the sentence said “too small,” “it” would mean the suitcase. ONE word changes everything — that's why attention is such a superpower."}
       ],
       "complete":{"icon":"🎖️","badge":"Badge earned: Attention Ace","sub":"Mission 7 of 12","progress":58}
+    }</script>
+  </div></div>
+
+  <p class="step">Mission 8 · light up the network</p>
+  <div class="ctf"><div data-ctf-widget="neuron" data-ctf-id="kids-m8-neuron">
+    <script type="application/json">{
+      "eyebrow":"Be the trainer","title":"Light up the neural network!",
+      "prompt":"A signal wants to travel from the teal inputs to the OUT bulb — but it can only flow through <span class=\"ctf-q\">strong connections</span>. Tap the lines to strengthen them (tap again to reset). You only have a few strength points — spend them wisely, then send the signal!",
+      "points":4,
+      "complete":{"icon":"🎖️","badge":"Bonus: Network Electrician!","sub":"Mission 8 of 12","progress":66}
     }</script>
   </div></div>
 

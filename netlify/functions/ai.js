@@ -56,7 +56,7 @@ export default async (req) => {
         max_tokens: MAX_TOKENS[mode],
         messages: [
           { role: "system", content: SYSTEM[mode] },
-          { role: "user", content: prompt }
+          { role: "user", content: userContent(prompt, body.image) }
         ]
       })
     });
@@ -72,6 +72,17 @@ export default async (req) => {
     return json({ error: "Could not reach the AI service.", detail: String(e).slice(0, 200) }, 502);
   }
 };
+
+// optional vision: body.image = data URL (e.g. a kid's canvas drawing)
+function userContent(prompt, image) {
+  if (typeof image === "string" && image.startsWith("data:image/") && image.length < 2_000_000) {
+    return [
+      { type: "text", text: prompt },
+      { type: "image_url", image_url: { url: image, detail: "low" } }
+    ];
+  }
+  return prompt;
+}
 
 function json(obj, status) {
   return new Response(JSON.stringify(obj), {

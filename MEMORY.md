@@ -89,6 +89,33 @@ coding, with emphasis on how AI is reshaping software development. Origin materi
   "Online now" avatar strip on home + board, green dots on the roster. Works with anon auth.
 - Board/home link: home presence strip links to `board.html#chat` (opens chat view).
 
+## Experience round (06-10/11 night): new games, lo-fi studio, drip pacing
+
+- **4 new widget types** (kids now has 15 widgets / 152 steps; home TOTAL updated):
+  - **draw** (M5b): canvas drawing → REAL gpt-4o-mini VISION guess (`/api/ai` now accepts
+    `image` data-URL, both netlify fn + dev server; <2MB, detail:low). Verified live — AI
+    guessed a programmatic house drawing ("Is it a cozy little house?").
+  - **wordchain** (M6, replaced nextword config): build a sentence picking from 3 options
+    w/ probability bars; ending reflects avg likelihood (careful vs creativity-dial-up).
+  - **order** (M4b): tap steps into sequence (collect→label→train→test→use).
+  - **neuron** (M8a): tap edges to strengthen (weights), limited points, send signal →
+    output lights if a complete path exists. Fail gives coaching.
+  - Second `[INTERACTIVE]` markers added to M4/M5/M8 in type-a-kids.md (marker order must
+    match preview-kids.html block order).
+- **Lo-fi Study Beats** (`lessons/music.js`, `window.CTFMusic`): 100% PROCEDURAL Web Audio
+  (kick/snare/hat patterns + detuned triangle chord pads + vinyl crackle + rain noise) — no
+  audio files, no licensing. 🎵 dock in player: play/pause, 3 vibes (chill/space/sunny),
+  3 tempos, layer toggles, **🎲 Remix** (re-seeds patterns — framed as generative AI).
+  Music **ducks under TTS**. Prefs persist (never autoplays). Verified.
+- **Drip pacing — Jon's anti-binge ask:** PARTS = M1-4 (+0d), M5-8 (+2d), M9-12 (+4d);
+  anchor = `cohorts.starts_on` (pilot set 2026-06-10 via mgmt API; myCohorts now selects
+  starts_on) else local `ctf:firstplay`. Player: forward-gate (Continue → friendly lock
+  screen "Part 2 unlocks on Friday!" + replay/home suggestions), resume clamps OUT of
+  locked regions (incl. cloud resume; capstone counts as Mission 12 — was a bug). Home tile
+  clamps to last unlocked mission + " · Part N unlocks {Weekday}!" note. **Bypasses:**
+  cohort staff role, or `?unlock=all` (sets `ctf:unlockall`) — give Jon this for demos.
+  Verified: reclamp, lock screen, home note, bypass.
+
 ## Polish round (06-11-2026): audio toggle, art badges, gear rewards, living avatars
 
 - **Audio learning toggle** replaced the top-bar 🔊: bottom-bar pill "🔈 Turn on audio
