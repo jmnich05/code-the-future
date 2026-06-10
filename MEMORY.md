@@ -89,6 +89,23 @@ coding, with emphasis on how AI is reshaping software development. Origin materi
   "Online now" avatar strip on home + board, green dots on the roster. Works with anon auth.
 - Board/home link: home presence strip links to `board.html#chat` (opens chat view).
 
+## Sales website (06-10-2026, `sales-website` branch / PR #3)
+
+- **Root `index.html` is now the public sales/SEO site**; the kid platform is untouched at
+  `/platform/` (sales nav "Log In" → `/platform/`). Was a meta-redirect before — merging the
+  PR changes what production root serves.
+- **Video slot:** hero has a 16:9 film panel; set `FILM_URL` in the EDIT-ME config block at
+  the bottom of index.html (YouTube embed URL or hosted .mp4) when Jon records his film.
+- **Cohort cards are placeholder data** in the same EDIT-ME block (`COHORTS` array): Session
+  A July 13–24, Session B July 27–Aug 7, Fall AI Club waitlist. Jon edits dates/seats there.
+- **Lead capture = Netlify Forms** (form name `cohort-interest`, honeypot, AJAX success
+  state). Submissions land in Netlify → Forms; no backend, no Supabase table.
+- SEO: meta/OG/canonical + Organization JSON-LD. Indexing blocked until Jon removes the
+  Netlify password protection.
+- `scripts/dev.mjs` root path now serves `/index.html` (sales) to match production.
+- Claims kept honest: psychologist unnamed ("helps design & review"), library unnamed
+  ("public library in Louisville"), no fabricated stats or testimonials.
+
 ## Experience round (06-10/11 night): new games, lo-fi studio, drip pacing
 
 - **4 new widget types** (kids now has 15 widgets / 152 steps; home TOTAL updated):
