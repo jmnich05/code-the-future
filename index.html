@@ -74,7 +74,8 @@
   @keyframes pulse{50%{opacity:.4}}
   .hero h1{font-size:clamp(38px,5.2vw,60px);font-weight:700;margin-bottom:18px}
   .hero h1 .grad{background:linear-gradient(90deg,var(--teal-bright),var(--blue-bright) 55%,#9DB8FF);-webkit-background-clip:text;background-clip:text;color:transparent}
-  .hero p.lede{font-size:18px;color:rgba(255,255,255,.85);max-width:520px;margin-bottom:30px}
+  .hero p.lede{font-size:18px;color:rgba(255,255,255,.85);max-width:520px;margin-bottom:16px}
+  .hero p.lede:last-of-type{margin-bottom:30px;font-size:16px;color:rgba(255,255,255,.78)}
   .hero-ctas{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:26px}
   .hero-meta{display:flex;gap:22px;flex-wrap:wrap;font-size:13.5px;color:rgba(255,255,255,.72)}
   .hero-meta b{color:#fff;font-family:var(--display)}
@@ -237,6 +238,7 @@
       <span class="pill"><span class="dot"></span>Louisville · Summer 2026 · Ages 8–11</span>
       <h1>The kids who understand AI will <span class="grad">build the future.</span></h1>
       <p class="lede">Code the Future is a hands-on AI camp where kids don't watch videos about technology — they <b>use real AI</b>: drawing for an AI that actually sees, training mini-models, and building things they're proud of.</p>
+      <p class="lede">And they get a weekly hands-on session with a <b>coach who works in the industry</b> and is passionate about the future, alongside a <b>psychologist who specializes in child development</b> and helped develop the platform and curriculum.</p>
       <div class="hero-ctas">
         <a class="btn btn-primary btn-big" href="#cohorts">Reserve a Spot</a>
         <a class="btn btn-ghost btn-big" href="#film">▶ Watch the Film</a>
@@ -273,8 +275,8 @@
   <div class="wrap">
     <div class="sec-head reveal">
       <span class="kicker" style="color:var(--blue)">Why your kid needs this</span>
-      <h2>AI literacy is the new reading.</h2>
-      <p>Today's 8-year-olds will never apply for a job, write a paper, or build anything without AI in the loop. The question isn't whether they'll use it — it's whether they'll understand it.</p>
+      <h2>Give them a head start on the world they're growing up into.</h2>
+      <p>AI will be woven into nearly everything today's kids grow up to do. They're going to use it either way — the head start is understanding it: knowing how it works, what it's great at, and where it still needs a human.</p>
     </div>
     <div class="why-grid">
       <div class="why-card reveal">
@@ -505,11 +507,16 @@
   var nav = document.getElementById("nav");
   addEventListener("scroll", function () { nav.classList.toggle("scrolled", scrollY > 24); }, { passive: true });
 
-  // scroll reveals
+  // scroll reveals — anything already in the viewport (deep links, mid-page loads)
+  // shows immediately; only below-the-fold content waits for the observer
   var io = new IntersectionObserver(function (es) {
     es.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add("in"); io.unobserve(e.target); } });
   }, { threshold: 0.12 });
-  document.querySelectorAll(".reveal").forEach(function (el) { io.observe(el); });
+  document.querySelectorAll(".reveal").forEach(function (el) {
+    var r = el.getBoundingClientRect();
+    if (r.top < innerHeight && r.bottom > 0) el.classList.add("in");
+    else io.observe(el);
+  });
 
   // AJAX form submit (Netlify Forms) with friendly success state
   var form = document.getElementById("leadForm");
