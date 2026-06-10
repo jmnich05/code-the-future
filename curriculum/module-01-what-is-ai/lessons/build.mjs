@@ -50,6 +50,27 @@ function artBeat(track, n) {
   return name ? { type: "image", html: `<div class="lesson-art"><img src="../assets/art/${name}.svg" alt="" loading="lazy"></div>` } : null;
 }
 
+// video breaks — Code.org "How AI Works" series (classroom-made, ~5 min each).
+// IDs verified via YouTube oEmbed. Embedded with youtube-nocookie (privacy mode).
+const VIDEO_MAP = {
+  kids: {
+    2: { id: "Ok-xpKjKp2g", title: "How AI Works", cap: "🍿 Video break! Code.org's quick intro to how AI works — everything we just talked about, in motion." },
+    4: { id: "OeU5m6vRyCk", title: "What is Machine Learning?", cap: "🍿 Video break! See machine learning — “learning from examples” — in action." },
+    5: { id: "2hXG8v8p0KM", title: "How Computer Vision Works", cap: "🍿 Video break! How a computer really learns to SEE." },
+    6: { id: "X-AWdfSFCHQ", title: "How Chatbots and Large Language Models Work", cap: "🍿 Video break! How chatbots guess the next word — for real." },
+    8: { id: "JrXazCEACVo", title: "How Neural Networks Work", cap: "🍿 Video break! Inside a neural network — the pretend brain you just learned about." },
+    10: { id: "x2mRoFNm22g", title: "Training Data & Bias", cap: "🍿 Video break! Why good examples matter — and what happens when they're unfair." }
+  },
+  adults: {}
+};
+function videoBeat(track, n) {
+  const v = VIDEO_MAP[track] && VIDEO_MAP[track][n];
+  if (!v) return null;
+  return { type: "video", html:
+    `<div class="lesson-video"><div class="vframe"><iframe src="https://www.youtube-nocookie.com/embed/${v.id}?rel=0&modestbranding=1" title="${v.title}" loading="lazy" allow="accelerometer; encrypted-media; picture-in-picture; web-share" allowfullscreen></iframe></div>` +
+    `<p class="vcap">${v.cap}<br><span class="vcredit">“${v.title}” · Code.org · YouTube</span></p></div>` };
+}
+
 function widgetBlocks(previewFile) {
   const html = readFileSync(join(MOD, "interactive", previewFile), "utf8");
   return html.match(/<div class="ctf"><div data-ctf-widget[\s\S]*?<\/div><\/div>/g) || [];
@@ -101,6 +122,7 @@ const isMeta = (l) => /^\*.*(minutes|of 12).*\*$/.test(l.trim());
 const isComplete = (l) => /^###\s/.test(l) && /complete/i.test(l);
 
 function buildUnit(unitText, ctx) {
+  ctx.videoDone = false;
   const rawLines = unitText.split("\n").filter((l) => l.trim() !== "---");
   const heading0 = rawLines[0].replace(/^##\s/, "").trim();
   const isIntro = /how this module works/i.test(heading0);
@@ -129,7 +151,11 @@ function buildUnit(unitText, ctx) {
     if (/\[CAPSTONE/.test(joined)) { ctx.capstoneHtml = capstoneHtml(ctx.track); continue; }
     if (inComplete) { completeBuf.push(blk); continue; }
     if (isComplete(f0)) { inComplete = true; completeBuf.push(blk); continue; }
-    if (/\[INTERACTIVE/.test(joined)) { beats.push({ type: "widget", html: ctx.nextWidget() }); continue; }
+    if (/\[INTERACTIVE/.test(joined)) {
+      // a video break (if mapped) lands right before the mission's interactive
+      if (!ctx.videoDone) { const vb = videoBeat(ctx.track, ctx.n); if (vb) { beats.push(vb); ctx.videoDone = true; } }
+      beats.push({ type: "widget", html: ctx.nextWidget() }); continue;
+    }
     if (/^####\s|^###\s/.test(f0)) { pendingHead += blockHtml(blk); continue; }
     const html = pendingHead + blockHtml(blk);
     beats.push({ type: blockType(f0), html });

@@ -172,64 +172,98 @@
 
   // =========================================================================
   // NEXTWORD — learner predicts the next word, then reveals common answers.
+  // Supports cfg.rounds = [{stem, common, explain}] for multiple challenges.
   // =========================================================================
   function renderNextWord(root, cfg, id) {
     root.innerHTML = header(cfg);
-    var stem = el('div', 'ctf-stem', esc(cfg.stem) + ' <span class="blank">?</span>');
-    root.appendChild(stem);
-    var input = el('input', 'ctf-input'); input.type = 'text'; input.placeholder = cfg.placeholder || 'Your guess…';
-    root.appendChild(input);
-    var actions = el('div', 'ctf-actions');
-    var btn = el('button', 'ctf-btn', 'Reveal');
-    actions.appendChild(btn); root.appendChild(actions);
-    var fb = el('div', 'ctf-feedback info'); root.appendChild(fb);
+    var rounds = cfg.rounds || [{ stem: cfg.stem, common: cfg.common, explain: cfg.explain }];
+    var idx = 0;
+    var area = el('div'); root.appendChild(area);
     var done = completionCard(cfg); if (done) root.appendChild(done);
-    function go() {
-      var guess = (input.value || '').trim();
-      var common = (cfg.common || []).map(function (w) { return w.toLowerCase(); });
-      var hit = guess && common.indexOf(guess.toLowerCase()) > -1;
-      stem.querySelector('.blank').textContent = cfg.common && cfg.common[0] ? cfg.common[0] : (guess || '…');
-      fb.className = 'ctf-feedback show info';
-      fb.innerHTML =
-        (guess ? 'You guessed <b>' + esc(guess) + '</b>. ' : '') +
-        (hit ? 'Nice — that\'s one of the most common answers! ' : '') +
-        (cfg.common ? 'People (and AI) usually say: <b>' + cfg.common.map(esc).join('</b>, <b>') + '</b>. ' : '') +
-        (cfg.explain || '');
-      reveal(done, (cfg.complete && cfg.complete.progress) || 100); markDone(id);
+
+    function renderRound() {
+      var r = rounds[idx];
+      area.innerHTML = (rounds.length > 1 ? '<p class="ctf-roundlbl">Round ' + (idx + 1) + ' of ' + rounds.length + '</p>' : '');
+      var stem = el('div', 'ctf-stem', esc(r.stem) + ' <span class="blank">?</span>');
+      area.appendChild(stem);
+      var input = el('input', 'ctf-input'); input.type = 'text'; input.placeholder = cfg.placeholder || 'Your guess…';
+      area.appendChild(input);
+      var actions = el('div', 'ctf-actions');
+      var btn = el('button', 'ctf-btn', 'Reveal');
+      actions.appendChild(btn); area.appendChild(actions);
+      var fb = el('div', 'ctf-feedback info'); area.appendChild(fb);
+
+      function go() {
+        var guess = (input.value || '').trim();
+        var common = (r.common || []).map(function (w) { return w.toLowerCase(); });
+        var hit = guess && common.indexOf(guess.toLowerCase()) > -1;
+        stem.querySelector('.blank').textContent = r.common && r.common[0] ? r.common[0] : (guess || '…');
+        fb.className = 'ctf-feedback show ' + (hit ? 'good' : 'info');
+        fb.innerHTML =
+          (guess ? 'You guessed <b>' + esc(guess) + '</b>. ' : '') +
+          (hit ? 'Nice — that\'s one of the most common answers! ' : '') +
+          (r.common ? 'People (and AI) usually say: <b>' + r.common.map(esc).join('</b>, <b>') + '</b>. ' : '') +
+          (r.explain || '');
+        btn.style.display = 'none';
+        if (idx < rounds.length - 1) {
+          var next = el('button', 'ctf-btn', 'Next round →');
+          next.addEventListener('click', function () { idx++; renderRound(); });
+          actions.appendChild(next);
+        } else {
+          reveal(done, (cfg.complete && cfg.complete.progress) || 100); markDone(id);
+        }
+      }
+      btn.addEventListener('click', go);
+      input.addEventListener('keydown', function (e) { if (e.key === 'Enter' && btn.style.display !== 'none') go(); });
     }
-    btn.addEventListener('click', go);
-    input.addEventListener('keydown', function (e) { if (e.key === 'Enter') go(); });
+    renderRound();
   }
 
   // =========================================================================
   // ATTENTION — click which earlier word the highlighted word refers to.
+  // Supports cfg.rounds = [{tokens, hint, explain}] for multiple sentences.
   // =========================================================================
   function renderAttention(root, cfg, id) {
     root.innerHTML = header(cfg);
-    var answered = false;
-    var s = el('p', 'ctf-sentence');
-    (cfg.tokens || []).forEach(function (t, i) {
-      if (typeof t === 'string') { s.appendChild(document.createTextNode(t)); return; }
-      var w = el('span', 'ctf-word' + (t.target ? ' target' : ' pick'), esc(t.w));
-      if (!t.target) {
-        w.addEventListener('click', function () {
-          if (answered) return; answered = true;
-          var correct = t.ref === true;
-          w.classList.add(correct ? 'is-correct' : 'is-wrong');
-          if (!correct) { // also light up the right one
-            s.querySelectorAll('.ctf-word.pick').forEach(function (x, xi) {});
-          }
-          fb.className = 'ctf-feedback show ' + (correct ? 'good' : 'info');
-          fb.innerHTML = (correct ? '<b>Yes!</b> ' : '<b>Look again — </b>') + (cfg.explain || '');
-          reveal(done, (cfg.complete && cfg.complete.progress) || 100); markDone(id);
-        });
-      }
-      s.appendChild(w);
-    });
-    root.appendChild(s);
-    if (cfg.hint) root.appendChild(el('p', 'ctf-muted', esc(cfg.hint)));
-    var fb = el('div', 'ctf-feedback'); root.appendChild(fb);
+    var rounds = cfg.rounds || [{ tokens: cfg.tokens, hint: cfg.hint, explain: cfg.explain }];
+    var idx = 0;
+    var area = el('div'); root.appendChild(area);
     var done = completionCard(cfg); if (done) root.appendChild(done);
+
+    function renderRound() {
+      var r = rounds[idx];
+      var answered = false;
+      area.innerHTML = (rounds.length > 1 ? '<p class="ctf-roundlbl">Sentence ' + (idx + 1) + ' of ' + rounds.length + '</p>' : '');
+      var s = el('p', 'ctf-sentence');
+      var fb = el('div', 'ctf-feedback');
+      var actions = el('div', 'ctf-actions');
+      (r.tokens || []).forEach(function (t) {
+        if (typeof t === 'string') { s.appendChild(document.createTextNode(t)); return; }
+        var w = el('span', 'ctf-word' + (t.target ? ' target' : ' pick'), esc(t.w));
+        if (!t.target) {
+          w.addEventListener('click', function () {
+            if (answered) return; answered = true;
+            var correct = t.ref === true;
+            w.classList.add(correct ? 'is-correct' : 'is-wrong');
+            fb.className = 'ctf-feedback show ' + (correct ? 'good' : 'info');
+            fb.innerHTML = (correct ? '<b>Yes!</b> ' : '<b>Look again — </b>') + (r.explain || '');
+            if (idx < rounds.length - 1) {
+              var next = el('button', 'ctf-btn', 'Next sentence →');
+              next.addEventListener('click', function () { idx++; renderRound(); });
+              actions.appendChild(next);
+            } else {
+              reveal(done, (cfg.complete && cfg.complete.progress) || 100); markDone(id);
+            }
+          });
+        }
+        s.appendChild(w);
+      });
+      area.appendChild(s);
+      if (r.hint) area.appendChild(el('p', 'ctf-muted', esc(r.hint)));
+      area.appendChild(fb);
+      area.appendChild(actions);
+    }
+    renderRound();
   }
 
   // =========================================================================
@@ -373,8 +407,121 @@
     if (done) root.appendChild(done);
   }
 
+  // =========================================================================
+  // TRAINER — teach a mini-AI by labeling examples, then watch it guess new
+  // ones. The AI copies YOUR teaching (mislabel = it learns the mistake) —
+  // a hands-on lesson in training data quality.
+  // =========================================================================
+  function renderTrainer(root, cfg, id) {
+    root.innerHTML = header(cfg);
+    var classes = cfg.classes || [];
+    var train = cfg.train || [];
+    var test = cfg.test || [];
+    var labels = {};   // train index -> chosen class key
+    var labeled = 0;
+
+    var phase1 = el('div');
+    phase1.innerHTML = '<p class="ctf-trainer-phase">🎓 Step 1 — Teach your AI! Label each picture:</p>';
+    var list = el('div');
+    train.forEach(function (it, i) {
+      var row = el('div', 'ctf-sort-item');
+      row.innerHTML = '<span class="label"><span class="emoji" style="font-size:1.8rem">' + esc(it.emoji) + '</span></span>' +
+        '<span class="solved-tag" id="' + id + '-t' + i + '"></span>';
+      var bz = el('span', 'buckets');
+      classes.forEach(function (c) {
+        var chip = el('button', 'ctf-chip', esc(c.label));
+        chip.addEventListener('click', function () {
+          if (labels[i] == null) labeled++;
+          labels[i] = c.key;
+          row.classList.add('solved');
+          row.querySelector('.solved-tag').textContent = 'You said: ' + c.label;
+          row.classList.remove('solved'); row.classList.add('solved'); // keep style
+          if (labeled === train.length) startTest();
+        });
+        bz.appendChild(chip);
+      });
+      row.appendChild(bz); list.appendChild(row);
+    });
+    phase1.appendChild(list);
+    root.appendChild(phase1);
+
+    var phase2 = el('div'); phase2.style.display = 'none'; root.appendChild(phase2);
+    var fb = el('div', 'ctf-feedback'); root.appendChild(fb);
+    var done = completionCard(cfg); if (done) root.appendChild(done);
+
+    function startTest() {
+      phase2.style.display = '';
+      phase2.innerHTML = '<p class="ctf-trainer-phase" style="margin-top:14px">🤖 Step 2 — Your AI tries brand-new pictures it has never seen…</p>';
+      var right = 0;
+      test.forEach(function (t, i) {
+        var srcIdx = (typeof t.like === 'number') ? t.like : i % train.length;
+        var guessKey = labels[srcIdx];
+        var guess = classes.filter(function (c) { return c.key === guessKey; })[0] || classes[0];
+        var ok = guessKey === t.cls;
+        if (ok) right++;
+        var row = el('div', 'ctf-sort-item ' + (ok ? 'solved' : ''));
+        if (!ok) row.style.borderColor = 'var(--coral-500)';
+        row.innerHTML = '<span class="label"><span class="emoji" style="font-size:1.8rem">' + esc(t.emoji) + '</span></span>' +
+          '<span style="margin-left:auto;font-weight:700;color:' + (ok ? 'var(--teal-600)' : 'var(--coral-600)') + '">AI says: ' + esc(guess.label) + ' ' + (ok ? '✓' : '✕') + '</span>';
+        setTimeout(function () { phase2.appendChild(row); }, 600 * (i + 1));
+      });
+      setTimeout(function () {
+        fb.className = 'ctf-feedback show ' + (right === test.length ? 'good' : 'info');
+        fb.innerHTML = right === test.length
+          ? '<b>Your AI got ' + right + '/' + test.length + '!</b> ' + (cfg.winText || 'Great teaching = a smart AI. That\'s exactly how training works!')
+          : '<b>Your AI got ' + right + '/' + test.length + '.</b> ' + (cfg.loseText || 'The AI learned exactly what YOU taught it — including the oops! That\'s why good examples matter so much.');
+        reveal(done, (cfg.complete && cfg.complete.progress) || 100); markDone(id);
+      }, 600 * (test.length + 1));
+    }
+  }
+
+  // =========================================================================
+  // MATCH — tap a card on the left, then its partner on the right.
+  // =========================================================================
+  function renderMatch(root, cfg, id) {
+    root.innerHTML = header(cfg);
+    var pairs = cfg.pairs || [];
+    var grid = el('div', 'ctf-match');
+    var leftCol = el('div', 'ctf-match-col'), rightCol = el('div', 'ctf-match-col');
+    grid.appendChild(leftCol); grid.appendChild(rightCol);
+    root.appendChild(grid);
+    var fb = el('div', 'ctf-feedback good'); fb.textContent = cfg.thanks || 'All matched — nice!'; root.appendChild(fb);
+    var done = completionCard(cfg); if (done) root.appendChild(done);
+
+    var selected = null, solved = 0;
+    // right column shuffled deterministically (rotate by 2) so it's never aligned
+    var order = pairs.map(function (_, i) { return (i + 2) % pairs.length; });
+
+    pairs.forEach(function (p, i) {
+      var lb = el('button', 'ctf-opt ctf-match-card', '<span>' + esc(p.l) + '</span>');
+      lb.setAttribute('data-i', i);
+      lb.addEventListener('click', function () {
+        if (lb.classList.contains('is-correct')) return;
+        grid.querySelectorAll('.ctf-match-card.is-selected').forEach(function (x) { x.classList.remove('is-selected'); });
+        lb.classList.add('is-selected'); selected = i;
+      });
+      leftCol.appendChild(lb);
+    });
+    order.forEach(function (i) {
+      var p = pairs[i];
+      var rb = el('button', 'ctf-opt ctf-match-card', '<span>' + esc(p.r) + '</span>');
+      rb.addEventListener('click', function () {
+        if (rb.classList.contains('is-correct') || selected == null) return;
+        var lb = leftCol.querySelector('[data-i="' + selected + '"]');
+        if (selected === i) {
+          lb.classList.remove('is-selected'); lb.classList.add('is-correct'); rb.classList.add('is-correct');
+          lb.disabled = true; rb.disabled = true; selected = null; solved++;
+          if (solved === pairs.length) { fb.classList.add('show'); reveal(done, (cfg.complete && cfg.complete.progress) || 100); markDone(id); }
+        } else {
+          rb.classList.add('shake'); setTimeout(function () { rb.classList.remove('shake'); }, 450);
+        }
+      });
+      rightCol.appendChild(rb);
+    });
+  }
+
   // ---- registry + boot ----------------------------------------------------
-  var RENDERERS = { poll: renderPoll, sort: renderSort, choice: renderChoice, nextword: renderNextWord, attention: renderAttention, quiz: renderQuiz, timeline: renderTimeline, reveal: renderReveal, slider: renderSlider };
+  var RENDERERS = { poll: renderPoll, sort: renderSort, choice: renderChoice, nextword: renderNextWord, attention: renderAttention, quiz: renderQuiz, timeline: renderTimeline, reveal: renderReveal, slider: renderSlider, trainer: renderTrainer, match: renderMatch };
 
   function hydrate(node) {
     if (node.getAttribute('data-ctf-ready')) return;

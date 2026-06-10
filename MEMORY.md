@@ -89,6 +89,23 @@ coding, with emphasis on how AI is reshaping software development. Origin materi
   "Online now" avatar strip on home + board, green dots on the roster. Works with anon auth.
 - Board/home link: home presence strip links to `board.html#chat` (opens chat view).
 
+## Module 1 enrichment (06-10-2026)
+
+- **Video breaks:** 6 Code.org "How AI Works" videos (IDs verified via YouTube oEmbed)
+  embedded as `video` beats via `VIDEO_MAP` in `lessons/build.mjs` — inserted right before
+  each mapped mission's widget. Missions 2 (intro), 4 (machine learning), 5 (computer
+  vision), 6 (chatbots/LLMs), 8 (neural nets), 10 (training data & bias). Embeds use
+  **youtube-nocookie.com** (privacy mode, kids product). To add videos: verify ID via
+  oEmbed (`https://www.youtube.com/oembed?url=<encoded watch url>`), add to VIDEO_MAP,
+  rebuild.
+- **Interactives upgraded (Jon: "less survey-y, more depth"):** 2 new widget types —
+  **trainer** (teach a mini-AI by labeling examples; it copies your teaching, mistakes
+  included → training-data lesson, M4) and **match** (pair cards, M8 brain↔AI). `nextword`
+  + `attention` now support `rounds:[…]` (M6 ×3, M7 ×2 incl. trophy/suitcase). M2 sort
+  expanded to 8 trickier items; M3 + M10 became 3-question quizzes; M12 final quiz now 6
+  questions. All verified in the player (trainer 3/3 + badge, match reject+complete,
+  rounds advance). Kids total steps now **149** (home progress bar updated).
+
 ## Safety + cohort scope (06-10-2026)
 
 - **Profanity filter, defense in depth:** DB triggers (migration `…150000_profanity_filter.sql`,

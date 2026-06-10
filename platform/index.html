@@ -293,7 +293,7 @@
     document.getElementById("homeBadges").textContent = badges.length + (badges.length===1?" badge":" badges") + " earned";
     var kids = await D.getProgress("module-01-what-is-ai","kids");
     if (kids){
-      var pct = Math.min(100, Math.round(kids.position / 143 * 100));
+      var pct = Math.min(100, Math.round(kids.position / 149 * 100));
       document.getElementById("contBar").style.width = pct + "%";
       document.getElementById("contMeta").textContent = pct + "% through · keep going!";
       document.getElementById("contGo").textContent = "Continue →";

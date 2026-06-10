@@ -90,9 +90,14 @@ is config-only: `poll` (S1 self-assessment), `choice` (S2/S3 rules-vs-examples, 
 S11 spot-the-limitation), `timeline` (S4/S5 history), `slider` (S7 weight-tuning, S9
 confidence — demoed in `preview.html`), `nextword` (S8 predict), `quiz` (S12).
 
-## Widget types — all 9 built ✅
+## Widget types — all 11 built ✅
 
-`poll · sort · choice · nextword · attention · quiz · timeline · reveal · slider`
+`poll · sort · choice · nextword · attention · quiz · timeline · reveal · slider · trainer · match`
+
+- **trainer** — teach a mini-AI by labeling examples, then watch it guess new ones (it
+  copies YOUR teaching, mistakes included — a hands-on training-data lesson).
+- **match** — tap-to-pair cards (left ↔ right), wrong pairs shake.
+- **nextword / attention** now support `rounds:[…]` for multi-challenge sequences.
 
 Every Module 1 marker (both tracks) maps to one of these. Remaining work is **config only**
 — writing each marker's JSON — plus the **capstone** (separate; see `../capstone/`). No new

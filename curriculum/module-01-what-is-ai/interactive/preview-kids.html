@@ -44,32 +44,45 @@
   <div class="ctf"><div data-ctf-widget="sort" data-ctf-id="kids-m2-sort">
     <script type="application/json">{
       "eyebrow":"Follows rules, or learns?","title":"Sort each one into the right box",
-      "prompt":"A toaster <span class=\"ctf-q\">follows rules</span>. A smart helper <span class=\"ctf-q\">learns</span>. Tap the box you think each belongs in.",
+      "prompt":"A toaster <span class=\"ctf-q\">follows rules</span>. A smart helper <span class=\"ctf-q\">learns</span>. Careful — some of these are tricky!",
       "buckets":["Follows rules","Learns"],
-      "items":[{"emoji":"🍞","label":"Toaster","bucket":0},{"emoji":"🧮","label":"Calculator","bucket":0},{"emoji":"💡","label":"Light switch","bucket":0},{"emoji":"🗣️","label":"Voice assistant","bucket":1},{"emoji":"🚗","label":"Self-driving car","bucket":1}],
-      "thanks":"You got them all — that's the #1 idea in AI!",
+      "items":[{"emoji":"🍞","label":"Toaster","bucket":0},{"emoji":"🧮","label":"Calculator","bucket":0},{"emoji":"📺","label":"App that suggests your next video","bucket":1},{"emoji":"💡","label":"Light switch","bucket":0},{"emoji":"📧","label":"Spam catcher that spots sneaky emails","bucket":1},{"emoji":"🎮","label":"Remote control","bucket":0},{"emoji":"📸","label":"Photo app that finds all your dog pics","bucket":1},{"emoji":"🗣️","label":"Voice assistant","bucket":1}],
+      "thanks":"All 8 — even the tricky ones! That's the #1 idea in AI!",
       "complete":{"icon":"🎖️","badge":"Badge earned: AI Spotter","sub":"Mission 2 of 12","progress":16}
     }</script>
   </div></div>
 
   <p class="step">Mission 3 · patterns</p>
-  <div class="ctf"><div data-ctf-widget="choice" data-ctf-id="kids-m3-pattern">
+  <div class="ctf"><div data-ctf-widget="quiz" data-ctf-id="kids-m3-pattern">
     <script type="application/json">{
-      "eyebrow":"Spot the pattern","title":"2, 4, 6, 8, …","prompt":"You learn by spotting patterns. What comes <span class=\"ctf-q\">next</span>?",
-      "options":["9","10","12","7"],"answer":1,"correctText":"Nice pattern-finding!","wrongText":"Close!",
-      "explain":"The pattern is \"add 2 each time,\" so after 8 comes <b>10</b>. You just did what AI does — found the rule from examples.",
+      "eyebrow":"Spot the pattern","title":"Pattern Finder challenge",
+      "prompt":"Your brain is a pattern machine — prove it! Three rounds, each one trickier.",
+      "questions":[
+        {"q":"2, 4, 6, 8, … what comes next?","options":["9","10","12","7"],"answer":1},
+        {"q":"🔵 🔺 🔵 🔺 🔵 … what comes next?","options":["🔵","🔺","🟢","⭐"],"answer":1},
+        {"q":"Hardest one: 1, 2, 4, 8, 16, … what comes next?","options":["18","24","32","20"],"answer":2}
+      ],
+      "perfect":"3 for 3! You found ADD, REPEAT, and DOUBLE patterns — exactly what AI does with millions of examples.",
+      "passText":"Pattern-finding takes practice — and that's the point! AI needs lots of examples too.",
       "complete":{"icon":"🎖️","badge":"Badge earned: Pattern Finder","sub":"Mission 3 of 12","progress":25}
     }</script>
   </div></div>
 
   <p class="step">Mission 4 · how AI learns</p>
-  <div class="ctf"><div data-ctf-widget="choice" data-ctf-id="kids-m4-training">
+  <div class="ctf"><div data-ctf-widget="trainer" data-ctf-id="kids-m4-training">
     <script type="application/json">{
-      "eyebrow":"Brain Trainer","title":"Good examples in, smart AI out",
-      "prompt":"You want an AI that knows what a <span class=\"ctf-q\">dog</span> is. But you only ever show it big fluffy golden retrievers. Then it meets a tiny Chihuahua. What might happen?",
-      "options":["It instantly knows it's a dog","It might get confused and miss it","It turns into a cat","It refuses to look"],"answer":1,
-      "correctText":"Exactly!","wrongText":"Think about the examples…",
-      "explain":"If all the examples are one kind, the AI learns a narrow pattern. Show it <b>all</b> kinds of dogs and it learns better. Good examples in, smart AI out!",
+      "eyebrow":"Brain Trainer","title":"Train your very own AI!",
+      "prompt":"This baby AI knows NOTHING. Teach it cats vs. dogs by labeling these pictures — then watch it try brand-new ones. <span class=\"ctf-q\">Teach carefully…</span> it learns exactly what you show it!",
+      "classes":[{"key":"cat","label":"Cat 🐱"},{"key":"dog","label":"Dog 🐶"}],
+      "train":[
+        {"emoji":"😺","cls":"cat"},{"emoji":"🐶","cls":"dog"},{"emoji":"🐈","cls":"cat"},
+        {"emoji":"🦮","cls":"dog"},{"emoji":"😸","cls":"cat"},{"emoji":"🐕","cls":"dog"}
+      ],
+      "test":[
+        {"emoji":"🐈‍⬛","cls":"cat","like":0},{"emoji":"🐩","cls":"dog","like":1},{"emoji":"😻","cls":"cat","like":4}
+      ],
+      "winText":"Great teaching = a smart AI. Good examples in, smart AI out — that's training!",
+      "loseText":"See that? The AI copied YOUR labels — even the oops. AI is only as good as its examples. (Replay the Mission to try again!)",
       "complete":{"icon":"🎖️","badge":"Badge earned: Brain Trainer","sub":"Mission 4 of 12","progress":33}
     }</script>
   </div></div>
@@ -88,9 +101,13 @@
   <p class="step">Mission 6 · how AI reads</p>
   <div class="ctf"><div data-ctf-widget="nextword" data-ctf-id="kids-m6-nextword">
     <script type="application/json">{
-      "eyebrow":"Guess the next word","title":"Finish the sentence like an AI would","prompt":"AI writes by guessing the next word. Your turn first!",
-      "stem":"Peanut butter and","placeholder":"What comes next?","common":["jelly","jam","honey"],
-      "explain":"AI does exactly this — it read tons of writing and learned which word usually comes next, then builds whole sentences one word at a time.",
+      "eyebrow":"Guess the next word","title":"Finish the sentence like an AI would","prompt":"AI writes by guessing the next word. Three rounds — they get harder!",
+      "placeholder":"What comes next?",
+      "rounds":[
+        {"stem":"Peanut butter and","common":["jelly","jam","honey"],"explain":"Easy one — you've heard that pattern a million times, just like AI has."},
+        {"stem":"Twinkle, twinkle, little","common":["star"],"explain":"Songs are super-strong patterns. AI learns them from reading, not singing!"},
+        {"stem":"The dragon opened its giant","common":["mouth","wings","eyes","jaws"],"explain":"Trickier! More than one word fits — so AI picks the MOST LIKELY one. That's why its answers can change each time."}
+      ],
       "complete":{"icon":"🎖️","badge":"Badge earned: Word Wizard","sub":"Mission 6 of 12","progress":50}
     }</script>
   </div></div>
@@ -98,22 +115,31 @@
   <p class="step">Mission 7 · the attention trick</p>
   <div class="ctf"><div data-ctf-widget="attention" data-ctf-id="kids-m7-attention">
     <script type="application/json">{
-      "eyebrow":"The attention trick","title":"What does “it” mean?","prompt":"Click the word that <span class=\"ctf-q\">it</span> is really talking about.",
-      "tokens":["The ",{"w":"dog","ref":false}," chased the ",{"w":"ball","ref":true}," because ",{"w":"it","target":true}," was bouncy."],
-      "hint":"Hint: which one is bouncy?",
-      "explain":"“It” means the <b>ball</b>, because balls are bouncy. Your brain paid <b>attention</b> to the word “bouncy” — and that's exactly the trick a transformer uses.",
+      "eyebrow":"The attention trick","title":"What does “it” mean?","prompt":"Click the word that <span class=\"ctf-q\">it</span> is really talking about. Two sentences — the second one is sneaky!",
+      "rounds":[
+        {"tokens":["The ",{"w":"dog","ref":false}," chased the ",{"w":"ball","ref":true}," because ",{"w":"it","target":true}," was bouncy."],
+         "hint":"Hint: which one is bouncy?",
+         "explain":"“It” means the <b>ball</b>, because balls are bouncy. Your brain paid <b>attention</b> to “bouncy.”"},
+        {"tokens":["The ",{"w":"trophy","ref":true}," didn't fit in the ",{"w":"suitcase","ref":false}," because ",{"w":"it","target":true}," was too big."],
+         "hint":"Hint: which one was too BIG?",
+         "explain":"The <b>trophy</b> was too big! Now flip it: if the sentence said “too small,” “it” would mean the suitcase. ONE word changes everything — that's why attention is such a superpower."}
+      ],
       "complete":{"icon":"🎖️","badge":"Badge earned: Attention Ace","sub":"Mission 7 of 12","progress":58}
     }</script>
   </div></div>
 
   <p class="step">Mission 8 · is AI like a brain?</p>
-  <div class="ctf"><div data-ctf-widget="choice" data-ctf-id="kids-m8-brain">
+  <div class="ctf"><div data-ctf-widget="match" data-ctf-id="kids-m8-brain">
     <script type="application/json">{
-      "eyebrow":"Neuron Navigator","title":"Brain or machine?",
-      "prompt":"AI is <i>inspired</i> by the brain — but it isn't alive. Which one can <span class=\"ctf-q\">only</span> a real person (you) do?",
-      "options":["Find patterns fast","Feel happy and excited","Sort a thousand pictures","Guess the next word"],"answer":1,
-      "correctText":"Yes!","wrongText":"A computer can do that one…",
-      "explain":"AI can find patterns and guess words, but it can't actually <b>feel</b> anything. Feelings are your superpower — when a chatbot says \"I'm happy to help,\" it's just predicting friendly-sounding words.",
+      "eyebrow":"Neuron Navigator","title":"Match: your brain ↔ the AI version",
+      "prompt":"AI borrowed ideas from your brain — but it's NOT the same. Tap a card on the left, then its AI partner on the right.",
+      "pairs":[
+        {"l":"🧠 Your real neurons","r":"A web of pretend neurons (a neural network)"},
+        {"l":"💪 Connections get stronger when you practice","r":"Numbers get adjusted during training"},
+        {"l":"👀 You focus on words that matter","r":"The attention trick in a transformer"},
+        {"l":"❤️ You feel happy, sad, excited","r":"…nothing. AI has NO feelings at all"}
+      ],
+      "thanks":"All matched! Same tricks, very different thing — AI copied the ideas, not the life.",
       "complete":{"icon":"🎖️","badge":"Badge earned: Neuron Navigator","sub":"Mission 8 of 12","progress":66}
     }</script>
   </div></div>
@@ -136,13 +162,17 @@
   </div></div>
 
   <p class="step">Mission 10 · great at, and not</p>
-  <div class="ctf"><div data-ctf-widget="choice" data-ctf-id="kids-m10-trust">
+  <div class="ctf"><div data-ctf-widget="quiz" data-ctf-id="kids-m10-trust">
     <script type="application/json">{
-      "eyebrow":"Smart Boss","title":"Should you trust it?",
-      "prompt":"You ask an AI a question and it answers super confidently: <span class=\"ctf-q\">“The Moon is made of cheese!”</span> What should you do?",
-      "options":["Believe it — it sounded really sure","Double-check it with a grown-up or a real source","Get mad at the AI","Never use AI again"],"answer":1,
-      "correctText":"Boss move!","wrongText":"Sounding sure isn't the same as being right…",
-      "explain":"AI can sound 100% sure and still be totally wrong — that's called a <b>hallucination</b>. You're the boss: always double-check the important stuff.",
+      "eyebrow":"Smart Boss","title":"Boss Test: trust it or check it?",
+      "prompt":"Three real situations. Make the boss call on each one.",
+      "questions":[
+        {"q":"An AI answers super confidently: “The Moon is made of cheese!” What do you do?","options":["Believe it — it sounded really sure","Double-check with a grown-up or a real source","Get mad at the AI","Never use AI again"],"answer":1},
+        {"q":"An AI only ever saw golden retrievers. A chihuahua walks by. What might happen?","options":["It knows every dog ever","It might miss the chihuahua — its examples were too narrow","It turns into a cat","Chihuahuas aren't dogs"],"answer":1},
+        {"q":"AI offers to just DO your homework. The boss move is…","options":["Let it! Free answers!","Use it to EXPLAIN the hard part, then do the work yourself","Ask it to do your chores too","Throw the computer away"],"answer":1}
+      ],
+      "perfect":"3/3 — certified Smart Boss! Double-check, watch for narrow examples, and keep YOUR brain in charge.",
+      "passText":"Being the boss takes practice — the key: AI helps you think, it doesn't think FOR you.",
       "complete":{"icon":"🎖️","badge":"Badge earned: Smart Boss","sub":"Mission 10 of 12","progress":83}
     }</script>
   </div></div>
@@ -164,10 +194,13 @@
       "eyebrow":"🏆 Final check","title":"Show what you know","revisit":"kids-m1-warmup","revisitText":"Back in Mission 1, you said AI was:",
       "questions":[
         {"q":"What makes AI different from a toaster?","options":["It's faster","It can learn from examples","It's bigger","It uses electricity"],"answer":1},
-        {"q":"How does AI mostly work?","options":["It finds patterns","It remembers everything","It guesses randomly","It asks a human"],"answer":0},
-        {"q":"When AI sounds sure but is wrong, who's in charge of checking?","options":["The AI","Nobody","You are!","The internet"],"answer":2}
+        {"q":"What are the examples an AI learns from called?","options":["Homework","Data","Snacks","Pixels"],"answer":1},
+        {"q":"How does a chatbot build its answers?","options":["It looks them up in a big book","It guesses the next word, over and over","It asks a teacher","It copies the internet exactly"],"answer":1},
+        {"q":"The clever focus trick that powers transformers is called…","options":["Concentration","Attention","Meditation","Detection"],"answer":1},
+        {"q":"A neural network is…","options":["A real living brain","A web of pretend neurons that learns by changing connections","A fishing net for robots","A type of wifi"],"answer":1},
+        {"q":"When AI sounds sure but is wrong (a “hallucination”), who's in charge of checking?","options":["The AI","Nobody","You are!","The internet"],"answer":2}
       ],
-      "perfect":"Perfect score! You officially understand what AI is. 🎉","passText":"You know your stuff — peek back at any you missed.",
+      "perfect":"6 for 6 — PERFECT! You officially understand what AI is better than most grown-ups. 🎉","passText":"Strong finish! Peek back at any you missed, then claim your badge.",
       "complete":{"icon":"🏆","badge":"Module 1 Complete: AI Explorer — Level 1!","sub":"All 12 badges earned","progress":100}
     }</script>
   </div></div>
