@@ -211,7 +211,7 @@
       if (speaking) { stopSpeaking(); return; }
       var b = stage.querySelector(".beat"); if (!b) return;
       finishReveal();
-      var text = b.innerText.replace(/\s+/g, " ").trim().slice(0, 900);
+      var text = (b.innerText || b.textContent || "").replace(/\s+/g, " ").trim().slice(0, 900);
       if (!text) return;
       voiceBtn.textContent = "…"; voiceBtn.disabled = true;
       try {
