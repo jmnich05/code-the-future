@@ -94,6 +94,25 @@ const server = createServer(async (req, res) => {
     } catch (e) { return send(res, 502, { error: "Could not reach the art robot." }); }
   }
 
+  if (path === "/api/tts" && req.method === "POST") {
+    const raw = await readBody(req);
+    const ekey = process.env.ELEVENLABS_API_KEY;
+    if (!ekey) return send(res, 500, { error: "Voice isn't set up yet — add ELEVENLABS_API_KEY to capstone/.env" });
+    let body = {}; try { body = JSON.parse(raw || "{}"); } catch { return send(res, 400, { error: "Invalid JSON" }); }
+    const text = (body.text || "").toString().replace(/\s+/g, " ").trim().slice(0, 900);
+    if (!text) return send(res, 400, { error: "Nothing to read." });
+    const voice = process.env.ELEVENLABS_VOICE_ID || "21m00Tcm4TlvDq8ikWAM";
+    try {
+      const r = await fetch("https://api.elevenlabs.io/v1/text-to-speech/" + voice + "?output_format=mp3_44100_64", {
+        method: "POST", headers: { "xi-api-key": ekey, "Content-Type": "application/json" },
+        body: JSON.stringify({ text, model_id: "eleven_turbo_v2_5", voice_settings: { stability: 0.5, similarity_boost: 0.75 } })
+      });
+      if (!r.ok) return send(res, 502, { error: "Voice service error (" + r.status + ").", detail: (await r.text()).slice(0, 300) });
+      res.writeHead(200, { "Content-Type": "audio/mpeg" });
+      return res.end(Buffer.from(await r.arrayBuffer()));
+    } catch (e) { return send(res, 502, { error: "Could not reach the voice service." }); }
+  }
+
   // static
   let fp = path === "/" ? "/platform/index.html" : path;
   if (fp.endsWith("/")) fp += "index.html";

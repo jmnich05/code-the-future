@@ -191,17 +191,23 @@ function joinPresence(cohortId, info, onSync) {
   return presenceChannel;
 }
 
-async function listMessages(cohortId, limit = 50) {
+async function listMessages(cohortId, limit = 50, dmWith = null) {
   if (!ok()) return [];
-  const { data } = await sb.from("messages").select("id, body, created_at, author_id").eq("cohort_id", cohortId).order("created_at", { ascending: false }).limit(limit);
+  let q = sb.from("messages").select("id, body, created_at, author_id, recipient_id").eq("cohort_id", cohortId);
+  if (dmWith) {
+    q = q.or(`and(author_id.eq.${uid()},recipient_id.eq.${dmWith}),and(author_id.eq.${dmWith},recipient_id.eq.${uid()})`);
+  } else {
+    q = q.is("recipient_id", null);
+  }
+  const { data } = await q.order("created_at", { ascending: false }).limit(limit);
   const msgs = (data || []).reverse();
   const profs = await profilesById(msgs.map((m) => m.author_id));
   return msgs.map((m) => ({ ...m, profiles: profs[m.author_id] || null }));
 }
 
-async function sendMessage(cohortId, body) {
+async function sendMessage(cohortId, body, recipientId = null) {
   if (!ok()) return { error: "not-connected" };
-  const { data, error } = await sb.from("messages").insert({ cohort_id: cohortId, author_id: uid(), body }).select().maybeSingle();
+  const { data, error } = await sb.from("messages").insert({ cohort_id: cohortId, author_id: uid(), body, recipient_id: recipientId }).select().maybeSingle();
   return error ? { error: error.message } : { message: data };
 }
 

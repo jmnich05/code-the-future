@@ -101,6 +101,29 @@
   .chat-input button{ font-family:var(--font-display); font-weight:700; font-size:1rem; border:none; color:#fff; background:linear-gradient(120deg,var(--blue-600),var(--teal-600)); border-radius:999px; padding:12px 24px; cursor:pointer; }
   .chat-note{ font-size:.78rem; color:var(--ink-400); text-align:center; padding:0 14px 12px; }
 
+  /* chat thread tabs */
+  .chat-tabs{ display:flex; gap:8px; padding:12px 14px 0; flex-wrap:wrap; }
+  .chat-tab{ font:inherit; font-weight:700; font-size:.9rem; cursor:pointer; border:2px solid var(--ink-200); background:var(--white);
+    border-radius:999px; padding:8px 16px; color:var(--ink-700); display:inline-flex; align-items:center; gap:8px; }
+  .chat-tab.active{ border-color:var(--blue-600); background:var(--blue-50); color:var(--blue-700); }
+  .chat-tab .avatar.sm{ width:24px; height:24px; border-radius:7px; }
+  .chat-tab .x{ font-weight:800; color:var(--ink-400); margin-left:2px; }
+  .dm-banner{ font-size:.8rem; color:var(--ink-500); padding:8px 16px 0; }
+
+  /* member profile popover (Roblox-style) */
+  .pop{ position:fixed; inset:0; background:rgba(7,12,26,.55); display:none; align-items:center; justify-content:center; z-index:50; padding:20px; }
+  .pop.open{ display:flex; }
+  .popcard{ background:#fff; border-radius:var(--radius-xl); padding:28px; width:300px; text-align:center; box-shadow:var(--shadow-lg); position:relative; }
+  .popcard .close{ position:absolute; top:10px; right:14px; font:inherit; font-size:1.2rem; background:none; border:none; cursor:pointer; color:var(--ink-400); }
+  .popcard .avatar{ width:120px; height:120px; margin:0 auto 12px; }
+  .popcard h3{ margin:0; font-size:1.4rem; }
+  .popcard .status{ font-size:.85rem; margin:6px 0 16px; color:var(--ink-500); display:flex; align-items:center; justify-content:center; gap:7px; }
+  .popcard .status .dot{ width:9px; height:9px; border-radius:50%; background:var(--ink-300); }
+  .popcard .status.on .dot{ background:#2FBF71; }
+  .popcard .chatbtn{ font-family:var(--font-display); font-weight:700; font-size:1.05rem; cursor:pointer; color:#fff; border:none;
+    border-radius:999px; padding:13px 26px; width:100%; background:linear-gradient(120deg,var(--blue-600),var(--teal-600)); }
+  .popcard .chatbtn[disabled]{ opacity:.5; cursor:default; }
+
   /* join overlay */
   .overlay{ position:fixed; inset:0; background:rgba(7,12,26,.7); display:none; align-items:center; justify-content:center; z-index:40; padding:20px; }
   .overlay.open{ display:flex; }
@@ -149,13 +172,14 @@
 
     <!-- LIVE CHAT -->
     <div id="viewChat" style="display:none">
+      <div class="chat-tabs" id="chatTabs"></div>
       <div class="chatbox">
         <div class="chat-msgs" id="chatMsgs"><div class="empty">Connecting to chat…</div></div>
         <div class="chat-input">
           <input id="chatText" maxlength="500" placeholder="Say something nice…">
           <button id="chatSend">Send</button>
         </div>
-        <div class="chat-note">Be kind! 💙 Mr. Jon can see all chat messages.</div>
+        <div class="chat-note">Be kind! 💙 Mr. Jon can see all chat messages — even private ones.</div>
       </div>
     </div>
 
@@ -170,6 +194,16 @@
       <div class="panel-h" id="memberCount">Cohort</div>
       <div class="members" id="members"></div>
     </div>
+  </div>
+</div>
+
+<div class="pop" id="memberPop">
+  <div class="popcard">
+    <button class="close" id="popClose">✕</button>
+    <div class="avatar" id="popAv"></div>
+    <h3 id="popName">…</h3>
+    <div class="status" id="popStatus"><span class="dot"></span><span id="popStatusTxt">offline</span></div>
+    <button class="chatbtn" id="popChat">💬 Chat</button>
   </div>
 </div>
 
@@ -326,26 +360,57 @@
     setView("feed"); loadPosts();
   };
 
-  // ---- live chat ----
-  var chatInited = false;
+  // ---- live chat (Everyone + DMs) ----
+  var chatSubscribed = false;
+  // state.chatTarget = null (everyone) | { id, name, avatar }
+  function threadOf(m){
+    if (m.recipient_id == null) return "all";
+    return m.author_id === state.me ? m.recipient_id : m.author_id;
+  }
+  function currentThread(){ return state.chatTarget ? state.chatTarget.id : "all"; }
+
   function chatBubble(m){
     var pr = m.profiles||{};
     var mine = state.me && m.author_id === state.me;
     return '<div class="cmsg'+(mine?" mine":"")+'"><span class="avatar sm">'+av(pr.avatar)+'</span>'+
       '<div class="bubble"><span class="nm">'+esc(pr.display_name||"Explorer")+'</span>'+esc(m.body)+'</div></div>';
   }
-  async function initChat(){
-    if (!state.cohort || chatInited) return;
-    chatInited = true;
+  function renderChatTabs(){
+    var t = state.chatTarget;
+    document.getElementById("chatTabs").innerHTML =
+      '<button class="chat-tab'+(!t?" active":"")+'" id="tabAll">👥 Everyone</button>' +
+      (t ? '<button class="chat-tab active" id="tabDm"><span class="avatar sm">'+av(t.avatar)+'</span>'+esc(t.name)+'<span class="x">✕</span></button>' : '');
+    document.getElementById("tabAll").onclick = function(){ state.chatTarget = null; loadThread(); };
+    var dm = document.getElementById("tabDm");
+    if (dm) dm.onclick = function(){ state.chatTarget = null; loadThread(); };
+    document.getElementById("chatText").placeholder = t ? ("Message " + t.name + "…") : "Say something nice…";
+  }
+  async function loadThread(){
+    if (!state.cohort) return;
+    renderChatTabs();
     var box = document.getElementById("chatMsgs");
-    var msgs = await window.CTFDB.listMessages(state.cohort.id);
-    box.innerHTML = msgs.length ? msgs.map(chatBubble).join("") : '<div class="empty">No messages yet — say hi! 👋</div>';
+    box.innerHTML = '<div class="empty">Loading…</div>';
+    var msgs = await window.CTFDB.listMessages(state.cohort.id, 50, state.chatTarget ? state.chatTarget.id : null);
+    box.innerHTML = msgs.length ? msgs.map(chatBubble).join("")
+      : '<div class="empty">' + (state.chatTarget ? "No messages with " + esc(state.chatTarget.name) + " yet — say hi! 👋" : "No messages yet — say hi! 👋") + '</div>';
     box.scrollTop = box.scrollHeight;
-    window.CTFDB.onNewMessage(state.cohort.id, function(m){
-      if (box.querySelector(".empty")) box.innerHTML = "";
-      box.insertAdjacentHTML("beforeend", chatBubble(m));
-      box.scrollTop = box.scrollHeight;
-    });
+    if (!chatSubscribed){
+      chatSubscribed = true;
+      window.CTFDB.onNewMessage(state.cohort.id, function(m){
+        if (m.author_id === state.me) return;          // own messages render optimistically
+        if (threadOf(m) !== currentThread()) return;   // belongs to another thread
+        if (box.querySelector(".empty")) box.innerHTML = "";
+        box.insertAdjacentHTML("beforeend", chatBubble(m));
+        box.scrollTop = box.scrollHeight;
+      });
+    }
+  }
+  function initChat(){ loadThread(); }
+  function openDm(uid, name, avatar){
+    if (uid === state.me) return;
+    state.chatTarget = { id: uid, name: name || "Explorer", avatar: avatar || null };
+    setView("chat");
+    loadThread();
   }
   async function sendChat(){
     var input = document.getElementById("chatText");
@@ -353,24 +418,55 @@
     if (!window.CTFFilter.isClean(t)){
       input.value = ""; input.placeholder = window.CTFFilter.message(); return;
     }
-    input.value = ""; input.placeholder = "Say something nice…";
-    var r = await window.CTFDB.sendMessage(state.cohort.id, t);
-    if (r.error && window.CTFFilter.isProfanityError(r.error)) input.placeholder = window.CTFFilter.message();
-    else if (r.error) alert("Couldn't send: " + r.error);
+    input.value = ""; input.placeholder = state.chatTarget ? ("Message " + state.chatTarget.name + "…") : "Say something nice…";
+    var r = await window.CTFDB.sendMessage(state.cohort.id, t, state.chatTarget ? state.chatTarget.id : null);
+    if (r.error && window.CTFFilter.isProfanityError(r.error)){ input.placeholder = window.CTFFilter.message(); return; }
+    if (r.error){ alert("Couldn't send: " + r.error); return; }
+    // optimistic echo of my own message
+    var box = document.getElementById("chatMsgs");
+    if (box.querySelector(".empty")) box.innerHTML = "";
+    var myProf = state.memberMap[state.me] || {};
+    box.insertAdjacentHTML("beforeend", chatBubble({ author_id: state.me, body: t, profiles: myProf }));
+    box.scrollTop = box.scrollHeight;
   }
   document.getElementById("chatSend").onclick = sendChat;
   document.getElementById("chatText").addEventListener("keydown", function(e){ if (e.key === "Enter") sendChat(); });
 
+  // ---- member profile popover (Roblox-style) ----
+  var popTarget = null;
+  function showPop(uid, name, avatar){
+    popTarget = { id: uid, name: name, avatar: avatar };
+    document.getElementById("popAv").innerHTML = av(avatar);
+    document.getElementById("popName").textContent = name || "Explorer";
+    var on = !!state.onlineIds[uid];
+    document.getElementById("popStatus").className = "status" + (on ? " on" : "");
+    document.getElementById("popStatusTxt").textContent = on ? "online now" : "offline";
+    var btn = document.getElementById("popChat");
+    if (uid === state.me){ btn.disabled = true; btn.textContent = "That's you! ⭐"; }
+    else { btn.disabled = false; btn.textContent = "💬 Chat with " + (name || "Explorer"); }
+    document.getElementById("memberPop").classList.add("open");
+  }
+  document.getElementById("popClose").onclick = function(){ document.getElementById("memberPop").classList.remove("open"); };
+  document.getElementById("memberPop").addEventListener("click", function(e){ if (e.target === this) this.classList.remove("open"); });
+  document.getElementById("popChat").onclick = function(){
+    document.getElementById("memberPop").classList.remove("open");
+    if (popTarget && popTarget.id !== state.me) openDm(popTarget.id, popTarget.name, popTarget.avatar);
+  };
+
   // ---- presence ----
   function renderPresence(online){
     state.onlineIds = {}; online.forEach(function(o){ state.onlineIds[o.user_id] = true; });
+    state.onlineInfo = online;
     var el = document.getElementById("presence");
     if (!online.length){ el.style.display="none"; } else {
       el.style.display = "flex";
       el.innerHTML = '<span class="dotlbl">Online now · '+online.length+'</span>' +
-        online.slice(0,12).map(function(o){
-          return '<span class="obubble"><span class="avatar sm">'+av(o.avatar)+'</span>'+esc(o.name||"Explorer")+(o.user_id===state.me?" (you)":"")+'</span>';
+        online.slice(0,12).map(function(o, i){
+          return '<span class="obubble" data-pi="'+i+'" style="cursor:pointer"><span class="avatar sm">'+av(o.avatar)+'</span>'+esc(o.name||"Explorer")+(o.user_id===state.me?" (you)":"")+'</span>';
         }).join("");
+      el.querySelectorAll(".obubble").forEach(function(b){
+        b.onclick = function(){ var o = state.onlineInfo[+b.getAttribute("data-pi")]; if (o) showPop(o.user_id, o.name, o.avatar); };
+      });
     }
     // green dots on roster
     document.querySelectorAll(".member").forEach(function(m){
@@ -381,12 +477,22 @@
   async function loadMembers(){
     if (!state.cohort) return;
     var ms = await window.CTFDB.listMembers(state.cohort.id);
-    state.staffIds = {}; ms.forEach(function(m){ if(m.role==="staff") state.staffIds[m.user_id]=true; });
+    state.staffIds = {}; state.memberMap = {};
+    ms.forEach(function(m){
+      if(m.role==="staff") state.staffIds[m.user_id]=true;
+      state.memberMap[m.user_id] = m.profiles || {};
+    });
     document.getElementById("memberCount").textContent = "Cohort · " + ms.length + (ms.length===1?" builder":" builders");
     document.getElementById("members").innerHTML = ms.map(function(m){
       var pr = m.profiles||{};
-      return '<div class="member" data-uid="'+m.user_id+'"><span class="on"></span><span class="avatar sm">'+av(pr.avatar)+'</span><span class="mn">'+esc(pr.display_name||"Explorer")+'</span></div>';
+      return '<div class="member" data-uid="'+m.user_id+'" style="cursor:pointer"><span class="on"></span><span class="avatar sm">'+av(pr.avatar)+'</span><span class="mn">'+esc(pr.display_name||"Explorer")+'</span></div>';
     }).join("");
+    document.querySelectorAll(".member").forEach(function(el){
+      el.onclick = function(){
+        var uid = el.getAttribute("data-uid"), pr = state.memberMap[uid] || {};
+        showPop(uid, pr.display_name || "Explorer", pr.avatar);
+      };
+    });
   }
 
   async function boot(){
@@ -406,7 +512,12 @@
     renderNav();
     await loadMembers();
     D.joinPresence(state.cohort.id, { name:(p&&p.display_name)||"Explorer", avatar:(p&&p.avatar)||null }, renderPresence);
-    if (location.hash === "#chat") setView("chat"); else await loadPosts();
+    // deep link: board.html?dm=<uid>#chat opens a DM with that member
+    var dmId = new URLSearchParams(location.search).get("dm");
+    if (dmId && dmId !== state.me && state.memberMap[dmId]){
+      var pr = state.memberMap[dmId];
+      openDm(dmId, pr.display_name || "Explorer", pr.avatar);
+    } else if (location.hash === "#chat") setView("chat"); else await loadPosts();
   }
 
   document.getElementById("joinGo").onclick = async function(){

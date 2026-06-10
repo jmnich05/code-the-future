@@ -12,12 +12,24 @@
   var MODULE = "module-01-what-is-ai";
   var stage, label, fill, backBtn, nextBtn, hint;
   var DATA, STEPS = [], pos = 0, animating = false, revealTimer = null, hadLocalPos = false;
+  var ttsAudio = null, speaking = false;
+  function stopSpeaking() {
+    if (ttsAudio) { try { ttsAudio.pause(); } catch (e) {} ttsAudio = null; }
+    speaking = false;
+    var vb = document.getElementById("pVoice");
+    if (vb) { vb.textContent = "🔊"; vb.title = "Read this to me"; }
+  }
 
   // ---- Supabase sync (optional; no-ops if CTFDB unconfigured) -------------
   function db() { return (window.CTFDB && window.CTFDB.enabled) ? window.CTFDB : null; }
   function cloudSaveProgress() { var d = db(); if (d) d.saveProgress(MODULE, TRACK, pos, pos >= STEPS.length - 1); }
   function onDbReady() {
     var d = db(); if (!d) return;
+    // if we're sitting on a complete beat that rendered before DB init, award now
+    var st = STEPS[pos];
+    if (st && st.kind === "beat" && st.b.type === "complete" && st.m && st.m.n) {
+      d.awardBadge(TRACK + "-m" + st.m.n, { module: MODULE, track: TRACK });
+    }
     if (!hadLocalPos) {
       d.getProgress(MODULE, TRACK).then(function (rp) {
         if (rp && typeof rp.position === "number" && rp.position > pos && rp.position < STEPS.length) { pos = rp.position; render(); }
@@ -74,6 +86,7 @@
 
   // ---- render one step ----------------------------------------------------
   function render() {
+    stopSpeaking();
     var step = STEPS[pos];
     var beat = el("div", "beat");
     var type = step.kind;
@@ -88,7 +101,13 @@
       type = step.b.type;
       beat.className = "beat t-" + type;
       if (type === "complete") {
-        beat.innerHTML = '<div class="wrap">' + step.b.html + "</div>";
+        var medal = "";
+        if (window.CTFBadge && step.m && step.m.n) {
+          medal = '<div class="badge-medal">' + window.CTFBadge.render(step.m.n) +
+            '<div class="badge-name">' + window.CTFBadge.NAMES[step.m.n - 1] + '</div></div>';
+        }
+        beat.innerHTML = medal + '<div class="wrap">' + step.b.html + "</div>";
+        confetti();
         var dd = db();
         if (dd && step.m && step.m.n) { dd.awardBadge(TRACK + "-m" + step.m.n, { module: MODULE, track: TRACK }); dd.logEvent("mission_complete", { module: MODULE, track: TRACK, n: step.m.n }); }
       } else if (type === "capstone") {
@@ -138,6 +157,26 @@
   function prev() { if (pos > 0) { pos--; render(); finishReveal(); } }
 
   function save() { try { localStorage.setItem(POSKEY, String(pos)); } catch (e) {} cloudSaveProgress(); }
+
+  // ---- confetti burst on badge moments ------------------------------------
+  function confetti() {
+    if (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    var colors = ["#3D74FF", "#26C7D1", "#FF5A38", "#FFB320", "#7C5CFF", "#2FBF71", "#FF6FB5"];
+    var holder = document.createElement("div");
+    holder.className = "confetti";
+    for (var i = 0; i < 34; i++) {
+      var p = document.createElement("i");
+      p.style.left = (Math.random() * 100) + "%";
+      p.style.background = colors[i % colors.length];
+      p.style.animationDelay = (Math.random() * 0.6) + "s";
+      p.style.animationDuration = (1.6 + Math.random() * 1.2) + "s";
+      p.style.width = p.style.height = (6 + Math.random() * 8) + "px";
+      if (i % 3 === 0) p.style.borderRadius = "50%";
+      holder.appendChild(p);
+    }
+    stage.appendChild(holder);
+    setTimeout(function () { if (holder.parentNode) holder.parentNode.removeChild(holder); }, 3400);
+  }
   function esc(s) { return String(s).replace(/[&<>]/g, function (c) { return ({ "&": "&amp;", "<": "&lt;", ">": "&gt;" })[c]; }); }
 
   // ---- boot ---------------------------------------------------------------
@@ -153,7 +192,7 @@
   function build() {
     var root = document.getElementById("player");
     root.innerHTML =
-      '<div class="p-top"><a class="p-exit" href="../../../platform/index.html">✕ Exit</a><span class="p-label" id="pLabel"></span><span class="p-track"><i id="pFill"></i></span></div>' +
+      '<div class="p-top"><a class="p-exit" href="../../../platform/index.html">✕ Exit</a><span class="p-label" id="pLabel"></span><button class="p-voice" id="pVoice" title="Read this to me">🔊</button><span class="p-track"><i id="pFill"></i></span></div>' +
       '<div class="p-stage" id="pStage"></div>' +
       '<div class="p-bottom"><button class="p-back" id="pBack">‹ Back</button><span class="p-hint" id="pHint"></span><button class="p-next" id="pNext">Continue →</button></div>';
     stage = document.getElementById("pStage");
@@ -165,6 +204,32 @@
 
     nextBtn.addEventListener("click", next);
     backBtn.addEventListener("click", prev);
+
+    // "Read to me" — ElevenLabs TTS via /api/tts (accessibility)
+    var voiceBtn = document.getElementById("pVoice");
+    voiceBtn.addEventListener("click", async function () {
+      if (speaking) { stopSpeaking(); return; }
+      var b = stage.querySelector(".beat"); if (!b) return;
+      finishReveal();
+      var text = b.innerText.replace(/\s+/g, " ").trim().slice(0, 900);
+      if (!text) return;
+      voiceBtn.textContent = "…"; voiceBtn.disabled = true;
+      try {
+        var r = await fetch("/api/tts", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ text: text }) });
+        voiceBtn.disabled = false;
+        if (!r.ok) {
+          var e = {}; try { e = await r.json(); } catch (x) {}
+          voiceBtn.textContent = "🔇"; voiceBtn.title = e.error || "Voice not available yet";
+          setTimeout(function () { voiceBtn.textContent = "🔊"; voiceBtn.title = "Read this to me"; }, 2600);
+          return;
+        }
+        var blob = await r.blob();
+        ttsAudio = new Audio(URL.createObjectURL(blob));
+        speaking = true; voiceBtn.textContent = "⏹";
+        ttsAudio.onended = function () { stopSpeaking(); };
+        ttsAudio.play();
+      } catch (err) { voiceBtn.disabled = false; voiceBtn.textContent = "🔊"; }
+    });
     stage.addEventListener("click", function (e) {
       if (e.target.closest("a,button,input,textarea,select,.ctf")) return;
       next();

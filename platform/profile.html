@@ -20,6 +20,11 @@
   .stat b{ font-family:var(--font-display); font-size:1.5rem; color:var(--ink-900); display:block; }
   .stat span{ font-family:var(--font-mono); font-size:10px; letter-spacing:.08em; text-transform:uppercase; color:var(--ink-500); }
   .section-h{ font-family:var(--font-mono); font-size:11px; letter-spacing:.1em; text-transform:uppercase; color:var(--ink-500); margin:22px 0 10px; }
+  .badge-case{ display:grid; grid-template-columns:repeat(auto-fill, minmax(96px, 1fr)); gap:14px; width:100%; }
+  .badge-slot{ text-align:center; }
+  .badge-slot .ctf-badge-svg{ width:78px; height:78px; filter:drop-shadow(0 6px 14px rgba(12,19,34,.18)); transition:transform .15s var(--ease-spring); }
+  .badge-slot:hover .ctf-badge-svg{ transform:scale(1.12) rotate(-4deg); }
+  .badge-slot span{ display:block; font-size:.72rem; font-weight:700; color:var(--ink-700); margin-top:6px; }
   .edit-panel{ display:none; margin-top:18px; border-top:1px solid var(--ink-200); padding-top:20px; }
   .edit-panel.open{ display:block; }
   .edit-grid{ display:grid; grid-template-columns:200px 1fr; gap:24px; align-items:start; }
@@ -76,6 +81,7 @@
 
 <script src="lib/config.js"></script>
 <script src="lib/avatar.js"></script>
+<script src="lib/badge.js"></script>
 <script src="lib/filter.js"></script>
 <script src="profile.js"></script>
 <script type="module">
@@ -90,14 +96,19 @@
   var builder = null;
 
   function localProfile(){ try { return JSON.parse(localStorage.getItem("ctf:profile")||"null"); } catch(e){ return null; } }
-  function prettyBadge(k){ var m=k.match(/-m(\d+)$/); if(m) return (k.indexOf("kids")===0?"Mission ":"Section ")+m[1]; if(/complete$/.test(k)) return "Module Complete"; return k; }
 
   function paint(){
     document.getElementById("avatar").innerHTML = A.render(profile.avatar||A.DEFAULT);
     document.getElementById("pname").textContent = profile.display_name || "Explorer";
     document.getElementById("tagline").textContent = profile.tagline || "";
     var bd = document.getElementById("badges");
-    if (badges.length) bd.innerHTML = badges.map(function(b){ return '<span class="badge-chip"><span class="ic"></span>'+prettyBadge(b)+'</span>'; }).join("");
+    if (badges.length){
+      var B = window.CTFBadge;
+      var keys = badges.slice().sort(function(a,b){ return B.numFor(a) - B.numFor(b); });
+      bd.innerHTML = '<div class="badge-case">' + keys.map(function(k){
+        return '<div class="badge-slot">' + B.render(B.numFor(k)) + '<span>' + B.nameFor(k) + '</span></div>';
+      }).join("") + '</div>';
+    }
     document.getElementById("stats").innerHTML =
       '<div class="stat"><b>'+badges.length+'</b><span>Badges</span></div>';
   }

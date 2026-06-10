@@ -39,7 +39,8 @@
   .online .dotlbl{ font-family:var(--font-mono); font-size:11px; letter-spacing:.1em; text-transform:uppercase; color:var(--ink-500); display:flex; align-items:center; gap:7px; margin-right:6px; }
   .online .dotlbl::before{ content:""; width:9px; height:9px; border-radius:50%; background:#2FBF71; box-shadow:0 0 0 4px rgba(47,191,113,.18); animation:pulse 2s infinite; }
   @keyframes pulse{ 50%{ box-shadow:0 0 0 7px rgba(47,191,113,.08); } }
-  .online .obubble{ display:flex; align-items:center; gap:6px; background:var(--white); border:1px solid var(--ink-200); border-radius:999px; padding:4px 12px 4px 4px; font-weight:700; font-size:.85rem; color:var(--ink-900); box-shadow:var(--shadow-sm); }
+  .online .obubble{ display:flex; align-items:center; gap:6px; background:var(--white); border:1px solid var(--ink-200); border-radius:999px; padding:4px 12px 4px 4px; font-weight:700; font-size:.85rem; color:var(--ink-900); box-shadow:var(--shadow-sm); text-decoration:none; cursor:pointer; transition:transform .14s var(--ease-out), border-color .14s; }
+  .online .obubble:hover{ transform:translateY(-2px); border-color:var(--blue-500); }
   .online .obubble .avatar.sm{ width:30px; height:30px; border-radius:9px; }
   .online a.chatlink{ font-weight:700; font-size:.85rem; color:var(--blue-700); text-decoration:none; background:var(--blue-50); border-radius:999px; padding:8px 14px; }
 
@@ -270,15 +271,17 @@
 
   function renderOnline(online, myId, cohortName){
     var el = document.getElementById("online");
-    var others = online; // include self — kids love seeing themselves online
-    if (!others.length){ el.style.display = "none"; return; }
+    if (!online.length){ el.style.display = "none"; return; }
     el.style.display = "flex";
-    el.innerHTML = '<span class="dotlbl">Online now · ' + others.length + '</span>' +
-      others.slice(0,10).map(function(o){
-        return '<span class="obubble"><span class="avatar sm">' + A.render(o.avatar || A.DEFAULT) + '</span>' +
-          (o.name || "Explorer") + (o.user_id === myId ? " (you)" : "") + '</span>';
+    el.innerHTML = '<span class="dotlbl">Online now · ' + online.length + '</span>' +
+      online.slice(0,10).map(function(o, i){
+        var self = o.user_id === myId;
+        return '<a class="obubble" data-oi="' + i + '" href="' + (self ? "profile.html" : ("board.html?dm=" + o.user_id + "#chat")) + '" ' +
+          'title="' + (self ? "Your profile" : ("Chat with " + (o.name || "Explorer"))) + '">' +
+          '<span class="avatar sm">' + A.render(o.avatar || A.DEFAULT) + '</span>' +
+          (o.name || "Explorer") + (self ? " (you)" : " 💬") + '</a>';
       }).join("") +
-      '<a class="chatlink" href="board.html#chat">💬 Live chat →</a>';
+      (online.length > 1 ? '<span class="muted" style="font-size:.8rem">tap a friend to chat!</span>' : '');
   }
 
   async function boot(){

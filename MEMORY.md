@@ -89,7 +89,26 @@ coding, with emphasis on how AI is reshaping software development. Origin materi
   "Online now" avatar strip on home + board, green dots on the roster. Works with anon auth.
 - Board/home link: home presence strip links to `board.html#chat` (opens chat view).
 
-## Module 1 enrichment (06-10-2026)
+## Night build #2 (06-10-2026 late): DMs, badge medals, read-to-me
+
+- **DMs (Roblox-style):** `messages.recipient_id` (null = cohort chat) — migration
+  `…020000_dms.sql` applied; RLS lets author+recipient+staff read. Board: clicking any
+  presence bubble or roster member opens a **profile popover** (avatar, name, online dot,
+  "💬 Chat with X") → DM thread with tabs (👥 Everyone | per-kid). Own messages render
+  **optimistically** (realtime callback skips author===me — realtime can lag ~seconds).
+  Home presence bubbles link to `board.html?dm=<uid>#chat` (self → profile). "Live chat"
+  pill removed. Verified: DM persists, threads isolated from Everyone, instant echo.
+- **Badge medallions:** `platform/lib/badge.js` (`window.CTFBadge`) — original SVG medals
+  (scalloped gradient ring per-mission color, night core, star, M#; M12 = 12/12 finale) +
+  canonical kids badge NAMES. Player complete-beats show a medal pop animation + **confetti
+  burst** (reduced-motion aware); profile shows a **badge case** grid. Edge case fixed:
+  resuming directly onto a complete beat before DB init now awards on ctfdb:ready.
+- **Read to me (accessibility):** `/api/tts` ElevenLabs proxy (netlify/functions/tts.js +
+  dev server route; model eleven_turbo_v2_5, default voice Rachel, override via
+  ELEVENLABS_VOICE_ID). Player top bar 🔊 button reads the current beat aloud (⏹ stops,
+  auto-stops on advance; 🔇 + friendly tooltip if unconfigured). **Jon must add
+  ELEVENLABS_API_KEY to capstone/.env (local) + Netlify env vars (prod).** Untested with a
+  real key as of this writing.
 
 - **Video breaks:** 6 Code.org "How AI Works" videos (IDs verified via YouTube oEmbed)
   embedded as `video` beats via `VIDEO_MAP` in `lessons/build.mjs` — inserted right before
