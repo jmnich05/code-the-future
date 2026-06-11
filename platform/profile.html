@@ -6,13 +6,7 @@
 <title>Code the Future — My Profile</title>
 <link rel="stylesheet" href="app.css">
 <style>
-  .top{ background:var(--grad-night); color:#fff; padding:18px 0 72px; }
-  .top .wrap{ display:flex; align-items:center; gap:14px; }
-  .top .brand{ font-family:var(--font-display); font-weight:700; }
-  .top .brand .accent{ color:var(--teal-400); }
-  .top .spacer{ margin-left:auto; }
-  .top a{ color:#cfe0ff; text-decoration:none; font-weight:600; font-size:.95rem; }
-  .pcard{ margin-top:-40px; padding:30px; display:grid; grid-template-columns:220px 1fr; gap:28px; align-items:start; }
+  .pcard{ margin-top:18px; padding:30px; display:grid; grid-template-columns:220px 1fr; gap:28px; align-items:start; }
   @media (max-width:680px){ .pcard{ grid-template-columns:1fr; justify-items:center; text-align:center; } }
   .pname{ font-size:2.2rem; }
   .stats{ display:flex; gap:10px; flex-wrap:wrap; margin:14px 0; }
@@ -33,11 +27,9 @@
 </style>
 </head>
 <body>
-<div class="top"><div class="wrap">
-  <span class="brand">Code the <span class="accent">Future</span></span>
-  <span class="spacer"></span>
-  <a href="../curriculum/module-01-what-is-ai/lessons/index.html">Continue learning →</a>
-</div></div>
+<!-- header + breadcrumbs injected by CTFTopbar.render() -->
+<script src="lib/topbar.js"></script>
+<script>CTFTopbar.render({ active: "profile", crumb: "My Profile" });</script>
 
 <div class="wrap">
   <div class="card pcard">

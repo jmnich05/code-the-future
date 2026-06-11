@@ -15,7 +15,8 @@
     linear-gradient(180deg, rgba(7,12,26,.80) 0%, rgba(7,12,26,.55) 34%, rgba(7,12,26,.12) 62%, rgba(7,12,26,.30) 100%); }
   .hero .inner{ position:relative; z-index:2; display:flex; flex-direction:column; flex:1; width:100%; max-width:1200px; margin:0 auto; padding:22px 24px 40px; }
   .hero nav.top{ display:flex; align-items:center; gap:16px; }
-  .hero .brand{ font-family:var(--font-display); font-weight:700; font-size:1.2rem; text-shadow:0 2px 12px rgba(0,0,0,.4); }
+  .hero .brand{ display:flex; align-items:center; gap:10px; font-family:var(--font-display); font-weight:700; font-size:1.2rem; text-shadow:0 2px 12px rgba(0,0,0,.4); }
+  .hero .brand img{ width:36px; height:36px; display:block; filter:drop-shadow(0 2px 8px rgba(0,0,0,.5)); }
   .hero .brand .accent{ color:var(--teal-400); }
   .hero nav.top .links{ margin-left:auto; display:flex; gap:8px; }
   .hero nav.top .links a{ color:#fff; text-decoration:none; font-weight:700; font-size:.95rem; background:rgba(7,12,26,.45); border:1px solid rgba(255,255,255,.25); border-radius:999px; padding:9px 18px; backdrop-filter:blur(8px); }
@@ -41,7 +42,8 @@
   @keyframes pulse{ 50%{ box-shadow:0 0 0 7px rgba(47,191,113,.08); } }
   .online .obubble{ display:flex; align-items:center; gap:6px; background:var(--white); border:1px solid var(--ink-200); border-radius:999px; padding:4px 12px 4px 4px; font-weight:700; font-size:.85rem; color:var(--ink-900); box-shadow:var(--shadow-sm); text-decoration:none; cursor:pointer; transition:transform .14s var(--ease-out), border-color .14s; }
   .online .obubble:hover{ transform:translateY(-2px); border-color:var(--blue-500); }
-  .online .obubble .avatar.sm{ width:30px; height:30px; border-radius:9px; }
+  .online .obubble .avatar.sm{ width:30px; height:30px; border-radius:9px; flex:none; }
+  .online .obubble .onm{ max-width:130px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
   .online a.chatlink{ font-weight:700; font-size:.85rem; color:var(--blue-700); text-decoration:none; background:var(--blue-50); border-radius:999px; padding:8px 14px; }
 
   /* ---- remix studio ---- */
@@ -102,7 +104,7 @@
   <div class="remix-tag" id="remixTag"><span>✨ Your AI remix</span><button id="resetHero">use original</button></div>
   <div class="inner">
     <nav class="top">
-      <span class="brand">◆ Code the <span class="accent">Future</span></span>
+      <span class="brand"><img src="assets/logo-icon-dark.svg" alt="Code the Future logo">Code the <span class="accent">Future</span></span>
       <span class="links"><a href="board.html">Board</a><a href="profile.html">Profile</a><a href="../curriculum/module-01-what-is-ai/lessons/player.html?track=kids">Lessons</a></span>
     </nav>
     <div class="headline">
@@ -273,13 +275,14 @@
     var el = document.getElementById("online");
     if (!online.length){ el.style.display = "none"; return; }
     el.style.display = "flex";
+    var esc = function(s){ return String(s==null?"":s).replace(/[&<>"]/g, function(c){ return ({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"})[c]; }); };
     el.innerHTML = '<span class="dotlbl">Online now · ' + online.length + '</span>' +
       online.slice(0,10).map(function(o, i){
         var self = o.user_id === myId;
-        return '<a class="obubble" data-oi="' + i + '" href="' + (self ? "profile.html" : ("board.html?dm=" + o.user_id + "#chat")) + '" ' +
-          'title="' + (self ? "Your profile" : ("Chat with " + (o.name || "Explorer"))) + '">' +
+        return '<a class="obubble" data-oi="' + i + '" href="' + (self ? "profile.html" : ("board.html?dm=" + encodeURIComponent(o.user_id) + "#chat")) + '" ' +
+          'title="' + (self ? "Your profile" : ("Chat with " + esc(o.name || "Explorer"))) + '">' +
           '<span class="avatar sm">' + A.render(o.avatar || A.DEFAULT) + '</span>' +
-          (o.name || "Explorer") + (self ? " (you)" : " 💬") + '</a>';
+          '<span class="onm">' + esc(o.name || "Explorer") + (self ? " (you)" : " 💬") + '</span></a>';
       }).join("") +
       (online.length > 1 ? '<span class="muted" style="font-size:.8rem">tap a friend to chat!</span>' : '');
   }
