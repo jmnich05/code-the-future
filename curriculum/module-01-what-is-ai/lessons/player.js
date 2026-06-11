@@ -336,7 +336,7 @@
           '<button class="md-chip" data-layer="vinyl">📀 Vinyl</button>' +
           '<button class="md-chip" data-layer="rain">🌧️ Rain</button></div>' +
         '<button class="md-remix" id="mdRemix">🎲 Remix the beat!</button>' +
-        '<div class="md-note">The computer generates this music from patterns — every remix is brand new. That\'s generative AI thinking!</div>' +
+        '<div class="md-note">The computer composes this live — and it keeps evolving as you listen: new drum patterns, little melodies, even key changes. No two minutes are ever the same. That\'s generative AI thinking!</div>' +
       '</div>' +
       '<div class="mmap" id="mmap"><div class="mmap-card">' +
         '<div class="mmap-head">🗺️ Mission Map <button class="mmap-close" id="mmapClose">✕</button></div>' +

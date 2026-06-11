@@ -83,10 +83,21 @@
     semis.forEach(function (s, i) {
       var o = ctx.createOscillator();
       o.type = "triangle";
-      o.frequency.value = v.root * Math.pow(2, s / 12);
+      o.frequency.value = v.root * Math.pow(2, (s + transpose) / 12);
       o.detune.value = (i % 2 ? 6 : -5);
       o.connect(f); o.start(t); o.stop(t + dur + 0.05);
     });
+  }
+  // soft melodic pluck on top of the chord — the "different song" feeling
+  function playPluck(t, semi) {
+    var v = VIBES[state.vibe] || VIBES.chill;
+    var o = ctx.createOscillator(), g = ctx.createGain();
+    var f = ctx.createBiquadFilter(); f.type = "lowpass"; f.frequency.value = v.filter + 600;
+    o.type = "sine";
+    o.frequency.value = v.root * 2 * Math.pow(2, (semi + transpose) / 12);
+    g.gain.setValueAtTime(0.06, t);
+    g.gain.exponentialRampToValueAtTime(0.001, t + 0.5);
+    o.connect(f); f.connect(g); g.connect(musicGain); o.start(t); o.stop(t + 0.55);
   }
 
   function startTextures() {
@@ -113,14 +124,42 @@
     crackleNode = rainNode = null;
   }
 
-  var chordIdx = 0;
+  // ---- endless radio: the beat EVOLVES while it plays ----------------------
+  // Every 8 bars (a "section") the drums quietly mutate to a new variation,
+  // announced by a little snare fill. Every other section the key drifts up or
+  // down a notch and wanders home again, and a sparse melody improvises over
+  // the chords. Same vibe, never the same minute twice — all generated live.
+  var chordIdx = 0, transpose = 0, melodySeed = 1;
+  var SECTION = 8; // bars per section
+  function evolve(bar) {
+    state.seed = (state.seed * 1103515245 + 12345) % 2147483647;
+    regenPatterns();
+    melodySeed = state.seed ^ 0x9E3779B9;
+    var section = bar / SECTION;
+    if (section % 2 === 0) {
+      var drifts = [0, 0, 2, -3, 5];
+      transpose = drifts[Math.floor(rng(state.seed + section)() * drifts.length)];
+    }
+  }
   function scheduler() {
     var spb = 60 / state.tempo / 4; // 16th note seconds
     while (nextNoteTime < ctx.currentTime + 0.15) {
-      var s16 = step % 16;
+      var s16 = step % 16, bar = Math.floor(step / 16);
+      if (bar > 0 && s16 === 0 && bar % SECTION === 0) evolve(bar);
       if (pattern.kick[s16]) playKick(nextNoteTime);
       if (pattern.snare[s16]) playSnare(nextNoteTime);
       if (pattern.hat[s16]) playHat(nextNoteTime, s16 % 4 === 2);
+      // snare fill walking into the next section
+      if ((bar + 1) % SECTION === 0 && s16 >= 12 && s16 % 2 === 0) playSnare(nextNoteTime);
+      // sparse improvised melody from the current chord (skips the first section)
+      if (bar >= SECTION && s16 % 4 === 2) {
+        var mr = rng(melodySeed + step)();
+        if (mr < 0.28) {
+          var v = VIBES[state.vibe] || VIBES.chill;
+          var semis = v.prog[(chordIdx - 1 + v.prog.length) % v.prog.length];
+          playPluck(nextNoteTime, semis[Math.floor(mr * 35.7) % semis.length] + (mr < 0.1 ? 12 : 0));
+        }
+      }
       if (s16 === 0) { playChord(nextNoteTime, spb * 16, chordIdx); chordIdx++; }
       nextNoteTime += spb;
       step++;
@@ -136,7 +175,7 @@
       if (ctx.state === "suspended") ctx.resume();
       if (state.on) return;
       state.on = true; started = true;
-      step = 0; chordIdx = 0; nextNoteTime = ctx.currentTime + 0.06;
+      step = 0; chordIdx = 0; transpose = 0; nextNoteTime = ctx.currentTime + 0.06;
       startTextures();
       lookahead = setInterval(scheduler, 90);
       api.onchange && api.onchange();
@@ -159,11 +198,13 @@
     },
     remix: function () {
       state.seed = Math.floor(Math.random() * 1e9);
+      transpose = 0; melodySeed = state.seed ^ 0x9E3779B9;
       regenPatterns(); persist();
       api.onchange && api.onchange();
     },
     duck: function (down) { if (musicGain) musicGain.gain.linearRampToValueAtTime(down ? 0.10 : 0.32, (ctx ? ctx.currentTime : 0) + 0.25); },
-    onchange: null
+    onchange: null,
+    _d: function () { return { bar: Math.floor(step / 16), seed: state.seed, transpose: transpose, kick: pattern.kick.join(""), hat: pattern.hat.join("") }; }
   };
   window.CTFMusic = api;
 })();
