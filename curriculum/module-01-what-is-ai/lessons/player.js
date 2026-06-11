@@ -12,6 +12,11 @@
   var MODULE = "module-01-what-is-ai";
   var stage, label, fill, backBtn, nextBtn, hint;
   var DATA, STEPS = [], pos = 0, animating = false, revealTimer = null, hadLocalPos = false;
+  // furthest step ever reached — the high-water mark. Replays move `pos` back,
+  // but `furthest` never decreases, and it's what we sync to the cloud so a
+  // fresh browser can never wipe out real progress.
+  var MAXKEY = "ctf:max:" + TRACK;
+  var furthest = 0, cloudReady = false;
   // ---- drip pacing: 3 parts, unlocked on days 0 / +2 / +4 ------------------
   var PARTS = [
     { n: 1, first: 1, last: 4, offset: 0 },
@@ -63,7 +68,8 @@
       '<h2>Part ' + part.n + ' unlocks ' + (u.days <= 1 ? "tomorrow" : "on " + u.weekday) + '!</h2>' +
       '<p>Amazing work today, Future Builder! 🎉 Your brain needs time to let all those new ideas settle in — that\'s real learning.</p>' +
       '<p class="lock-sub">Missions ' + part.first + '–' + part.last + ' open ' + (u.days <= 1 ? "tomorrow" : u.weekday) + '. Until then: replay any mission, remix your homepage, customize your character, or say hi on the board!</p>' +
-      '<a class="lock-btn" href="../../../platform/index.html">🏠 Back to home</a>' +
+      '<a class="lock-btn" href="../../../platform/index.html">🏠 Back to home</a> ' +
+      '<button class="lock-btn lock-alt" onclick="document.getElementById(\'pMap\').click()">🗺️ Replay a mission</button>' +
       '</div></div>';
     nextBtn.style.display = "none";
     hint.textContent = "";
@@ -104,7 +110,12 @@
 
   // ---- Supabase sync (optional; no-ops if CTFDB unconfigured) -------------
   function db() { return (window.CTFDB && window.CTFDB.enabled) ? window.CTFDB : null; }
-  function cloudSaveProgress() { var d = db(); if (d) d.saveProgress(MODULE, TRACK, pos, pos >= STEPS.length - 1); }
+  // cloud stores the HIGH-WATER MARK, and only after we've reconciled with the
+  // cloud once — so a fresh browser at step 0 can never overwrite real progress
+  function cloudSaveProgress() {
+    if (!cloudReady) return;
+    var d = db(); if (d) d.saveProgress(MODULE, TRACK, furthest, furthest >= STEPS.length - 1);
+  }
   function onDbReady() {
     var d = db(); if (!d) return;
     // pacing anchor + staff bypass come from the cohort
@@ -120,17 +131,21 @@
     if (st && st.kind === "beat" && st.b.type === "complete" && st.m && st.m.n) {
       d.awardBadge(TRACK + "-m" + st.m.n, { module: MODULE, track: TRACK });
     }
-    if (!hadLocalPos) {
-      d.getProgress(MODULE, TRACK).then(function (rp) {
-        if (rp && typeof rp.position === "number" && rp.position > pos && rp.position < STEPS.length) {
-          pos = rp.position;
-          var mn = stepMission(STEPS[pos]);
-          if (mn && isLocked(mn)) pos = lastUnlockedIndex();
-          render();
-        }
-        cloudSaveProgress();
-      });
-    } else { cloudSaveProgress(); }
+    // ALWAYS reconcile with the cloud: merge the high-water mark from wherever
+    // this kid played before (other browser, other device, cleared storage)
+    d.getProgress(MODULE, TRACK).then(function (rp) {
+      var cloudPos = (rp && typeof rp.position === "number") ? rp.position : 0;
+      if (cloudPos > furthest && cloudPos < STEPS.length) furthest = cloudPos;
+      // no local position = fresh browser → resume at the furthest point
+      if (!hadLocalPos && furthest > pos) {
+        pos = furthest;
+        var mn = stepMission(STEPS[pos]);
+        if (mn && isLocked(mn)) pos = lastUnlockedIndex();
+        render();
+      }
+      cloudReady = true;
+      save();
+    }).catch(function () { cloudReady = true; });
     d.logEvent("lesson_open", { module: MODULE, track: TRACK, pos: pos });
   }
 
@@ -260,7 +275,14 @@
   }
   function prev() { if (pos > 0) { pos--; render(); finishReveal(); } }
 
-  function save() { try { localStorage.setItem(POSKEY, String(pos)); } catch (e) {} cloudSaveProgress(); }
+  function save() {
+    if (pos > furthest) furthest = pos;
+    try {
+      localStorage.setItem(POSKEY, String(pos));
+      localStorage.setItem(MAXKEY, String(furthest));
+    } catch (e) {}
+    cloudSaveProgress();
+  }
 
   // ---- confetti burst on badge moments ------------------------------------
   function confetti() {
@@ -296,7 +318,7 @@
   function build() {
     var root = document.getElementById("player");
     root.innerHTML =
-      '<div class="p-top"><a class="p-exit" href="../../../platform/index.html">✕ Exit</a><span class="p-label" id="pLabel"></span><span class="p-track"><i id="pFill"></i></span></div>' +
+      '<div class="p-top"><a class="p-exit" href="../../../platform/index.html">✕ Exit</a><button class="p-map" id="pMap">🗺️ Missions</button><span class="p-label" id="pLabel"></span><span class="p-track"><i id="pFill"></i></span></div>' +
       '<div class="p-stage" id="pStage"></div>' +
       '<div class="p-bottom"><button class="p-back" id="pBack">‹ Back</button><button class="p-audio" id="pAudio"></button><button class="p-music" id="pMusic">🎵</button><span class="p-hint" id="pHint"></span><button class="p-next" id="pNext">Continue →</button></div>' +
       '<div class="music-dock" id="musicDock">' +
@@ -315,7 +337,12 @@
           '<button class="md-chip" data-layer="rain">🌧️ Rain</button></div>' +
         '<button class="md-remix" id="mdRemix">🎲 Remix the beat!</button>' +
         '<div class="md-note">The computer generates this music from patterns — every remix is brand new. That\'s generative AI thinking!</div>' +
-      '</div>';
+      '</div>' +
+      '<div class="mmap" id="mmap"><div class="mmap-card">' +
+        '<div class="mmap-head">🗺️ Mission Map <button class="mmap-close" id="mmapClose">✕</button></div>' +
+        '<div class="mmap-sub">Replay any mission you\'ve finished, or jump back to where you left off.</div>' +
+        '<div class="mmap-list" id="mmapList"></div>' +
+      '</div></div>';
     stage = document.getElementById("pStage");
     label = document.getElementById("pLabel");
     fill = document.getElementById("pFill");
@@ -360,6 +387,46 @@
       syncMusic();
     } else { musicBtn.style.display = "none"; }
 
+    // 🗺️ Mission Map — replay finished missions / fast-forward to your spot
+    var mapBtn = document.getElementById("pMap");
+    var mapOv = document.getElementById("mmap");
+    function missionRanges() {
+      var out = [], cur = null;
+      STEPS.forEach(function (st, i) {
+        if (!cur || cur.m !== st.m) { cur = { m: st.m, start: i, end: i }; out.push(cur); }
+        else cur.end = i;
+      });
+      return out;
+    }
+    function renderMap() {
+      var list = document.getElementById("mmapList");
+      list.innerHTML = missionRanges().map(function (r, idx) {
+        var m = r.m;
+        var name = m.kind === "intro" ? "Start here" : m.kind === "capstone" ? "🚀 The Big Mission" : "Mission " + m.n + " — " + m.title;
+        var mn = m.kind === "capstone" ? 12 : m.n;
+        var done = furthest > r.end;
+        var here = furthest >= r.start && furthest <= r.end;
+        var locked = mn ? isLocked(mn) : false;
+        var cls = "mm-item", chip = "", act = "";
+        if (locked) { cls += " mm-locked"; chip = "🔒 " + unlockLabel(partOf(mn)).weekday; }
+        else if (done) { cls += " mm-done"; chip = "✅ Replay"; act = ' data-jump="' + r.start + '"'; }
+        else if (here) { cls += " mm-here"; chip = "▶ Continue"; act = ' data-jump="' + furthest + '"'; }
+        else { cls += " mm-soon"; chip = "Up next"; }
+        return '<button class="' + cls + '"' + act + (locked || (!done && !here) ? " disabled" : "") + ">" +
+          '<span class="mm-name">' + esc(name) + '</span><span class="mm-chip">' + chip + "</span></button>";
+      }).join("");
+      list.querySelectorAll("[data-jump]").forEach(function (b) {
+        b.addEventListener("click", function () {
+          pos = Math.min(parseInt(b.getAttribute("data-jump"), 10) || 0, STEPS.length - 1);
+          mapOv.classList.remove("open");
+          render(); finishReveal();
+        });
+      });
+    }
+    mapBtn.addEventListener("click", function () { renderMap(); mapOv.classList.add("open"); });
+    document.getElementById("mmapClose").addEventListener("click", function () { mapOv.classList.remove("open"); });
+    mapOv.addEventListener("click", function (e) { if (e.target === mapOv) mapOv.classList.remove("open"); });
+
     // "Audio learning" toggle — ElevenLabs reads each screen aloud while ON
     var audioBtn = document.getElementById("pAudio");
     syncAudioBtn();
@@ -390,6 +457,9 @@
     hadLocalPos = savedRaw !== null && location.hash !== "#restart";
     var saved = parseInt(savedRaw || "0", 10);
     pos = (location.hash === "#restart" || isNaN(saved) || saved < 0 || saved >= STEPS.length) ? 0 : saved;
+    var savedMax = parseInt(localStorage.getItem(MAXKEY) || "0", 10);
+    furthest = Math.max(isNaN(savedMax) ? 0 : savedMax, isNaN(saved) ? 0 : Math.max(saved, 0));
+    if (furthest >= STEPS.length) furthest = STEPS.length - 1;
     var mn0 = stepMission(STEPS[pos]);
     if (mn0 && isLocked(mn0)) pos = lastUnlockedIndex();
     render();

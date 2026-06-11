@@ -301,7 +301,7 @@
     // continue tile: resolve cloud/local position → actual Mission number + title
     cohortsCache = await D.myCohorts();
     var kids = await D.getProgress("module-01-what-is-ai","kids");
-    var localPos = 0; try { localPos = parseInt(localStorage.getItem("ctf:pos:kids")||"0",10)||0; } catch(e){}
+    var localPos = 0; try { localPos = Math.max(parseInt(localStorage.getItem("ctf:pos:kids")||"0",10)||0, parseInt(localStorage.getItem("ctf:max:kids")||"0",10)||0); } catch(e){}
     var pos = Math.max((kids && kids.position) || 0, localPos);
     if (pos > 0 || (kids && kids.completed)){
       try {
