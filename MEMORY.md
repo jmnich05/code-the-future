@@ -101,11 +101,12 @@ coding, with emphasis on how AI is reshaping software development. Origin materi
   Management API (`POST /v1/projects/{ref}/database/query` with SUPABASE_ACCESS_TOKEN —
   the way to run ad-hoc SQL). Kenya: have her onboard + join FUTURE26, then promote her
   user_id the same way. Seed cohort had NO staff originally (seeded without owner).
-- **Notification pipeline (verified end-to-end)**: Supabase trigger (pg_net) on staff
-  DMs + help-channel posts → POST https://codethefuture.net/api/notify with x-ctf-secret
-  → notify.js relays to SLACK_WEBHOOK_URL and/or RESEND_API_KEY+NOTIFY_EMAIL (unset =
-  silent skip; trigger swallows exceptions so chat never breaks). Secret lives in the
-  migration (private repo) + NOTIFY_SECRET Netlify env var (set via Netlify MCP).
+- **Notification pipeline (LIVE — Slack confirmed 06-11)**: Supabase trigger (pg_net) on
+  staff DMs + help-channel posts → POST https://codethefuture.net/api/notify with
+  x-ctf-secret → notify.js → Slack webhook (SLACK_WEBHOOK_URL env var, set) and/or
+  Resend email (RESEND_API_KEY+NOTIFY_EMAIL, unset). Also supports SLACK_BOT_TOKEN+
+  SLACK_CHANNEL as an alternative path. Trigger swallows exceptions so chat never
+  breaks. Secret lives in the migration (private repo) + NOTIFY_SECRET Netlify env var.
 - **Netlify gotcha**: function env vars are baked at build, and unchanged function
   bundles are CACHED across deploys — after changing NOTIFY_*/any function env, touch
   the function file so its hash changes, or the old env persists. Also: MCP env upsert
