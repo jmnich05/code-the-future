@@ -66,6 +66,13 @@
   .gate p{ color:var(--ink-500); }
 
   .footnote{ font-family:var(--font-mono); font-size:10.5px; color:var(--ink-400); text-align:center; padding:0 0 36px; }
+
+  /* what's new build log */
+  .whatsnew{ padding:4px 18px 16px; }
+  .wn-day{ font-family:var(--font-mono); font-size:10.5px; letter-spacing:.08em; text-transform:uppercase; color:var(--blue-700); font-weight:700; margin:12px 0 6px; }
+  .wn-item{ display:flex; gap:9px; font-size:.92rem; color:var(--ink-700); margin-bottom:6px; }
+  .wn-item::before{ content:""; flex:none; width:6px; height:6px; border-radius:50%; background:var(--teal-500,#26C7D1); margin-top:8px; }
+  .wn-item b{ color:var(--ink-900); }
 </style>
 </head>
 <body>
@@ -100,6 +107,11 @@
         </div>
       </div>
     </div>
+    <div class="panel" style="margin-bottom:18px">
+      <div class="panel-h">🆕 What's new on the platform</div>
+      <div class="whatsnew" id="whatsNew"></div>
+    </div>
+
     <p class="footnote">Signals: 🔴 inactive 3+ days · 🟡 behind the unlocked part · ⚪ not started — refreshed live on load</p>
   </div>
 </div>
@@ -118,6 +130,34 @@
   var PARTS = [ { first:1, last:4, offset:0 }, { first:5, last:8, offset:2 }, { first:9, last:12, offset:4 } ];
 
   function esc(s){ return String(s==null?"":s).replace(/[&<>"]/g, function(c){ return ({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"})[c]; }); }
+
+  // build log shown to staff — newest first (update when features ship)
+  var WHATS_NEW = [
+    { day: "Thu Jun 11", items: [
+      "<b>Slack alerts live</b> — kid DMs to staff and Help posts now ping the Slack channel within seconds.",
+      "<b>Feature rundown PDF</b> for staff onboarding (docs folder in the repo)."
+    ]},
+    { day: "Wed Jun 10 (late)", items: [
+      "<b>Progress loss fixed</b> — furthest-reached progress syncs to the cloud; switching devices can't lose a kid's spot.",
+      "<b>Mission Map</b> — replay any finished mission or jump back to your spot; locked parts show unlock days.",
+      "<b>12 new mission artworks</b> with captions; <b>real AI history photos</b> (ELIZA, Shakey, Deep Blue, Perceptron) in Missions 8–9.",
+      "<b>\"AI or Not?\" arcade</b> — Mission 1's new game finale: 12 rounds, timer, score, streaks.",
+      "<b>Study Beats evolves</b> — the lo-fi engine now changes drums, melody, and key as it plays."
+    ]},
+    { day: "Wed Jun 10", items: [
+      "<b>Sales website live</b> at the domain root — SEO-ready, with a lead-capture form delivering to Netlify + email.",
+      "<b>Platform password gate</b> — kids' pages ask for the shared password; the sales site stays public.",
+      "<b>Mission Control</b> (this console) + the notification pipeline.",
+      "<b>Shared header + breadcrumbs</b> across the platform; board roster overflow + avatar sizing fixed.",
+      "<b>4 hands-on games</b> (draw-for-a-real-AI, Word Chain, Training Pipeline, Light the Network), <b>Study Beats</b> dock, <b>drip pacing</b> in three parts."
+    ]},
+    { day: "Tue Jun 9 (evening)", items: [
+      "<b>Profanity filter</b> at two layers (browser + database) across chat and board.",
+      "<b>Private messages</b> with profile popovers; badge medallions + confetti on mission complete.",
+      "<b>Audio learning</b> — every screen can read itself aloud; <b>generated badge art</b>, character gear rewards, living avatars.",
+      "<b>Code.org video breaks</b> + deeper interactives across Module 1."
+    ]}
+  ];
   function av(cfg){ return A.render(cfg && Object.keys(cfg).length ? cfg : A.DEFAULT); }
   function ago(ts){ var s=(Date.now()-new Date(ts).getTime())/1000; if(s<60)return"just now"; if(s<3600)return Math.floor(s/60)+"m ago"; if(s<86400)return Math.floor(s/3600)+"h ago"; return Math.floor(s/86400)+"d ago"; }
   function days(ts){ return (Date.now()-new Date(ts).getTime()) / 86400000; }
@@ -278,6 +318,13 @@
     helpRows.sort(function(a,b){ return (a.answered?1:0) - (b.answered?1:0); });
     document.getElementById("helpList").innerHTML = helpRows.map(function(r){ return r.html; }).join("") || '<div class="empty">No help posts yet.</div>';
     document.getElementById("helpN").textContent = helpRows.filter(function(r){ return !r.answered; }).length + " to answer";
+
+    // what's new build log
+    document.getElementById("whatsNew").innerHTML = WHATS_NEW.map(function(d){
+      return '<div class="wn-day">' + esc(d.day) + '</div>' + d.items.map(function(it){
+        return '<div class="wn-item"><span>' + it + '</span></div>';
+      }).join("");
+    }).join("");
 
     document.getElementById("gate").style.display = "none";
     document.getElementById("console").style.display = "";

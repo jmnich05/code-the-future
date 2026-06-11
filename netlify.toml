@@ -39,3 +39,9 @@
   from = "/api/notify"
   to = "/.netlify/functions/notify"
   status = 200
+
+# staff shortcut: codethefuture.net/admin → Mission Control
+[[redirects]]
+  from = "/admin"
+  to = "/platform/admin.html"
+  status = 301
