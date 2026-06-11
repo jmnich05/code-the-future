@@ -211,6 +211,41 @@ async function sendMessage(cohortId, body, recipientId = null) {
   return error ? { error: error.message } : { message: data };
 }
 
+// ---- staff console (RLS: *_select_staff policies gate these to cohort staff) --
+async function progressByUsers(uids) {
+  if (!ok() || !uids.length) return [];
+  const { data } = await sb.from("lesson_progress")
+    .select("user_id, module, track, position, completed, updated_at").in("user_id", uids);
+  return data || [];
+}
+
+async function badgesByUsers(uids) {
+  if (!ok() || !uids.length) return [];
+  const { data } = await sb.from("badges").select("user_id, badge_key, earned_at").in("user_id", uids);
+  return data || [];
+}
+
+// DM threads where I'm the recipient or sender — newest message per partner
+async function myDmMessages(cohortId, limit = 100) {
+  if (!ok()) return [];
+  const { data } = await sb.from("messages")
+    .select("id, body, created_at, author_id, recipient_id")
+    .eq("cohort_id", cohortId).not("recipient_id", "is", null)
+    .or(`author_id.eq.${uid()},recipient_id.eq.${uid()}`)
+    .order("created_at", { ascending: false }).limit(limit);
+  return data || [];
+}
+
+// latest Help & Questions posts with their comment authors (to spot unanswered)
+async function helpPosts(cohortId, limit = 20) {
+  if (!ok()) return [];
+  const { data } = await sb.from("posts")
+    .select("id, body, created_at, author_id, post_comments(author_id, created_at)")
+    .eq("cohort_id", cohortId).eq("channel", "help")
+    .order("created_at", { ascending: false }).limit(limit);
+  return data || [];
+}
+
 function onNewMessage(cohortId, cb) {
   if (!ok()) return null;
   const ch = sb.channel("chat:cohort:" + cohortId)
@@ -229,6 +264,7 @@ export const CTFDB = {
   awardBadge, listBadges, joinCohort, getProfile, updateProfile, logEvent,
   myCohorts, listMembers, listPosts, createPost, toggleReaction, listComments, addComment,
   joinPresence, listMessages, sendMessage, onNewMessage,
+  progressByUsers, badgesByUsers, myDmMessages, helpPosts,
   get user() { return user; }, get enabled() { return enabled; }
 };
 if (typeof window !== "undefined") window.CTFDB = CTFDB;

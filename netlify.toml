@@ -34,3 +34,8 @@
   from = "/api/tts"
   to = "/.netlify/functions/tts"
   status = 200
+
+[[redirects]]
+  from = "/api/notify"
+  to = "/.netlify/functions/notify"
+  status = 200

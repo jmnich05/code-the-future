@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Code the Future — Mission Control</title>
+<meta name="robots" content="noindex">
+<link rel="stylesheet" href="app.css">
+<style>
+  body{ background:var(--ink-50); }
+  .wrap2{ max-width:1200px; margin:0 auto; padding:0 20px; }
+
+  /* summary cards */
+  .stats-row{ display:grid; grid-template-columns:repeat(4,1fr); gap:16px; margin:18px 0; }
+  @media (max-width:880px){ .stats-row{ grid-template-columns:1fr 1fr; } }
+  .stat-card{ background:var(--white); border:1px solid var(--ink-200); border-radius:var(--radius-lg); box-shadow:var(--shadow-sm); padding:18px 20px; }
+  .stat-card b{ font-family:var(--font-display); font-size:1.9rem; color:var(--ink-900); display:block; line-height:1.1; }
+  .stat-card span{ font-family:var(--font-mono); font-size:10.5px; letter-spacing:.08em; text-transform:uppercase; color:var(--ink-500); }
+  .stat-card.alert b{ color:var(--coral-600); }
+
+  .grid2{ display:grid; grid-template-columns:1.6fr 1fr; gap:18px; align-items:start; margin-bottom:50px; }
+  @media (max-width:980px){ .grid2{ grid-template-columns:1fr; } }
+  .panel{ background:var(--white); border:1px solid var(--ink-200); border-radius:var(--radius-lg); box-shadow:var(--shadow-sm); overflow:hidden; }
+  .panel-h{ font-family:var(--font-mono); font-size:11px; letter-spacing:.1em; text-transform:uppercase; color:var(--ink-500); padding:16px 18px 10px; display:flex; align-items:center; gap:8px; }
+  .panel-h .n{ margin-left:auto; background:var(--blue-50); color:var(--blue-700); border-radius:999px; padding:2px 10px; font-weight:700; }
+
+  /* roster table */
+  .krow{ display:flex; align-items:center; gap:14px; padding:14px 18px; border-top:1px solid var(--ink-100); }
+  .krow .avatar.sm{ width:44px; height:44px; }
+  .krow .who{ min-width:0; flex:0 0 150px; }
+  .krow .who b{ display:block; color:var(--ink-900); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .krow .who small{ color:var(--ink-400); font-size:.75rem; }
+  .krow .prog{ flex:1; min-width:120px; }
+  .krow .prog .lbl{ display:flex; justify-content:space-between; font-size:.8rem; font-weight:700; color:var(--ink-700); margin-bottom:5px; }
+  .krow .prog .lbl small{ color:var(--ink-400); font-weight:600; }
+  .pbar{ height:8px; background:var(--ink-100); border-radius:999px; overflow:hidden; }
+  .pbar > i{ display:block; height:100%; border-radius:999px; background:linear-gradient(90deg,var(--blue-500),var(--teal-500)); }
+  .pbar.done > i{ background:linear-gradient(90deg,#2FBF71,#26C7D1); }
+  .krow .bdg{ flex:0 0 92px; display:flex; align-items:center; gap:3px; }
+  .krow .bdg img{ width:24px; height:24px; border-radius:7px; box-shadow:var(--shadow-sm); }
+  .krow .bdg .more{ font-size:.72rem; font-weight:800; color:var(--ink-500); }
+  .chips{ flex:0 0 150px; display:flex; flex-wrap:wrap; gap:5px; justify-content:flex-end; }
+  .chip{ font-family:var(--font-mono); font-size:9.5px; letter-spacing:.05em; text-transform:uppercase; border-radius:999px; padding:4px 9px; font-weight:700; white-space:nowrap; }
+  .chip.ok{ background:rgba(47,191,113,.13); color:#177A48; }
+  .chip.warn{ background:rgba(255,179,32,.16); color:#9A6A00; }
+  .chip.bad{ background:rgba(255,90,56,.13); color:#C2330F; }
+  .chip.muted{ background:var(--ink-100); color:var(--ink-500); }
+  .krow .dm{ flex:none; font-size:.8rem; font-weight:700; color:var(--blue-700); text-decoration:none; background:var(--blue-50); border-radius:999px; padding:7px 12px; white-space:nowrap; }
+  .krow .dm:hover{ background:var(--blue-100,#D4E2FF); }
+  @media (max-width:720px){ .krow{ flex-wrap:wrap; } .chips{ justify-content:flex-start; } }
+
+  /* inbox */
+  .inb{ padding:13px 18px; border-top:1px solid var(--ink-100); display:flex; gap:11px; align-items:flex-start; }
+  .inb .avatar.sm{ width:36px; height:36px; flex:none; }
+  .inb .m{ min-width:0; flex:1; }
+  .inb .m b{ color:var(--ink-900); font-size:.92rem; }
+  .inb .m .txt{ color:var(--ink-700); font-size:.9rem; margin:2px 0; overflow:hidden; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; }
+  .inb .m small{ color:var(--ink-400); font-size:.75rem; }
+  .inb .need{ flex:none; }
+  .inb a.go{ flex:none; font-size:.78rem; font-weight:700; color:var(--blue-700); text-decoration:none; align-self:center; }
+  .empty{ text-align:center; color:var(--ink-400); padding:26px 16px; font-size:.92rem; }
+
+  /* gate screens */
+  .gate{ max-width:520px; margin:60px auto; background:var(--white); border:1px solid var(--ink-200); border-radius:var(--radius-xl); box-shadow:var(--shadow-md); padding:40px; text-align:center; }
+  .gate h2{ margin:.2em 0 .4em; }
+  .gate p{ color:var(--ink-500); }
+
+  .footnote{ font-family:var(--font-mono); font-size:10.5px; color:var(--ink-400); text-align:center; padding:0 0 36px; }
+</style>
+</head>
+<body>
+<script src="lib/topbar.js"></script>
+<script>CTFTopbar.render({ active: "", crumb: "Mission Control (staff)" });</script>
+
+<div class="wrap2" id="app">
+  <div class="gate" id="gate"><h2>🔭 Mission Control</h2><p>Checking your staff badge…</p></div>
+
+  <div id="console" style="display:none">
+    <div class="stats-row">
+      <div class="stat-card"><b id="stBuilders">–</b><span>Builders</span></div>
+      <div class="stat-card"><b id="stAvg">–</b><span>Avg mission</span></div>
+      <div class="stat-card"><b id="stBadges">–</b><span>Badges earned</span></div>
+      <div class="stat-card alert"><b id="stAttention">–</b><span>Need attention</span></div>
+    </div>
+
+    <div class="grid2">
+      <div class="panel">
+        <div class="panel-h">🚀 Cohort progress — <span id="cohortLabel"></span><span class="n" id="rosterN"></span></div>
+        <div id="roster"><div class="empty">Loading…</div></div>
+      </div>
+
+      <div>
+        <div class="panel" style="margin-bottom:18px">
+          <div class="panel-h">💬 Private messages to staff<span class="n" id="dmN"></span></div>
+          <div id="dmList"><div class="empty">Loading…</div></div>
+        </div>
+        <div class="panel">
+          <div class="panel-h">❓ Help &amp; Questions<span class="n" id="helpN"></span></div>
+          <div id="helpList"><div class="empty">Loading…</div></div>
+        </div>
+      </div>
+    </div>
+    <p class="footnote">Signals: 🔴 inactive 3+ days · 🟡 behind the unlocked part · ⚪ not started — refreshed live on load</p>
+  </div>
+</div>
+
+<script src="lib/config.js"></script>
+<script src="lib/avatar.js"></script>
+<script src="lib/badge.js"></script>
+<script type="module">
+  import { CTFDB } from "./lib/ctf-db.js";
+  CTFDB.init().then(function(){ window.dispatchEvent(new Event("ctfdb:ready")); });
+</script>
+<script>
+(function(){
+  var A = window.CTFAvatar;
+  var MODULE = "module-01-what-is-ai", TRACK = "kids";
+  var PARTS = [ { first:1, last:4, offset:0 }, { first:5, last:8, offset:2 }, { first:9, last:12, offset:4 } ];
+
+  function esc(s){ return String(s==null?"":s).replace(/[&<>"]/g, function(c){ return ({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"})[c]; }); }
+  function av(cfg){ return A.render(cfg && Object.keys(cfg).length ? cfg : A.DEFAULT); }
+  function ago(ts){ var s=(Date.now()-new Date(ts).getTime())/1000; if(s<60)return"just now"; if(s<3600)return Math.floor(s/60)+"m ago"; if(s<86400)return Math.floor(s/3600)+"h ago"; return Math.floor(s/86400)+"d ago"; }
+  function days(ts){ return (Date.now()-new Date(ts).getTime()) / 86400000; }
+
+  // mission map from the lesson content (mirrors player.js flatten():
+  // one title step per non-capstone mission + one step per beat)
+  var MAP = null, TOTAL = 152;
+  async function loadMap(){
+    try{
+      var r = await fetch("../curriculum/" + MODULE + "/lessons/content/" + TRACK + ".json");
+      var data = await r.json();
+      var steps = 0; MAP = [];
+      data.missions.forEach(function(m){
+        var count = (m.kind === "capstone" ? 0 : 1) + (m.beats || []).length;
+        MAP.push({ start: steps, end: steps + count - 1, n: m.kind === "capstone" ? 12 : m.n, kind: m.kind, title: m.title || "" });
+        steps += count;
+      });
+      TOTAL = steps;
+    } catch(e){ MAP = null; }
+  }
+  function missionAt(pos){
+    if (!MAP) return { label: "Step " + (pos+1), n: null };
+    for (var i = 0; i < MAP.length; i++){
+      if (pos <= MAP[i].end){
+        var m = MAP[i];
+        if (m.kind === "intro") return { label: "Intro", n: 0 };
+        if (m.kind === "capstone") return { label: "Big Mission 🎉", n: 12 };
+        return { label: "Mission " + m.n, n: m.n };
+      }
+    }
+    return { label: "Done", n: 12 };
+  }
+  function unlockedPartLast(startsOn){
+    var anchor = startsOn ? new Date(startsOn + "T00:00:00") : new Date();
+    var last = 4;
+    PARTS.forEach(function(p){
+      var u = new Date(anchor); u.setDate(u.getDate() + p.offset);
+      if (new Date() >= u) last = p.last;
+    });
+    return last;
+  }
+
+  async function boot(){
+    var D = window.CTFDB, gate = document.getElementById("gate");
+    if (!D || !D.enabled){ gate.innerHTML = "<h2>🔭 Mission Control</h2><p>Couldn't connect. Refresh to try again.</p>"; return; }
+    var me = D.user.id;
+    var cohorts = (await D.myCohorts()).filter(function(c){ return c.role === "staff"; });
+    if (!cohorts.length){
+      gate.innerHTML = "<h2>🔒 Staff only</h2><p>This is the teacher console. If you should have access, ask Mr. Jon to make you cohort staff.</p>" +
+        '<p style="margin-top:18px"><a href="index.html" style="color:var(--blue-700);font-weight:700">← Back home</a></p>';
+      return;
+    }
+    var cohort = cohorts[0];
+    document.getElementById("cohortLabel").textContent = cohort.name;
+    await loadMap();
+
+    var members = await D.listMembers(cohort.id);
+    var uids = members.map(function(m){ return m.user_id; });
+    var results = await Promise.all([ D.progressByUsers(uids), D.badgesByUsers(uids), D.myDmMessages(cohort.id), D.helpPosts(cohort.id) ]);
+    var progress = results[0], badges = results[1], dms = results[2], help = results[3];
+
+    var progByUser = {}; progress.forEach(function(p){ if (p.module === MODULE) progByUser[p.user_id] = p; });
+    var badgesByUser = {}; badges.forEach(function(b){ (badgesByUser[b.user_id] = badgesByUser[b.user_id] || []).push(b); });
+
+    var partLast = unlockedPartLast(cohort.starts_on);
+    var learners = members.filter(function(m){ return m.role !== "staff"; });
+    var staffIds = {}; members.forEach(function(m){ if (m.role === "staff") staffIds[m.user_id] = true; });
+
+    // ---- roster ----
+    var attention = 0, missionSum = 0, missionCount = 0;
+    var rows = learners.map(function(m){
+      var pr = m.profiles || {};
+      var p = progByUser[m.user_id];
+      var bds = (badgesByUser[m.user_id] || []).slice().sort(function(a,b){ return (window.CTFBadge.numFor(a.badge_key)||0) - (window.CTFBadge.numFor(b.badge_key)||0); });
+      var signals = [];
+      var mission = { label: "Not started", n: null };
+      var pct = 0;
+
+      if (!p){ signals.push({ cls:"muted", t:"⚪ not started" }); attention++; }
+      else {
+        mission = p.completed ? { label: "Completed! 🏆", n: 12 } : missionAt(p.position);
+        pct = Math.min(100, Math.round(100 * (p.position + 1) / TOTAL));
+        if (p.completed) pct = 100;
+        if (mission.n != null){ missionSum += mission.n; missionCount++; }
+        var flagged = false;
+        if (!p.completed && days(p.updated_at) >= 3){ signals.push({ cls:"bad", t:"🔴 quiet " + Math.floor(days(p.updated_at)) + "d" }); flagged = true; }
+        if (!p.completed && mission.n != null){
+          var expectedFirst = PARTS.filter(function(pp){ return pp.last <= partLast; }).pop();
+          if (expectedFirst && mission.n < expectedFirst.first){ signals.push({ cls:"warn", t:"🟡 behind pace" }); flagged = true; }
+        }
+        if (!signals.length) signals.push({ cls:"ok", t:"🟢 on track" });
+        if (flagged) attention++;
+      }
+
+      var bimgs = bds.slice(0, 3).map(function(b){
+        var n = window.CTFBadge.numFor(b.badge_key);
+        return n ? '<img src="assets/badges/badge-' + n + '.png" title="' + esc(window.CTFBadge.nameFor(b.badge_key)) + '" alt="">' : "";
+      }).join("");
+      if (bds.length > 3) bimgs += '<span class="more">+' + (bds.length - 3) + "</span>";
+      if (!bds.length) bimgs = '<span class="more">—</span>';
+
+      return '<div class="krow">' +
+        '<span class="avatar sm">' + av(pr.avatar) + "</span>" +
+        '<span class="who"><b>' + esc(pr.display_name || "Explorer") + "</b><small>" + (p ? "active " + ago(p.updated_at) : "never started") + "</small></span>" +
+        '<span class="prog"><span class="lbl"><span>' + mission.label + '</span><small>' + (p ? (p.position + 1) + "/" + TOTAL : "0/" + TOTAL) + '</small></span>' +
+        '<span class="pbar' + (p && p.completed ? " done" : "") + '"><i style="width:' + pct + '%"></i></span></span>' +
+        '<span class="bdg">' + bimgs + "</span>" +
+        '<span class="chips">' + signals.map(function(s){ return '<span class="chip ' + s.cls + '">' + s.t + "</span>"; }).join("") + "</span>" +
+        '<a class="dm" href="board.html?dm=' + encodeURIComponent(m.user_id) + '#chat">💬 DM</a>' +
+        "</div>";
+    }).join("");
+    document.getElementById("roster").innerHTML = rows || '<div class="empty">No learners yet — share the join code!</div>';
+    document.getElementById("rosterN").textContent = learners.length;
+
+    // ---- summary cards ----
+    var totalBadges = badges.filter(function(b){ return !staffIds[b.user_id]; }).length;
+    document.getElementById("stBuilders").textContent = learners.length;
+    document.getElementById("stAvg").textContent = missionCount ? (Math.round(10 * missionSum / missionCount) / 10) : "—";
+    document.getElementById("stBadges").textContent = totalBadges;
+    document.getElementById("stAttention").textContent = attention;
+
+    // ---- DM inbox: latest message per partner thread, flag if kid spoke last ----
+    var profs = {}; members.forEach(function(m){ profs[m.user_id] = m.profiles || {}; });
+    var threads = {};
+    dms.forEach(function(msg){
+      var partner = msg.author_id === me ? msg.recipient_id : msg.author_id;
+      if (!threads[partner]) threads[partner] = msg;   // dms come newest-first
+    });
+    var dmRows = Object.keys(threads).map(function(uid){
+      var msg = threads[uid], pr = profs[uid] || {};
+      var needsReply = msg.author_id !== me;
+      return { needsReply: needsReply, html:
+        '<div class="inb">' +
+        '<span class="avatar sm">' + av(pr.avatar) + "</span>" +
+        '<span class="m"><b>' + esc(pr.display_name || "Explorer") + "</b>" +
+        '<div class="txt">' + esc(msg.body) + "</div><small>" + ago(msg.created_at) + "</small></span>" +
+        (needsReply ? '<span class="need chip bad">reply</span>' : '<span class="need chip ok">done</span>') +
+        '<a class="go" href="board.html?dm=' + encodeURIComponent(uid) + '#chat">Open →</a>' +
+        "</div>" };
+    });
+    dmRows.sort(function(a,b){ return (b.needsReply?1:0) - (a.needsReply?1:0); });
+    document.getElementById("dmList").innerHTML = dmRows.map(function(r){ return r.html; }).join("") || '<div class="empty">No private messages yet.</div>';
+    document.getElementById("dmN").textContent = dmRows.filter(function(r){ return r.needsReply; }).length + " to answer";
+
+    // ---- Help posts: unanswered = no comment from any staff member ----
+    var helpRows = help.map(function(po){
+      var pr = profs[po.author_id] || {};
+      var answered = (po.post_comments || []).some(function(c){ return staffIds[c.author_id]; });
+      return { answered: answered, html:
+        '<div class="inb">' +
+        '<span class="avatar sm">' + av(pr.avatar) + "</span>" +
+        '<span class="m"><b>' + esc(pr.display_name || "Explorer") + "</b>" +
+        '<div class="txt">' + esc(po.body) + "</div><small>" + ago(po.created_at) + "</small></span>" +
+        (answered ? '<span class="need chip ok">answered</span>' : '<span class="need chip bad">reply</span>') +
+        '<a class="go" href="board.html">Open →</a>' +
+        "</div>" };
+    });
+    helpRows.sort(function(a,b){ return (a.answered?1:0) - (b.answered?1:0); });
+    document.getElementById("helpList").innerHTML = helpRows.map(function(r){ return r.html; }).join("") || '<div class="empty">No help posts yet.</div>';
+    document.getElementById("helpN").textContent = helpRows.filter(function(r){ return !r.answered; }).length + " to answer";
+
+    document.getElementById("gate").style.display = "none";
+    document.getElementById("console").style.display = "";
+  }
+
+  if (window.CTFDB && window.CTFDB.enabled) boot();
+  else window.addEventListener("ctfdb:ready", boot, { once:true });
+})();
+</script>
+</body>
+</html>
