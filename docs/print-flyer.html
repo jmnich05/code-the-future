@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Code the Future — Print Flyer 8.5x11</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --blue:#2A5FF0; --blue-bright:#3D74FF; --teal:#12B2BC; --teal-bright:#26C7D1;
+    --coral:#FF5A38; --amber:#FFB320; --navy:#0A1226; --ink:#0C1322;
+    --display:"Space Grotesk",sans-serif; --body:"Plus Jakarta Sans",sans-serif; --mono:"JetBrains Mono",monospace;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  @page{ size:Letter; margin:0; }
+  html,body{font-family:var(--body)}
+  .page{
+    width:8.5in; height:11in; overflow:hidden; position:relative; color:#fff;
+    display:flex; flex-direction:column; padding:0.62in 0.66in 0.5in;
+    background:
+      radial-gradient(560px 400px at 10% 4%, rgba(42,95,240,.5), transparent 62%),
+      radial-gradient(520px 420px at 96% 70%, rgba(18,178,188,.4), transparent 62%),
+      linear-gradient(165deg,#0A1226 0%, #0E1D44 58%, #0B2D4D 100%);
+  }
+  .brandrow{ display:flex; align-items:center; gap:13px; }
+  .brandrow img{ width:46px; height:46px; }
+  .wm{ font-family:var(--display); font-weight:700; font-size:19pt; }
+  .wm i{ font-style:normal; color:var(--teal-bright); }
+  .where{ margin-left:auto; font-family:var(--mono); font-size:8.5pt; letter-spacing:.14em; text-transform:uppercase; color:rgba(255,255,255,.7); }
+
+  .pill{ align-self:flex-start; margin-top:30pt; font-family:var(--mono); font-size:9.5pt; font-weight:600; letter-spacing:.12em; text-transform:uppercase;
+    border:1.5px solid rgba(255,255,255,.3); background:rgba(255,255,255,.08); border-radius:999px; padding:6pt 14pt; color:var(--amber); }
+  h1{ font-family:var(--display); font-weight:700; font-size:42pt; line-height:1.04; letter-spacing:-.018em; margin-top:14pt; }
+  h1 .grad{ color:var(--teal-bright); }
+  .sub{ margin-top:12pt; font-size:13.5pt; line-height:1.5; color:rgba(255,255,255,.87); max-width:48ch; }
+
+  .points{ margin-top:22pt; display:grid; grid-template-columns:1fr 1fr; gap:9pt 22pt; }
+  .pt{ display:flex; gap:9pt; font-size:11.5pt; color:rgba(255,255,255,.88); }
+  .pt .d{ flex:none; width:8pt; height:8pt; border-radius:50%; margin-top:5pt; }
+  .pt b{ color:#fff; font-family:var(--display); font-weight:600; }
+  .d1{ background:var(--blue-bright) } .d2{ background:var(--teal-bright) } .d3{ background:var(--coral) } .d4{ background:var(--amber) }
+
+  .cta{ margin-top:auto; display:flex; align-items:center; gap:22pt; background:rgba(255,255,255,.07); border:1px solid rgba(255,255,255,.18); border-radius:22px; padding:18pt 22pt; }
+  .qrbox{ flex:none; background:#fff; border-radius:16px; padding:13pt; }
+  .qrbox img{ width:1.5in; height:1.5in; display:block; }
+  .ctatxt b{ display:block; font-family:var(--display); font-weight:700; font-size:17pt; line-height:1.2; margin-bottom:5pt; }
+  .ctatxt p{ font-size:11pt; color:rgba(255,255,255,.85); max-width:36ch; }
+  .url{ margin-top:8pt; display:inline-block; font-family:var(--display); font-weight:700; font-size:14.5pt; background:linear-gradient(120deg,var(--coral),#FF8A38); border-radius:999px; padding:7pt 16pt; }
+  .foot{ margin-top:14pt; display:flex; justify-content:space-between; font-family:var(--mono); font-size:8pt; letter-spacing:.1em; text-transform:uppercase; color:rgba(255,255,255,.55); }
+  .accent{ position:absolute; left:0; right:0; bottom:0; height:7px; background:linear-gradient(90deg,var(--blue-bright),var(--teal-bright) 55%,var(--coral)); }
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="brandrow">
+    <img src="../platform/assets/logo-icon-dark.svg" alt="">
+    <span class="wm">Code the <i>Future</i></span>
+    <span class="where">AI Camp · Ages 8–11 · Louisville</span>
+  </div>
+
+  <span class="pill">Founding Cohort starts July 2026 — enrolling now</span>
+  <h1>The kids who understand AI will <span class="grad">build the future.</span></h1>
+  <p class="sub">A hands-on AI camp where kids don't watch videos about technology — they use real AI: drawing for an AI that actually sees, training mini-models, and building things they're proud of.</p>
+
+  <div class="points">
+    <div class="pt"><span class="d d1"></span><span><b>A real hour, every week</b> — small-group, hands-on sessions at the public library, mentors in the room.</span></div>
+    <div class="pt"><span class="d d2"></span><span><b>A platform kids love</b> — 12 game-like missions at home, badges, characters, and real AI inside.</span></div>
+    <div class="pt"><span class="d d3"></span><span><b>Designed with a child psychologist</b> — pacing, confidence, and safety built for ages 8–11.</span></div>
+    <div class="pt"><span class="d d4"></span><span><b>Safe by design</b> — no kid emails, filtered chat, small cohorts where every child gets seen.</span></div>
+  </div>
+
+  <div class="cta">
+    <div class="qrbox"><img src="qr-codethefuture.svg" alt="QR code to codethefuture.net"></div>
+    <div class="ctatxt">
+      <b>Scan to see the platform and reserve a spot.</b>
+      <p>Meet the missions, the characters, and the camp — and save your child's seat in the founding cohort.</p>
+      <span class="url">codethefuture.net</span>
+    </div>
+  </div>
+
+  <div class="foot">
+    <span>Code the Future · Louisville, KY</span>
+    <span>Learn to build what's next</span>
+  </div>
+  <div class="accent"></div>
+</div>
+</body>
+</html>
