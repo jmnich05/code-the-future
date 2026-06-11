@@ -10,6 +10,8 @@
 //   SLACK_WEBHOOK_URL  — Slack incoming webhook (Slack app → Incoming Webhooks)
 //   RESEND_API_KEY + NOTIFY_EMAIL — email via resend.com (optional)
 // Unset channels are skipped silently, so this never breaks chat.
+// (env vars are baked into the function at build time — touching this file
+//  forces a rebuild so new env values are picked up)
 // ==========================================================================
 
 export default async (req) => {
