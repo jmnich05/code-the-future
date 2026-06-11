@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Code the Future — Parent One-Pager</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --blue:#2A5FF0; --blue-bright:#3D74FF; --teal:#12B2BC; --teal-bright:#26C7D1;
+    --coral:#FF5A38; --amber:#FFB320; --navy:#0A1226; --ink:#0C1322;
+    --ink-600:#3A4358; --ink-500:#5A6478; --paper:#F6F8FE; --line:rgba(12,19,34,.12);
+    --display:"Space Grotesk",sans-serif; --body:"Plus Jakarta Sans",sans-serif; --mono:"JetBrains Mono",monospace;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  @page{ size:Letter; margin:0; }
+  html,body{font-family:var(--body);color:var(--ink);font-size:9.6pt;line-height:1.5}
+  .page{ width:8.5in; height:11in; display:flex; flex-direction:column; overflow:hidden; position:relative; }
+
+  /* header band */
+  .band{
+    background:
+      radial-gradient(420px 260px at 12% 0%, rgba(42,95,240,.5), transparent 65%),
+      radial-gradient(380px 260px at 95% 100%, rgba(18,178,188,.4), transparent 65%),
+      linear-gradient(160deg,#0A1226, #0E1D44 65%, #0B2D4D);
+    color:#fff; padding:0.34in 0.55in 0.28in;
+  }
+  .band .brandrow{ display:flex; align-items:center; gap:11px; margin-bottom:12pt; }
+  .band .brandrow img{ width:34px; height:34px; }
+  .band .wm{ font-family:var(--display); font-weight:700; font-size:14.5pt; }
+  .band .wm i{ font-style:normal; color:var(--teal-bright); }
+  .band .where{ margin-left:auto; font-family:var(--mono); font-size:7.5pt; letter-spacing:.12em; text-transform:uppercase; color:rgba(255,255,255,.65); }
+  .band h1{ font-family:var(--display); font-weight:700; font-size:21.5pt; line-height:1.1; letter-spacing:-.015em; max-width:34ch; }
+  .band .sub{ margin-top:8pt; font-size:10.5pt; color:rgba(255,255,255,.85); max-width:60ch; }
+
+  .content{ flex:1; padding:0.24in 0.55in 0; }
+
+  /* three pillars */
+  .pillars{ display:flex; gap:10pt; margin-bottom:14pt; }
+  .pillar{ flex:1; border:1px solid var(--line); border-left:4px solid var(--blue-bright); border-radius:12px; padding:10pt 12pt; background:#fff; }
+  .pillar:nth-child(2){ border-left-color:var(--teal); }
+  .pillar:nth-child(3){ border-left-color:var(--coral); }
+  .pillar b{ display:block; font-family:var(--display); font-weight:600; font-size:10.5pt; margin-bottom:3pt; }
+  .pillar p{ font-size:8.8pt; color:var(--ink-600); }
+
+  .kick{ font-family:var(--mono); font-size:7.5pt; font-weight:600; letter-spacing:.16em; text-transform:uppercase; color:var(--blue); margin-bottom:5pt; }
+
+  /* feature grid */
+  .features{ display:grid; grid-template-columns:1fr 1fr; gap:5pt 16pt; margin-bottom:13pt; }
+  .feat{ display:flex; gap:7pt; }
+  .feat .dot{ flex:none; width:6pt; height:6pt; border-radius:50%; background:var(--teal-bright); margin-top:4pt; }
+  .feat p{ font-size:9pt; color:var(--ink-600); }
+  .feat b{ color:var(--ink); font-family:var(--display); font-weight:600; }
+
+  /* trust strip */
+  .trust{ background:var(--paper); border:1px solid var(--line); border-radius:12px; padding:10pt 13pt; display:flex; gap:14pt; margin-bottom:13pt; }
+  .trust .t{ flex:1; }
+  .trust b{ display:block; font-family:var(--display); font-weight:600; font-size:9.5pt; margin-bottom:2pt; }
+  .trust p{ font-size:8.4pt; color:var(--ink-600); }
+
+  /* cta row */
+  .cta{ background:linear-gradient(135deg,#0A1226,#11214A); color:#fff; border-radius:14px; padding:12pt 16pt; display:flex; align-items:center; gap:16pt; }
+  .cta .price b{ display:block; font-family:var(--display); font-size:15pt; color:var(--amber); line-height:1.15; }
+  .cta .price span{ font-family:var(--mono); font-size:7pt; letter-spacing:.08em; text-transform:uppercase; color:rgba(255,255,255,.65); }
+  .cta .go{ flex:1; font-size:9.5pt; color:rgba(255,255,255,.88); }
+  .cta .go b{ color:#fff; }
+  .cta .url{ font-family:var(--display); font-weight:700; font-size:13pt; background:linear-gradient(120deg,var(--coral),#FF8A38); border-radius:999px; padding:8pt 16pt; white-space:nowrap; }
+
+  .foot{ padding:7pt 0.55in 0.22in; display:flex; justify-content:space-between; font-family:var(--mono); font-size:7pt; letter-spacing:.06em; text-transform:uppercase; color:var(--ink-500); }
+  .accent{ position:absolute; left:0; right:0; bottom:0; height:5px; background:linear-gradient(90deg,var(--blue-bright),var(--teal-bright) 55%,var(--coral)); }
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="band">
+    <div class="brandrow">
+      <img src="../platform/assets/logo-icon-dark.svg" alt="">
+      <span class="wm">Code the <i>Future</i></span>
+      <span class="where">AI Summer Camp · Louisville · Ages 8–11</span>
+    </div>
+    <h1>Your kid is going to grow up with AI. This summer, they learn to drive it.</h1>
+    <p class="sub">Code the Future is a hands-on AI camp where kids don't watch videos about technology — they use real AI: drawing for an AI that actually sees, training mini-models, and building things they're proud of.</p>
+  </div>
+
+  <div class="content">
+    <div class="pillars">
+      <div class="pillar"><b>A real hour, every week</b><p>Small-group, hands-on sessions at the public library in Louisville — mentors in the room, kids building together, out loud.</p></div>
+      <div class="pillar"><b>Designed with a child psychologist</b><p>A psychologist who specializes in child development helped build the platform and reviews every module — pacing, confidence, and safety designed for how 8–11 year-olds actually learn.</p></div>
+      <div class="pillar"><b>A platform kids love logging into</b><p>Between sessions, campers keep going at home on our own learning platform — paced like a great game, safe by design.</p></div>
+    </div>
+
+    <div class="kick">What your child gets on the platform</div>
+    <div class="features">
+      <div class="feat"><span class="dot"></span><p><b>12 game-like missions</b> — full-screen, one idea at a time, built for busy brains. Sort, train, draw, and play through every concept.</p></div>
+      <div class="feat"><span class="dot"></span><p><b>Real AI, really used</b> — kids draw on a canvas and a real AI guesses their picture; the final mission is built with the same AI professionals use.</p></div>
+      <div class="feat"><span class="dot"></span><p><b>Badges and character gear</b> — every mission earns custom badge art plus new gear for their animated character: capes, jetpacks, crowns.</p></div>
+      <div class="feat"><span class="dot"></span><p><b>Paced like a real camp</b> — missions unlock in waves across the week, so kids can't binge it in a day and always have a reason to come back.</p></div>
+      <div class="feat"><span class="dot"></span><p><b>A safe clubhouse</b> — cohort chat behind a two-layer language filter, with staff able to see every message. No email or personal info required from kids.</p></div>
+      <div class="feat"><span class="dot"></span><p><b>Built for every learner</b> — one tap and any mission reads itself aloud; focus-friendly study music kids can remix themselves.</p></div>
+      <div class="feat"><span class="dot"></span><p><b>Age-appropriate, honest content</b> — real AI history, real concepts, zero hype. Kids finish able to explain AI to the family.</p></div>
+      <div class="feat"><span class="dot"></span><p><b>Adults can see progress</b> — staff dashboards track every camper's missions and flag anyone who's stuck, so no kid slips through.</p></div>
+    </div>
+
+    <div class="trust">
+      <div class="t"><b>Safety first, by design</b><p>Kids join with a cohort code — no email, no personal data. Every chat message passes a profanity filter and is visible to staff.</p></div>
+      <div class="t"><b>Small cohorts on purpose</b><p>Limited seats per session so every kid gets seen, helped, and celebrated.</p></div>
+      <div class="t"><b>What kids learn</b><p>What AI really is, how it learns, how it sees and reads, where it's brilliant, where it fails — and why human judgment is their superpower.</p></div>
+    </div>
+
+    <div class="cta">
+      <div class="price"><b>$75</b><span>per module</span></div>
+      <div class="price"><b>$300</b><span>full program · 4 modules</span></div>
+      <div class="go"><b>Summer 2026 cohorts are enrolling now.</b> See the platform, meet the missions, and reserve your child's spot online.</div>
+      <div class="url">codethefuture.net</div>
+    </div>
+  </div>
+
+  <div class="foot">
+    <span>Code the Future · Louisville, KY</span>
+    <span>Learn to build what's next</span>
+  </div>
+  <div class="accent"></div>
+</div>
+</body>
+</html>
