@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Code the Future — Feature Rundown · June 9–11, 2026</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --blue:#2A5FF0; --blue-bright:#3D74FF; --teal:#12B2BC; --teal-bright:#26C7D1;
+    --coral:#FF5A38; --amber:#FFB320; --navy:#0A1226; --navy-deep:#070C1A;
+    --ink:#0C1322; --ink-600:#3A4358; --ink-500:#5A6478; --ink-300:#B9C1D4;
+    --paper:#F6F8FE; --line:rgba(12,19,34,.12);
+    --display:"Space Grotesk",sans-serif; --body:"Plus Jakarta Sans",sans-serif; --mono:"JetBrains Mono",monospace;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{font-family:var(--body);color:var(--ink);font-size:10.5pt;line-height:1.55}
+  @page{ size:Letter; margin:0.7in 0.75in 0.8in; }
+  @page cover{ margin:0; }
+  .cover{ page:cover; page-break-after:always; }
+
+  /* ---- cover ---- */
+  .cover{
+    height:11in; width:8.5in; position:relative; overflow:hidden; color:#fff;
+    background:
+      radial-gradient(640px 420px at 16% 12%, rgba(42,95,240,.45), transparent 62%),
+      radial-gradient(560px 420px at 88% 86%, rgba(18,178,188,.35), transparent 62%),
+      linear-gradient(165deg, #0A1226 0%, #0E1D44 60%, #0B2D4D 100%);
+    display:flex; flex-direction:column; padding:0.9in;
+  }
+  .cover .brand{ display:flex; align-items:center; gap:14px; }
+  .cover .brand img{ width:52px; height:52px; }
+  .cover .brand .wm{ font-family:var(--display); font-weight:700; font-size:20pt; letter-spacing:-.01em; }
+  .cover .brand .wm i{ font-style:normal; color:var(--teal-bright); }
+  .cover .mid{ margin:auto 0; }
+  .cover .kicker{ font-family:var(--mono); font-size:9.5pt; font-weight:600; letter-spacing:.18em; text-transform:uppercase; color:var(--teal-bright); margin-bottom:14pt; }
+  .cover h1{ font-family:var(--display); font-weight:700; font-size:38pt; line-height:1.04; letter-spacing:-.015em; max-width:9.2ch... }
+  .cover h1{ max-width:14ch; }
+  .cover .sub{ margin-top:14pt; font-size:12.5pt; color:rgba(255,255,255,.82); max-width:48ch; }
+  .cover .statrow{ display:flex; gap:10pt; margin-top:26pt; flex-wrap:wrap; }
+  .cover .stat{ border:1px solid rgba(255,255,255,.22); background:rgba(255,255,255,.07); border-radius:14px; padding:10pt 14pt; }
+  .cover .stat b{ display:block; font-family:var(--display); font-size:16pt; color:var(--amber); line-height:1.1; }
+  .cover .stat span{ font-family:var(--mono); font-size:7.5pt; letter-spacing:.08em; text-transform:uppercase; color:rgba(255,255,255,.65); }
+  .cover .foot{ display:flex; justify-content:space-between; align-items:flex-end; font-family:var(--mono); font-size:8.5pt; color:rgba(255,255,255,.55); letter-spacing:.06em; }
+  .cover .accent{ position:absolute; left:0; right:0; bottom:0; height:6px; background:linear-gradient(90deg,var(--blue-bright),var(--teal-bright) 55%,var(--coral)); }
+
+  /* ---- inner pages ---- */
+  h2{ font-family:var(--display); font-weight:700; font-size:17pt; letter-spacing:-.01em; margin:0 0 4pt; }
+  .sec{ margin-bottom:18pt; }
+  .sec-head{ page-break-after:avoid; page-break-inside:avoid; }
+  .sec-head{ border-bottom:2.5px solid var(--ink); padding-bottom:6pt; margin-bottom:10pt; }
+  .kick{ font-family:var(--mono); font-size:8pt; font-weight:600; letter-spacing:.16em; text-transform:uppercase; }
+  .k-blue{ color:var(--blue) } .k-teal{ color:var(--teal) } .k-coral{ color:var(--coral) } .k-amber{ color:#9A6A00 }
+  .lede{ color:var(--ink-600); font-size:10.5pt; margin-bottom:8pt; }
+  .feat{ display:flex; gap:9pt; margin-bottom:8.5pt; page-break-inside:avoid; }
+  .feat .dot{ flex:none; width:7pt; height:7pt; border-radius:50%; margin-top:4.5pt; }
+  .d-blue{ background:var(--blue-bright) } .d-teal{ background:var(--teal-bright) } .d-coral{ background:var(--coral) } .d-amber{ background:var(--amber) }
+  .feat b{ font-family:var(--display); font-weight:600; font-size:11pt; }
+  .feat p{ color:var(--ink-600); font-size:10pt; margin-top:1pt; }
+  .feat .tag{ font-family:var(--mono); font-size:7pt; font-weight:600; letter-spacing:.06em; text-transform:uppercase; background:var(--paper); border:1px solid var(--line); border-radius:999px; padding:1.5pt 7pt; margin-left:6pt; color:var(--ink-500); white-space:nowrap; }
+  .page-break{ page-break-before:always; }
+  .callout{ background:linear-gradient(135deg,#0A1226,#11214A); color:#fff; border-radius:16px; padding:13pt 16pt; margin:6pt 0 16pt; page-break-inside:avoid; }
+  .callout .kick{ color:var(--teal-bright); }
+  .callout p{ font-size:10pt; color:rgba(255,255,255,.88); margin-top:4pt; }
+  .callout b{ color:var(--amber); }
+  .tour{ background:var(--paper); border:1px solid var(--line); border-radius:16px; padding:13pt 16pt; page-break-inside:avoid; }
+  .tour ol{ margin:6pt 0 0 16pt; }
+  .tour li{ margin-bottom:5pt; font-size:10pt; color:var(--ink-600); }
+  .tour li b{ color:var(--ink); font-family:var(--display); font-weight:600; }
+  .tour code{ font-family:var(--mono); font-size:8.5pt; background:#fff; border:1px solid var(--line); border-radius:6px; padding:1pt 5pt; }
+  .footer-note{ margin-top:14pt; padding-top:8pt; border-top:1px solid var(--line); font-family:var(--mono); font-size:8pt; color:var(--ink-500); display:flex; justify-content:space-between; }
+</style>
+</head>
+<body>
+
+<!-- ============================== COVER ============================== -->
+<div class="cover">
+  <div class="brand">
+    <img src="../platform/assets/logo-icon-dark.svg" alt="">
+    <span class="wm">Code the <i>Future</i></span>
+  </div>
+  <div class="mid">
+    <div class="kicker">Feature Rundown · For Kenya</div>
+    <h1>Two nights of building. One very different platform.</h1>
+    <p class="sub">Everything that shipped between Tuesday 8:30&nbsp;PM and Thursday morning — the learning experience, the public sales site, the staff console, and the safety rails underneath it all. Every item below is live at codethefuture.net.</p>
+    <div class="statrow">
+      <div class="stat"><b>28</b><span>deploys</span></div>
+      <div class="stat"><b>16</b><span>interactive games</span></div>
+      <div class="stat"><b>12</b><span>AI-made mission artworks</span></div>
+      <div class="stat"><b>1</b><span>sales website</span></div>
+      <div class="stat"><b>1</b><span>staff console</span></div>
+    </div>
+  </div>
+  <div class="foot">
+    <span>JUNE 9–11, 2026 · LOUISVILLE, KY</span>
+    <span>LEARN TO BUILD WHAT'S NEXT</span>
+  </div>
+  <div class="accent"></div>
+</div>
+
+<!-- ============================== PAGE 1 ============================== -->
+<div class="sec">
+  <div class="sec-head"><span class="kick k-blue">01 · The Learning Experience</span><h2>Module 1 became a world, not a worksheet</h2></div>
+  <p class="lede">Twelve missions, 154 screens, sixteen hands-on activities. Kids don't read about AI — they poke it, train it, and draw for it.</p>
+
+  <div class="feat"><span class="dot d-blue"></span><div><b>"AI or Not?" Arcade — Mission 1's new finale</b><p>Twelve everyday things zoom in one at a time — smart speaker, toaster, YouTube recommendations — and the kid calls it: AI, or just a machine? Seven-second timer, score, streak multipliers, and an instant one-line "why" after every call. Module 1 now opens with a bang.</p></div></div>
+  <div class="feat"><span class="dot d-blue"></span><div><b>Draw for a real AI <span class="tag">live AI</span></b><p>Kids draw on a canvas and an actual vision model looks at their pixels and guesses the picture. Not a simulation — the exact concept Mission 5 teaches, demonstrated on the kid's own art.</p></div></div>
+  <div class="feat"><span class="dot d-blue"></span><div><b>Three more concept games</b><p>Word Chain (build a sentence by picking next words with visible probabilities — how language models actually work), Training Pipeline (put the steps of training in order), and Light the Network (spend limited strength points on connections to make a signal reach the output — weights, made tactile).</p></div></div>
+  <div class="feat"><span class="dot d-blue"></span><div><b>Video breaks</b><p>Six short Code.org "How AI Works" videos embedded at exactly the right moments, in privacy mode.</p></div></div>
+  <div class="feat"><span class="dot d-blue"></span><div><b>Mission art that explains itself <span class="tag">AI-generated</span></b><p>The abstract diagrams are gone. Every mission opens with a picture-book scene of a kid and robot doing that mission's concept, plus a caption that lands the idea ("Training = showing a computer LOTS of examples…").</p></div></div>
+  <div class="feat"><span class="dot d-blue"></span><div><b>Real AI history, license-verified</b><p>Mission 9 is now a photo gallery: Ada Lovelace, Alan Turing, the actual 1966 ELIZA chat transcript, Shakey the robot, and a Deep Blue tower — all public-domain or Creative Commons, credits included.</p></div></div>
+  <div class="feat"><span class="dot d-blue"></span><div><b>Audio learning</b><p>One toggle and every screen reads itself aloud in a warm narrator voice (ElevenLabs) — for early readers and ear-first learners. Music ducks underneath automatically.</p></div></div>
+  <div class="feat"><span class="dot d-blue"></span><div><b>Study Beats — an endless lo-fi radio <span class="tag">generated live</span></b><p>A music dock composes lo-fi beats in real time — no audio files, no licensing. Kids pick vibes, change tempo, add vinyl crackle or rain, and remix the whole beat. As of last night it evolves while it plays: new drum patterns every section, improvised melodies, gentle key changes. It is itself a generative-AI lesson.</p></div></div>
+</div>
+
+<div class="sec">
+  <div class="sec-head"><span class="kick k-teal">02 · Progression &amp; Pacing</span><h2>Designed so kids come back</h2></div>
+  <div class="feat"><span class="dot d-teal"></span><div><b>Drip pacing in three parts</b><p>Missions 1–4 open on day one; 5–8 unlock two days later; 9–12 two days after that — anchored to each cohort's start date. Finishing a part earns a warm "your brain needs time to let this settle" screen, not a wall. Parents always have a reason to send kids back.</p></div></div>
+  <div class="feat"><span class="dot d-teal"></span><div><b>Badges + character gear</b><p>Every mission awards custom AI-generated badge art plus a new accessory for the kid's avatar — capes, jetpacks, crowns, a champion's laurel. Avatars are alive now: they blink, bob, and get excited on hover.</p></div></div>
+  <div class="feat"><span class="dot d-teal"></span><div><b>Mission Map: replay and fast-forward</b><p>A map button in the player lists every mission — finished ones replay, the current one jumps to your exact spot, locked parts show their unlock day. Progress is bulletproof now: a "furthest-reached" marker syncs to the cloud, so switching devices or clearing a browser can never lose a kid's progress.</p></div></div>
+</div>
+
+<!-- ============================== PAGE 2 ============================== -->
+<div class="sec">
+  <div class="sec-head"><span class="kick k-coral">03 · Community &amp; Safety</span><h2>A clubhouse with guardrails</h2></div>
+  <div class="feat"><span class="dot d-coral"></span><div><b>Live chat + private messages</b><p>Cohort-wide chat plus one-tap private messages: tap any member's avatar, see their profile card, hit "Chat with…". An "online now" strip shows who's around, with live green dots on the roster.</p></div></div>
+  <div class="feat"><span class="dot d-coral"></span><div><b>Profanity filtering at two layers</b><p>Blocked in the browser before sending and enforced again inside the database — it cannot be bypassed by clever kids. Chat notes remind everyone that staff can see all messages, including private ones.</p></div></div>
+  <div class="feat"><span class="dot d-coral"></span><div><b>FAQ &amp; AI Dictionary</b><p>Twenty kid-voiced Q&amp;As on the board: how the platform works, plus AI terms explained for ages 8–11.</p></div></div>
+  <div class="feat"><span class="dot d-coral"></span><div><b>One consistent platform shell</b><p>Every page shares a branded header — logo, Home / Missions / Board / Profile pills, breadcrumbs — so kids always know where they are and how to get home.</p></div></div>
+</div>
+
+<div class="sec">
+  <div class="sec-head"><span class="kick k-amber">04 · The Public Sales Site</span><h2>codethefuture.net now sells the camp</h2></div>
+  <p class="lede">The root of the domain is a full marketing site; the kids' platform lives behind Log In, protected by its own password gate.</p>
+  <div class="feat"><span class="dot d-amber"></span><div><b>The pitch, structured</b><p>Hero with a slot for Jon's film, "why your kid needs this," six platform selling points, a scrolling marquee of the real badge art, living avatar crew, the public-library labs, and the child-psychologist partnership — coach and psychologist featured in the hero copy.</p></div></div>
+  <div class="feat"><span class="dot d-amber"></span><div><b>Cohort listings + lead capture</b><p>Session cards with dates and openings; "Save My Spot" form delivers parent leads to the Netlify dashboard and email — verified end to end. SEO meta, social cards, and structured data are in place for Google.</p></div></div>
+  <div class="feat"><span class="dot d-amber"></span><div><b>Platform password gate</b><p>The sales site is public; everything under /platform and the missions still asks for a shared password (currently set) until launch. The gate can never lock anyone out by accident.</p></div></div>
+</div>
+
+<div class="sec">
+  <div class="sec-head"><span class="kick k-blue">05 · Mission Control — for you and Jon</span><h2>The staff console</h2></div>
+  <div class="feat"><span class="dot d-blue"></span><div><b>Cohort progress at a glance</b><p>Every kid: avatar, current mission, progress bar, badge art, last-active time — plus signals that flag who needs attention (not started / quiet 3+ days / behind the unlocked part). Each row has a DM button straight into a private chat.</p></div></div>
+  <div class="feat"><span class="dot d-blue"></span><div><b>An inbox that knows what's unanswered</b><p>Private messages to staff are flagged "reply" until you respond; Help &amp; Questions posts are flagged until a staff member comments.</p></div></div>
+  <div class="feat"><span class="dot d-blue"></span><div><b>Slack notifications — live</b><p>The moment a kid sends staff a private message or posts in Help, a Slack ping lands with the kid's name, a preview, and a reply link. Confirmed working this morning.</p></div></div>
+  <div class="callout">
+    <span class="kick">Access</span>
+    <p>Mission Control lives at <b>codethefuture.net/platform/admin.html</b> — bookmark it; it's deliberately not in the kids' navigation. Kenya: create your character on the platform, join with code <b>FUTURE26</b>, tell Jon your character name, and you'll be promoted to staff with full console + notification access.</p>
+  </div>
+</div>
+
+<!-- ============================== PAGE 3 ============================== -->
+<div class="sec">
+  <div class="sec-head"><span class="kick k-teal">06 · Kenya's Ten-Minute Tour</span><h2>See it the way a kid will</h2></div>
+  <div class="tour">
+    <ol>
+      <li><b>Sales site.</b> Open <code>codethefuture.net</code> — scroll the whole page; this is what parents see first.</li>
+      <li><b>Log In</b> (top right) → enter the platform password from Jon → create your character. Try a face and an accessory.</li>
+      <li><b>Join the cohort</b> with code <code>FUTURE26</code> when the board asks.</li>
+      <li><b>Play Mission 1.</b> Watch the words trickle in, meet the new mission art, take the warm-up poll, then play the <b>AI or Not? arcade</b> — chase a streak.</li>
+      <li><b>Turn on the extras.</b> Tap the music note for Study Beats (hit Remix twice), and "Turn on audio learning" to hear a screen read aloud.</li>
+      <li><b>Earn the badge</b>, then open your Profile and put your new gear on your character.</li>
+      <li><b>Open the Mission Map</b> (top bar) — see replay, your spot, and the locked parts with unlock days.</li>
+      <li><b>Visit the Board.</b> Read the FAQ, then tap a member and send a private hello.</li>
+      <li><b>DM "Mr. Jon"</b> — and watch the Slack channel ping within seconds. That's the staff alert pipeline.</li>
+      <li><b>Peek at Mission Control</b> (once promoted): <code>/platform/admin.html</code> — the whole cohort on one screen.</li>
+    </ol>
+  </div>
+  <div class="footer-note">
+    <span>CODE THE FUTURE · FEATURE RUNDOWN · JUNE 9–11 2026</span>
+    <span>PREPARED FOR KENYA · BUILT WITH CLAUDE</span>
+  </div>
+</div>
+
+</body>
+</html>
