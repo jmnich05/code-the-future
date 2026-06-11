@@ -117,7 +117,7 @@ const server = createServer(async (req, res) => {
   }
 
   // static
-  let fp = path === "/" ? "/platform/index.html" : path;
+  let fp = path === "/" ? "/index.html" : path;   // root = sales site (platform lives at /platform/)
   if (fp.endsWith("/")) fp += "index.html";
   const file = normalize(join(ROOT, fp));
   if (!file.startsWith(ROOT)) return send(res, 403, "Forbidden");

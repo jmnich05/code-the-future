@@ -6,6 +6,19 @@
 [build]
   publish = "."
   functions = "netlify/functions"
+  edge_functions = "netlify/edge-functions"
+
+# Password gate for the learner platform (sales site at / stays public).
+# Active only when GATE_PASSWORD is set in Netlify env vars. The excluded
+# folders are reused by the public sales page (hero/badges/avatar engine).
+[[edge_functions]]
+  path = "/platform/*"
+  excludedPath = ["/platform/assets/*", "/platform/lib/*"]
+  function = "gate"
+
+[[edge_functions]]
+  path = "/curriculum/*"
+  function = "gate"
 
 [[redirects]]
   from = "/api/ai"
