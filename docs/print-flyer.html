@@ -35,11 +35,14 @@
   h1 .grad{ color:var(--teal-bright); }
   .sub{ margin-top:12pt; font-size:13.5pt; line-height:1.5; color:rgba(255,255,255,.87); max-width:48ch; }
 
-  .points{ margin-top:22pt; display:grid; grid-template-columns:1fr 1fr; gap:9pt 22pt; }
-  .pt{ display:flex; gap:9pt; font-size:11.5pt; color:rgba(255,255,255,.88); }
-  .pt .d{ flex:none; width:8pt; height:8pt; border-radius:50%; margin-top:5pt; }
-  .pt b{ color:#fff; font-family:var(--display); font-weight:600; }
-  .d1{ background:var(--blue-bright) } .d2{ background:var(--teal-bright) } .d3{ background:var(--coral) } .d4{ background:var(--amber) }
+  .points{ margin-top:20pt; display:grid; grid-template-columns:1fr 1fr; gap:10pt 12pt; }
+  .pt{ display:block; font-size:10.8pt; line-height:1.45; color:rgba(255,255,255,.86);
+    background:rgba(255,255,255,.07); border:1px solid rgba(255,255,255,.15); border-radius:14px; padding:10pt 13pt; }
+  .pt b{ display:block; color:#fff; font-family:var(--display); font-weight:600; font-size:11.5pt; margin-bottom:2pt; }
+  .points .pt:nth-child(1){ border-left:5px solid var(--blue-bright); }
+  .points .pt:nth-child(2){ border-left:5px solid var(--teal-bright); }
+  .points .pt:nth-child(3){ border-left:5px solid var(--coral); }
+  .points .pt:nth-child(4){ border-left:5px solid var(--amber); }
 
   .cta{ margin-top:auto; display:flex; align-items:center; gap:22pt; background:rgba(255,255,255,.07); border:1px solid rgba(255,255,255,.18); border-radius:22px; padding:18pt 22pt; }
   .qrbox{ flex:none; background:#fff; border-radius:16px; padding:13pt; }
@@ -64,10 +67,10 @@
   <p class="sub">A hands-on AI camp where kids don't watch videos about technology — they use real AI: drawing for an AI that actually sees, training mini-models, and building things they're proud of.</p>
 
   <div class="points">
-    <div class="pt"><span class="d d1"></span><span><b>A real hour, every week</b> — small-group, hands-on sessions at the public library, mentors in the room.</span></div>
-    <div class="pt"><span class="d d2"></span><span><b>A platform kids love</b> — 12 game-like missions at home, badges, characters, and real AI inside.</span></div>
-    <div class="pt"><span class="d d3"></span><span><b>Designed with a child psychologist</b> — pacing, confidence, and safety built for ages 8–11.</span></div>
-    <div class="pt"><span class="d d4"></span><span><b>Safe by design</b> — no kid emails, filtered chat, small cohorts where every child gets seen.</span></div>
+    <div class="pt"><b>A real hour, every week</b>Small-group, hands-on sessions at the public library, mentors in the room.</div>
+    <div class="pt"><b>A platform kids love</b>12 game-like missions at home, badges, characters, and real AI inside.</div>
+    <div class="pt"><b>Designed with a child psychologist</b>Pacing, confidence, and safety built for ages 8–11.</div>
+    <div class="pt"><b>Safe by design</b>No kid emails, filtered chat, small cohorts where every child gets seen.</div>
   </div>
 
   <div class="cta">
