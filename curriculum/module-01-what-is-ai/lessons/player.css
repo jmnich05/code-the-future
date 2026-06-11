@@ -236,3 +236,8 @@ body{ margin:0; background:var(--ink-50); color:var(--ink-700); font-family:var(
 .mm-locked .mm-chip{ background:var(--ink-100); color:var(--ink-500); }
 .mm-soon .mm-chip{ background:rgba(255,179,32,.16); color:#9A6A00; }
 .lock-btn.lock-alt{ background:transparent; border:2px solid var(--blue-200, #C9D9FF); color:var(--blue-700); font:inherit; font-family:var(--font-display); font-weight:700; cursor:pointer; }
+
+/* caption under mission-opening art — ties the picture to the concept */
+.lesson-art{ flex-direction:column; gap:0; }
+.lesson-art .art-cap{ margin:18px auto 0; max-width:56ch; text-align:center; font-size:1.05rem; line-height:1.55; color:var(--ink-700); font-weight:600; }
+.lesson-art img{ border-radius:22px; box-shadow:var(--shadow-lg); }

@@ -26,7 +26,7 @@
    "beats": [
     {
      "type": "image",
-     "html": "<div class=\"lesson-art\"><img src=\"../assets/art/welcome.svg\" alt=\"\" loading=\"lazy\"></div>"
+     "html": "<div class=\"lesson-art\"><img src=\"../assets/art/mission-1.jpg\" alt=\"\" loading=\"lazy\"><p class=\"art-cap\">You + your AI teammate. Building the future is a team sport — that's the whole idea of this camp.</p></div>"
     },
     {
      "type": "text",
@@ -54,7 +54,15 @@
     },
     {
      "type": "widget",
-     "html": "<div class=\"ctf\"><div data-ctf-widget=\"poll\" data-ctf-id=\"kids-m1-warmup\">\n    <script type=\"application/json\">{\n      \"eyebrow\":\"🚀 Before we start\",\"title\":\"What do you THINK AI is right now?\",\n      \"prompt\":\"There are no wrong answers! Pick one, or type your own. We'll come back to this at the end.\",\"columns\":2,\n      \"options\":[{\"emoji\":\"🤖\",\"label\":\"A robot that thinks\"},{\"emoji\":\"🧠\",\"label\":\"A super-smart computer\"},{\"emoji\":\"✨\",\"label\":\"Kind of like magic\"},{\"emoji\":\"🤷\",\"label\":\"I'm not totally sure\"}],\n      \"freeText\":true,\"placeholder\":\"Or describe it in your own words…\",\n      \"thanks\":\"Saved! Remember your answer — you'll see it again in Mission 12.\",\n      \"complete\":{\"icon\":\"🎖️\",\"badge\":\"Badge earned: Future Builder\",\"sub\":\"Mission 1 of 12\",\"progress\":8}\n    }</script>\n  </div></div>"
+     "html": "<div class=\"ctf\"><div data-ctf-widget=\"poll\" data-ctf-id=\"kids-m1-warmup\">\n    <script type=\"application/json\">{\n      \"eyebrow\":\"🚀 Before we start\",\"title\":\"What do you THINK AI is right now?\",\n      \"prompt\":\"There are no wrong answers! Pick one, or type your own. We'll come back to this at the end.\",\"columns\":2,\n      \"options\":[{\"emoji\":\"🤖\",\"label\":\"A robot that thinks\"},{\"emoji\":\"🧠\",\"label\":\"A super-smart computer\"},{\"emoji\":\"✨\",\"label\":\"Kind of like magic\"},{\"emoji\":\"🤷\",\"label\":\"I'm not totally sure\"}],\n      \"freeText\":true,\"placeholder\":\"Or describe it in your own words…\",\n      \"thanks\":\"Saved! Remember your answer — you'll see it again in Mission 12.\"\n    }</script>\n  </div></div>"
+    },
+    {
+     "type": "text",
+     "html": "<p>Now — before you collect your first badge, let's see those instincts in action. Your first game: things from your everyday world are going to zoom onto the screen, one at a time. Your job is to call it — <strong>AI, or just a machine?</strong> You get seven seconds per round. Ready, Future Builder?</p>"
+    },
+    {
+     "type": "widget",
+     "html": "<div class=\"ctf\"><div data-ctf-widget=\"arcade\" data-ctf-id=\"kids-m1-arcade\">\n    <script type=\"application/json\">{\n      \"eyebrow\":\"🕹️ Your first game\",\"title\":\"AI or Not? — The Arcade\",\n      \"prompt\":\"Things from your world are about to zoom in. Is it AI (it learns and guesses) or just a machine (same fixed steps every time)? Trust your gut — and watch the clock!\",\n      \"seconds\":7,\n      \"labels\":{\"yes\":\"🧠 AI!\",\"no\":\"⚙️ Just a machine\"},\n      \"items\":[\n        {\"emoji\":\"🔊\",\"label\":\"Smart speaker answering your questions\",\"ai\":true,\"why\":\"It understands words by learning from millions of voices.\"},\n        {\"emoji\":\"🧮\",\"label\":\"Calculator\",\"ai\":false,\"why\":\"Same buttons, same answer, every time. Zero learning.\"},\n        {\"emoji\":\"📺\",\"label\":\"YouTube picking your next video\",\"ai\":true,\"why\":\"It learned what YOU like by watching what you watch.\"},\n        {\"emoji\":\"🍞\",\"label\":\"Toaster\",\"ai\":false,\"why\":\"One job, fixed rules: heat bread until the timer dings.\"},\n        {\"emoji\":\"📸\",\"label\":\"Phone camera finding faces\",\"ai\":true,\"why\":\"It learned what faces look like from tons of examples.\"},\n        {\"emoji\":\"🔦\",\"label\":\"Flashlight\",\"ai\":false,\"why\":\"On. Off. That's the whole brain.\"},\n        {\"emoji\":\"✍️\",\"label\":\"Autocorrect fixing your spelling\",\"ai\":true,\"why\":\"It guesses the word you MEANT — learned from billions of sentences.\"},\n        {\"emoji\":\"🚲\",\"label\":\"Bicycle\",\"ai\":false,\"why\":\"All you — no computer anywhere!\"},\n        {\"emoji\":\"🗺️\",\"label\":\"Maps predicting traffic\",\"ai\":true,\"why\":\"It learns traffic patterns to guess the fastest way home.\"},\n        {\"emoji\":\"⏲️\",\"label\":\"Microwave\",\"ai\":false,\"why\":\"It follows the timer's fixed steps — no guessing involved.\"},\n        {\"emoji\":\"🤖\",\"label\":\"Robot vacuum that learns your room\",\"ai\":true,\"why\":\"It builds a map and gets smarter about where the crumbs hide.\"},\n        {\"emoji\":\"🎮\",\"label\":\"Game enemies that learn your moves\",\"ai\":true,\"why\":\"Some games adapt to how YOU play — that's learning!\"}\n      ],\n      \"takeaway\":\"If it LEARNS from examples and makes guesses — it's AI. If it follows the same fixed steps every time — it's just a machine. You can now spot AI anywhere. Most grown-ups can't!\",\n      \"complete\":{\"icon\":\"🎖️\",\"badge\":\"Badge earned: Future Builder\",\"sub\":\"Mission 1 of 12\",\"progress\":8}\n    }</script>\n  </div></div>"
     },
     {
      "type": "complete",
@@ -70,7 +78,7 @@
    "beats": [
     {
      "type": "image",
-     "html": "<div class=\"lesson-art\"><img src=\"../assets/art/learns.svg\" alt=\"\" loading=\"lazy\"></div>"
+     "html": "<div class=\"lesson-art\"><img src=\"../assets/art/mission-2.jpg\" alt=\"\" loading=\"lazy\"><p class=\"art-cap\">AI is a guessing machine: show it stuff, and it guesses what it's looking at.</p></div>"
     },
     {
      "type": "text",
@@ -134,7 +142,7 @@
    "beats": [
     {
      "type": "image",
-     "html": "<div class=\"lesson-art\"><img src=\"../assets/art/patterns.svg\" alt=\"\" loading=\"lazy\"></div>"
+     "html": "<div class=\"lesson-art\"><img src=\"../assets/art/mission-3.jpg\" alt=\"\" loading=\"lazy\"><p class=\"art-cap\">Your brain saw lots of different dogs and found the pattern all by itself. Nobody handed you a dog rulebook!</p></div>"
     },
     {
      "type": "text",
@@ -190,7 +198,7 @@
    "beats": [
     {
      "type": "image",
-     "html": "<div class=\"lesson-art\"><img src=\"../assets/art/training.svg\" alt=\"\" loading=\"lazy\"></div>"
+     "html": "<div class=\"lesson-art\"><img src=\"../assets/art/mission-4.jpg\" alt=\"\" loading=\"lazy\"><p class=\"art-cap\">Training = showing a computer LOTS of examples until it spots the pattern — just like you did.</p></div>"
     },
     {
      "type": "text",
@@ -250,7 +258,7 @@
    "beats": [
     {
      "type": "image",
-     "html": "<div class=\"lesson-art\"><img src=\"../assets/art/seeing.svg\" alt=\"\" loading=\"lazy\"></div>"
+     "html": "<div class=\"lesson-art\"><img src=\"../assets/art/mission-5.jpg\" alt=\"\" loading=\"lazy\"><p class=\"art-cap\">To a computer, a picture isn't a cat. It's thousands of tiny colored squares called pixels.</p></div>"
     },
     {
      "type": "text",
@@ -302,7 +310,7 @@
    "beats": [
     {
      "type": "image",
-     "html": "<div class=\"lesson-art\"><img src=\"../assets/art/words.svg\" alt=\"\" loading=\"lazy\"></div>"
+     "html": "<div class=\"lesson-art\"><img src=\"../assets/art/mission-6.jpg\" alt=\"\" loading=\"lazy\"><p class=\"art-cap\">AI reads by guessing the next word, over and over, crazy fast. That's really how it works.</p></div>"
     },
     {
      "type": "text",
@@ -366,7 +374,7 @@
    "beats": [
     {
      "type": "image",
-     "html": "<div class=\"lesson-art\"><img src=\"../assets/art/attention.svg\" alt=\"\" loading=\"lazy\"></div>"
+     "html": "<div class=\"lesson-art\"><img src=\"../assets/art/mission-7.jpg\" alt=\"\" loading=\"lazy\"><p class=\"art-cap\">The attention trick: shine a spotlight on the words that matter most, ignore the rest.</p></div>"
     },
     {
      "type": "text",
@@ -414,11 +422,11 @@
    "beats": [
     {
      "type": "image",
-     "html": "<div class=\"lesson-art\"><img src=\"../assets/art/brain-net.svg\" alt=\"\" loading=\"lazy\"></div>"
+     "html": "<div class=\"lesson-art\"><img src=\"../assets/art/mission-8.jpg\" alt=\"\" loading=\"lazy\"><p class=\"art-cap\">A neural network is a pretend brain made of math — inspired by yours, but not the same.</p></div>"
     },
     {
      "type": "image",
-     "html": "<div class=\"lesson-fig\"><figure><img src=\"../assets/img/neuron-cajal.jpg\" alt=\"\" loading=\"lazy\"><figcaption><b>Real neurons</b>, drawn by Santiago Ramón y Cajal. AI's “neural networks” borrow this idea.<br><span class=\"credit\">Ramón y Cajal · public domain</span></figcaption></figure></div>"
+     "html": "<div class=\"lesson-fig row\"><figure><img src=\"../assets/img/neuron-cajal.jpg\" alt=\"\" loading=\"lazy\"><figcaption><b>Real neurons</b>, drawn by Santiago Ramón y Cajal. AI's “neural networks” borrow this idea.<br><span class=\"credit\">Ramón y Cajal · public domain</span></figcaption></figure><figure><img src=\"../assets/img/perceptron.png\" alt=\"\" loading=\"lazy\"><figcaption><b>The Perceptron (1958)</b> — the very first “pretend brain” machine. Every neural network today is its grandkid.<br><span class=\"credit\">Operator's manual · public domain</span></figcaption></figure></div>"
     },
     {
      "type": "text",
@@ -478,11 +486,11 @@
    "beats": [
     {
      "type": "image",
-     "html": "<div class=\"lesson-art\"><img src=\"../assets/art/timeline.svg\" alt=\"\" loading=\"lazy\"></div>"
+     "html": "<div class=\"lesson-art\"><img src=\"../assets/art/mission-9.jpg\" alt=\"\" loading=\"lazy\"><p class=\"art-cap\">AI went from filling a whole room to fitting in your pocket. This mission is that story.</p></div>"
     },
     {
      "type": "image",
-     "html": "<div class=\"lesson-fig row\"><figure><img src=\"../assets/img/ada-lovelace.jpg\" alt=\"\" loading=\"lazy\"><figcaption><b>Ada Lovelace</b> — wrote the first computer program in the 1840s, a century before computers existed.<br><span class=\"credit\">Public domain · Wikimedia Commons</span></figcaption></figure><figure><img src=\"../assets/img/turing.jpg\" alt=\"\" loading=\"lazy\"><figcaption><b>Alan Turing</b> — in 1950 he asked, “Can machines think?”<br><span class=\"credit\">Public domain · Wikimedia Commons</span></figcaption></figure></div>"
+     "html": "<div class=\"lesson-fig row\"><figure><img src=\"../assets/img/ada-lovelace.jpg\" alt=\"\" loading=\"lazy\"><figcaption><b>Ada Lovelace</b> — wrote the first computer program in the 1840s, a century before computers existed.<br><span class=\"credit\">Public domain · Wikimedia Commons</span></figcaption></figure><figure><img src=\"../assets/img/turing.jpg\" alt=\"\" loading=\"lazy\"><figcaption><b>Alan Turing</b> — in 1950 he asked, “Can machines think?”<br><span class=\"credit\">Public domain · Wikimedia Commons</span></figcaption></figure><figure><img src=\"../assets/img/eliza.png\" alt=\"\" loading=\"lazy\"><figcaption><b>ELIZA (1966)</b> — the first chatbot! People typed to it like a friend… but it was just clever pattern tricks.<br><span class=\"credit\">Public domain · Wikimedia Commons</span></figcaption></figure><figure><img src=\"../assets/img/shakey.jpg\" alt=\"\" loading=\"lazy\"><figcaption><b>Shakey (1969)</b> — the first robot that could look around and plan its own moves. (Yes, it shook a lot.)<br><span class=\"credit\">Photo: The wub · CC BY-SA 4.0</span></figcaption></figure><figure><img src=\"../assets/img/deep-blue.jpg\" alt=\"\" loading=\"lazy\"><figcaption><b>Deep Blue (1997)</b> — the chess computer that beat the human world champion. This is one of its towers.<br><span class=\"credit\">Photo: James the photographer · CC BY 2.0</span></figcaption></figure></div>"
     },
     {
      "type": "text",
@@ -530,7 +538,7 @@
    "beats": [
     {
      "type": "image",
-     "html": "<div class=\"lesson-art\"><img src=\"../assets/art/trust.svg\" alt=\"\" loading=\"lazy\"></div>"
+     "html": "<div class=\"lesson-art\"><img src=\"../assets/art/mission-10.jpg\" alt=\"\" loading=\"lazy\"><p class=\"art-cap\">AI is amazing at patterns — but feelings, fairness, and judgment? That's YOUR superpower.</p></div>"
     },
     {
      "type": "image",
@@ -590,7 +598,7 @@
    "beats": [
     {
      "type": "image",
-     "html": "<div class=\"lesson-art\"><img src=\"../assets/art/future.svg\" alt=\"\" loading=\"lazy\"></div>"
+     "html": "<div class=\"lesson-art\"><img src=\"../assets/art/mission-11.jpg\" alt=\"\" loading=\"lazy\"><p class=\"art-cap\">The future needs builders who understand AI. After this mission, that's you.</p></div>"
     },
     {
      "type": "image",
@@ -634,7 +642,7 @@
    "beats": [
     {
      "type": "image",
-     "html": "<div class=\"lesson-art\"><img src=\"../assets/art/trophy.svg\" alt=\"\" loading=\"lazy\"></div>"
+     "html": "<div class=\"lesson-art\"><img src=\"../assets/art/mission-12.jpg\" alt=\"\" loading=\"lazy\"><p class=\"art-cap\">Every badge, every mission — you earned this one. Final mission!</p></div>"
     },
     {
      "type": "image",

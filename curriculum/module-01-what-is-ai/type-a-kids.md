@@ -48,6 +48,13 @@ this. You just have to be curious and willing to try. You already are. Let's go.
 
 `[INTERACTIVE: warm-up — "What do you THINK AI is right now?" Pick an emoji or type a guess. We save it and come back to it in Mission 12 to see how much you've grown.]`
 
+Now — before you collect your first badge, let's see those instincts in action. Your first
+game: things from your everyday world are going to zoom onto the screen, one at a time.
+Your job is to call it — **AI, or just a machine?** You get seven seconds per round.
+Ready, Future Builder?
+
+`[INTERACTIVE: AI or Not? — The Arcade. 12 fast rounds, score, streaks, and a countdown. Learn the #1 trick for spotting AI anywhere: does it LEARN and guess, or follow fixed steps?]`
+
 ### ✅ Mission 1 Complete!
 **You just unlocked:**
 - AI stands for **Artificial Intelligence**.

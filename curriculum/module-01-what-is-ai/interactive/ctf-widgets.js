@@ -765,8 +765,118 @@
     draw();
   }
 
+  // =========================================================================
+  // ARCADE — "AI or Not?" Fast-paced sorter: things zoom in, you call it.
+  // Score, streak multiplier, per-round timer, instant one-line "why" after
+  // every call. Ends with a rank + the big takeaway. Fully replayable.
+  // =========================================================================
+  function renderArcade(root, cfg, id) {
+    root.innerHTML = header(cfg);
+    var items = (cfg.items || []).slice();
+    var secs = cfg.seconds || 7;
+    var labels = cfg.labels || { yes: "🧠 AI!", no: "⚙️ Just a machine" };
+
+    var box = el('div', 'ctf-arcade');
+    box.innerHTML =
+      '<div class="ctf-arc-hud">' +
+        '<span class="ctf-arc-score">⭐ <b>0</b></span>' +
+        '<span class="ctf-arc-streak"></span>' +
+        '<span class="ctf-arc-round"></span>' +
+      '</div>' +
+      '<div class="ctf-arc-timer"><i></i></div>' +
+      '<div class="ctf-arc-stage"><button class="ctf-btn ctf-arc-start">▶ Start the game!</button></div>' +
+      '<div class="ctf-arc-why"></div>' +
+      '<div class="ctf-arc-controls">' +
+        '<button class="ctf-arc-call ctf-arc-yes">' + esc(labels.yes) + '</button>' +
+        '<button class="ctf-arc-call ctf-arc-no">' + esc(labels.no) + '</button>' +
+      '</div>';
+    root.appendChild(box);
+    var done = completionCard(cfg); if (done) root.appendChild(done);
+
+    var stage = box.querySelector('.ctf-arc-stage'), why = box.querySelector('.ctf-arc-why');
+    var scoreEl = box.querySelector('.ctf-arc-score b'), streakEl = box.querySelector('.ctf-arc-streak');
+    var roundEl = box.querySelector('.ctf-arc-round'), timerEl = box.querySelector('.ctf-arc-timer i');
+    var controls = box.querySelector('.ctf-arc-controls');
+    var yesBtn = box.querySelector('.ctf-arc-yes'), noBtn = box.querySelector('.ctf-arc-no');
+
+    var round = -1, score = 0, streak = 0, best = 0, timer = null, accepting = false;
+    controls.style.visibility = 'hidden';
+
+    function setHud() {
+      scoreEl.textContent = score;
+      streakEl.innerHTML = streak >= 2 ? '🔥 streak ×' + streak : '';
+      roundEl.textContent = round >= 0 ? (Math.min(round + 1, items.length) + ' / ' + items.length) : '';
+    }
+    function showCard(it) {
+      stage.innerHTML = '<div class="ctf-arc-card"><span class="ctf-arc-emoji">' + esc(it.emoji) + '</span><span class="ctf-arc-name">' + esc(it.label) + '</span></div>';
+    }
+    function startTimer() {
+      clearInterval(timer);
+      var left = secs * 1000, step = 50;
+      timerEl.style.width = '100%'; timerEl.className = '';
+      timer = setInterval(function () {
+        left -= step;
+        timerEl.style.width = Math.max(0, left / (secs * 1000) * 100) + '%';
+        if (left < secs * 333) timerEl.className = 'hot';
+        if (left <= 0) { clearInterval(timer); if (accepting) call(null); }
+      }, step);
+    }
+    function nextRound() {
+      round++;
+      why.className = 'ctf-arc-why'; why.innerHTML = '';
+      if (round >= items.length) return finish();
+      setHud();
+      showCard(items[round]);
+      controls.style.visibility = '';
+      accepting = true;
+      startTimer();
+    }
+    function call(saidAI) {
+      if (!accepting) return;
+      accepting = false; clearInterval(timer);
+      var it = items[round];
+      var card = stage.querySelector('.ctf-arc-card');
+      var right = saidAI !== null && saidAI === !!it.ai;
+      if (right) {
+        streak++; best = Math.max(best, streak);
+        var pts = 10 * (streak >= 3 ? 2 : 1);
+        score += pts;
+        if (card) { card.classList.add('win'); card.insertAdjacentHTML('beforeend', '<span class="ctf-arc-pts">+' + pts + '</span>'); }
+        why.className = 'ctf-arc-why show good';
+        why.innerHTML = '<b>' + (it.ai ? '🧠 Yes — AI!' : '⚙️ Right — just a machine!') + '</b> ' + esc(it.why || '');
+      } else {
+        streak = 0;
+        if (card) card.classList.add('lose');
+        why.className = 'ctf-arc-why show bad';
+        why.innerHTML = '<b>' + (saidAI === null ? '⏰ Time\'s up!' : (it.ai ? '🧠 It\'s actually AI!' : '⚙️ It\'s just a machine!')) + '</b> ' + esc(it.why || '');
+      }
+      setHud();
+      controls.style.visibility = 'hidden';
+      setTimeout(nextRound, right ? 1400 : 2300);
+    }
+    function finish() {
+      clearInterval(timer);
+      controls.style.visibility = 'hidden';
+      timerEl.style.width = '0%';
+      var max = items.length * 10 * 2, pct = score / (items.length * 10);
+      var rank = pct >= 1.4 ? '👑 AI BOSS' : pct >= 1 ? '🕵️ AI Detective' : pct >= .6 ? '🔍 AI Spotter' : '🌱 AI Explorer';
+      stage.innerHTML = '<div class="ctf-arc-end"><div class="ctf-arc-rank">' + rank + '</div>' +
+        '<div class="ctf-arc-final">⭐ ' + score + ' points · best streak 🔥' + best + '</div>' +
+        '<p class="ctf-arc-takeaway">' + esc(cfg.takeaway || 'If it LEARNS from examples and makes guesses — it\'s AI. If it follows the same fixed steps every time — it\'s just a machine.') + '</p>' +
+        '<button class="ctf-btn ctf-arc-again">↺ Play again</button></div>';
+      stage.querySelector('.ctf-arc-again').addEventListener('click', function () {
+        round = -1; score = 0; streak = 0; best = 0; setHud(); nextRound();
+      });
+      reveal(done, (cfg.complete && cfg.complete.progress) || 100); markDone(id);
+    }
+    box.querySelector('.ctf-arc-start').addEventListener('click', nextRound);
+    yesBtn.addEventListener('click', function () { call(true); });
+    noBtn.addEventListener('click', function () { call(false); });
+    setHud();
+  }
+
   // ---- registry + boot ----------------------------------------------------
-  var RENDERERS = { poll: renderPoll, sort: renderSort, choice: renderChoice, nextword: renderNextWord, attention: renderAttention, quiz: renderQuiz, timeline: renderTimeline, reveal: renderReveal, slider: renderSlider, trainer: renderTrainer, match: renderMatch, draw: renderDraw, wordchain: renderWordChain, order: renderOrder, neuron: renderNeuron };
+  var RENDERERS = { poll: renderPoll, sort: renderSort, choice: renderChoice, nextword: renderNextWord, attention: renderAttention, quiz: renderQuiz, timeline: renderTimeline, reveal: renderReveal, slider: renderSlider, trainer: renderTrainer, match: renderMatch, draw: renderDraw, wordchain: renderWordChain, order: renderOrder, neuron: renderNeuron, arcade: renderArcade };
 
   function hydrate(node) {
     if (node.getAttribute('data-ctf-ready')) return;

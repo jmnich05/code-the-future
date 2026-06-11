@@ -8,7 +8,7 @@
 // One beat = one focused screen. Beat types: title | text | quote | list |
 // image | widget | complete | capstone.  Node 18+, no deps.
 // ==========================================================================
-import { readFileSync, writeFileSync, mkdirSync } from "node:fs";
+import { readFileSync, writeFileSync, mkdirSync, existsSync } from "node:fs";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -22,7 +22,11 @@ const IMG = {
   galaxy: { src: "../assets/img/galaxy-nasa.jpg", cap: "<b>The universe is vast.</b> Your generation will explore it with AI as a tool.", credit: "NASA · public domain" },
   ada: { src: "../assets/img/ada-lovelace.jpg", cap: "<b>Ada Lovelace</b> — wrote the first computer program in the 1840s, a century before computers existed.", credit: "Public domain · Wikimedia Commons" },
   rover: { src: "../assets/img/mars-rover-nasa.jpg", cap: "<b>A robot on Mars.</b> NASA's Curiosity rover took this selfie — built by people who once sat where you are.", credit: "NASA/JPL-Caltech · public domain" },
-  deepfield: { src: "../assets/img/deep-field-nasa.jpg", cap: "<b>Thousands of galaxies</b> in one tiny patch of sky — discovery is just getting started.", credit: "NASA/ESA Hubble · public domain" }
+  deepfield: { src: "../assets/img/deep-field-nasa.jpg", cap: "<b>Thousands of galaxies</b> in one tiny patch of sky — discovery is just getting started.", credit: "NASA/ESA Hubble · public domain" },
+  eliza: { src: "../assets/img/eliza.png", cap: "<b>ELIZA (1966)</b> — the first chatbot! People typed to it like a friend… but it was just clever pattern tricks.", credit: "Public domain · Wikimedia Commons" },
+  shakey: { src: "../assets/img/shakey.jpg", cap: "<b>Shakey (1969)</b> — the first robot that could look around and plan its own moves. (Yes, it shook a lot.)", credit: "Photo: The wub · CC BY-SA 4.0" },
+  deepblue: { src: "../assets/img/deep-blue.jpg", cap: "<b>Deep Blue (1997)</b> — the chess computer that beat the human world champion. This is one of its towers.", credit: "Photo: James the photographer · CC BY 2.0" },
+  perceptron: { src: "../assets/img/perceptron.png", cap: "<b>The Perceptron (1958)</b> — the very first “pretend brain” machine. Every neural network today is its grandkid.", credit: "Operator's manual · public domain" }
 };
 
 const TRACKS = {
@@ -30,7 +34,7 @@ const TRACKS = {
     md: "type-a-kids.md", out: "kids.json", cls: "track-kids",
     title: "What Is AI?", eyebrow: "Module 1 · Ages 8–11", unitWord: "Mission",
     capstone: { href: "../capstone/kids-big-mission.html", eyebrow: "🚀 The Big Mission", h: "Now use AI yourself", p: "You earned all 12 badges. Time for the best part — talk to a real AI.", btn: "Start the Big Mission →" },
-    figs: { "Is AI Like a Brain": ["neuron"], "The Story of AI": ["ada", "turing"], "What AI Is Great At": ["eniac"], "The Future Is Yours": ["rover", "galaxy"], "You Did It": ["deepfield"] }
+    figs: { "Is AI Like a Brain": ["neuron", "perceptron"], "The Story of AI": ["ada", "turing", "eliza", "shakey", "deepblue"], "What AI Is Great At": ["eniac"], "The Future Is Yours": ["rover", "galaxy"], "You Did It": ["deepfield"] }
   },
   adults: {
     md: "type-b-adults.md", out: "adults.json", cls: "track-adults",
@@ -40,12 +44,33 @@ const TRACKS = {
   }
 };
 
-// original concept art (assets/art/*.svg) — one per mission, by number
+// mission-opening art — one per mission, by number.
+// kids: generated scene PNGs (assets/art/mission-N.png) with a caption tying
+// the picture to the mission's idea; falls back to the old abstract SVGs if a
+// PNG hasn't been generated yet (run: node scripts/gen-mission-art.mjs)
 const ART_MAP = {
   kids: { 1: "welcome", 2: "learns", 3: "patterns", 4: "training", 5: "seeing", 6: "words", 7: "attention", 8: "brain-net", 9: "timeline", 10: "trust", 11: "future", 12: "trophy" },
   adults: { 1: "welcome", 2: "learns", 3: "patterns", 4: "timeline", 5: "timeline", 6: "future", 7: "brain-net", 8: "words", 9: "seeing", 10: "training", 11: "trust", 12: "trophy" }
 };
+const ART_CAPTIONS = {
+  1: "You + your AI teammate. Building the future is a team sport — that's the whole idea of this camp.",
+  2: "AI is a guessing machine: show it stuff, and it guesses what it's looking at.",
+  3: "Your brain saw lots of different dogs and found the pattern all by itself. Nobody handed you a dog rulebook!",
+  4: "Training = showing a computer LOTS of examples until it spots the pattern — just like you did.",
+  5: "To a computer, a picture isn't a cat. It's thousands of tiny colored squares called pixels.",
+  6: "AI reads by guessing the next word, over and over, crazy fast. That's really how it works.",
+  7: "The attention trick: shine a spotlight on the words that matter most, ignore the rest.",
+  8: "A neural network is a pretend brain made of math — inspired by yours, but not the same.",
+  9: "AI went from filling a whole room to fitting in your pocket. This mission is that story.",
+  10: "AI is amazing at patterns — but feelings, fairness, and judgment? That's YOUR superpower.",
+  11: "The future needs builders who understand AI. After this mission, that's you.",
+  12: "Every badge, every mission — you earned this one. Final mission!"
+};
 function artBeat(track, n) {
+  if (track === "kids" && existsSync(join(MOD, "assets", "art", `mission-${n}.jpg`))) {
+    const cap = ART_CAPTIONS[n] ? `<p class="art-cap">${ART_CAPTIONS[n]}</p>` : "";
+    return { type: "image", html: `<div class="lesson-art"><img src="../assets/art/mission-${n}.jpg" alt="" loading="lazy">${cap}</div>` };
+  }
   const name = ART_MAP[track] && ART_MAP[track][n];
   return name ? { type: "image", html: `<div class="lesson-art"><img src="../assets/art/${name}.svg" alt="" loading="lazy"></div>` } : null;
 }
