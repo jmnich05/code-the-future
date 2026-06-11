@@ -11,7 +11,7 @@
 //   RESEND_API_KEY + NOTIFY_EMAIL — email via resend.com (optional)
 // Unset channels are skipped silently, so this never breaks chat.
 // (env vars are baked into the function at build time — touch this file to
-//  force a rebuild whenever NOTIFY_* values change)
+//  force a rebuild whenever NOTIFY_*/SLACK_* values change)
 // ==========================================================================
 
 export default async (req) => {
