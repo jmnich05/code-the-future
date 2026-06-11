@@ -35,6 +35,7 @@ export default async (req) => {
 
   const sent = { slack: false, email: false };
 
+  // Slack path 1: incoming webhook (simplest — never expires)
   if (process.env.SLACK_WEBHOOK_URL) {
     try {
       const r = await fetch(process.env.SLACK_WEBHOOK_URL, {
@@ -43,6 +44,19 @@ export default async (req) => {
         body: JSON.stringify({ text })
       });
       sent.slack = r.ok;
+    } catch {}
+  }
+  // Slack path 2: bot token + channel (needs chat:write scope, bot in channel,
+  // and a NON-rotating token — xoxb-... that doesn't expire)
+  else if (process.env.SLACK_BOT_TOKEN && process.env.SLACK_CHANNEL) {
+    try {
+      const r = await fetch("https://slack.com/api/chat.postMessage", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "Authorization": "Bearer " + process.env.SLACK_BOT_TOKEN },
+        body: JSON.stringify({ channel: process.env.SLACK_CHANNEL, text })
+      });
+      const j = await r.json().catch(() => ({}));
+      sent.slack = !!j.ok;
     } catch {}
   }
 
