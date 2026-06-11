@@ -46,8 +46,10 @@ h1,h2,h3{ font-family:var(--font-display); color:var(--ink-900); letter-spacing:
   color:var(--ink-900); background:var(--white); transition:border-color .14s, box-shadow .14s; }
 .input:focus{ outline:none; border-color:var(--blue-600); box-shadow:0 0 0 4px rgba(61,116,255,.25); }
 
-/* avatar */
-.avatar{ width:160px; height:160px; border-radius:28px; overflow:hidden; box-shadow:var(--shadow-md); }
+/* avatar — inline-block so width/height apply even outside flex contexts
+   (spans are inline by default and ignore sizing, which let roster avatars
+   render at arbitrary sizes and overflow their panel) */
+.avatar{ display:inline-block; vertical-align:middle; flex:none; width:160px; height:160px; border-radius:28px; overflow:hidden; box-shadow:var(--shadow-md); }
 .avatar.lg{ width:220px; height:220px; }
 .avatar.sm{ width:48px; height:48px; border-radius:12px; }
 .ctf-avatar-svg{ display:block; width:100%; height:100%; }
