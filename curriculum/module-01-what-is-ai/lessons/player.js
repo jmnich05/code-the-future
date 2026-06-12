@@ -24,12 +24,21 @@
     { n: 3, first: 9, last: 12, offset: 4 }
   ];
   var paceBypass = false, paceAnchor = null;
+  // LOCAL date, not toISOString (UTC) — an evening first-open used to stamp
+  // tomorrow's date and lock Part 1 until the next day
+  function localDate() {
+    var d = new Date();
+    return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0");
+  }
   try {
     if (new URLSearchParams(location.search).get("unlock") === "all") localStorage.setItem("ctf:unlockall", "1");
     paceBypass = localStorage.getItem("ctf:unlockall") === "1";
     paceAnchor = localStorage.getItem("ctf:firstplay");
-    if (!paceAnchor) { paceAnchor = new Date().toISOString().slice(0, 10); localStorage.setItem("ctf:firstplay", paceAnchor); }
-  } catch (e) { paceAnchor = new Date().toISOString().slice(0, 10); }
+    if (!paceAnchor || paceAnchor > localDate()) {  // self-heal future-dated anchors
+      paceAnchor = localDate();
+      localStorage.setItem("ctf:firstplay", paceAnchor);
+    }
+  } catch (e) { paceAnchor = localDate(); }
   function stepMission(st) {
     if (!st || !st.m) return null;
     if (st.m.n) return st.m.n;
@@ -55,9 +64,16 @@
     }
     return 0;
   }
+  var bootTarget = null;  // saved position the boot clamp squashed (if any)
   function reclampForLocks() {
     var mn = stepMission(STEPS[pos]);
     if (mn && isLocked(mn)) { pos = lastUnlockedIndex(); render(); }
+    else if (bootTarget != null) {
+      // the cohort anchor arrived and may have unlocked what boot clamped —
+      // give the kid their real spot back
+      var tm = stepMission(STEPS[bootTarget]);
+      if (!tm || !isLocked(tm)) { pos = bootTarget; bootTarget = null; render(); }
+    }
   }
   function showLock(part) {
     stopSpeaking();
@@ -461,7 +477,7 @@
     furthest = Math.max(isNaN(savedMax) ? 0 : savedMax, isNaN(saved) ? 0 : Math.max(saved, 0));
     if (furthest >= STEPS.length) furthest = STEPS.length - 1;
     var mn0 = stepMission(STEPS[pos]);
-    if (mn0 && isLocked(mn0)) pos = lastUnlockedIndex();
+    if (mn0 && isLocked(mn0)) { bootTarget = pos; pos = lastUnlockedIndex(); }
     render();
     // Supabase may finish initializing after this script runs:
     if (db()) onDbReady(); else window.addEventListener("ctfdb:ready", onDbReady, { once: true });

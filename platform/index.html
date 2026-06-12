@@ -103,6 +103,25 @@
   .track b{ display:block; color:var(--ink-900); font-family:var(--font-display); font-size:1.1rem; }
   .track span{ font-size:.9rem; color:var(--ink-500); }
   footer{ text-align:center; color:var(--ink-400); font-family:var(--font-mono); font-size:11px; letter-spacing:.08em; padding:0 0 40px; }
+
+  /* ---- mobile (<=640px) ---- */
+  @media (max-width:640px){
+    .hero{ min-height:72vh; }
+    .hero .inner{ padding:14px 16px 32px; }
+    .hero nav.top{ flex-wrap:wrap; gap:10px; }
+    .hero .brand{ font-size:1.02rem; gap:7px; white-space:nowrap; }
+    .hero .brand img{ width:26px; height:26px; }
+    .me-dock{ margin-left:auto; padding:5px 8px 4px; border-radius:14px; gap:3px; }
+    .me-dock .avatar{ width:44px; height:44px; border-radius:11px; }
+    .me-dock .dock-name{ font-size:.6rem; max-width:56px; }
+    .hero nav.top .links{ order:3; width:100%; margin-left:0; gap:6px; flex-wrap:wrap; }
+    .hero nav.top .links a{ padding:7px 13px; font-size:.84rem; }
+    .remix-tag{ top:auto; bottom:14px; right:14px; }
+    .hero .headline{ margin-top:14px; }
+    .studio{ padding:24px 18px; }
+    .studio .gen{ width:100%; }
+    .online{ padding:12px 14px 0; }
+  }
 </style>
 </head>
 <body>

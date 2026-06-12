@@ -241,3 +241,29 @@ body{ margin:0; background:var(--ink-50); color:var(--ink-700); font-family:var(
 .lesson-art{ flex-direction:column; gap:0; }
 .lesson-art .art-cap{ margin:18px auto 0; max-width:56ch; text-align:center; font-size:1.05rem; line-height:1.55; color:var(--ink-700); font-weight:600; }
 .lesson-art img{ border-radius:22px; box-shadow:var(--shadow-lg); }
+
+/* ---- mobile player (<=640px): everything on one thumb-friendly row ------- */
+@media (max-width:640px){
+  .p-top{ padding:10px 12px 0; gap:8px; }
+  .p-exit{ font-size:11px; white-space:nowrap; padding:5px 7px; }
+  .p-map{ font-size:10.5px; padding:5px 9px; white-space:nowrap; }
+  .p-label{ font-size:10px; min-width:0; flex:1; }
+  .p-track{ flex:none; width:54px; margin-left:0; }
+
+  .beat h2{ font-size:1.7rem; }
+  .beat.t-title h2{ font-size:2rem; }
+  .beat p{ font-size:1.15rem; }
+  .beat li{ font-size:1.1rem; padding-left:28px; }
+  .p-stage{ padding:14px 16px; }
+
+  .p-bottom{ padding:10px 10px calc(10px + env(safe-area-inset-bottom)); gap:6px; }
+  .p-back{ padding:10px 8px; font-size:.9rem; white-space:nowrap; flex:none; }
+  .p-audio{ max-width:108px; font-size:.68rem; line-height:1.2; padding:8px 10px; }
+  .p-audio small{ display:none; }
+  .p-music{ flex:none; }
+  .p-hint{ display:none; }
+  .p-next{ flex:1; min-width:0; white-space:nowrap; font-size:1rem; padding:13px 14px; text-align:center; }
+
+  .music-dock{ width:min(340px, calc(100vw - 20px)); }
+  .badge-medal img,.badge-medal svg{ width:120px; height:120px; }
+}
