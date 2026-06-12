@@ -3,6 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" type="image/svg+xml" href="/platform/assets/logo-icon-tile.svg">
+<link rel="apple-touch-icon" href="/platform/assets/touch-icon.png">
 <title>Code the Future — Create your character</title>
 <link rel="stylesheet" href="app.css">
 <style>
@@ -77,7 +79,7 @@
     var st = document.getElementById("status");
     if (window.CTFDB && window.CTFDB.enabled) { await window.CTFDB.updateProfile(profile); window.CTFDB.logEvent("onboarded", {}); }
     else { st.textContent = "Saved on this device (cloud sync will catch up)."; }
-    location.href = "profile.html";
+    location.href = "index.html";   // home: character dock + "Start Mission 1" = the obvious next step
   };
 })();
 </script>

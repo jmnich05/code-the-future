@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+Disallow: /platform/
+Disallow: /curriculum/
+Disallow: /admin/
+Disallow: /docs/
+
+Sitemap: https://codethefuture.net/sitemap.xml
