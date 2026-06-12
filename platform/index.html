@@ -18,9 +18,18 @@
   .hero .brand{ display:flex; align-items:center; gap:10px; font-family:var(--font-display); font-weight:700; font-size:1.2rem; text-shadow:0 2px 12px rgba(0,0,0,.4); }
   .hero .brand img{ width:36px; height:36px; display:block; filter:drop-shadow(0 2px 8px rgba(0,0,0,.5)); }
   .hero .brand .accent{ color:var(--teal-400); }
-  .hero nav.top .links{ margin-left:auto; display:flex; gap:8px; }
+  .hero nav.top .links{ margin-left:auto; display:flex; gap:8px; align-items:center; }
   .hero nav.top .links a{ color:#fff; text-decoration:none; font-weight:700; font-size:.95rem; background:rgba(7,12,26,.45); border:1px solid rgba(255,255,255,.25); border-radius:999px; padding:9px 18px; backdrop-filter:blur(8px); }
   .hero nav.top .links a:hover{ background:rgba(42,95,240,.65); }
+
+  /* game-style character dock — your buddy lives in the top right */
+  .me-dock{ display:flex; flex-direction:column; align-items:center; gap:5px; text-decoration:none; margin-left:10px;
+    background:rgba(7,12,26,.5); border:1.5px solid rgba(255,255,255,.3); border-radius:18px; padding:8px 12px 7px; backdrop-filter:blur(8px);
+    transition:transform .15s var(--ease-spring), border-color .15s; }
+  .me-dock:hover{ transform:translateY(-3px) scale(1.03); border-color:var(--teal-400); }
+  .me-dock .avatar{ width:72px; height:72px; border-radius:16px; box-shadow:0 8px 22px rgba(0,0,0,.4); }
+  .me-dock .dock-name{ font-family:var(--font-display); font-weight:700; font-size:.78rem; color:#fff; max-width:84px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; text-shadow:0 1px 6px rgba(0,0,0,.5); }
+  @media (max-width:700px){ .me-dock .avatar{ width:56px; height:56px; } }
   .hero .headline{ margin-top:clamp(20px, 5vh, 56px); text-align:center; padding-bottom:8px; }
   .hero .eyebrow{ color:#8DEAEF; text-shadow:0 1px 8px rgba(0,0,0,.5); }
   .hero h1{ color:#fff; font-size:clamp(2.6rem, 7vw, 5rem); line-height:.98; letter-spacing:-.03em; margin:.1em 0; text-shadow:0 4px 26px rgba(0,0,0,.55); }
@@ -105,7 +114,9 @@
   <div class="inner">
     <nav class="top">
       <span class="brand"><img src="assets/logo-icon-dark.svg" alt="Code the Future logo">Code the <span class="accent">Future</span></span>
-      <span class="links"><a href="board.html">Board</a><a href="profile.html">Profile</a><a href="../curriculum/module-01-what-is-ai/lessons/player.html?track=kids">Lessons</a></span>
+      <span class="links"><a href="board.html">Board</a><a href="profile.html">Profile</a><a href="../curriculum/module-01-what-is-ai/lessons/player.html?track=kids">Lessons</a>
+        <a class="me-dock" href="profile.html" title="Your character"><span class="avatar" id="dockAv"></span><span class="dock-name" id="dockName">Explorer</span></a>
+      </span>
     </nav>
     <div class="headline">
       <p class="eyebrow">SUMMER 2026 · AI CAMP FOR KIDS</p>
@@ -266,10 +277,15 @@
   };
 
   // ---- profile / progress / cohort / presence ----
-  document.getElementById("homeAv").innerHTML = A.render(A.DEFAULT);
+  function setMe(avatar, name){
+    var svg = A.render(avatar || A.DEFAULT);
+    document.getElementById("homeAv").innerHTML = svg;
+    document.getElementById("dockAv").innerHTML = svg;
+    if (name){ document.getElementById("homeName").textContent = name; document.getElementById("dockName").textContent = name; }
+  }
+  setMe(null, null);
   try { var lp = JSON.parse(localStorage.getItem("ctf:profile")||"null");
-    if (lp){ document.getElementById("homeName").textContent = lp.display_name||"Explorer";
-      if (lp.avatar) document.getElementById("homeAv").innerHTML = A.render(lp.avatar); } } catch(e){}
+    if (lp) setMe(lp.avatar, lp.display_name || "Explorer"); } catch(e){}
 
   function renderOnline(online, myId, cohortName){
     var el = document.getElementById("online");
@@ -293,8 +309,8 @@
     var p = await D.getProfile();
     if (p && !p.onboarded){ location.href = "onboarding.html"; return; }
     if (p){
-      document.getElementById("homeName").textContent = p.display_name || "Explorer";
-      if (p.avatar && Object.keys(p.avatar).length) document.getElementById("homeAv").innerHTML = A.render(p.avatar);
+      setMe(p.avatar && Object.keys(p.avatar).length ? p.avatar : null, p.display_name || "Explorer");
+      try { localStorage.setItem("ctf:profile", JSON.stringify({ display_name: p.display_name, avatar: p.avatar })); } catch(e){}
     }
     var badges = await D.listBadges();
     document.getElementById("homeBadges").textContent = badges.length + (badges.length===1?" badge":" badges") + " earned";

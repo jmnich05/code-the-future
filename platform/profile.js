@@ -9,11 +9,22 @@
   var CAT = [
     { key: "bg", label: "Background", type: "bg" },
     { key: "color", label: "Color", type: "color" },
-    { key: "face", label: "Face", type: "part" },
+    { key: "hair", label: "Hair", type: "part" },
+    { key: "face", label: "Eyes", type: "part" },
+    { key: "brows", label: "Brows", type: "part" },
+    { key: "mouth", label: "Mouth", type: "part" },
     { key: "acc", label: "Gear", type: "part" }
   ];
 
-  function opts(cat) { return cat.key === "bg" ? A.BG : cat.key === "color" ? A.COLORS : cat.key === "face" ? A.FACES : A.ACCS; }
+  function opts(cat) {
+    return cat.key === "bg" ? A.BG
+      : cat.key === "color" ? A.COLORS
+      : cat.key === "hair" ? A.HAIR
+      : cat.key === "face" ? A.FACES
+      : cat.key === "brows" ? A.BROWS
+      : cat.key === "mouth" ? A.MOUTHS
+      : A.ACCS;
+  }
 
   function mount(o) {
     var preview = o.preview, picker = o.picker;

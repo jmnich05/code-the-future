@@ -83,6 +83,11 @@ h1,h2,h3{ font-family:var(--font-display); color:var(--ink-900); letter-spacing:
 /* hover = excited wiggle (profile, bubbles, roster) */
 .avatar:hover .av-all, .obubble:hover .av-all, .member:hover .av-all{ animation:av-excited .55s ease-in-out infinite; }
 @keyframes av-excited{ 0%,100%{ transform:translateY(0) rotate(0) } 25%{ transform:translateY(-6px) rotate(-4deg) } 75%{ transform:translateY(-6px) rotate(4deg) } }
+/* full-body v3: the right arm waves hello on hover */
+.ctf-avatar-svg .av-arm-r{ transform-box:fill-box; transform-origin:30% 15%; }
+.avatar:hover .av-arm-r, .obubble:hover .av-arm-r, .member:hover .av-arm-r, .me-dock:hover .av-arm-r{ animation:av-wave .6s ease-in-out infinite; }
+@keyframes av-wave{ 0%,100%{ transform:rotate(0) } 40%{ transform:rotate(-38deg) } 70%{ transform:rotate(-18deg) } }
+@media (prefers-reduced-motion: reduce){ .avatar:hover .av-arm-r, .obubble:hover .av-arm-r, .member:hover .av-arm-r, .me-dock:hover .av-arm-r{ animation:none; } }
 @media (prefers-reduced-motion: reduce){
   .ctf-avatar-svg .av-all, .ctf-avatar-svg .av-eyes,
   .avatar:hover .av-all, .obubble:hover .av-all, .member:hover .av-all{ animation:none; }
