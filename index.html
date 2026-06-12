@@ -81,6 +81,42 @@
   .hero-ctas{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:26px}
   .hero-meta{display:flex;gap:22px;flex-wrap:wrap;font-size:13.5px;color:rgba(255,255,255,.72)}
   .hero-meta b{color:#fff;font-family:var(--display)}
+  /* ---- live sandbox (hero) ---- */
+  .sandbox{background:rgba(255,255,255,.97);border-radius:22px;box-shadow:0 30px 80px rgba(0,0,0,.5);padding:16px 16px 14px;color:var(--ink)}
+  .sb-kick{display:block;font-family:var(--mono);font-size:10.5px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--coral);margin-bottom:9px}
+  .sb-tabs{display:flex;gap:8px;margin-bottom:12px}
+  .sb-tab{flex:1;font-family:var(--display);font-weight:600;font-size:13.5px;cursor:pointer;border:1.5px solid var(--line);background:#fff;border-radius:999px;padding:8px 10px;color:rgba(12,19,34,.65);transition:all .15s}
+  .sb-tab.active{background:linear-gradient(120deg,var(--blue),var(--blue-bright));border-color:transparent;color:#fff;box-shadow:0 6px 18px rgba(42,95,240,.35)}
+  #sbCanvas{width:100%;height:auto;display:block;background:#fff;border:1.5px solid var(--line);border-radius:14px;cursor:crosshair;touch-action:none}
+  .sb-tools{display:flex;align-items:center;gap:8px;margin-top:10px}
+  .sb-color{width:30px;height:30px;border-radius:50%;border:2.5px solid transparent;cursor:pointer;flex:none}
+  .sb-color.sel{border-color:var(--teal-bright);box-shadow:0 0 0 2px #fff inset}
+  .sb-tool{width:34px;height:34px;border-radius:10px;border:1.5px solid var(--line);background:#fff;font-size:15px;cursor:pointer;flex:none}
+  .sb-go{flex:1;font-family:var(--display);font-weight:700;font-size:13.5px;cursor:pointer;color:#fff;border:none;border-radius:999px;padding:10px 8px;background:linear-gradient(120deg,var(--coral),#FF8A38);box-shadow:0 6px 18px rgba(255,90,56,.35)}
+  .sb-go[disabled]{opacity:.55;cursor:default}
+  .sb-status{margin-top:10px;font-size:13px;line-height:1.5;color:rgba(12,19,34,.7);min-height:38px}
+  .sb-status b{color:var(--ink)}
+  .sb-status a{color:var(--blue);font-weight:700}
+  /* mini AI-or-Not */
+  .sb-arc{min-height:300px;display:flex;flex-direction:column}
+  .sb-arc .q{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:6px}
+  .sb-arc .em{font-size:54px;line-height:1.1}
+  .sb-arc .lb{font-family:var(--display);font-weight:700;font-size:16px;max-width:30ch}
+  .sb-arc .hud{font-family:var(--mono);font-size:11px;color:rgba(12,19,34,.55);text-align:center;margin-bottom:6px}
+  .sb-arc .calls{display:flex;gap:8px;margin-top:10px}
+  .sb-arc .call{flex:1;font-family:var(--display);font-weight:700;font-size:14px;cursor:pointer;color:#fff;border:none;border-radius:999px;padding:12px 8px}
+  .sb-arc .call.yes{background:linear-gradient(120deg,var(--blue),var(--teal-bright))}
+  .sb-arc .call.no{background:#3a4358}
+  .sb-arc .why{min-height:40px;font-size:12.5px;line-height:1.45;margin-top:9px;color:rgba(12,19,34,.7);text-align:center}
+  .sb-arc .endcard{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:8px}
+  .sb-arc .endcard .rank{font-family:var(--display);font-weight:700;font-size:22px}
+  .sb-arc .again{font:inherit;font-weight:700;cursor:pointer;color:var(--blue);background:none;border:none}
+
+  /* ---- founders film section ---- */
+  .filmsec{background:var(--navy-deep);color:#fff;padding:88px 0}
+  .filmsec .film{max-width:860px;margin:0 auto}
+  .filmsec .sec-head p{color:rgba(255,255,255,.72)}
+
   /* video panel */
   .film{position:relative;border-radius:22px;overflow:hidden;border:1px solid rgba(255,255,255,.18);box-shadow:0 30px 80px rgba(0,0,0,.5);aspect-ratio:16/9;background:#0a1226}
   .film iframe,.film video{position:absolute;inset:0;width:100%;height:100%;border:0}
@@ -233,6 +269,10 @@
     .lead .row2{grid-template-columns:1fr}
     form.lead{padding:20px 16px}
     .cta-row .btn-big{width:100%;justify-content:center}
+    .sandbox{padding:12px 12px 11px}
+    .sb-tab{font-size:12px;padding:7px 6px}
+    .sb-go{font-size:12.5px}
+    .filmsec{padding:56px 0}
   }
 </style>
 </head>
@@ -271,14 +311,31 @@
         <span><b>Small groups</b> at the public library</span>
       </div>
     </div>
-    <div class="film" id="film">
-      <!-- VIDEO SLOT — when Jon's film is ready, set FILM_URL in the script
-           at the bottom of this file (YouTube embed URL or hosted .mp4). -->
-      <div class="film-poster"></div>
-      <div class="film-shade"></div>
-      <div class="film-play">
-        <div class="ring">▶</div>
-        <span>The film — coming soon</span>
+    <!-- live sandbox: real platform activities, playable before signing up -->
+    <div class="sandbox reveal in" id="sandbox">
+      <div class="sb-head">
+        <span class="sb-kick">Try it right now — no sign-up</span>
+        <div class="sb-tabs">
+          <button class="sb-tab active" data-tab="draw">🎨 Draw for a real AI</button>
+          <button class="sb-tab" data-tab="arcade">🕹️ AI or Not?</button>
+        </div>
+      </div>
+
+      <div class="sb-pane" id="paneDraw">
+        <canvas id="sbCanvas" width="480" height="300"></canvas>
+        <div class="sb-tools">
+          <button class="sb-color sel" data-c="#0C1322" style="background:#0C1322"></button>
+          <button class="sb-color" data-c="#2A5FF0" style="background:#2A5FF0"></button>
+          <button class="sb-color" data-c="#FF5A38" style="background:#FF5A38"></button>
+          <button class="sb-color" data-c="#FFB320" style="background:#FFB320"></button>
+          <button class="sb-tool" id="sbClear">🗑️</button>
+          <button class="sb-go" id="sbGuess">🤖 Ask the AI to guess</button>
+        </div>
+        <div class="sb-status" id="sbStatus">Draw anything — a real AI will look at your pixels and guess. This is Mission 5.</div>
+      </div>
+
+      <div class="sb-pane" id="paneArcade" style="display:none">
+        <div class="sb-arc" id="sbArc"></div>
       </div>
     </div>
   </div>
@@ -292,6 +349,26 @@
     <div class="t"><span class="ic">⚡</span><span><b>Real AI, really used</b>Not videos about AI — the actual tools</span></div>
   </div>
 </div>
+
+<!-- ============ FOUNDERS FILM ============ -->
+<section class="filmsec" id="filmsec">
+  <div class="wrap">
+    <div class="sec-head reveal" style="margin-left:auto;margin-right:auto;text-align:center;max-width:560px">
+      <span class="kicker" style="color:var(--teal-bright);justify-content:center">Meet the founders</span>
+      <h2>Why we built this for Louisville kids.</h2>
+    </div>
+    <div class="film reveal" id="film">
+      <!-- VIDEO SLOT — when Jon's film is ready, set FILM_URL in the script
+           at the bottom of this file (YouTube embed URL or hosted .mp4). -->
+      <div class="film-poster"></div>
+      <div class="film-shade"></div>
+      <div class="film-play">
+        <div class="ring">▶</div>
+        <span>The film — coming soon</span>
+      </div>
+    </div>
+  </div>
+</section>
 
 <section class="why" id="why">
   <div class="wrap">
@@ -318,8 +395,8 @@
       </div>
     </div>
     <div class="creed reveal">
-      <div class="q">"Code handles the loop. AI handles the judgment inside the loop. <em>Humans handle the exceptions.</em>"</div>
-      <div class="tag">The mental model we teach</div>
+      <div class="q">"The future isn't something that happens to kids. It's something they get to <em>build</em> — and AI is the most powerful building tool a generation has ever been handed."</div>
+      <div class="tag">Why we exist</div>
     </div>
   </div>
 </section>
@@ -524,6 +601,114 @@
     d.innerHTML = window.CTFAvatar ? window.CTFAvatar.render(c) : "";
     row.appendChild(d);
   });
+
+  // ---- hero sandbox: real platform activities, free taste ----
+  (function(){
+    var GUESS_CAP = 3, GUESS_KEY = "ctf:demo:guesses";
+    function guessesUsed(){ try { return parseInt(localStorage.getItem(GUESS_KEY)||"0",10)||0; } catch(e){ return 0; } }
+
+    // tabs
+    document.querySelectorAll(".sb-tab").forEach(function(t){
+      t.addEventListener("click", function(){
+        document.querySelectorAll(".sb-tab").forEach(function(x){ x.classList.remove("active"); });
+        t.classList.add("active");
+        document.getElementById("paneDraw").style.display = t.dataset.tab === "draw" ? "" : "none";
+        document.getElementById("paneArcade").style.display = t.dataset.tab === "arcade" ? "" : "none";
+        if (t.dataset.tab === "arcade") startArc();
+      });
+    });
+
+    // draw pad
+    var canvas = document.getElementById("sbCanvas"), g = canvas.getContext("2d");
+    g.fillStyle = "#FFFFFF"; g.fillRect(0,0,canvas.width,canvas.height);
+    g.lineCap = "round"; g.lineJoin = "round";
+    var color = "#0C1322", drawing = false, last = null, strokes = 0;
+    function pos(e){
+      var r = canvas.getBoundingClientRect();
+      var t = e.touches ? e.touches[0] : e;
+      return { x: (t.clientX - r.left) * (canvas.width / r.width), y: (t.clientY - r.top) * (canvas.height / r.height) };
+    }
+    function down(e){ drawing = true; last = pos(e); strokes++; e.preventDefault(); }
+    function move(e){
+      if (!drawing) return;
+      var p = pos(e);
+      g.strokeStyle = color; g.lineWidth = 7;
+      g.beginPath(); g.moveTo(last.x, last.y); g.lineTo(p.x, p.y); g.stroke();
+      last = p; e.preventDefault();
+    }
+    canvas.addEventListener("mousedown", down); canvas.addEventListener("mousemove", move); window.addEventListener("mouseup", function(){ drawing = false; });
+    canvas.addEventListener("touchstart", down, { passive:false }); canvas.addEventListener("touchmove", move, { passive:false }); canvas.addEventListener("touchend", function(){ drawing = false; });
+    document.querySelectorAll(".sb-color").forEach(function(b){
+      b.addEventListener("click", function(){ color = b.dataset.c; document.querySelectorAll(".sb-color").forEach(function(x){ x.classList.remove("sel"); }); b.classList.add("sel"); });
+    });
+    document.getElementById("sbClear").addEventListener("click", function(){ g.fillStyle = "#FFFFFF"; g.fillRect(0,0,canvas.width,canvas.height); strokes = 0; });
+
+    var status = document.getElementById("sbStatus"), goBtn = document.getElementById("sbGuess");
+    function capped(){
+      goBtn.disabled = true; goBtn.textContent = "🤖 Demo complete";
+      status.innerHTML = "<b>That's the free taste!</b> Your kid gets the full version — 12 missions of this. <a href=\"#cohorts\">Reserve a spot →</a>";
+    }
+    if (guessesUsed() >= GUESS_CAP) capped();
+    goBtn.addEventListener("click", function(){
+      if (strokes < 1){ status.innerHTML = "Draw something first! 🎨"; return; }
+      goBtn.disabled = true; goBtn.textContent = "🤖 Looking at your art…";
+      fetch("/api/ai", { method:"POST", headers:{ "Content-Type":"application/json" },
+        body: JSON.stringify({ mode:"kids", image: canvas.toDataURL("image/jpeg", 0.7),
+          prompt: "We are playing a drawing guessing game! Look at this drawing and guess what it shows. Answer in ONE short, excited sentence like \"Is it a ... ?\" then say one nice thing about the drawing." }) })
+        .then(function(r){ return r.json().then(function(d){ return { ok:r.ok, d:d }; }); })
+        .then(function(res){
+          var used = guessesUsed() + 1;
+          try { localStorage.setItem(GUESS_KEY, String(used)); } catch(e){}
+          if (res.ok && res.d.text){
+            status.innerHTML = "<b>🤖 AI says:</b> " + String(res.d.text).replace(/[<>]/g,"") +
+              "<br><span style=\"color:rgba(12,19,34,.55)\">A real AI just looked at your pixels. This is what campers do in Mission 5.</span>";
+          } else {
+            status.innerHTML = "🙈 The AI got shy — try once more!";
+          }
+          if (used >= GUESS_CAP) capped();
+          else { goBtn.disabled = false; goBtn.textContent = "🤖 Guess again (" + (GUESS_CAP - used) + " left)"; }
+        })
+        .catch(function(){ goBtn.disabled = false; goBtn.textContent = "🤖 Ask the AI to guess"; status.innerHTML = "🙈 Couldn't reach the AI — try again in a moment."; });
+    });
+
+    // mini AI-or-Not
+    var ITEMS = [
+      { e:"🔊", l:"Smart speaker answering questions", ai:true,  w:"It understands words by learning from millions of voices." },
+      { e:"🔦", l:"Flashlight", ai:false, w:"On. Off. That's the whole brain." },
+      { e:"📺", l:"YouTube picking your next video", ai:true,  w:"It learned what you like by watching what you watch." },
+      { e:"🍞", l:"Toaster", ai:false, w:"Fixed rules: heat until the timer dings." },
+      { e:"✍️", l:"Autocorrect fixing your spelling", ai:true,  w:"It guesses the word you MEANT, learned from billions of sentences." },
+      { e:"🚲", l:"Bicycle", ai:false, w:"All you — no computer anywhere!" }
+    ];
+    var arc = document.getElementById("sbArc"), ai = 0, score = 0, started = false;
+    function startArc(){
+      if (started) return; started = true; round(0, 0);
+    }
+    function round(i, sc){
+      if (i >= ITEMS.length){
+        arc.innerHTML = '<div class="endcard"><div class="rank">' + (sc >= 5 ? "🕵️ AI Detective!" : sc >= 3 ? "🔍 AI Spotter!" : "🌱 AI Explorer!") + '</div>' +
+          '<div>' + sc + ' / ' + ITEMS.length + ' — your kid gets <b>12 full missions</b> of games like this.</div>' +
+          '<a href="#cohorts" style="color:var(--blue);font-weight:700">Reserve a spot →</a>' +
+          '<button class="again">↺ Play again</button></div>';
+        arc.querySelector(".again").addEventListener("click", function(){ round(0, 0); });
+        return;
+      }
+      var it = ITEMS[i];
+      arc.innerHTML = '<div class="hud">' + (i+1) + ' / ' + ITEMS.length + ' · score ' + sc + '</div>' +
+        '<div class="q"><span class="em">' + it.e + '</span><span class="lb">' + it.l + '</span></div>' +
+        '<div class="why"></div>' +
+        '<div class="calls"><button class="call yes">🧠 AI!</button><button class="call no">⚙️ Just a machine</button></div>';
+      function answer(saidAI){
+        var right = saidAI === it.ai;
+        if (right) sc++;
+        arc.querySelector(".why").innerHTML = (right ? "✅ " : "❌ ") + "<b>" + (it.ai ? "It's AI" : "Just a machine") + ".</b> " + it.w;
+        arc.querySelectorAll(".call").forEach(function(b){ b.disabled = true; });
+        setTimeout(function(){ round(i+1, sc); }, 1600);
+      }
+      arc.querySelector(".yes").addEventListener("click", function(){ answer(true); });
+      arc.querySelector(".no").addEventListener("click", function(){ answer(false); });
+    }
+  })();
 
   // nav scroll state
   var nav = document.getElementById("nav");
