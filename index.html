@@ -315,7 +315,7 @@
     <!-- live sandbox: real platform activities, playable before signing up -->
     <div class="sandbox reveal in" id="sandbox">
       <div class="sb-head">
-        <span class="sb-kick">Try it right now — no sign-up</span>
+        <span class="sb-kick">Quick Demo</span>
         <div class="sb-tabs">
           <button class="sb-tab active" data-tab="draw">🎨 Draw for a real AI</button>
           <button class="sb-tab" data-tab="arcade">🕹️ AI or Not?</button>
@@ -332,7 +332,7 @@
           <button class="sb-tool" id="sbClear">🗑️</button>
           <button class="sb-go" id="sbGuess">🤖 Ask the AI to guess</button>
         </div>
-        <div class="sb-status" id="sbStatus">Draw anything — a real AI will look at your pixels and guess. This is Mission 5.</div>
+        <div class="sb-status" id="sbStatus">Draw anything — a real AI will look at your pixels and guess.</div>
       </div>
 
       <div class="sb-pane" id="paneArcade" style="display:none">
@@ -662,7 +662,7 @@
           try { localStorage.setItem(GUESS_KEY, String(used)); } catch(e){}
           if (res.ok && res.d.text){
             status.innerHTML = "<b>🤖 AI says:</b> " + String(res.d.text).replace(/[<>]/g,"") +
-              "<br><span style=\"color:rgba(12,19,34,.55)\">A real AI just looked at your pixels. This is what campers do in Mission 5.</span>";
+              "<br><span style=\"color:rgba(12,19,34,.55)\">A real AI just looked at your pixels — exactly what campers do on the platform.</span>";
           } else {
             status.innerHTML = "🙈 The AI got shy — try once more!";
           }
