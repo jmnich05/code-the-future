@@ -1,0 +1,486 @@
+/* ==========================================================================
+   Code the Future — Lesson PLAYER engine
+   Renders one beat per screen. Words trickle in. Tap / Space / → to continue.
+   Loads lessons/content/<track>.json (track from ?track=kids|adults).
+   ========================================================================== */
+(function () {
+  "use strict";
+  var qs = new URLSearchParams(location.search);
+  var TRACK = qs.get("track") === "adults" ? "adults" : "kids";
+  var MODULE = "module-02-ai-and-society";
+  var POSKEY = "ctf:pos:" + MODULE + ":" + TRACK;
+  var stage, label, fill, backBtn, nextBtn, hint;
+  var DATA, STEPS = [], pos = 0, animating = false, revealTimer = null, hadLocalPos = false;
+  // furthest step ever reached — the high-water mark. Replays move `pos` back,
+  // but `furthest` never decreases, and it's what we sync to the cloud so a
+  // fresh browser can never wipe out real progress.
+  var MAXKEY = "ctf:max:" + MODULE + ":" + TRACK;
+  var furthest = 0, cloudReady = false;
+  // ---- drip pacing: 3 parts, unlocked on days 0 / +2 / +4 ------------------
+  var PARTS = [
+    { n: 1, first: 1, last: 4, offset: 0 },
+    { n: 2, first: 5, last: 8, offset: 2 },
+    { n: 3, first: 9, last: 12, offset: 4 }
+  ];
+  var paceBypass = false, paceAnchor = null;
+  // LOCAL date, not toISOString (UTC) — an evening first-open used to stamp
+  // tomorrow's date and lock Part 1 until the next day
+  function localDate() {
+    var d = new Date();
+    return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0");
+  }
+  try {
+    if (new URLSearchParams(location.search).get("unlock") === "all") localStorage.setItem("ctf:unlockall", "1");
+    paceBypass = localStorage.getItem("ctf:unlockall") === "1";
+    paceAnchor = localStorage.getItem("ctf:firstplay:" + MODULE);
+    if (!paceAnchor || paceAnchor > localDate()) {  // self-heal future-dated anchors
+      paceAnchor = localDate();
+      localStorage.setItem("ctf:firstplay:" + MODULE, paceAnchor);
+    }
+  } catch (e) { paceAnchor = localDate(); }
+  function stepMission(st) {
+    if (!st || !st.m) return null;
+    if (st.m.n) return st.m.n;
+    if (st.m.kind === "capstone") return 12;   // capstone unlocks with Part 3
+    return null;                                // intro: always open
+  }
+  function partOf(m) { for (var i = 0; i < PARTS.length; i++) if (m >= PARTS[i].first && m <= PARTS[i].last) return PARTS[i]; return PARTS[0]; }
+  function unlockDate(part) { var d = new Date(paceAnchor + "T00:00:00"); d.setDate(d.getDate() + part.offset); return d; }
+  function isLocked(m) {
+    if (paceBypass || !m) return false;
+    return new Date() < unlockDate(partOf(m));
+  }
+  function unlockLabel(part) {
+    var d = unlockDate(part);
+    var days = Math.ceil((d - new Date()) / 86400000);
+    var wd = d.toLocaleDateString("en-US", { weekday: "long" });
+    return { weekday: wd, days: days };
+  }
+  function lastUnlockedIndex() {
+    for (var i = STEPS.length - 1; i >= 0; i--) {
+      var mn = stepMission(STEPS[i]);
+      if (!mn || !isLocked(mn)) return i;
+    }
+    return 0;
+  }
+  var bootTarget = null;  // saved position the boot clamp squashed (if any)
+  function reclampForLocks() {
+    var mn = stepMission(STEPS[pos]);
+    if (mn && isLocked(mn)) { pos = lastUnlockedIndex(); render(); }
+    else if (bootTarget != null) {
+      // the cohort anchor arrived and may have unlocked what boot clamped —
+      // give the kid their real spot back
+      var tm = stepMission(STEPS[bootTarget]);
+      if (!tm || !isLocked(tm)) { pos = bootTarget; bootTarget = null; render(); }
+    }
+  }
+  function showLock(part) {
+    stopSpeaking();
+    var u = unlockLabel(part);
+    stage.innerHTML =
+      '<div class="beat t-lock revealed"><div class="lock-card">' +
+      '<div class="lock-ico">🔒</div>' +
+      '<h2>Part ' + part.n + ' unlocks ' + (u.days <= 1 ? "tomorrow" : "on " + u.weekday) + '!</h2>' +
+      '<p>Amazing work today, Future Builder! 🎉 Your brain needs time to let all those new ideas settle in — that\'s real learning.</p>' +
+      '<p class="lock-sub">Missions ' + part.first + '–' + part.last + ' open ' + (u.days <= 1 ? "tomorrow" : u.weekday) + '. Until then: replay any mission, remix your homepage, customize your character, or say hi on the board!</p>' +
+      '<a class="lock-btn" href="../../../platform/index.html">🏠 Back to home</a> ' +
+      '<button class="lock-btn lock-alt" onclick="document.getElementById(\'pMap\').click()">🗺️ Replay a mission</button>' +
+      '</div></div>';
+    nextBtn.style.display = "none";
+    hint.textContent = "";
+    label.textContent = "Part " + part.n + " · locked";
+  }
+
+  var ttsAudio = null, speaking = false;
+  var audioOn = false; try { audioOn = localStorage.getItem("ctf:audio") === "1"; } catch (e) {}
+  function stopSpeaking() {
+    if (ttsAudio) { try { ttsAudio.pause(); } catch (e) {} ttsAudio = null; }
+    speaking = false;
+    if (window.CTFMusic) window.CTFMusic.duck(false);
+    syncAudioBtn();
+  }
+  function syncAudioBtn() {
+    var b = document.getElementById("pAudio");
+    if (!b) return;
+    b.classList.toggle("on", audioOn);
+    b.innerHTML = audioOn ? (speaking ? "🔊 Reading… <small>tap to turn off</small>" : "🔊 Audio learning <b>ON</b>") : "🔈 Turn on audio learning";
+  }
+  async function speakBeat() {
+    var b = stage.querySelector(".beat"); if (!b) return;
+    var text = (b.innerText || b.textContent || "").replace(/\s+/g, " ").trim().slice(0, 900);
+    if (!text) return;   // image/art beats have nothing to read
+    try {
+      var r = await fetch("/api/tts", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ text: text }) });
+      if (!r.ok || !audioOn) return;
+      var blob = await r.blob();
+      stopSpeaking();
+      if (!audioOn) return;
+      ttsAudio = new Audio(URL.createObjectURL(blob));
+      speaking = true; syncAudioBtn();
+      if (window.CTFMusic) window.CTFMusic.duck(true);
+      ttsAudio.onended = function () { speaking = false; if (window.CTFMusic) window.CTFMusic.duck(false); syncAudioBtn(); };
+      ttsAudio.play().catch(function () { speaking = false; if (window.CTFMusic) window.CTFMusic.duck(false); syncAudioBtn(); });
+    } catch (e) {}
+  }
+
+  // ---- Supabase sync (optional; no-ops if CTFDB unconfigured) -------------
+  function db() { return (window.CTFDB && window.CTFDB.enabled) ? window.CTFDB : null; }
+  // cloud stores the HIGH-WATER MARK, and only after we've reconciled with the
+  // cloud once — so a fresh browser at step 0 can never overwrite real progress
+  function cloudSaveProgress() {
+    if (!cloudReady) return;
+    var d = db(); if (d) d.saveProgress(MODULE, TRACK, furthest, furthest >= STEPS.length - 1);
+  }
+  function onDbReady() {
+    var d = db(); if (!d) return;
+    // pacing anchor + staff bypass come from the cohort
+    d.myCohorts().then(function (cs) {
+      if (cs && cs.length) {
+        if (cs[0].role === "staff") paceBypass = true;
+        if (cs[0].starts_on) paceAnchor = cs[0].starts_on;
+        reclampForLocks();
+      }
+    });
+    // if we're sitting on a complete beat that rendered before DB init, award now
+    var st = STEPS[pos];
+    if (st && st.kind === "beat" && st.b.type === "complete" && st.m && st.m.n) {
+      d.awardBadge(TRACK + "-m" + st.m.n, { module: MODULE, track: TRACK });
+    }
+    // ALWAYS reconcile with the cloud: merge the high-water mark from wherever
+    // this kid played before (other browser, other device, cleared storage)
+    d.getProgress(MODULE, TRACK).then(function (rp) {
+      var cloudPos = (rp && typeof rp.position === "number") ? rp.position : 0;
+      if (cloudPos > furthest && cloudPos < STEPS.length) furthest = cloudPos;
+      // no local position = fresh browser → resume at the furthest point
+      if (!hadLocalPos && furthest > pos) {
+        pos = furthest;
+        var mn = stepMission(STEPS[pos]);
+        if (mn && isLocked(mn)) pos = lastUnlockedIndex();
+        render();
+      }
+      cloudReady = true;
+      save();
+    }).catch(function () { cloudReady = true; });
+    d.logEvent("lesson_open", { module: MODULE, track: TRACK, pos: pos });
+  }
+
+  function el(t, c, h) { var n = document.createElement("t" === t ? "div" : t); n = document.createElement(t); if (c) n.className = c; if (h != null) n.innerHTML = h; return n; }
+
+  // ---- word-by-word wrapping (preserves inline tags) ----------------------
+  function wrapWords(node, st) {
+    [].slice.call(node.childNodes).forEach(function (n) {
+      if (n.nodeType === 3) {
+        var parts = n.textContent.split(/(\s+)/), frag = document.createDocumentFragment();
+        parts.forEach(function (p) {
+          if (p === "" ) return;
+          if (!p.trim()) { frag.appendChild(document.createTextNode(p)); return; }
+          var s = document.createElement("span"); s.className = "w"; s.textContent = p;
+          s.style.animationDelay = (st.i++ * 26) + "ms";
+          frag.appendChild(s);
+        });
+        node.replaceChild(frag, n);
+      } else if (n.nodeType === 1) { wrapWords(n, st); }
+    });
+  }
+
+  function applyReveal(beatEl, type) {
+    var total = 400;
+    if (type === "text" || type === "quote") {
+      var st = { i: 0 };
+      [].slice.call(beatEl.querySelectorAll("h2,h3,h4,p,blockquote p")).forEach(function (e) { wrapWords(e, st); });
+      total = st.i * 26 + 460;
+    } else if (type === "list") {
+      var st2 = { i: 0 };
+      [].slice.call(beatEl.querySelectorAll("h2,h3,h4")).forEach(function (e) { wrapWords(e, st2); });
+      var lis = [].slice.call(beatEl.querySelectorAll("li"));
+      lis.forEach(function (li, i) { li.classList.add("reveal-child"); li.style.animationDelay = (st2.i * 26 + i * 95) + "ms"; });
+      total = st2.i * 26 + lis.length * 95 + 540;
+    } else {
+      var cs = [].slice.call(beatEl.children);
+      if (!cs.length) { beatEl.classList.add("reveal-child"); cs = [beatEl]; }
+      cs.forEach(function (c, i) { c.classList.add("reveal-child"); c.style.animationDelay = (i * 110) + "ms"; });
+      total = cs.length * 110 + 560;
+    }
+    return total;
+  }
+
+  function finishReveal() {
+    var b = stage.querySelector(".beat"); if (b) b.classList.add("revealed");
+    animating = false; clearTimeout(revealTimer); syncControls();
+  }
+
+  // ---- render one step ----------------------------------------------------
+  function render() {
+    stopSpeaking();
+    var step = STEPS[pos];
+    var beat = el("div", "beat");
+    var type = step.kind;
+
+    if (step.kind === "title") {
+      type = "title";
+      beat.className = "beat t-title";
+      var m = step.m;
+      var num = m.kind === "intro" ? "Start here" : (DATA.unitWord + " " + m.n + " of " + DATA.total);
+      beat.innerHTML = '<div class="num">' + num + "</div><h2>" + esc(m.title) + "</h2>" + (m.meta ? '<div class="meta">' + m.meta + "</div>" : "");
+    } else {
+      type = step.b.type;
+      beat.className = "beat t-" + type;
+      if (type === "complete") {
+        var medal = "";
+        if (window.CTFBadge && step.m && step.m.n) {
+          var rw = window.CTFAvatar && window.CTFAvatar.REWARDS && window.CTFAvatar.REWARDS[step.m.n];
+          medal = '<div class="badge-medal">' + window.CTFBadge.render(step.m.n) +
+            '<div class="badge-name">' + window.CTFBadge.NAMES[step.m.n - 1] + '</div>' +
+            (rw ? '<div class="badge-gift">🎁 New gear unlocked: <b>' + rw.emoji + " " + rw.label + '</b> — try it on your character!</div>' : '') +
+            '</div>';
+        }
+        beat.innerHTML = medal + '<div class="wrap">' + step.b.html + "</div>";
+        confetti();
+        var dd = db();
+        if (dd && step.m && step.m.n) { dd.awardBadge(TRACK + "-m" + step.m.n, { module: MODULE, track: TRACK }); dd.logEvent("mission_complete", { module: MODULE, track: TRACK, n: step.m.n }); }
+      } else if (type === "capstone") {
+        beat.innerHTML = '<div class="inner">' + step.b.html + "</div>";
+        var dc = db(); if (dc) dc.awardBadge(TRACK + "-" + MODULE + "-complete", { module: MODULE, track: TRACK });
+      } else beat.innerHTML = step.b.html;
+    }
+
+    stage.innerHTML = "";
+    stage.appendChild(beat);
+    stage.scrollTop = 0;
+
+    if (type === "widget" && window.CTFWidgets) window.CTFWidgets.init(stage);
+
+    var dur = applyReveal(beat, type);
+    animating = true; clearTimeout(revealTimer);
+    revealTimer = setTimeout(function () { animating = false; syncControls(); }, dur);
+
+    if (audioOn) speakBeat();   // audio learning: read each screen aloud
+
+    save();
+    syncControls();
+  }
+
+  function syncControls() {
+    var step = STEPS[pos], atEnd = pos >= STEPS.length - 1;
+    var m = step.m;
+    label.textContent = m.kind === "capstone" ? "Capstone" : m.kind === "intro" ? "Read this first" : (DATA.unitWord + " " + m.n + " · " + m.title);
+    fill.style.width = (STEPS.length > 1 ? (pos / (STEPS.length - 1) * 100) : 100) + "%";
+    backBtn.disabled = pos === 0;
+
+    // next button
+    if (step.kind === "beat" && step.b.type === "capstone") { nextBtn.style.display = "none"; }
+    else {
+      nextBtn.style.display = "";
+      var nextStep = STEPS[pos + 1];
+      if (step.kind === "title") nextBtn.textContent = "Begin →";
+      else if (nextStep && nextStep.kind === "title") nextBtn.textContent = "Next " + DATA.unitWord + " →";
+      else if (atEnd) nextBtn.textContent = "Finish";
+      else nextBtn.textContent = animating ? "Skip →" : "Continue →";
+    }
+    hint.textContent = animating ? "tap to reveal" : (step.kind === "title" ? "tap anywhere to begin" : "");
+  }
+
+  function next() {
+    if (animating) { finishReveal(); return; }
+    if (pos < STEPS.length - 1) {
+      var nxm = stepMission(STEPS[pos + 1]);
+      if (nxm && isLocked(nxm)) { showLock(partOf(nxm)); return; }
+      pos++; render();
+    }
+  }
+  function prev() { if (pos > 0) { pos--; render(); finishReveal(); } }
+
+  function save() {
+    if (pos > furthest) furthest = pos;
+    try {
+      localStorage.setItem(POSKEY, String(pos));
+      localStorage.setItem(MAXKEY, String(furthest));
+    } catch (e) {}
+    cloudSaveProgress();
+  }
+
+  // ---- confetti burst on badge moments ------------------------------------
+  function confetti() {
+    if (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    var colors = ["#3D74FF", "#26C7D1", "#FF5A38", "#FFB320", "#7C5CFF", "#2FBF71", "#FF6FB5"];
+    var holder = document.createElement("div");
+    holder.className = "confetti";
+    for (var i = 0; i < 34; i++) {
+      var p = document.createElement("i");
+      p.style.left = (Math.random() * 100) + "%";
+      p.style.background = colors[i % colors.length];
+      p.style.animationDelay = (Math.random() * 0.6) + "s";
+      p.style.animationDuration = (1.6 + Math.random() * 1.2) + "s";
+      p.style.width = p.style.height = (6 + Math.random() * 8) + "px";
+      if (i % 3 === 0) p.style.borderRadius = "50%";
+      holder.appendChild(p);
+    }
+    stage.appendChild(holder);
+    setTimeout(function () { if (holder.parentNode) holder.parentNode.removeChild(holder); }, 3400);
+  }
+  function esc(s) { return String(s).replace(/[&<>]/g, function (c) { return ({ "&": "&amp;", "<": "&lt;", ">": "&gt;" })[c]; }); }
+
+  // ---- boot ---------------------------------------------------------------
+  function flatten(data) {
+    var steps = [];
+    data.missions.forEach(function (m) {
+      if (m.kind !== "capstone") steps.push({ kind: "title", m: m });
+      m.beats.forEach(function (b) { steps.push({ kind: "beat", m: m, b: b }); });
+    });
+    return steps;
+  }
+
+  function build() {
+    var root = document.getElementById("player");
+    root.innerHTML =
+      '<div class="p-top"><a class="p-exit" href="../../../platform/index.html">✕ Exit</a><button class="p-map" id="pMap">🗺️ Missions</button><span class="p-label" id="pLabel"></span><span class="p-track"><i id="pFill"></i></span></div>' +
+      '<div class="p-stage" id="pStage"></div>' +
+      '<div class="p-bottom"><button class="p-back" id="pBack">‹ Back</button><button class="p-audio" id="pAudio"></button><button class="p-music" id="pMusic">🎵</button><span class="p-hint" id="pHint"></span><button class="p-next" id="pNext">Continue →</button></div>' +
+      '<div class="music-dock" id="musicDock">' +
+        '<div class="md-head">🎵 Study Beats <span class="md-sub">made by code, remixed by you</span></div>' +
+        '<button class="md-play" id="mdPlay">▶ Play beats</button>' +
+        '<div class="md-row"><span class="md-lbl">Vibe</span>' +
+          '<button class="md-chip" data-vibe="chill">😌 Chill</button>' +
+          '<button class="md-chip" data-vibe="space">🌌 Space</button>' +
+          '<button class="md-chip" data-vibe="sunny">🌞 Sunny</button></div>' +
+        '<div class="md-row"><span class="md-lbl">Speed</span>' +
+          '<button class="md-chip" data-tempo="68">🐢 Slow</button>' +
+          '<button class="md-chip" data-tempo="76">🚶 Chill</button>' +
+          '<button class="md-chip" data-tempo="88">🏃 Upbeat</button></div>' +
+        '<div class="md-row"><span class="md-lbl">Layers</span>' +
+          '<button class="md-chip" data-layer="vinyl">📀 Vinyl</button>' +
+          '<button class="md-chip" data-layer="rain">🌧️ Rain</button></div>' +
+        '<button class="md-remix" id="mdRemix">🎲 Remix the beat!</button>' +
+        '<div class="md-note">The computer composes this live — and it keeps evolving as you listen: new drum patterns, little melodies, even key changes. No two minutes are ever the same. That\'s generative AI thinking!</div>' +
+      '</div>' +
+      '<div class="mmap" id="mmap"><div class="mmap-card">' +
+        '<div class="mmap-head">🗺️ Mission Map <button class="mmap-close" id="mmapClose">✕</button></div>' +
+        '<div class="mmap-sub">Replay any mission you\'ve finished, or jump back to where you left off.</div>' +
+        '<div class="mmap-list" id="mmapList"></div>' +
+      '</div></div>';
+    stage = document.getElementById("pStage");
+    label = document.getElementById("pLabel");
+    fill = document.getElementById("pFill");
+    backBtn = document.getElementById("pBack");
+    nextBtn = document.getElementById("pNext");
+    hint = document.getElementById("pHint");
+
+    nextBtn.addEventListener("click", next);
+    backBtn.addEventListener("click", prev);
+
+    // 🎵 Study beats dock
+    var musicBtn = document.getElementById("pMusic");
+    var dock = document.getElementById("musicDock");
+    function syncMusic() {
+      var M = window.CTFMusic; if (!M) return;
+      musicBtn.classList.toggle("on", M.state.on);
+      musicBtn.textContent = M.state.on ? "🎵" : "🎵";
+      document.getElementById("mdPlay").textContent = M.state.on ? "⏸ Pause beats" : "▶ Play beats";
+      dock.querySelectorAll("[data-vibe]").forEach(function (c) { c.classList.toggle("sel", c.getAttribute("data-vibe") === M.state.vibe); });
+      dock.querySelectorAll("[data-tempo]").forEach(function (c) { c.classList.toggle("sel", +c.getAttribute("data-tempo") === M.state.tempo); });
+      dock.querySelectorAll("[data-layer]").forEach(function (c) {
+        var k = c.getAttribute("data-layer"); c.classList.toggle("sel", !!M.state[k]);
+      });
+    }
+    if (window.CTFMusic) {
+      window.CTFMusic.onchange = syncMusic;
+      musicBtn.addEventListener("click", function () { dock.classList.toggle("open"); syncMusic(); });
+      document.getElementById("mdPlay").addEventListener("click", function () { window.CTFMusic.toggle(); });
+      document.getElementById("mdRemix").addEventListener("click", function () {
+        window.CTFMusic.remix();
+        this.textContent = "🎲 Remixed! Again?";
+        if (!window.CTFMusic.state.on) window.CTFMusic.start();
+      });
+      dock.querySelectorAll("[data-vibe]").forEach(function (c) { c.addEventListener("click", function () { window.CTFMusic.setVibe(c.getAttribute("data-vibe")); }); });
+      dock.querySelectorAll("[data-tempo]").forEach(function (c) { c.addEventListener("click", function () { window.CTFMusic.setTempo(+c.getAttribute("data-tempo")); }); });
+      dock.querySelectorAll("[data-layer]").forEach(function (c) { c.addEventListener("click", function () {
+        var k = c.getAttribute("data-layer"); window.CTFMusic.setLayer(k, !window.CTFMusic.state[k]);
+      }); });
+      document.addEventListener("click", function (e) {
+        if (dock.classList.contains("open") && !dock.contains(e.target) && e.target !== musicBtn) dock.classList.remove("open");
+      });
+      syncMusic();
+    } else { musicBtn.style.display = "none"; }
+
+    // 🗺️ Mission Map — replay finished missions / fast-forward to your spot
+    var mapBtn = document.getElementById("pMap");
+    var mapOv = document.getElementById("mmap");
+    function missionRanges() {
+      var out = [], cur = null;
+      STEPS.forEach(function (st, i) {
+        if (!cur || cur.m !== st.m) { cur = { m: st.m, start: i, end: i }; out.push(cur); }
+        else cur.end = i;
+      });
+      return out;
+    }
+    function renderMap() {
+      var list = document.getElementById("mmapList");
+      list.innerHTML = missionRanges().map(function (r, idx) {
+        var m = r.m;
+        var name = m.kind === "intro" ? "Start here" : m.kind === "capstone" ? "🚀 The Big Mission" : "Mission " + m.n + " — " + m.title;
+        var mn = m.kind === "capstone" ? 12 : m.n;
+        var done = furthest > r.end;
+        var here = furthest >= r.start && furthest <= r.end;
+        var locked = mn ? isLocked(mn) : false;
+        var cls = "mm-item", chip = "", act = "";
+        if (locked) { cls += " mm-locked"; chip = "🔒 " + unlockLabel(partOf(mn)).weekday; }
+        else if (done) { cls += " mm-done"; chip = "✅ Replay"; act = ' data-jump="' + r.start + '"'; }
+        else if (here) { cls += " mm-here"; chip = "▶ Continue"; act = ' data-jump="' + furthest + '"'; }
+        else { cls += " mm-soon"; chip = "Up next"; }
+        return '<button class="' + cls + '"' + act + (locked || (!done && !here) ? " disabled" : "") + ">" +
+          '<span class="mm-name">' + esc(name) + '</span><span class="mm-chip">' + chip + "</span></button>";
+      }).join("");
+      list.querySelectorAll("[data-jump]").forEach(function (b) {
+        b.addEventListener("click", function () {
+          pos = Math.min(parseInt(b.getAttribute("data-jump"), 10) || 0, STEPS.length - 1);
+          mapOv.classList.remove("open");
+          render(); finishReveal();
+        });
+      });
+    }
+    mapBtn.addEventListener("click", function () { renderMap(); mapOv.classList.add("open"); });
+    document.getElementById("mmapClose").addEventListener("click", function () { mapOv.classList.remove("open"); });
+    mapOv.addEventListener("click", function (e) { if (e.target === mapOv) mapOv.classList.remove("open"); });
+
+    // "Audio learning" toggle — ElevenLabs reads each screen aloud while ON
+    var audioBtn = document.getElementById("pAudio");
+    syncAudioBtn();
+    audioBtn.addEventListener("click", function () {
+      audioOn = !audioOn;
+      try { localStorage.setItem("ctf:audio", audioOn ? "1" : "0"); } catch (e) {}
+      if (audioOn) { finishReveal(); speakBeat(); } else { stopSpeaking(); }
+      syncAudioBtn();
+    });
+    stage.addEventListener("click", function (e) {
+      if (e.target.closest("a,button,input,textarea,select,.ctf")) return;
+      next();
+    });
+    document.addEventListener("keydown", function (e) {
+      if (e.target.matches("input,textarea")) return;
+      if (e.key === "ArrowRight" || e.key === " " || e.key === "Enter") { e.preventDefault(); next(); }
+      else if (e.key === "ArrowLeft") { e.preventDefault(); prev(); }
+    });
+  }
+
+  fetch("content/" + TRACK + ".json").then(function (r) { return r.json(); }).then(function (data) {
+    DATA = data;
+    document.body.classList.add(data.cls);
+    document.title = "Code the Future — " + (TRACK === "kids" ? "What Is AI? (Kids)" : "What Is AI? (Adults)");
+    STEPS = flatten(data);
+    build();
+    var savedRaw = localStorage.getItem(POSKEY);
+    hadLocalPos = savedRaw !== null && location.hash !== "#restart";
+    var saved = parseInt(savedRaw || "0", 10);
+    pos = (location.hash === "#restart" || isNaN(saved) || saved < 0 || saved >= STEPS.length) ? 0 : saved;
+    var savedMax = parseInt(localStorage.getItem(MAXKEY) || "0", 10);
+    furthest = Math.max(isNaN(savedMax) ? 0 : savedMax, isNaN(saved) ? 0 : Math.max(saved, 0));
+    if (furthest >= STEPS.length) furthest = STEPS.length - 1;
+    var mn0 = stepMission(STEPS[pos]);
+    if (mn0 && isLocked(mn0)) { bootTarget = pos; pos = lastUnlockedIndex(); }
+    render();
+    // Supabase may finish initializing after this script runs:
+    if (db()) onDbReady(); else window.addEventListener("ctfdb:ready", onDbReady, { once: true });
+  }).catch(function (e) {
+    document.getElementById("player").innerHTML = '<div style="padding:40px;font-family:sans-serif">Could not load lesson content. Run <code>node lessons/build.mjs</code> and serve the module folder.</div>';
+  });
+})();
