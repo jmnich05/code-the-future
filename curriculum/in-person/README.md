@@ -1,8 +1,8 @@
-# The Library Hour — In-Person Session Design
+# The Library Session — In-Person Session Design
 
-The weekly one-hour, hands-on session at the public library. This is the other half of
-Code the Future: the platform teaches the concepts at home; **the Library Hour makes them
-physical, social, and loud.**
+The weekly **90-minute** (1.5-hour) hands-on session at the public library. This is the
+other half of Code the Future: the platform teaches the concepts at home; **the Library
+Session makes them physical, social, and loud.**
 
 > Working principle: kids arrive having just spent the week *on screens* doing missions.
 > The hour is deliberately **screens-down**. Every activity takes something they tapped on
@@ -20,18 +20,26 @@ physical, social, and loud.**
 4. **A mentor sees every kid.** Small groups, names known, stuck kids unstuck — the thing
    no app can sell.
 
-## The repeatable shape (every session, 60 minutes)
+## The repeatable shape (every session, 90 minutes)
+
+The hour-and-a-half breathes: it opens with a review, peaks twice (a loud build and a
+hands-on *make*), and lands calm. The review Jon wanted is built in as **segment 2** — but
+disguised as a game show, so it plays like the best part of the night instead of a quiz.
 
 | Min | Segment | What happens |
 |---|---|---|
-| 0–5 | **Power-Up** | Arrival ritual. Physical badge stickers awarded for missions finished this week (sticker art = the platform badge art). Each kid shares ONE thing that surprised them — 15 seconds, standing, fast. Not a quiz, a brag. |
-| 5–15 | **Warm-Up Game** | A loud, fast, whole-group game that reviews the week's concepts sideways (see activity bank). Think recess with a secret syllabus. |
-| 15–45 | **The Main Build** | The big hands-on block. One activity, done deeply — building, training, decoding, or being the machine. This is the science-center core. |
-| 45–55 | **Together-Time** | Calmer. Either the **Time Capsule** ritual (see below) or "Teach-It-Back prep": each kid chooses one thing and rehearses explaining it to their grown-up at pickup. |
-| 55–60 | **Mission Briefing** | The cliffhanger: what unlocks on the platform this week, said like a movie trailer. Kids leave wanting to log in. |
+| 0–8 | **Power-Up** ⚡ | Arrival ritual. Physical badge stickers awarded for missions finished this week (sticker art = the platform badge art). Each kid shares ONE thing that surprised them — 15 seconds, standing, fast. Not a quiz, a brag. |
+| 8–22 | **Mission Recap Showdown** 🎮 | *This is the week's review — as a team game show.* Buzzer-style trivia on last week's missions: point rounds, a lightning round, a final wager. Reviews everything without a single "okay, who can tell me…". (Activity bank #11.) |
+| 22–32 | **Warm-Up Game** 🗑️ | A loud, fast, whole-group game that burns arrival energy and teases tonight's concept sideways (see activity bank). Recess with a secret syllabus. |
+| 32–62 | **The Main Build** 🧠 | The big hands-on block, 30 min. One activity, done deeply — building, training, decoding, or being the machine. The science-center core. |
+| 62–80 | **Make-It Lab** 🛠️ | New with the 90-minute hour: kids *create a physical thing* — a built robot, a mural panel, a designed AI helper. They leave holding it; it goes home or into the Time Capsule. This is the "what did you make today?!" segment. |
+| 80–88 | **Together-Time** ⏳ | Calmer. Either the **Time Capsule** ritual (see below) or "Teach-It-Back prep": each kid picks one thing and rehearses explaining it to their grown-up at pickup. |
+| 88–90 | **Mission Briefing** 🎬 | The cliffhanger: what unlocks on the platform this week, said like a movie trailer. Kids leave wanting to log in. |
 
 The shape never changes; the content rotates. Kids thrive on the ritual; mentors can run
-any session from a one-page plan.
+any session from a one-page plan. Pickup overlaps the tail of Mission Briefing — kids teach
+their grown-up their one thing while the mentor delivers one specific, positive sentence per
+kid to each parent (the retention engine).
 
 ## The Time Capsule (season-long thread)
 
@@ -56,7 +64,7 @@ Full activity menu with materials and mentor scripts: [activity-bank.md](activit
   rules — that's exactly what engineers do" beats "good job."
 - **Every kid touches the materials every segment.** No watching-only roles; rotate the
   fun jobs (robot, signal-starter, flashlight-holder) by name, not by hand-raising.
-- **Predictable structure, surprising content.** Same five segments every week on a
+- **Predictable structure, surprising content.** Same seven segments every week on a
   visible agenda card — the kids who need the routine get it; the novelty lives inside
   the segments.
 - **Quiet entry option.** A kid who arrives overloaded can do Power-Up by placing their
