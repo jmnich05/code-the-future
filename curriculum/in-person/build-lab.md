@@ -192,5 +192,7 @@ Session 1 builds the skeleton and gets a first laugh. The next two make it real:
   faster-filling brain). With a bigger room, add a second approve-helper.
 - **The "pull from the internet" source** — recommend a vetted encyclopedia summary API for
   v1 (controlled, real, safe) rather than open web on kids' devices.
-- **Prototype next** — a focused build using the realtime + `ai.js` parts already in the
-  repo; this doc is the spec.
+- **Prototype** — a working prototype now lives in [`/buildlab`](../../buildlab/) (big-screen
+  `screen.html` + kid `play.html`, realtime via Supabase broadcast, the AI via `/api/ai`).
+  Verified end-to-end; see its [README](../../buildlab/README.md) for how to run it and the
+  production TODOs (persistence, a dedicated AI endpoint, gating, the web-data source).
