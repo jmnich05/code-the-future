@@ -173,11 +173,17 @@ Session 1 builds the skeleton and gets a first laugh. The next two make it real:
   should it be fair to. This is the Module 2 ethics arc (privacy, fairness, who decides),
   lived through the thing they built. Optional magic: kick off a real overnight fine-tune as
   the *"sending it to the AI gym"* moment.
-- **Session 3 · "Ask It Anything."** The polished AI, now genuinely smart about its topic
-  and well-behaved, takes live questions from the whole room — the graduation payoff:
-  *"you built this."* Then the on-ramp to each kid building their **own** mini-app from a
-  4–5 template menu (Trivia Bot · Story Buddy · Homework Explainer · Pet Translator ·
-  Compliment Machine).
+- **Session 3 · "Give It Hands: Agents" (direction in flux — Jon's call).** Leaning away
+  from a plain "ask it anything" finale toward the bigger, more current idea: **what an AI
+  *agent* is, and how agents changed how software gets built.** The kids' AI so far only
+  *talks*; an agent can *do* — use tools, take actions, loop until a job is done. Show how
+  this flipped software development: you used to write every step by hand; now you describe
+  the goal and an agent builds/does it (this camp's whole thesis — *code runs the loop, the
+  agent makes the judgment, humans set the goal and the guardrails*). Hands-on payoff: give
+  their class AI a simple "tool" so it can take an action live, then each kid builds their
+  **own** mini-app/agent from a 4–5 template menu (Trivia Bot · Story Buddy · Homework
+  Helper · Pet Translator · Compliment Machine). [Open: how deep to go on "agents" for 8–11
+  — keep it concrete (an AI with hands), not architecture.]
 
 ## Open questions / mentor notes
 - **Topic of the class AI** — kid-chosen for ownership; mentor keeps a short off-limits list.
