@@ -89,7 +89,7 @@
 <script src="../platform/lib/config.js"></script>
 <script src="../platform/lib/filter.js"></script>
 <script type="module">
-import { joinLab, runAI, buildPrompt, genCode } from "./lab.js";
+import { joinLab, runBuildLab, saveState, loadState, genCode } from "./lab.js";
 
 const qs = new URLSearchParams(location.search);
 const CODE = (qs.get("code") || genCode()).toUpperCase();
@@ -101,13 +101,30 @@ const state = { stage:0, name:"Sparky", topic:"dolphins", personality:"funny and
 const $ = (id)=>document.getElementById(id);
 
 // identity inputs → state (and broadcast so kids' run reflects)
-$("aiName").addEventListener("input", e=>{ state.name=e.target.value||"Sparky"; sync(); });
-$("aiTopic").addEventListener("input", e=>{ state.topic=e.target.value||"fun facts"; sync(); });
-$("aiPers").addEventListener("change", e=>{ state.personality=e.target.value; sync(); });
+$("aiName").addEventListener("input", e=>{ state.name=e.target.value||"Sparky"; sync(); persist(); });
+$("aiTopic").addEventListener("input", e=>{ state.topic=e.target.value||"fun facts"; sync(); persist(); });
+$("aiPers").addEventListener("change", e=>{ state.personality=e.target.value; sync(); persist(); });
 
-let lab;
-lab = joinLab(CODE, onMsg, ()=> sync());
+let lab = joinLab(CODE, onMsg, ()=> sync());
 function sync(){ lab.send({kind:"state", stage:state.stage, name:state.name, topic:state.topic}); }
+
+// rehydrate if this session already existed (e.g. the big screen reloaded)
+(async ()=>{
+  const saved = await loadState(CODE);
+  if(saved) rehydrate(saved);
+})();
+function rehydrate(s){
+  state.name=s.name||state.name; state.topic=s.topic||state.topic; state.personality=s.personality||state.personality;
+  state.facts=s.facts||[]; state.rules=s.rules||[];
+  $("aiName").value=state.name; $("aiTopic").value=state.topic; if(s.personality) $("aiPers").value=s.personality;
+  renderFacts(); renderRules();
+  if(typeof s.stage==="number") setStage(s.stage); else sync();
+}
+let persistT;
+function persist(){
+  clearTimeout(persistT);
+  persistT=setTimeout(()=>saveState(CODE, {stage:state.stage, name:state.name, topic:state.topic, personality:state.personality, facts:state.facts, rules:state.rules}), 500);
+}
 
 // stage rail
 document.querySelectorAll(".stage-chip").forEach(c=>{
@@ -119,6 +136,7 @@ function setStage(n){
     c.classList.toggle("on", i===n); c.classList.toggle("done", i<n);
   });
   lab.send({kind:"state", stage:n, name:state.name, topic:state.topic});
+  persist();
 }
 
 function onMsg(m){
@@ -158,6 +176,7 @@ function approve(m){
   if(m.kind==="fact"){ state.facts.push(m); renderFacts(); }
   else { state.rules.push(m); renderRules(); }
   lab.send({kind:"approved", id:m.id, of:m.kind});
+  persist();
 }
 function renderFacts(){
   const box=$("facts"); $("factCount").textContent=state.facts.length;
@@ -189,7 +208,7 @@ $("runBtn").addEventListener("click", async ()=>{
   const btn=$("runBtn"); btn.disabled=true; btn.textContent="…thinking";
   $("aLbl").textContent=state.name+" says";
   try{
-    const text=await runAI(buildPrompt(state, q));
+    const text=await runBuildLab(state, q);
     $("aBody").textContent=text; $("answer").classList.add("show");
   }catch(e){
     $("aBody").textContent="(couldn't reach the AI — "+e.message+")"; $("answer").classList.add("show");

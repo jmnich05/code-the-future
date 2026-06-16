@@ -15,25 +15,27 @@ Design + run-of-show: [`../curriculum/in-person/build-lab.md`](../curriculum/in-
 
 ## How it works
 - **Realtime** = Supabase broadcast channel `buildlab:<CODE>` (reuses the project's anon
-  config; no tables). The big screen is the source of truth.
-- **The "AI they built"** = the kid-safe `/api/ai` proxy, with the identity + rules + facts
-  assembled into the prompt (`buildPrompt` in `lab.js`). The proxy's built-in kid-safe system
-  prompt stays as an outer guardrail.
+  config). The big screen is the source of truth.
+- **Persistence** = the big screen saves the whole assembled AI (identity + facts + rules +
+  stage) as a blob in the `buildlab_sessions` table, debounced. On reload with the same
+  `?code=`, it **rehydrates** — so a projector hiccup doesn't wipe the room's work.
+- **The "AI they built"** = the dedicated **`/api/buildlab`** endpoint. The kids' identity,
+  rules, and facts are assembled server-side into a system prompt behind a **fixed kid-safe
+  preamble that their content can't override** (bigger knowledge base + token budget than
+  `/api/ai`).
 - **Moderation** = `CTFFilter` on each submission (client) **+** the mentor approve-gate
-  (nothing hits the screen unapproved).
+  (nothing hits the screen unapproved) **+** the fixed safety preamble in the endpoint.
 
 ## Verified
 Realtime round-trip (kid → screen → approve → brain → "approved" back to kid), stage sync,
-moderation, and the Run-it call all tested. The AI call returns a mock on `localhost` and the
-real answer when **deployed** (the function needs Netlify).
+moderation, and **persistence (reload rehydrates from Supabase)** all tested in preview. The
+AI call returns a mock on `localhost` and the real answer when **deployed** (the function
+needs Netlify) — confirm First Contact on the deploy preview.
 
-## Known limits / production TODOs
-- **Ephemeral** — broadcast has no persistence; if the big screen reloads, the brain resets,
-  and late joiners don't see prior facts. Add a small Supabase table for durability.
-- **Prompt cap** — `/api/ai` caps input at 2000 chars, so facts are truncated to ~1200. For
-  bigger knowledge bases, add a dedicated `/api/buildlab` endpoint (higher token budget,
-  structured input, proper system prompt) instead of stuffing the user turn.
-- **Gating** — `buildlab/` is currently public; add it to the edge gate before classroom use.
+## Known limits / next steps
+- **Gating** — `buildlab/` is intentionally public (kids need frictionless phone access; the
+  4-letter code is the soft gate). Revisit if needed.
 - **"Grab from the internet"** data source (a vetted encyclopedia-summary fetch) isn't wired
   yet — v1 is type-a-fact. Clear next addition.
 - **Identity stage** is host-driven (kids suggest names, host picks); democratic voting = v2.
+- **Cleanup** — old `buildlab_sessions` rows aren't auto-pruned; add a TTL/cron later.

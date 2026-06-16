@@ -43,8 +43,45 @@ export async function runAI(promptText) {
   }
 }
 
-// Build the live prompt from everything the class assembled. The kid-safe system
-// prompt inside /api/ai stays as an outer guardrail; this is the user turn.
+// Preferred: the dedicated /api/buildlab endpoint — structured input, a fixed
+// kid-safe system preamble, and a bigger knowledge base than /api/ai allows.
+// Falls back to a friendly mock on localhost (no Netlify function there).
+export async function runBuildLab(state, question) {
+  const payload = {
+    name: state.name, topic: state.topic, personality: state.personality,
+    rules: (state.rules || []).map(function (r) { return r.text; }),
+    facts: (state.facts || []).map(function (f) { return f.text; }),
+    question: question
+  };
+  try {
+    const r = await fetch("/api/buildlab", {
+      method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload)
+    });
+    if (!r.ok) { const e = await r.json().catch(function () { return {}; }); throw new Error(e.error || ("AI error " + r.status)); }
+    const d = await r.json();
+    return d.text || "(the AI didn't say anything)";
+  } catch (err) {
+    if (location.hostname === "localhost" || location.hostname === "127.0.0.1") {
+      return "[local preview — deploy to talk to the real AI] Hi! I'm " + (state.name || "your class AI") +
+        ". I only know the " + ((state.facts || []).length) + " facts you taught me so far!";
+    }
+    throw err;
+  }
+}
+
+// ---- persistence: one state blob per code, so a big-screen reload restores ----
+export async function saveState(code, state) {
+  try { await sb.from("buildlab_sessions").upsert({ code: code, state: state, updated_at: new Date().toISOString() }); }
+  catch (e) { /* prototype: persistence is best-effort */ }
+}
+export async function loadState(code) {
+  try {
+    const { data } = await sb.from("buildlab_sessions").select("state").eq("code", code).maybeSingle();
+    return data ? data.state : null;
+  } catch (e) { return null; }
+}
+
+// Legacy single-field assembly (kept for the /api/ai fallback path).
 export function buildPrompt(state, question) {
   const facts = (state.facts || []).map(function (f) { return "- " + f.text; });
   let factBlock = "", i = 0;
