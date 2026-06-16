@@ -4,9 +4,12 @@ The weekly **90-minute** (1.5-hour) hands-on session at the public library. This
 other half of Code the Future: the platform teaches the concepts at home; **the Library
 Session makes them physical, social, and loud.**
 
-> Working principle: kids arrive having just spent the week *on screens* doing missions.
-> The hour is deliberately **screens-down**. Every activity takes something they tapped on
-> the platform and puts it in their hands — yarn, cards, flashlights, their own bodies.
+> Working principle: the hour **breathes in two halves**. The **front half is
+> screens-down** — kids arrive having spent the week on screens, so the review and warm-ups
+> put concepts back in their hands (yarn, cards, flashlights, their own bodies). For the
+> first three sessions, the **back half flips screens-up**: devices out, and the whole room
+> *builds a real AI together* on the big screen — the **[Build Lab](build-lab.md)**. We
+> review with our bodies, then we build with our brains.
 
 ## Why this hour is worth the money
 
@@ -57,6 +60,16 @@ it home. It is the cheapest, most memorable thing we will ever make.
 - **Session 4 — Demo Day** — families invited; kids run the stations and teach the grown-ups; Big Mission showcase; capsules sealed-ish (resealed each module era)
 
 Full activity menu with materials and mentor scripts: [activity-bank.md](activity-bank.md)
+
+## The Build Lab arc (Sessions 1–3 · screens-up back half)
+
+Layered onto the season map above: the **back half** of the first three sessions is the
+**[Build Lab](build-lab.md)** — devices out, Jon's laptop on the big screen, and the room
+**builds one real AI together** over three weeks (feed its brain → make it smart + think
+about society → ask it anything). The screens-down review still opens every session; the
+Build Lab is what the 45-minute main block becomes for this arc. Full 45-minute Session 1
+run-of-show, the tech we reuse, and the safety/moderation flow live in
+[build-lab.md](build-lab.md).
 
 ## Mentor ground rules (Kenya-informed, draft for her review)
 
