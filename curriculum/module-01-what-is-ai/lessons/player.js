@@ -12,6 +12,12 @@
   var MODULE = "module-01-what-is-ai";
   var stage, label, fill, backBtn, nextBtn, hint;
   var DATA, STEPS = [], pos = 0, animating = false, revealTimer = null, hadLocalPos = false;
+  // anti-skip-spam: a minimum dwell on each genuinely-NEW beat before you can
+  // advance. Content-proportional, so it completes faster than a kid actually
+  // reads (never blocks a real reader) — but a spammer can't race to the reward.
+  // Re-reads and replays are never gated. Tune with these three constants.
+  var DWELL_FLOOR = 2200, DWELL_PER_WORD = 200, DWELL_CAP = 9000;
+  var dwellTimer = null, dwellReady = true;
   // furthest step ever reached — the high-water mark. Replays move `pos` back,
   // but `furthest` never decreases, and it's what we sync to the cloud so a
   // fresh browser can never wipe out real progress.
@@ -255,10 +261,31 @@
     animating = true; clearTimeout(revealTimer);
     revealTimer = setTimeout(function () { animating = false; syncControls(); }, dur);
 
+    // minimum dwell — only on genuinely-new beats (pos beyond the high-water
+    // mark), never on titles, re-reads, or replays.
+    setupDwell(beat, type, pos > furthest);
+
     if (audioOn) speakBeat();   // audio learning: read each screen aloud
 
     save();
     syncControls();
+  }
+
+  function setupDwell(beat, type, isNew) {
+    clearTimeout(dwellTimer);
+    nextBtn.classList.remove("charging", "ready");
+    if (!isNew || type === "title") { dwellReady = true; return; }
+    var words = (beat.textContent || "").trim().split(/\s+/).filter(Boolean).length;
+    var ms = Math.min(DWELL_CAP, Math.max(DWELL_FLOOR, words * DWELL_PER_WORD));
+    dwellReady = false;
+    nextBtn.style.setProperty("--charge-ms", ms + "ms");
+    nextBtn.classList.add("charging");
+    dwellTimer = setTimeout(function () {
+      dwellReady = true;
+      nextBtn.classList.remove("charging");
+      nextBtn.classList.add("ready");
+      syncControls();
+    }, ms);
   }
 
   function syncControls() {
@@ -278,16 +305,20 @@
       else if (atEnd) nextBtn.textContent = "Finish";
       else nextBtn.textContent = animating ? "Skip →" : "Continue →";
     }
-    hint.textContent = animating ? "tap to reveal" : (step.kind === "title" ? "tap anywhere to begin" : "");
+    hint.textContent = animating ? "tap to reveal" : (!dwellReady ? "keep reading…" : (step.kind === "title" ? "tap anywhere to begin" : ""));
   }
 
   function next() {
     if (animating) { finishReveal(); return; }
+    if (!dwellReady) { nudgeNext(); return; }   // still charging — can't skip yet
     if (pos < STEPS.length - 1) {
       var nxm = stepMission(STEPS[pos + 1]);
       if (nxm && isLocked(nxm)) { showLock(partOf(nxm)); return; }
       pos++; render();
     }
+  }
+  function nudgeNext() {
+    nextBtn.classList.remove("nudge"); void nextBtn.offsetWidth; nextBtn.classList.add("nudge");
   }
   function prev() { if (pos > 0) { pos--; render(); finishReveal(); } }
 

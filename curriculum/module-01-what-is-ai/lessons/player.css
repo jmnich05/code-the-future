@@ -112,19 +112,47 @@ body{ margin:0; background:var(--ink-50); color:var(--ink-700); font-family:var(
 .p-next:active{ transform:scale(.97); }
 
 /* --- Reveal (the trickle) ------------------------------------------------ */
-.w{ display:inline-block; opacity:0; transform:translateY(8px); animation:w-in .42s var(--ease-out) forwards; }
-@keyframes w-in{ to{ opacity:1; transform:none; } }
+.w{ display:inline-block; opacity:0; transform:translateY(9px); filter:blur(3px); animation:w-in .52s var(--ease-out) forwards; }
+@keyframes w-in{ to{ opacity:1; transform:none; filter:blur(0); } }
 .reveal-child{ opacity:0; transform:translateY(14px); animation:w-in .5s var(--ease-out) forwards; }
-.revealed .w,.revealed .reveal-child{ opacity:1 !important; transform:none !important; animation:none !important; }
+.revealed .w,.revealed .reveal-child{ opacity:1 !important; transform:none !important; filter:none !important; animation:none !important; }
 
 @media (prefers-reduced-motion: reduce){
-  .w,.reveal-child{ animation:none !important; opacity:1 !important; transform:none !important; }
+  .w,.reveal-child{ animation:none !important; opacity:1 !important; transform:none !important; filter:none !important; }
   .p-track>i{ transition:none; }
 }
 @media (max-width:560px){
   .beat h2{ font-size:1.9rem; } .beat.t-title h2{ font-size:2.2rem; }
   .beat p{ font-size:1.25rem; } .beat li{ font-size:1.2rem; }
   .beat.t-quote blockquote p{ font-size:1.5rem; } .beat.t-quote blockquote{ padding:28px 24px; }
+}
+
+/* --- Ambient background drift + beat flow-in (subtle, reduced-motion safe) - */
+.player{ position:relative; z-index:1; }
+body::before, body::after{ content:""; position:fixed; border-radius:50%; filter:blur(70px); z-index:0; pointer-events:none; }
+body::before{ width:48vmax; height:48vmax; left:-12vmax; top:-15vmax;
+  background:radial-gradient(circle, rgba(38,199,209,.16), transparent 70%); animation:drift1 36s ease-in-out infinite alternate; }
+body::after{ width:42vmax; height:42vmax; right:-14vmax; bottom:-16vmax;
+  background:radial-gradient(circle, rgba(61,116,255,.13), transparent 70%); animation:drift2 44s ease-in-out infinite alternate; }
+@keyframes drift1{ from{ transform:translate(0,0) scale(1); } to{ transform:translate(7vmax,5vmax) scale(1.14); } }
+@keyframes drift2{ from{ transform:translate(0,0) scale(1); } to{ transform:translate(-6vmax,-4vmax) scale(1.1); } }
+.beat{ position:relative; z-index:1; animation:beat-in .5s var(--ease-out) both; }
+@keyframes beat-in{ from{ opacity:0; transform:translateY(10px); } to{ opacity:1; transform:none; } }
+
+/* charge-up Next button — the anti-skip dwell, shown as a filling fuse */
+.p-next{ position:relative; overflow:hidden; }
+.p-next.charging{ filter:saturate(.9) brightness(.9); }
+.p-next.charging::after{ content:""; position:absolute; left:0; bottom:0; height:4px; width:0;
+  background:rgba(255,255,255,.92); border-radius:2px; animation:charge var(--charge-ms,4000ms) linear forwards; }
+@keyframes charge{ to{ width:100%; } }
+.p-next.ready{ animation:nextpop .34s var(--ease-spring); }
+@keyframes nextpop{ 0%{ transform:scale(1); } 45%{ transform:scale(1.06); } 100%{ transform:scale(1); } }
+.p-next.nudge{ animation:nudge .42s; }
+@keyframes nudge{ 0%,100%{ transform:translateX(0); } 20%{ transform:translateX(-5px); } 60%{ transform:translateX(5px); } }
+
+@media (prefers-reduced-motion: reduce){
+  body::before, body::after{ animation:none !important; }
+  .beat{ animation:none !important; }
 }
 
 /* --- Original concept art panel ------------------------------------------ */
