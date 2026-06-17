@@ -135,7 +135,7 @@
   <div class="inner">
     <nav class="top">
       <span class="brand"><img src="assets/logo-icon-dark.svg" alt="Code the Future logo">Code the <span class="accent">Future</span></span>
-      <span class="links"><a href="board.html">Board</a><a href="profile.html">Profile</a><a href="../curriculum/module-01-what-is-ai/lessons/player.html?track=kids">Lessons</a>
+      <span class="links"><a href="missions.html">Missions</a><a href="board.html">Board</a><a href="profile.html">Profile</a>
         <a class="me-dock" href="profile.html" title="Your character"><span class="avatar" id="dockAv"></span><span class="dock-name" id="dockName">Explorer</span></a>
       </span>
     </nav>
@@ -175,8 +175,8 @@
 </div>
 
 <div class="deck">
-  <a class="tile primary" href="../curriculum/module-01-what-is-ai/lessons/player.html?track=kids" id="continueTile">
-    <p class="eyebrow">Continue learning</p>
+  <a class="tile primary" href="missions.html" id="continueTile">
+    <p class="eyebrow">Your journey across Louisville</p>
     <h2 id="contTitle">Module 1 — What Is AI?</h2>
     <div class="progressbar"><i id="contBar" style="width:0%"></i></div>
     <span id="contMeta" style="font-size:.92rem;opacity:.92">Start your first Mission →</span>
@@ -391,7 +391,7 @@
       } catch(e){
         document.getElementById("contGo").textContent = "Continue →";
       }
-      document.getElementById("continueTile").href = "../curriculum/module-01-what-is-ai/lessons/player.html?track=kids";
+      document.getElementById("continueTile").href = "missions.html";
     }
     var cohorts = cohortsCache || [];
     if (cohorts.length){
