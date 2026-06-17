@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" type="image/svg+xml" href="/platform/assets/logo-icon-tile.svg">
+<link rel="apple-touch-icon" href="/platform/assets/touch-icon.png">
+<title>Code the Future — Skills Your Child Builds</title>
+<link rel="stylesheet" href="app.css">
+<style>
+  body{ background:var(--ink-50); }
+  .wrap{ max-width:1120px; }
+
+  .back-row{ max-width:1120px; margin:18px auto 0; padding:0 20px; }
+  .back{ display:inline-flex; align-items:center; gap:7px; font-family:var(--font-display); font-weight:700; font-size:.92rem; color:var(--blue-700);
+    text-decoration:none; background:var(--white); border:1px solid var(--ink-200); border-radius:999px; padding:9px 16px; box-shadow:var(--shadow-sm); }
+  .back:hover{ border-color:var(--blue-600); background:var(--blue-50); }
+
+  .intro{ max-width:1120px; margin:18px auto 0; padding:0 20px; }
+  .intro .eyebrow{ color:var(--teal-600); }
+  .intro h1{ font-size:clamp(1.9rem,4vw,2.6rem); margin:.18em 0 .35em; }
+  .intro p{ max-width:64ch; color:var(--ink-500); font-size:1.05rem; }
+
+  /* overall progress banner */
+  .overall{ max-width:1120px; margin:22px auto 0; padding:0 20px; }
+  .overall .inner{ background:var(--grad-night); color:#fff; border-radius:var(--radius-xl); box-shadow:var(--shadow-lg); padding:24px 28px;
+    display:flex; align-items:center; gap:22px; flex-wrap:wrap; position:relative; overflow:hidden; }
+  .overall .inner::before{ content:""; position:absolute; inset:0; pointer-events:none;
+    background:radial-gradient(120% 150% at 90% -20%, rgba(38,199,209,.28), transparent 55%), radial-gradient(120% 150% at 5% 130%, rgba(61,116,255,.3), transparent 55%); }
+  .overall .inner > *{ position:relative; }
+  .ring{ flex:none; width:108px; height:108px; }
+  .ring text{ font-family:var(--font-display); }
+  .overall .copy{ flex:1; min-width:220px; }
+  .overall .copy .k{ font-family:var(--font-mono); font-size:11px; letter-spacing:.12em; text-transform:uppercase; color:#8DEAEF; }
+  .overall .copy h2{ color:#fff; font-size:1.5rem; margin:4px 0 6px; }
+  .overall .copy p{ color:rgba(255,255,255,.82); font-size:.96rem; margin:0; }
+  .overall .demo{ font-family:var(--font-mono); font-size:10px; letter-spacing:.1em; text-transform:uppercase; color:#04222a;
+    background:var(--amber-400); border-radius:999px; padding:4px 11px; font-weight:700; align-self:flex-start; }
+
+  /* category grid */
+  .cats{ max-width:1120px; margin:24px auto 60px; padding:0 20px; display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:20px; }
+  @media (max-width:760px){ .cats{ grid-template-columns:1fr; } }
+  .cat{ background:var(--white); border:1px solid var(--ink-200); border-radius:var(--radius-xl); box-shadow:var(--shadow-md);
+    padding:24px; display:flex; flex-direction:column; gap:14px; position:relative; overflow:hidden; }
+  .cat::before{ content:""; position:absolute; left:0; top:0; bottom:0; width:5px; background:var(--accent); }
+  .cat-head{ display:flex; align-items:center; gap:14px; }
+  .cat-ic{ width:50px; height:50px; flex:none; border-radius:14px; display:grid; place-items:center; font-size:26px;
+    background:color-mix(in srgb, var(--accent) 14%, #fff); }
+  .cat-head .t{ flex:1; min-width:0; }
+  .cat-head h3{ font-size:1.2rem; }
+  .cat-head .blurb{ font-size:.86rem; color:var(--ink-500); margin-top:3px; }
+  .cat-count{ font-family:var(--font-mono); font-size:.78rem; font-weight:600; color:var(--accent);
+    background:color-mix(in srgb, var(--accent) 12%, #fff); border-radius:999px; padding:6px 12px; white-space:nowrap; align-self:flex-start; }
+  .cat-bar{ height:7px; border-radius:999px; background:var(--ink-100); overflow:hidden; }
+  .cat-bar > i{ display:block; height:100%; border-radius:999px; background:var(--accent); width:0; transition:width 1s var(--ease-out); }
+
+  .skills{ list-style:none; margin:2px 0 0; padding:0; display:flex; flex-direction:column; gap:9px; }
+  .skill{ display:flex; align-items:center; gap:11px; font-size:.96rem; }
+  .skill .mark{ flex:none; width:24px; height:24px; border-radius:50%; display:grid; place-items:center; font-size:.8rem; }
+  .skill.earned .mark{ background:var(--teal-500); color:#fff; box-shadow:0 2px 6px rgba(18,178,188,.4); }
+  .skill.earned .nm{ color:var(--ink-900); font-weight:600; }
+  .skill.todo .mark{ background:var(--ink-50); border:1.5px solid var(--ink-200); color:var(--ink-300); }
+  .skill.todo .nm{ color:var(--ink-400); }
+  .skill .nm{ flex:1; min-width:0; }
+  .skill .mtag{ font-family:var(--font-mono); font-size:.66rem; letter-spacing:.04em; color:var(--ink-400); white-space:nowrap; }
+  .skill.earned .mtag{ color:var(--teal-600); }
+
+  footer{ text-align:center; color:var(--ink-400); font-family:var(--font-mono); font-size:11px; letter-spacing:.08em; padding:0 0 40px; }
+</style>
+</head>
+<body>
+<!-- header + breadcrumbs injected by CTFTopbar.render() below -->
+
+<div class="back-row">
+  <a class="back" href="index.html">← Back to home</a>
+</div>
+
+<div class="intro">
+  <p class="eyebrow">◆ For parents</p>
+  <h1>The skills your child is building</h1>
+  <p>We don't just teach AI. Across every mission, your camper grows durable, real-world skills — critical thinking, communication, responsibility, and creativity. Each one is checked off the moment they finish the mission that teaches it.</p>
+</div>
+
+<div class="overall">
+  <div class="inner">
+    <svg class="ring" id="ring" viewBox="0 0 120 120" aria-hidden="true">
+      <circle cx="60" cy="60" r="50" fill="none" stroke="rgba(255,255,255,.18)" stroke-width="11"></circle>
+      <circle id="ringFill" cx="60" cy="60" r="50" fill="none" stroke="#26C7D1" stroke-width="11" stroke-linecap="round"
+        stroke-dasharray="314.16" stroke-dashoffset="314.16" transform="rotate(-90 60 60)"></circle>
+      <text id="ringNum" x="60" y="58" text-anchor="middle" font-weight="700" font-size="30" fill="#fff">0</text>
+      <text x="60" y="78" text-anchor="middle" font-size="11" fill="rgba(255,255,255,.7)" font-family="JetBrains Mono, monospace">SKILLS</text>
+    </svg>
+    <div class="copy">
+      <span class="k">Learning outcomes</span>
+      <h2 id="overallH">Skills unlocked so far</h2>
+      <p id="overallP">As your camper completes missions, the skills they've mastered light up below.</p>
+    </div>
+    <span class="demo" id="demoTag" style="display:none"></span>
+  </div>
+</div>
+
+<div class="cats" id="cats"></div>
+
+<footer>CODE THE FUTURE · LOUISVILLE · LEARNING OUTCOMES</footer>
+
+<script src="lib/config.js"></script>
+<script src="lib/avatar.js"></script>
+<script src="lib/topbar.js"></script>
+<script>CTFTopbar.render({ active: "home", crumb: "Skills & Outcomes", me: true });</script>
+<script src="lib/skills.js"></script>
+<script type="module">
+  import { CTFDB } from "./lib/ctf-db.js";
+  CTFDB.init().then(function(){ window.dispatchEvent(new Event("ctfdb:ready")); });
+</script>
+<script>
+(function(){
+  var S = window.CTFSkills;
+  var CATS = S.categories;
+  var TOTAL = CATS.reduce(function(a,c){ return a + c.skills.length; }, 0);
+
+  function esc(s){ return String(s==null?"":s).replace(/[&<>"]/g, function(c){ return ({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"})[c]; }); }
+
+  // ---- which badges has this learner earned? ----
+  // demo=N pretends Module-1 missions 1..N are done (for screenshots).
+  function demoN(){
+    var v = parseInt(new URLSearchParams(location.search).get("demo") || "0", 10);
+    return (isNaN(v) || v < 0) ? 0 : Math.min(v, 12);
+  }
+  function earnedSetFromBadges(badges){
+    var set = {};
+    (badges || []).forEach(function(b){ if (b && b.badge_key) set[b.badge_key] = true; });
+    return set;
+  }
+  function earnedSetFromDemo(n){
+    var set = {};
+    for (var i = 1; i <= n; i++) set["kids-m" + i] = true; // Module 1, missions 1..N
+    return set;
+  }
+  function isEarned(skill, set){ return !!set[S.badgeKey(skill)]; }
+
+  function mtag(skill){ return skill.mod === 2 ? "M2·" + skill.n : "M1·" + skill.n; }
+
+  function render(set){
+    var earnedTotal = 0;
+    var html = CATS.map(function(cat, ci){
+      var got = cat.skills.filter(function(sk){ return isEarned(sk, set); }).length;
+      earnedTotal += got;
+      var pct = cat.skills.length ? Math.round(got / cat.skills.length * 100) : 0;
+      var items = cat.skills.map(function(sk){
+        var on = isEarned(sk, set);
+        return '<li class="skill ' + (on ? "earned" : "todo") + '">' +
+          '<span class="mark">' + (on ? "✓" : "○") + '</span>' +
+          '<span class="nm">' + esc(sk.name) + '</span>' +
+          '<span class="mtag">' + mtag(sk) + '</span></li>';
+      }).join("");
+      return '<section class="cat" style="--accent:' + cat.accent + '">' +
+        '<div class="cat-head">' +
+          '<div class="cat-ic">' + cat.icon + '</div>' +
+          '<div class="t"><h3>' + esc(cat.name) + '</h3><div class="blurb">' + esc(cat.blurb) + '</div></div>' +
+          '<span class="cat-count">' + got + ' / ' + cat.skills.length + '</span>' +
+        '</div>' +
+        '<div class="cat-bar"><i data-pct="' + pct + '"></i></div>' +
+        '<ul class="skills">' + items + '</ul>' +
+      '</section>';
+    }).join("");
+    document.getElementById("cats").innerHTML = html;
+
+    // animate bars + ring after paint
+    requestAnimationFrame(function(){
+      document.querySelectorAll(".cat-bar > i").forEach(function(i){ i.style.width = i.getAttribute("data-pct") + "%"; });
+      var C = 2 * Math.PI * 50;
+      var off = C * (1 - (TOTAL ? earnedTotal / TOTAL : 0));
+      var f = document.getElementById("ringFill");
+      f.style.transition = "stroke-dashoffset 1.1s cubic-bezier(.22,1,.36,1)";
+      f.style.strokeDashoffset = off.toFixed(1);
+    });
+    document.getElementById("ringNum").textContent = earnedTotal;
+    document.getElementById("overallH").textContent =
+      earnedTotal === 0 ? "Ready to start building" : earnedTotal + " of " + TOTAL + " skills unlocked";
+    document.getElementById("overallP").textContent =
+      earnedTotal === 0 ? "As your camper completes missions, the skills they've mastered light up below."
+      : "Every check below is a skill your camper has demonstrated by finishing a mission. " + (TOTAL - earnedTotal) + " more to go.";
+  }
+
+  async function boot(){
+    var n = demoN();
+    if (n > 0){
+      var tag = document.getElementById("demoTag");
+      tag.style.display = ""; tag.textContent = "Demo · " + n + " missions done";
+      render(earnedSetFromDemo(n));
+      return;
+    }
+    var set = {};
+    var D = window.CTFDB;
+    if (D && D.enabled){
+      try { set = earnedSetFromBadges(await D.listBadges()); } catch(e){ set = {}; }
+    }
+    render(set);
+  }
+
+  // Render immediately (empty/demo) so the page never looks broken; refine when DB is ready.
+  if (demoN() > 0 || (window.CTFDB && window.CTFDB.enabled)) boot();
+  else { render({}); window.addEventListener("ctfdb:ready", boot, { once:true }); }
+})();
+</script>
+</body>
+</html>

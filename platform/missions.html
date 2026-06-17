@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Missions — Code the Future</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --blue:#2A5FF0;--blue-bright:#3D74FF;--teal:#12B2BC;--teal-bright:#26C7D1;--teal-300:#5BDCE6;
+    --coral:#FF5A38;--amber:#FFB320;--amber-300:#FFD980;--navy:#0A1226;--navy2:#0F1B3A;
+    --display:'Space Grotesk',sans-serif;--body:'Plus Jakarta Sans',system-ui,sans-serif;--mono:'JetBrains Mono',monospace;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{font-family:var(--body);color:#fff;overflow:hidden;
+    background:radial-gradient(1000px 600px at 50% -10%, #16264f, #0A1226 70%)}
+  .app{height:100dvh;display:grid;grid-template-rows:auto 1fr auto}
+
+  .top{flex:none;display:flex;align-items:center;gap:13px;padding:13px 20px;z-index:20}
+  .back{display:flex;align-items:center;gap:7px;color:#cfe0ff;text-decoration:none;font-weight:600;font-size:.9rem;
+    background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);border-radius:999px;padding:8px 15px}
+  .title{font-family:var(--display);font-weight:700;font-size:1.12rem}
+  .mods{display:flex;gap:7px;margin-left:4px}
+  .mod{font-family:var(--mono);font-size:.68rem;letter-spacing:.05em;text-transform:uppercase;color:#aebfe0;
+    background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:999px;padding:7px 12px;cursor:pointer}
+  .mod.on{color:#04222a;background:linear-gradient(120deg,var(--blue-bright),var(--teal-bright));border-color:transparent;font-weight:700}
+  .prog{margin-left:auto;display:flex;align-items:center;gap:10px}
+  .prog .lbl{font-family:var(--mono);font-size:.7rem;color:#aebfe0}
+  .prog .bar{width:140px;height:9px;border-radius:999px;background:rgba(255,255,255,.12);overflow:hidden}
+  .prog .bar i{display:block;height:100%;width:0;border-radius:999px;background:linear-gradient(90deg,var(--blue-bright),var(--teal-bright));transition:width 1s cubic-bezier(.22,1,.36,1)}
+
+  .scene{flex:1;position:relative;display:flex;align-items:center;justify-content:center;overflow:hidden;padding:8px;min-height:0}
+  /* the illustrated top-down Louisville map (3:2). The IMG sizes the box (in-flow,
+     fits the viewport keeping aspect); nodes overlay by % and stay aligned. */
+  .mapwrap{position:relative;border-radius:20px;overflow:hidden;line-height:0;
+    box-shadow:0 24px 60px rgba(0,0,0,.5),0 0 0 1px rgba(255,255,255,.08)}
+  .mapwrap img.bg{display:block;max-width:100%;max-height:calc(100dvh - 104px);width:auto;height:auto}
+  .mapwrap .veil{position:absolute;inset:0;background:radial-gradient(120% 120% at 50% 40%, transparent 55%, rgba(10,18,38,.28))}
+  .pathsvg{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+
+  .node{position:absolute;transform:translate(-50%,-50%);text-align:center;cursor:pointer;z-index:4}
+  .disc{width:clamp(40px,5.2vw,62px);height:clamp(40px,5.2vw,62px);border-radius:50%;display:flex;align-items:center;justify-content:center;
+    font-size:clamp(18px,2.5vw,26px);position:relative;background:rgba(255,255,255,.92);border:3px solid #fff;
+    box-shadow:0 6px 16px rgba(0,0,0,.45);transition:transform .2s cubic-bezier(.34,1.56,.64,1)}
+  .node:hover .disc{transform:scale(1.1)}
+  .node .num{position:absolute;top:-7px;right:-7px;width:22px;height:22px;border-radius:50%;font-family:var(--display);font-weight:700;font-size:.72rem;
+    display:flex;align-items:center;justify-content:center;background:var(--navy2);color:#fff;border:2px solid #fff}
+  .node .lbl{margin-top:6px;font-family:var(--display);font-weight:700;font-size:clamp(.6rem,1.1vw,.74rem);color:#fff;
+    text-shadow:0 1px 3px #000,0 2px 8px rgba(0,0,0,.8);max-width:120px;line-height:1.1}
+  .node.done .disc{background:linear-gradient(135deg,#2FBF71,#26C7D1);border-color:#bff5d8;color:#04332099}
+  .node.done .num{background:#177A48}
+  .node.done .disc::after{content:"✓";position:absolute;bottom:-5px;left:50%;transform:translateX(-50%);width:20px;height:20px;border-radius:50%;
+    background:#2FBF71;border:2px solid #fff;font-size:.72rem;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800}
+  .node.locked .disc{background:rgba(40,30,60,.7);border-color:rgba(255,255,255,.5);filter:grayscale(.5);color:#fff}
+  .node.locked .disc::after{content:"🔒";position:absolute;bottom:-5px;left:50%;transform:translateX(-50%);font-size:.78rem}
+  .node.locked .lbl{opacity:.7}
+  .node.current .disc{border-color:var(--amber);box-shadow:0 0 0 0 rgba(255,179,32,.7);animation:pulse 1.8s ease-out infinite}
+  @keyframes pulse{to{box-shadow:0 0 0 18px rgba(255,179,32,0)}}
+
+  .buddy{position:absolute;transform:translate(-50%,-128%);z-index:7;animation:bob 2.6s ease-in-out infinite;pointer-events:none}
+  @keyframes bob{0%,100%{transform:translate(-50%,-128%)}50%{transform:translate(-50%,-140%)}}
+  .buddy .av{width:clamp(56px,7vw,84px);height:clamp(56px,7vw,84px);border-radius:18px;background:radial-gradient(circle at 50% 30%,#fff,#EAF1FF);
+    box-shadow:0 12px 26px rgba(0,0,0,.5),0 0 0 4px rgba(91,220,230,.6)}
+  .buddy .tag{margin:6px auto 0;width:max-content;font-family:var(--display);font-weight:700;font-size:.72rem;color:#04222a;
+    background:linear-gradient(120deg,var(--amber),var(--amber-300));border-radius:999px;padding:4px 12px;box-shadow:0 5px 14px rgba(0,0,0,.4)}
+
+  .cur{position:absolute;left:50%;bottom:14px;transform:translateX(-50%);z-index:15;display:flex;align-items:center;gap:14px;
+    background:rgba(10,18,38,.85);border:1px solid rgba(255,255,255,.16);border-radius:18px;padding:12px 14px 12px 17px;backdrop-filter:blur(10px);
+    box-shadow:0 18px 44px rgba(0,0,0,.5);max-width:min(540px,calc(100vw - 24px))}
+  .cur .k{font-family:var(--mono);font-size:.64rem;letter-spacing:.1em;text-transform:uppercase;color:var(--teal-300)}
+  .cur h3{font-family:var(--display);font-weight:700;font-size:1.04rem;line-height:1.12;margin:2px 0}
+  .cur .sub{font-size:.8rem;color:#aebfe0}
+  .cur .go{margin-left:4px;flex:none;font-family:var(--display);font-weight:700;font-size:.98rem;color:#fff;text-decoration:none;
+    border-radius:999px;padding:12px 20px;background:linear-gradient(120deg,var(--coral),var(--amber));box-shadow:0 10px 24px rgba(255,90,56,.4);white-space:nowrap}
+  .cur.done-all .go{background:linear-gradient(120deg,var(--blue-bright),var(--teal))}
+  .ghost{font-family:var(--mono);font-size:.62rem;letter-spacing:.08em;color:rgba(255,255,255,.35);text-align:center;padding:4px}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="top">
+    <a class="back" href="index.html">← Home</a>
+    <span class="title">Your Journey</span>
+    <div class="mods">
+      <span class="mod on" data-mod="module-01-what-is-ai">Module 1</span>
+      <span class="mod" data-mod="module-02-ai-and-society">Module 2</span>
+    </div>
+    <div class="prog"><span class="lbl" id="progLbl">—</span><span class="bar"><i id="progBar"></i></span></div>
+  </div>
+
+  <div class="scene">
+    <div class="mapwrap" id="mapwrap">
+      <img class="bg" src="assets/louisville-map.png" alt="Illustrated map of Louisville">
+      <div class="veil"></div>
+      <svg class="pathsvg" id="pathsvg" preserveAspectRatio="none"></svg>
+      <!-- nodes + buddy injected -->
+    </div>
+  </div>
+  <div class="ghost" id="ghost"></div>
+</div>
+
+<script src="lib/config.js"></script>
+<script src="lib/avatar.js"></script>
+<script type="module">
+import { CTFDB } from "./lib/ctf-db.js";
+
+// ---- mission journeys (landmark stops placed on the Louisville map) ----
+const ROUTES = {
+  "module-01-what-is-ai": {
+    label:"Module 1 · What Is AI?", badge:"kids-m", player:"../curriculum/module-01-what-is-ai/lessons/player.html?track=kids",
+    stops:[
+      {t:"Welcome, Future Builder",icon:"🌊",place:"Waterfront Park",x:12,y:25},
+      {t:"Meet AI: What Even Is It?",icon:"🌉",place:"Big Four Bridge",x:27,y:14},
+      {t:"How You Learned What a Dog Is",icon:"🏙️",place:"Downtown",x:44,y:23},
+      {t:"AI Learns the Same Way You Do",icon:"🥊",place:"Ali Center",x:60,y:15},
+      {t:"Teaching a Computer to SEE",icon:"📚",place:"Main Library",x:74,y:26},
+      {t:"How AI Reads Words",icon:"🎨",place:"Speed Art Museum",x:84,y:43},
+      {t:"The Attention Trick",icon:"🐎",place:"Churchill Downs",x:79,y:79},
+      {t:"Is AI Like a Brain?",icon:"🌳",place:"Cherokee Park",x:61,y:69},
+      {t:"The Story of AI",icon:"🚢",place:"Belle of Louisville",x:45,y:80},
+      {t:"What AI Is Great At (and Not)",icon:"🦓",place:"Louisville Zoo",x:30,y:67},
+      {t:"The Future Is Yours",icon:"⚾",place:"Slugger Field",x:15,y:80},
+      {t:"You Did It!",icon:"🚀",place:"The Future",x:14,y:50},
+    ]
+  },
+  "module-02-ai-and-society": {
+    label:"Module 2 · AI & Our World", badge:"kids-mod2-", player:"../curriculum/module-02-ai-and-society/lessons/player.html?track=kids",
+    stops:[
+      {t:"Welcome Back, Future Builder",icon:"🌊",place:"Waterfront Park",x:12,y:25},
+      {t:"AI Is Already Out There",icon:"🌉",place:"Big Four Bridge",x:27,y:14},
+      {t:"AI the Doctor's Helper",icon:"🏥",place:"Downtown",x:44,y:23},
+      {t:"AI and the Planet",icon:"🌳",place:"Cherokee Park",x:60,y:15},
+      {t:"AI at Work",icon:"🏙️",place:"Main Street",x:74,y:26},
+      {t:"Every Tool Can Help or Hurt",icon:"🔨",place:"Speed Art Museum",x:84,y:43},
+      {t:"Your Stuff Is Yours",icon:"🔒",place:"Churchill Downs",x:79,y:79},
+      {t:"Who Holds the Biggest Tools?",icon:"⚖️",place:"Cherokee Park",x:61,y:69},
+      {t:"Tools, Rules, and Freedom",icon:"🔦",place:"Belle of Louisville",x:45,y:80},
+      {t:"Who Decides the Future of AI?",icon:"🗳️",place:"Louisville Zoo",x:30,y:67},
+      {t:"You Get to Help Build It",icon:"🛠️",place:"Slugger Field",x:15,y:80},
+      {t:"You Did It!",icon:"🏆",place:"The Future",x:14,y:50},
+    ]
+  }
+};
+
+const qs = new URLSearchParams(location.search);
+let MODULE = "module-01-what-is-ai", done = 0;
+const mapwrap = document.getElementById('mapwrap');
+
+function countDone(badges, prefix){
+  const re = new RegExp("^"+prefix.replace(/[-]/g,"\\-")+"(\\d+)$");
+  let max = 0;
+  (badges||[]).forEach(b=>{ const k = b.badge_key||b.key||(typeof b==="string"?b:""); const m=String(k).match(re); if(m) max=Math.max(max, +m[1]); });
+  return max;
+}
+
+async function loadProgress(){
+  if (qs.has("demo")) { done = Math.max(0, Math.min(12, parseInt(qs.get("demo"),10)||0)); return; }
+  try {
+    await CTFDB.init();
+    if (CTFDB.enabled) { const badges = await CTFDB.listBadges(); done = countDone(badges, ROUTES[MODULE].badge); }
+  } catch(e){ done = 0; }
+}
+
+function px(stop){ const r = mapwrap.getBoundingClientRect(); return { x: stop.x/100*r.width, y: stop.y/100*r.height }; }
+
+function render(){
+  [...mapwrap.querySelectorAll('.node,.buddy')].forEach(n=>n.remove());
+  const R = ROUTES[MODULE], stops = R.stops;
+  const current = Math.min(done+1, stops.length);
+  const pts = stops.map(px);
+  let full=`M ${pts[0].x} ${pts[0].y}`, dpath=`M ${pts[0].x} ${pts[0].y}`;
+  for(let i=1;i<pts.length;i++){ const c=`C ${pts[i-1].x+30} ${pts[i-1].y}, ${pts[i].x-30} ${pts[i].y}, ${pts[i].x} ${pts[i].y}`;
+    full+=" "+c; if(i<=Math.max(done, current-1)) dpath+=" "+c; }
+  const svg=document.getElementById('pathsvg'); const r=mapwrap.getBoundingClientRect(); svg.setAttribute('viewBox',`0 0 ${r.width} ${r.height}`);
+  svg.innerHTML=`<defs><linearGradient id="pg" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#3D74FF"/><stop offset="1" stop-color="#26C7D1"/></linearGradient></defs>
+    <path d="${full}" fill="none" stroke="rgba(255,255,255,.6)" stroke-width="7" stroke-linecap="round" stroke-dasharray="1 14"/>
+    <path d="${dpath}" fill="none" stroke="url(#pg)" stroke-width="8" stroke-linecap="round"/>`;
+  stops.forEach((m,i)=>{
+    const n=i+1, state = n<=done ? "done" : (n===current ? "current" : "locked");
+    const el=document.createElement('div'); el.className=`node ${state}`; el.style.left=m.x+'%'; el.style.top=m.y+'%';
+    el.innerHTML=`<div class="disc">${m.icon}<span class="num">${n}</span></div><div class="lbl">${m.t}</div>`;
+    el.onclick=()=>{ if(state==="done"||state==="current") location.href=R.player; };
+    mapwrap.appendChild(el);
+  });
+  const cn=stops[current-1];
+  const buddy=document.createElement('div'); buddy.className='buddy'; buddy.style.left=cn.x+'%'; buddy.style.top=cn.y+'%';
+  buddy.innerHTML=`<div class="av">${window.CTFAvatar?CTFAvatar.render(getAv()):"🧑‍🚀"}</div><div class="tag">You are here</div>`;
+  mapwrap.appendChild(buddy);
+  document.getElementById('progLbl').textContent=`${done} of ${stops.length}`;
+  document.getElementById('progBar').style.width=(done/stops.length*100)+'%';
+  curCard(R, cn, current, done>=stops.length);
+}
+function getAv(){ try{ const p=JSON.parse(localStorage.getItem("ctf:profile")||"null"); return (p&&p.avatar&&Object.keys(p.avatar).length)?p.avatar:CTFAvatar.DEFAULT; }catch(e){ return CTFAvatar.DEFAULT; } }
+function curCard(R, m, current, allDone){
+  let c=document.getElementById('curcard'); if(c) c.remove();
+  c=document.createElement('div'); c.className='cur'+(allDone?' done-all':''); c.id='curcard';
+  c.innerHTML = allDone
+    ? `<div><div class="k">${R.label}</div><h3>🎉 Module complete!</h3><div class="sub">You traveled the whole city. Replay any stop anytime.</div></div><a class="go" href="${R.player}">Replay →</a>`
+    : `<div><div class="k">Mission ${current} · ${m.place}</div><h3>${m.t}</h3><div class="sub">Pick up where you left off across the city.</div></div><a class="go" href="${R.player}">${current>1?'Continue':'Start'} →</a>`;
+  document.querySelector('.scene').appendChild(c);
+}
+
+document.querySelectorAll('.mod').forEach(b=>b.onclick=async()=>{
+  document.querySelectorAll('.mod').forEach(x=>x.classList.remove('on')); b.classList.add('on');
+  MODULE=b.dataset.mod; await loadProgress(); render();
+});
+document.getElementById('ghost').textContent = qs.has("demo") ? "demo view" : "";
+
+await loadProgress();
+const _bg = mapwrap.querySelector('img.bg');
+if (_bg.complete && _bg.naturalWidth) render(); else _bg.addEventListener('load', render, { once:true });
+addEventListener('resize', ()=>{ clearTimeout(window._rt); window._rt=setTimeout(render,150); });
+</script>
+</body>
+</html>
