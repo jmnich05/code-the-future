@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Missions — Code the Future</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --blue:#2A5FF0;--blue-bright:#3D74FF;--teal:#12B2BC;--teal-bright:#26C7D1;--teal-300:#5BDCE6;
+    --coral:#FF5A38;--coral-bright:#FF7556;--amber:#FFB320;--amber-300:#FFD980;
+    --navy:#0A1226;--navy2:#0F1B3A;--ink:#0C1322;
+    --display:'Space Grotesk',sans-serif;--body:'Plus Jakarta Sans',system-ui,sans-serif;--mono:'JetBrains Mono',monospace;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{font-family:var(--body);color:#fff;overflow:hidden;background:var(--navy)}
+  .app{height:100dvh;display:flex;flex-direction:column}
+
+  /* top bar */
+  .top{flex:none;display:flex;align-items:center;gap:14px;padding:14px 22px;z-index:20;
+    background:linear-gradient(180deg,rgba(10,18,38,.92),rgba(10,18,38,0));}
+  .back{display:flex;align-items:center;gap:7px;color:#cfe0ff;text-decoration:none;font-weight:600;font-size:.92rem;
+    background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);border-radius:999px;padding:8px 15px;}
+  .title{font-family:var(--display);font-weight:700;font-size:1.15rem}
+  .mods{display:flex;gap:7px;margin-left:6px}
+  .mod{font-family:var(--mono);font-size:.7rem;letter-spacing:.06em;text-transform:uppercase;color:#aebfe0;
+    background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:999px;padding:7px 13px;cursor:pointer}
+  .mod.on{color:#04222a;background:linear-gradient(120deg,var(--blue-bright),var(--teal-bright));border-color:transparent;font-weight:700}
+  .prog{margin-left:auto;display:flex;align-items:center;gap:11px}
+  .prog .lbl{font-family:var(--mono);font-size:.72rem;letter-spacing:.06em;color:#aebfe0}
+  .prog .bar{width:150px;height:9px;border-radius:999px;background:rgba(255,255,255,.12);overflow:hidden}
+  .prog .bar i{display:block;height:100%;width:0;border-radius:999px;background:linear-gradient(90deg,var(--blue-bright),var(--teal-bright));transition:width 1s cubic-bezier(.22,1,.36,1)}
+
+  /* scene */
+  .scene{flex:1;position:relative;overflow:hidden;
+    background:linear-gradient(180deg,#10204d 0%,#1b2f63 30%,#3a4d8f 55%,#7d6aa8 74%,#d98a8f 100%);}
+  .stars i{position:absolute;background:#fff;border-radius:50%;opacity:.8;animation:tw 3.5s ease-in-out infinite}
+  @keyframes tw{0%,100%{opacity:.25}50%{opacity:.95}}
+  .sun{position:absolute;left:50%;top:60%;width:130px;height:130px;border-radius:50%;transform:translate(-50%,-50%);
+    background:radial-gradient(circle,#FFE9A8,#FFB320 60%,rgba(255,179,32,0) 72%);filter:blur(2px);opacity:.85}
+  .clouds span{position:absolute;background:rgba(255,255,255,.16);border-radius:50px;filter:blur(6px);animation:drift 40s linear infinite}
+  @keyframes drift{from{transform:translateX(-60px)}to{transform:translateX(60px)}}
+  /* skyline silhouette */
+  .skyline{position:absolute;left:0;right:0;bottom:30%;height:30%;}
+  .river{position:absolute;left:0;right:0;bottom:0;height:32%;
+    background:linear-gradient(180deg,rgba(38,199,209,.18),rgba(42,95,240,.42) 60%,#16264f);}
+  .river::before{content:"";position:absolute;inset:0;background:
+    repeating-linear-gradient(95deg,rgba(255,255,255,.10) 0 2px,transparent 2px 70px);animation:shimmer 6s linear infinite;opacity:.5}
+  @keyframes shimmer{to{transform:translateX(70px)}}
+  .hills{position:absolute;left:0;right:0;bottom:26%;height:18%;background:
+    radial-gradient(120% 100% at 20% 100%,#5a4a8a,transparent 60%),
+    radial-gradient(120% 100% at 80% 100%,#6b5a9a,transparent 60%);opacity:.6}
+
+  /* path + nodes layer */
+  .map{position:absolute;inset:0;z-index:5}
+  .pathsvg{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+  .node{position:absolute;transform:translate(-50%,-50%);text-align:center;cursor:pointer}
+  .disc{width:74px;height:74px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:30px;position:relative;
+    background:rgba(255,255,255,.14);border:3px solid rgba(255,255,255,.5);box-shadow:0 8px 22px rgba(0,0,0,.35);backdrop-filter:blur(3px);
+    transition:transform .2s var(--ease,cubic-bezier(.34,1.56,.64,1))}
+  .node:hover .disc{transform:scale(1.08)}
+  .node .num{position:absolute;top:-8px;right:-8px;width:26px;height:26px;border-radius:50%;font-family:var(--display);font-weight:700;font-size:.82rem;
+    display:flex;align-items:center;justify-content:center;background:var(--navy2);color:#fff;border:2px solid rgba(255,255,255,.6)}
+  .node .lbl{margin-top:9px;font-family:var(--display);font-weight:600;font-size:.74rem;color:#fff;text-shadow:0 2px 8px rgba(0,0,0,.6);max-width:120px}
+  .node .place{font-family:var(--mono);font-size:.6rem;letter-spacing:.04em;color:#cfe0ff;opacity:.85;text-shadow:0 1px 6px rgba(0,0,0,.6)}
+  /* states */
+  .node.done .disc{background:linear-gradient(135deg,#2FBF71,#26C7D1);border-color:#bff5d8}
+  .node.done .num{background:#177A48}
+  .node.done .disc::after{content:"✓";position:absolute;bottom:-6px;left:50%;transform:translateX(-50%);width:24px;height:24px;border-radius:50%;
+    background:#2FBF71;border:2px solid #fff;font-size:.8rem;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800}
+  .node.locked{opacity:.62}
+  .node.locked .disc{background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.28);filter:grayscale(.4)}
+  .node.locked .disc::after{content:"🔒";position:absolute;bottom:-6px;left:50%;transform:translateX(-50%);font-size:.85rem}
+  .node.current .disc{border-color:var(--amber);box-shadow:0 0 0 0 rgba(255,179,32,.6);animation:pulse 1.8s ease-out infinite}
+  @keyframes pulse{to{box-shadow:0 0 0 22px rgba(255,179,32,0)}}
+
+  /* avatar buddy at current node */
+  .buddy{position:absolute;transform:translate(-50%,-118%);z-index:8;animation:bob 2.6s ease-in-out infinite;pointer-events:none}
+  @keyframes bob{0%,100%{transform:translate(-50%,-118%)}50%{transform:translate(-50%,-128%)}}
+  .buddy .av{width:96px;height:96px;border-radius:22px;background:radial-gradient(circle at 50% 30%,#fff,#EAF1FF);
+    box-shadow:0 14px 30px rgba(0,0,0,.4),0 0 0 4px rgba(91,220,230,.5)}
+  .buddy .tag{margin:8px auto 0;width:max-content;font-family:var(--display);font-weight:700;font-size:.78rem;color:#04222a;
+    background:linear-gradient(120deg,var(--amber),var(--amber-300));border-radius:999px;padding:5px 13px;box-shadow:0 6px 16px rgba(0,0,0,.3)}
+
+  /* current mission card */
+  .cur{position:absolute;left:50%;bottom:18px;transform:translateX(-50%);z-index:15;display:flex;align-items:center;gap:16px;
+    background:rgba(10,18,38,.82);border:1px solid rgba(255,255,255,.16);border-radius:18px;padding:13px 16px 13px 18px;backdrop-filter:blur(10px);
+    box-shadow:0 18px 44px rgba(0,0,0,.45);max-width:min(560px,calc(100vw - 28px))}
+  .cur .k{font-family:var(--mono);font-size:.66rem;letter-spacing:.12em;text-transform:uppercase;color:var(--teal-300)}
+  .cur h3{font-family:var(--display);font-weight:700;font-size:1.08rem;line-height:1.15;margin:2px 0}
+  .cur .sub{font-size:.82rem;color:#aebfe0}
+  .cur .go{margin-left:6px;flex:none;font-family:var(--display);font-weight:700;font-size:1rem;color:#fff;text-decoration:none;
+    border-radius:999px;padding:13px 22px;background:linear-gradient(120deg,var(--coral),var(--amber));box-shadow:0 10px 26px rgba(255,90,56,.4);white-space:nowrap}
+  .hintbar{position:absolute;left:0;right:0;bottom:0;text-align:center;font-family:var(--mono);font-size:.66rem;letter-spacing:.1em;
+    color:rgba(255,255,255,.4);padding:6px;z-index:14}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="top">
+    <a class="back" href="index.html">← Home</a>
+    <span class="title">Your Journey</span>
+    <div class="mods">
+      <span class="mod on" data-mod="1">Module 1 · What Is AI?</span>
+      <span class="mod" data-mod="2">Module 2 · AI &amp; Our World</span>
+    </div>
+    <div class="prog"><span class="lbl" id="progLbl">—</span><span class="bar"><i id="progBar"></i></span></div>
+  </div>
+
+  <div class="scene" id="scene">
+    <div class="stars" id="stars"></div>
+    <div class="sun"></div>
+    <div class="clouds" id="clouds"></div>
+    <div class="hills"></div>
+    <svg class="skyline" viewBox="0 0 1200 260" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+      <g fill="#2b2552" opacity="0.85">
+        <rect x="60" y="120" width="46" height="140"/><rect x="120" y="80" width="34" height="180"/>
+        <rect x="170" y="150" width="58" height="110"/><rect x="250" y="60" width="40" height="200"/>
+        <rect x="300" y="110" width="30" height="150"/><rect x="360" y="40" width="50" height="220"/>
+        <polygon points="385,40 410,10 435,40"/>
+        <rect x="450" y="130" width="44" height="130"/><rect x="520" y="90" width="36" height="170"/>
+        <rect x="580" y="150" width="60" height="110"/><rect x="670" y="70" width="42" height="190"/>
+        <rect x="730" y="120" width="32" height="140"/><rect x="790" y="50" width="48" height="210"/>
+        <rect x="860" y="140" width="54" height="120"/><rect x="940" y="95" width="38" height="165"/>
+        <rect x="1000" y="125" width="44" height="135"/><rect x="1070" y="75" width="40" height="185"/>
+        <rect x="1130" y="150" width="50" height="110"/>
+      </g>
+      <g fill="#FFD980" opacity="0.55">
+        <rect x="128" y="100" width="6" height="8"/><rect x="140" y="120" width="6" height="8"/>
+        <rect x="258" y="90" width="6" height="8"/><rect x="270" y="130" width="6" height="8"/>
+        <rect x="370" y="80" width="6" height="8"/><rect x="678" y="100" width="6" height="8"/>
+        <rect x="800" y="90" width="6" height="8"/><rect x="1078" y="110" width="6" height="8"/>
+      </g>
+    </svg>
+    <div class="river"></div>
+
+    <div class="map" id="map">
+      <svg class="pathsvg" id="pathsvg" preserveAspectRatio="none"></svg>
+      <!-- nodes + buddy injected by JS -->
+    </div>
+
+    <div class="hintbar" id="hintbar">prototype · animated Louisville journey · the buddy travels as missions are completed</div>
+  </div>
+</div>
+
+<script src="lib/avatar.js"></script>
+<script>
+const M1 = [
+  {t:"Welcome, Future Builder", icon:"🌊", place:"Waterfront Park", x:7,  y:60},
+  {t:"Meet AI: What Even Is It?", icon:"🌉", place:"Big Four Bridge", x:16, y:42},
+  {t:"How You Learned What a Dog Is", icon:"⚾", place:"Louisville Slugger", x:25, y:57},
+  {t:"AI Learns the Same Way You Do", icon:"🥊", place:"Muhammad Ali Center", x:34, y:39},
+  {t:"Teaching a Computer to SEE", icon:"📚", place:"Main Library", x:43, y:55},
+  {t:"How AI Reads Words", icon:"🏀", place:"Yum! Center", x:51, y:37},
+  {t:"The Attention Trick", icon:"🐎", place:"Churchill Downs", x:60, y:54},
+  {t:"Is AI Like a Brain?", icon:"🚢", place:"Belle of Louisville", x:68, y:39},
+  {t:"The Story of AI", icon:"🌳", place:"Cherokee Park", x:76, y:56},
+  {t:"What AI Is Great At (and Not)", icon:"🦓", place:"Louisville Zoo", x:84, y:41},
+  {t:"The Future Is Yours", icon:"🎨", place:"Speed Art Museum", x:90, y:58},
+  {t:"You Did It!", icon:"🚀", place:"The Future", x:95, y:40},
+];
+// MOCK progress: missions 1–4 done, currently on 5 (real build reads this from Supabase/localStorage)
+let current = 5, done = 4, MISSIONS = M1;
+
+const scene = document.getElementById('scene'), map = document.getElementById('map');
+// starfield
+const stars = document.getElementById('stars');
+for(let i=0;i<60;i++){ const s=document.createElement('i'); const sz=Math.random()*2+1;
+  s.style.cssText=`left:${Math.random()*100}%;top:${Math.random()*46}%;width:${sz}px;height:${sz}px;animation-delay:${Math.random()*3}s`; stars.appendChild(s); }
+// clouds
+const clouds=document.getElementById('clouds');
+[[12,18,170,34],[64,12,210,40],[38,26,140,30],[82,22,180,36]].forEach(([l,t,w,h],i)=>{
+  const c=document.createElement('span'); c.style.cssText=`left:${l}%;top:${t}%;width:${w}px;height:${h}px;animation-duration:${30+i*8}s`; clouds.appendChild(c); });
+
+function px(node){ const r=map.getBoundingClientRect(); return {x:node.x/100*r.width, y:node.y/100*r.height}; }
+
+function render(){
+  // clear old nodes/buddy
+  [...map.querySelectorAll('.node,.buddy')].forEach(n=>n.remove());
+  const pts = MISSIONS.map(px);
+  // path string (smooth-ish through points)
+  const seg = (a,b)=>{ const mx=(a.x+b.x)/2; return `Q ${a.x} ${(a.y+b.y)/2}, ${mx} ${(a.y+b.y)/2} T ${b.x} ${b.y}`; };
+  let full=`M ${pts[0].x} ${pts[0].y}`, donePath=`M ${pts[0].x} ${pts[0].y}`;
+  for(let i=1;i<pts.length;i++){ const c=`C ${pts[i-1].x+40} ${pts[i-1].y}, ${pts[i].x-40} ${pts[i].y}, ${pts[i].x} ${pts[i].y}`;
+    full+=" "+c; if(i<=done) donePath+=" "+c; }
+  const svg=document.getElementById('pathsvg'); const r=map.getBoundingClientRect();
+  svg.setAttribute('viewBox',`0 0 ${r.width} ${r.height}`);
+  svg.innerHTML=`<defs><linearGradient id="pg" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#3D74FF"/><stop offset="1" stop-color="#26C7D1"/></linearGradient></defs>
+    <path d="${full}" fill="none" stroke="rgba(255,255,255,.22)" stroke-width="9" stroke-linecap="round" stroke-dasharray="2 16"/>
+    <path d="${donePath}" fill="none" stroke="url(#pg)" stroke-width="9" stroke-linecap="round"/>`;
+  // nodes
+  MISSIONS.forEach((m,i)=>{
+    const n=i+1, state = n<=done ? "done" : (n===current ? "current" : (n<=current ? "done":"locked"));
+    const el=document.createElement('div'); el.className=`node ${state}`;
+    el.style.left=m.x+'%'; el.style.top=m.y+'%';
+    el.innerHTML=`<div class="disc">${m.icon}<span class="num">${n}</span></div>
+      <div class="lbl">${m.t}</div><div class="place">${m.icon} ${m.place}</div>`;
+    el.onclick=()=>{ if(state!=="locked") flash(m,n); };
+    map.appendChild(el);
+  });
+  // buddy at current
+  const cn=MISSIONS[current-1];
+  const buddy=document.createElement('div'); buddy.className='buddy'; buddy.style.left=cn.x+'%'; buddy.style.top=cn.y+'%';
+  const avHtml = (window.CTFAvatar) ? CTFAvatar.render(CTFAvatar.DEFAULT) : "🧑‍🚀";
+  buddy.innerHTML=`<div class="av">${avHtml}</div><div class="tag">You are here</div>`;
+  map.appendChild(buddy);
+  // header progress + current card
+  document.getElementById('progLbl').textContent = `${done} of ${MISSIONS.length} missions`;
+  document.getElementById('progBar').style.width = (done/MISSIONS.length*100)+'%';
+  curCard(cn);
+}
+function curCard(m){
+  let c=document.getElementById('curcard'); if(c) c.remove();
+  c=document.createElement('div'); c.className='cur'; c.id='curcard';
+  c.innerHTML=`<div><div class="k">Mission ${current} · ${m.place}</div><h3>${m.t}</h3><div class="sub">Pick up where you left off across the city.</div></div>
+    <a class="go" href="../curriculum/module-01-what-is-ai/lessons/player.html?track=kids">Continue →</a>`;
+  scene.appendChild(c);
+}
+function flash(m,n){ const c=document.getElementById('curcard'); if(c){ c.style.transform='translateX(-50%) scale(1.03)'; setTimeout(()=>c.style.transform='translateX(-50%)',180); } }
+
+// module toggle (Module 2 = same demo journey for the prototype)
+document.querySelectorAll('.mod').forEach(b=>b.onclick=()=>{
+  document.querySelectorAll('.mod').forEach(x=>x.classList.remove('on')); b.classList.add('on');
+  document.querySelector('.title').textContent = b.dataset.mod==="2" ? "Your Journey · Module 2" : "Your Journey";
+});
+
+render();
+addEventListener('resize', ()=>{ clearTimeout(window._rt); window._rt=setTimeout(render,150); });
+</script>
+</body>
+</html>
