@@ -27,17 +27,31 @@ const TRACKS = {
   }
 };
 
-// mission-opening art — Pass 2 (generated scenes). Empty for now → no lead art,
-// the player just opens each Mission on its first text beat.
-const ART_MAP = { kids: {} };
-const ART_CAPTIONS = {};
+// mission-opening art — Pass 2: on-brand SVG scene cards (assets/art/mission-N.svg),
+// each with a caption tying the picture to the mission's idea. A generated photo-
+// real .jpg, if dropped in later, takes precedence over the SVG.
+const ART_MAP = { kids: { 1:"mission-1",2:"mission-2",3:"mission-3",4:"mission-4",5:"mission-5",6:"mission-6",7:"mission-7",8:"mission-8",9:"mission-9",10:"mission-10",11:"mission-11",12:"mission-12" } };
+const ART_CAPTIONS = {
+  1: "You're back — and this week, AI gets bigger than apps.",
+  2: "AI is already woven through the whole world — not just your screen.",
+  3: "AI helps doctors spot what tired eyes might miss — like a metal detector for sickness.",
+  4: "AI helps with giant jobs: clean energy, weather, and taking care of the planet.",
+  5: "Code does the loop, AI does the judgment, humans handle the exceptions.",
+  6: "A tool isn't good or bad — the choices we make with it are.",
+  7: "Your information is like your belongings: you get a say in who sees it.",
+  8: "What if one kid owned every ball at recess? Who holds the biggest tools matters.",
+  9: "A flashlight lights your way home — or gets shined in your face. Same tool, different choice.",
+  10: "Nobody decides alone — the future of AI is steered by lots of voices, including yours.",
+  11: "You don't just use AI — you get to help build it: curiosity + judgment + kindness.",
+  12: "You did it — Level 2. Look how big you can think about AI now."
+};
 function artBeat(track, n) {
+  const cap = ART_CAPTIONS[n] ? `<p class="art-cap">${ART_CAPTIONS[n]}</p>` : "";
   if (track === "kids" && existsSync(join(MOD, "assets", "art", `mission-${n}.jpg`))) {
-    const cap = ART_CAPTIONS[n] ? `<p class="art-cap">${ART_CAPTIONS[n]}</p>` : "";
     return { type: "image", html: `<div class="lesson-art"><img src="../assets/art/mission-${n}.jpg" alt="" loading="lazy">${cap}</div>` };
   }
   const name = ART_MAP[track] && ART_MAP[track][n];
-  return name ? { type: "image", html: `<div class="lesson-art"><img src="../assets/art/${name}.svg" alt="" loading="lazy"></div>` } : null;
+  return name ? { type: "image", html: `<div class="lesson-art"><img src="../assets/art/${name}.svg" alt="" loading="lazy">${cap}</div>` } : null;
 }
 
 // video breaks — verified via YouTube oEmbed. Mixed reputable sources (Code.org

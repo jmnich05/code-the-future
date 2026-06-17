@@ -25,6 +25,10 @@
    "meta": "~10 minutes",
    "beats": [
     {
+     "type": "image",
+     "html": "<div class=\"lesson-art\"><img src=\"../assets/art/mission-1.svg\" alt=\"\" loading=\"lazy\"><p class=\"art-cap\">You're back — and this week, AI gets bigger than apps.</p></div>"
+    },
+    {
      "type": "text",
      "html": "<p>Remember the toaster from last week? A toaster does the same thing every time. And the cook who tasted a thousand meals and can invent a brand-new dish? That's AI — it <em>learns</em>. You already know the single biggest idea in all of AI. Most grown-ups still can't explain it, and you can. Take a second to feel good about that.</p>"
     },
@@ -73,6 +77,10 @@
    "meta": "~10 minutes",
    "beats": [
     {
+     "type": "image",
+     "html": "<div class=\"lesson-art\"><img src=\"../assets/art/mission-2.svg\" alt=\"\" loading=\"lazy\"><p class=\"art-cap\">AI is already woven through the whole world — not just your screen.</p></div>"
+    },
+    {
      "type": "text",
      "html": "<p>When you think of AI, you probably picture a chatbot or a phone. But AI is <em>way</em> bigger than your screen. It's already woven into the whole world around you, quietly doing jobs you never see.</p>"
     },
@@ -108,6 +116,10 @@
    "title": "AI the Doctor's Helper",
    "meta": "~10 minutes",
    "beats": [
+    {
+     "type": "image",
+     "html": "<div class=\"lesson-art\"><img src=\"../assets/art/mission-3.svg\" alt=\"\" loading=\"lazy\"><p class=\"art-cap\">AI helps doctors spot what tired eyes might miss — like a metal detector for sickness.</p></div>"
+    },
     {
      "type": "text",
      "html": "<p>Here's one of the most hopeful things AI does in the whole world: it helps doctors keep people healthy.</p>"
@@ -145,6 +157,10 @@
    "meta": "~10 minutes",
    "beats": [
     {
+     "type": "image",
+     "html": "<div class=\"lesson-art\"><img src=\"../assets/art/mission-4.svg\" alt=\"\" loading=\"lazy\"><p class=\"art-cap\">AI helps with giant jobs: clean energy, weather, and taking care of the planet.</p></div>"
+    },
+    {
      "type": "text",
      "html": "<p>Some problems are too big for any one person to solve alone — like taking care of our whole planet. Good news: this is another place AI is becoming an amazing helper.</p>"
     },
@@ -180,6 +196,10 @@
    "title": "AI at Work",
    "meta": "~10 minutes",
    "beats": [
+    {
+     "type": "image",
+     "html": "<div class=\"lesson-art\"><img src=\"../assets/art/mission-5.svg\" alt=\"\" loading=\"lazy\"><p class=\"art-cap\">Code does the loop, AI does the judgment, humans handle the exceptions.</p></div>"
+    },
     {
      "type": "text",
      "html": "<p>You've probably heard a grown-up wonder, \"Is AI going to change jobs?\" The honest answer is <em>yes</em> — and once you understand <em>how</em>, it's a lot less scary and a lot more interesting.</p>"
@@ -229,6 +249,10 @@
    "meta": "~10 minutes",
    "beats": [
     {
+     "type": "image",
+     "html": "<div class=\"lesson-art\"><img src=\"../assets/art/mission-6.svg\" alt=\"\" loading=\"lazy\"><p class=\"art-cap\">A tool isn't good or bad — the choices we make with it are.</p></div>"
+    },
+    {
      "type": "text",
      "html": "<p>Okay — you've seen the amazing side: AI helping doctors, the planet, and people at work. Now we turn a corner. Because the most powerful tool in the world comes with the most important <em>choices</em> in the world, and a smart builder thinks about both.</p>"
     },
@@ -276,6 +300,10 @@
    "title": "Your Stuff Is Yours",
    "meta": "~10 minutes",
    "beats": [
+    {
+     "type": "image",
+     "html": "<div class=\"lesson-art\"><img src=\"../assets/art/mission-7.svg\" alt=\"\" loading=\"lazy\"><p class=\"art-cap\">Your information is like your belongings: you get a say in who sees it.</p></div>"
+    },
     {
      "type": "text",
      "html": "<p>Time for your first big builder question, and it's one you can actually use <em>today</em>: <strong>privacy</strong>.</p>"
@@ -325,6 +353,10 @@
    "meta": "~10 minutes",
    "beats": [
     {
+     "type": "image",
+     "html": "<div class=\"lesson-art\"><img src=\"../assets/art/mission-8.svg\" alt=\"\" loading=\"lazy\"><p class=\"art-cap\">What if one kid owned every ball at recess? Who holds the biggest tools matters.</p></div>"
+    },
+    {
      "type": "text",
      "html": "<p>Here's a question that even a lot of grown-ups haven't stopped to think about: the most powerful AI is really, really expensive and hard to build. So <em>who actually has it?</em></p>"
     },
@@ -364,6 +396,10 @@
    "title": "Tools, Rules, and Freedom",
    "meta": "~10 minutes",
    "beats": [
+    {
+     "type": "image",
+     "html": "<div class=\"lesson-art\"><img src=\"../assets/art/mission-9.svg\" alt=\"\" loading=\"lazy\"><p class=\"art-cap\">A flashlight lights your way home — or gets shined in your face. Same tool, different choice.</p></div>"
+    },
     {
      "type": "text",
      "html": "<p>This Mission has the biggest idea in the whole module, and it builds right on the last one. We're going to take it slow and start somewhere comfy.</p>"
@@ -409,6 +445,10 @@
    "meta": "~10 minutes",
    "beats": [
     {
+     "type": "image",
+     "html": "<div class=\"lesson-art\"><img src=\"../assets/art/mission-10.svg\" alt=\"\" loading=\"lazy\"><p class=\"art-cap\">Nobody decides alone — the future of AI is steered by lots of voices, including yours.</p></div>"
+    },
+    {
      "type": "text",
      "html": "<p>After the last couple of Missions, you might be thinking: <em>okay, this is a super powerful tool, and how it's used really matters… so who's actually in charge of all this?</em> Brilliant question. Let's answer it — and the answer is full of hope.</p>"
     },
@@ -453,6 +493,10 @@
    "meta": "~10 minutes",
    "beats": [
     {
+     "type": "image",
+     "html": "<div class=\"lesson-art\"><img src=\"../assets/art/mission-11.svg\" alt=\"\" loading=\"lazy\"><p class=\"art-cap\">You don't just use AI — you get to help build it: curiosity + judgment + kindness.</p></div>"
+    },
+    {
      "type": "text",
      "html": "<p>Let's pull this whole week together, because you've come a <em>long</em> way. You learned that AI is powerful and already changing the world (Missions 2–5). You learned it comes with real choices about fairness, privacy, power, and control (Missions 6–10). So here's the big finish: *<em>the people who get to shape all of this are the kids growing up </em>with<em> it. That's you.</em>*</p>"
     },
@@ -492,6 +536,10 @@
    "title": "You Did It!",
    "meta": "~10 minutes",
    "beats": [
+    {
+     "type": "image",
+     "html": "<div class=\"lesson-art\"><img src=\"../assets/art/mission-12.svg\" alt=\"\" loading=\"lazy\"><p class=\"art-cap\">You did it — Level 2. Look how big you can think about AI now.</p></div>"
+    },
     {
      "type": "text",
      "html": "<p>Look how big your thinking got this week. Twelve Missions ago, AI was a tool that draws dragons. Now you can talk about how it's changing medicine, the planet, and jobs — <em>and</em> you can think clearly about fairness, privacy, power, and who gets to decide. That's not just \"knowing about AI.\" That's <em>wisdom</em> about AI. Let's pull it all together.</p>"
