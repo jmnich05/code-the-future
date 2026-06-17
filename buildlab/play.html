@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Build Lab — Code the Future</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="lab.css">
+</head>
+<body>
+<div class="wrap kid">
+
+  <!-- JOIN -->
+  <div id="join" class="join">
+    <h1>Build <span style="color:var(--teal-300)">Lab</span></h1>
+    <p>Type the code on the big screen.</p>
+    <input id="codeInput" maxlength="4" placeholder="CODE" autocomplete="off" autocapitalize="characters">
+    <input id="nameInput" class="bigfield" style="text-align:center" maxlength="14" placeholder="Your name">
+    <button class="btn full" id="joinBtn">Join the lab →</button>
+    <p id="joinErr" style="color:var(--coral-bright);margin-top:10px;min-height:1.2em"></p>
+  </div>
+
+  <!-- PLAYING -->
+  <div id="play" style="display:none">
+    <div class="lab-top">
+      <h1 style="font-size:1.2rem">Building <i id="aiNameHdr" style="color:var(--teal-300);font-style:normal">our AI</i></h1>
+      <div class="code">YOU: <b id="meName"></b></div>
+    </div>
+
+    <!-- stage 0: name -->
+    <div class="kidstage" data-stage="0">
+      <span class="kick">Step 1 · Who is it?</span>
+      <h2 style="font-family:var(--display);margin:6px 0">Suggest a name for our AI</h2>
+      <input id="nameField" class="bigfield" maxlength="18" placeholder="e.g. Sparky, Nova, Captain Fin…">
+      <button class="btn full" data-send="name">Send my idea</button>
+    </div>
+
+    <!-- stage 1: fact -->
+    <div class="kidstage" data-stage="1">
+      <span class="kick">Step 2 · Feed the brain</span>
+      <h2 style="font-family:var(--display);margin:6px 0">Teach it a fact about <span id="topic1">our topic</span></h2>
+      <input id="factField" class="bigfield" maxlength="160" placeholder="e.g. Dolphins sleep with one eye open!">
+      <button class="btn full" data-send="fact">Add to the brain</button>
+      <p class="waiting" style="padding:14px 0 0" id="factHint">The mentor approves it, then it pops onto the big screen.</p>
+    </div>
+
+    <!-- stage 2: rule -->
+    <div class="kidstage" data-stage="2">
+      <span class="kick">Step 3 · House rules</span>
+      <h2 style="font-family:var(--display);margin:6px 0">Teach it how to act</h2>
+      <input id="ruleField" class="bigfield" maxlength="120" placeholder="e.g. Always be kind. Or: if you don't know, say so.">
+      <button class="btn full" data-send="rule">Add a rule</button>
+    </div>
+
+    <!-- stage 3: watch -->
+    <div class="kidstage" data-stage="3">
+      <div class="waiting"><div class="big">📺✨</div>
+        <h2 style="font-family:var(--display)">Look at the big screen!</h2>
+        <p>Time to wake up the AI you built.</p></div>
+    </div>
+
+    <div class="kidstage" data-stage="-1">
+      <div class="waiting"><div class="big">⏳</div><p>Waiting for the mentor to start the next step…</p></div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+</div>
+
+<script src="../platform/lib/config.js"></script>
+<script src="../platform/lib/filter.js"></script>
+<script type="module">
+import { joinLab, filterClean, uid } from "./lab.js";
+
+const $=(id)=>document.getElementById(id);
+let lab, me="", stage=-1;
+const sent={}; // id -> element awaiting approval
+
+$("joinBtn").addEventListener("click", join);
+$("codeInput").addEventListener("keydown", e=>{ if(e.key==="Enter") $("nameInput").focus(); });
+$("nameInput").addEventListener("keydown", e=>{ if(e.key==="Enter") join(); });
+
+function join(){
+  const code=($("codeInput").value||"").trim().toUpperCase();
+  const name=($("nameInput").value||"").trim();
+  if(code.length<4){ $("joinErr").textContent="Type the 4-letter code."; return; }
+  if(!name){ $("joinErr").textContent="What's your name?"; return; }
+  me=name; $("meName").textContent=me;
+  lab=joinLab(code, onMsg, ()=> lab.send({kind:"hello", from:me}));
+  $("join").style.display="none"; $("play").style.display="block";
+  showStage(-1);
+}
+
+function onMsg(m){
+  if(m.kind==="state"){
+    if(m.name) $("aiNameHdr").textContent=m.name;
+    if(m.topic) $("topic1").textContent=m.topic;
+    showStage(m.stage);
+  }
+  if(m.kind==="approved" && sent[m.id]){
+    toast(m.of==="rule"?"✓ Rule added!":"✓ It learned your fact!");
+    delete sent[m.id];
+  }
+}
+
+function showStage(n){
+  stage=n;
+  document.querySelectorAll(".kidstage").forEach(el=>{
+    el.classList.toggle("on", +el.dataset.stage===n);
+  });
+}
+
+document.querySelectorAll("[data-send]").forEach(btn=>{
+  btn.addEventListener("click", ()=>{
+    const kind=btn.dataset.send;
+    const field = kind==="name"?$("nameField"): kind==="fact"?$("factField"):$("ruleField");
+    const text=(field.value||"").trim();
+    if(!text) return;
+    if(!filterClean(text)){ toast("Let's keep it kind 💙 try again"); return; }
+    if(kind==="name"){ lab.send({kind:"name", from:me, text}); toast("Sent your idea!"); field.value=""; return; }
+    const id=uid();
+    lab.send({kind, id, from:me, text});
+    sent[id]=true; field.value="";
+    toast(kind==="rule"?"Rule sent — waiting for OK":"Sent! Waiting for the mentor ✓");
+  });
+});
+
+let toastT;
+function toast(msg){
+  const t=$("toast"); t.textContent=msg; t.classList.add("show");
+  clearTimeout(toastT); toastT=setTimeout(()=>t.classList.remove("show"), 2200);
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Build Lab · Big Screen — Code the Future</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="lab.css">
+</head>
+<body>
+<div class="wrap">
+  <div class="lab-top">
+    <svg class="mark" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <defs><linearGradient id="s" x1="28" y1="100" x2="96" y2="28" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#fff"></stop><stop offset="1" stop-color="#3FD0DA"></stop></linearGradient></defs>
+      <path d="M30 98 L60 68" stroke="url(#s)" stroke-width="11" stroke-linecap="round"></path>
+      <path d="M60 68 L46 40" stroke="url(#s)" stroke-width="11" stroke-linecap="round"></path>
+      <path d="M60 68 L92 32" stroke="url(#s)" stroke-width="11" stroke-linecap="round"></path>
+      <path d="M91 52 L92 32 L72 35" stroke="#FF7556" stroke-width="11" stroke-linecap="round" stroke-linejoin="round"></path>
+      <circle cx="30" cy="98" r="8" fill="#fff"></circle><circle cx="60" cy="68" r="8" fill="#fff"></circle><circle cx="46" cy="40" r="7.5" fill="#FFC74D"></circle>
+    </svg>
+    <h1>Build <i>Lab</i></h1>
+    <div class="code">JOIN CODE&nbsp; <b id="code">····</b></div>
+  </div>
+
+  <div class="stages" id="stages">
+    <button class="stage-chip on" data-stage="0">1 · Who Is It?</button>
+    <button class="stage-chip" data-stage="1">2 · Feed the Brain</button>
+    <button class="stage-chip" data-stage="2">3 · House Rules</button>
+    <button class="stage-chip" data-stage="3">4 · First Contact</button>
+  </div>
+
+  <div class="grid">
+    <!-- LEFT: the AI being born -->
+    <div style="display:flex;flex-direction:column;gap:22px">
+      <div class="card idcard">
+        <div><span class="kick">Identity Card</span><h2>Who is our AI?</h2></div>
+        <div class="idrow"><label>Name</label><input id="aiName" placeholder="Sparky" value="Sparky"></div>
+        <div id="nameChips" class="namechips"></div>
+        <div class="idrow"><label>Expert in</label><input id="aiTopic" placeholder="dolphins, space, Louisville…" value="dolphins"></div>
+        <div class="idrow"><label>Personality</label>
+          <select id="aiPers">
+            <option>funny and excited</option><option>calm and wise</option>
+            <option>super curious</option><option>friendly and kind</option><option>silly and playful</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="card brain-wrap">
+        <span class="kick">Knowledge Base</span>
+        <div class="brain pulse" id="brain"><div class="count"><span id="factCount">0</span><small>FACTS</small></div></div>
+        <div class="meter"><i id="meter"></i></div>
+        <div class="goal"><span id="goalTxt">Goal: 20 facts</span></div>
+      </div>
+
+      <div class="card">
+        <span class="kick">Run it · First Contact</span>
+        <h2>Ask the AI you built</h2>
+        <p class="hint">Type the question the room picked, then wake it up.</p>
+        <div class="runrow">
+          <input id="question" placeholder="What's your favorite thing about dolphins?">
+          <button class="btn" id="runBtn">▶ Run it</button>
+        </div>
+        <div class="answer" id="answer"><div class="lbl" id="aLbl">Sparky says</div><div class="body" id="aBody"></div></div>
+      </div>
+    </div>
+
+    <!-- RIGHT: live entries from kids -->
+    <div style="display:flex;flex-direction:column;gap:22px">
+      <div class="card">
+        <span class="kick">Mentor approve-gate</span>
+        <h2>Waiting to approve <span id="pendCount" style="color:var(--amber)"></span></h2>
+        <p class="hint">Tap ✓ to send it to the big screen, ✕ to skip. Nothing shows until you approve.</p>
+        <div class="list pending" id="pending"><div class="empty">No new entries yet — they'll pop in here.</div></div>
+      </div>
+      <div class="card">
+        <h2>In the brain <span id="approvedHdr" style="color:var(--teal-300)"></span></h2>
+        <div class="list" id="facts"><div class="empty">Approved facts land here.</div></div>
+      </div>
+      <div class="card">
+        <h2>House rules</h2>
+        <div class="list" id="rules"><div class="empty">Approved rules land here.</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="../platform/lib/config.js"></script>
+<script src="../platform/lib/filter.js"></script>
+<script type="module">
+import { joinLab, runBuildLab, saveState, loadState, genCode } from "./lab.js";
+
+const qs = new URLSearchParams(location.search);
+const CODE = (qs.get("code") || genCode()).toUpperCase();
+document.getElementById("code").textContent = CODE;
+history.replaceState(null,"", "?code="+CODE);
+
+const GOAL = 20;
+const state = { stage:0, name:"Sparky", topic:"dolphins", personality:"funny and excited", facts:[], rules:[], pending:[] };
+const $ = (id)=>document.getElementById(id);
+
+// identity inputs → state (and broadcast so kids' run reflects)
+$("aiName").addEventListener("input", e=>{ state.name=e.target.value||"Sparky"; sync(); persist(); });
+$("aiTopic").addEventListener("input", e=>{ state.topic=e.target.value||"fun facts"; sync(); persist(); });
+$("aiPers").addEventListener("change", e=>{ state.personality=e.target.value; sync(); persist(); });
+
+let lab = joinLab(CODE, onMsg, ()=> sync());
+function sync(){ lab.send({kind:"state", stage:state.stage, name:state.name, topic:state.topic}); }
+
+// rehydrate if this session already existed (e.g. the big screen reloaded)
+(async ()=>{
+  const saved = await loadState(CODE);
+  if(saved) rehydrate(saved);
+})();
+function rehydrate(s){
+  state.name=s.name||state.name; state.topic=s.topic||state.topic; state.personality=s.personality||state.personality;
+  state.facts=s.facts||[]; state.rules=s.rules||[];
+  $("aiName").value=state.name; $("aiTopic").value=state.topic; if(s.personality) $("aiPers").value=s.personality;
+  renderFacts(); renderRules();
+  if(typeof s.stage==="number") setStage(s.stage); else sync();
+}
+let persistT;
+function persist(){
+  clearTimeout(persistT);
+  persistT=setTimeout(()=>saveState(CODE, {stage:state.stage, name:state.name, topic:state.topic, personality:state.personality, facts:state.facts, rules:state.rules}), 500);
+}
+
+// stage rail
+document.querySelectorAll(".stage-chip").forEach(c=>{
+  c.addEventListener("click", ()=> setStage(+c.dataset.stage));
+});
+function setStage(n){
+  state.stage=n;
+  document.querySelectorAll(".stage-chip").forEach((c,i)=>{
+    c.classList.toggle("on", i===n); c.classList.toggle("done", i<n);
+  });
+  lab.send({kind:"state", stage:n, name:state.name, topic:state.topic});
+  persist();
+}
+
+function onMsg(m){
+  if(m.kind==="hello"){ sync(); return; }
+  if(m.kind==="name"){ addNameChip(m.text); return; }
+  if(m.kind==="fact" || m.kind==="rule"){ addPending(m); return; }
+}
+
+function addNameChip(text){
+  const chip=document.createElement("button"); chip.className="namechip"; chip.textContent=text;
+  chip.onclick=()=>{ $("aiName").value=text; state.name=text; sync(); };
+  $("nameChips").appendChild(chip);
+}
+
+function addPending(m){
+  state.pending.push(m);
+  renderPending();
+}
+function renderPending(){
+  const box=$("pending");
+  $("pendCount").textContent = state.pending.length? "("+state.pending.length+")":"";
+  if(!state.pending.length){ box.innerHTML='<div class="empty">No new entries yet — they\'ll pop in here.</div>'; return; }
+  box.innerHTML="";
+  state.pending.forEach(m=>{
+    const row=document.createElement("div"); row.className="item";
+    row.innerHTML='<span class="who">'+esc(m.from)+'</span><span class="txt">'+(m.kind==="rule"?"📜 ":"")+esc(m.text)+'</span>';
+    const ap=document.createElement("div"); ap.className="approve";
+    const ok=document.createElement("button"); ok.className="ok"; ok.textContent="✓";
+    const no=document.createElement("button"); no.className="no"; no.textContent="✕";
+    ok.onclick=()=>approve(m); no.onclick=()=>reject(m);
+    ap.appendChild(ok); ap.appendChild(no); row.appendChild(ap); box.appendChild(row);
+  });
+}
+function reject(m){ state.pending=state.pending.filter(p=>p.id!==m.id); renderPending(); }
+function approve(m){
+  state.pending=state.pending.filter(p=>p.id!==m.id); renderPending();
+  if(m.kind==="fact"){ state.facts.push(m); renderFacts(); }
+  else { state.rules.push(m); renderRules(); }
+  lab.send({kind:"approved", id:m.id, of:m.kind});
+  persist();
+}
+function renderFacts(){
+  const box=$("facts"); $("factCount").textContent=state.facts.length;
+  $("approvedHdr").textContent = state.facts.length? "("+state.facts.length+")":"";
+  const pct=Math.min(100, Math.round(state.facts.length/GOAL*100)); $("meter").style.width=pct+"%";
+  if(state.facts.length>=GOAL){ $("goalTxt").textContent="🎉 Goal reached — the brain is full!"; }
+  if(!state.facts.length){ box.innerHTML='<div class="empty">Approved facts land here.</div>'; return; }
+  box.innerHTML="";
+  state.facts.slice().reverse().forEach((m,i)=>{
+    const row=document.createElement("div"); row.className="item"+(i===0?" fly":"");
+    row.innerHTML='<span class="who">'+esc(m.from)+'</span><span class="txt">'+esc(m.text)+'</span>';
+    box.appendChild(row);
+  });
+}
+function renderRules(){
+  const box=$("rules");
+  if(!state.rules.length){ box.innerHTML='<div class="empty">Approved rules land here.</div>'; return; }
+  box.innerHTML="";
+  state.rules.slice().reverse().forEach((m,i)=>{
+    const row=document.createElement("div"); row.className="item"+(i===0?" fly":"");
+    row.innerHTML='<span class="who">'+esc(m.from)+'</span><span class="txt">'+esc(m.text)+'</span>';
+    box.appendChild(row);
+  });
+}
+
+// Run it
+$("runBtn").addEventListener("click", async ()=>{
+  const q=$("question").value.trim(); if(!q) return;
+  const btn=$("runBtn"); btn.disabled=true; btn.textContent="…thinking";
+  $("aLbl").textContent=state.name+" says";
+  try{
+    const text=await runBuildLab(state, q);
+    $("aBody").textContent=text; $("answer").classList.add("show");
+  }catch(e){
+    $("aBody").textContent="(couldn't reach the AI — "+e.message+")"; $("answer").classList.add("show");
+  }
+  btn.disabled=false; btn.textContent="▶ Run it";
+});
+
+function esc(s){ return String(s).replace(/[&<>]/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[c])); }
+</script>
+</body>
+</html>

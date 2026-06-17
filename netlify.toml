@@ -26,6 +26,11 @@
   status = 200
 
 [[redirects]]
+  from = "/api/buildlab"
+  to = "/.netlify/functions/buildlab"
+  status = 200
+
+[[redirects]]
   from = "/api/image"
   to = "/.netlify/functions/image"
   status = 200
