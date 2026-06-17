@@ -59,6 +59,7 @@
       ".ctf-tour-reward{text-align:center;}",
       ".ctf-tour-medal{font-size:3.6rem;animation:ctf-pop .7s cubic-bezier(.34,1.56,.64,1) both;}",
       ".ctf-tour-badge{display:inline-block;margin:6px 0 2px;font-family:'Space Grotesk',sans-serif;font-weight:700;color:#0E9099;}",
+      ".ctf-tour-gift{font-size:.92rem;color:#2A3349;background:#FFF7E6;border:1px solid #FFC74D;border-radius:12px;padding:8px 12px;margin:6px auto 12px;max-width:90%;}",
       "@keyframes ctf-pop{0%{opacity:0;transform:scale(.3) rotate(-15deg);}70%{transform:scale(1.1) rotate(4deg);}100%{opacity:1;transform:scale(1);}}",
       ".ctf-tour-confetti{position:fixed;inset:0;z-index:9001;pointer-events:none;overflow:hidden;}",
       ".ctf-tour-confetti i{position:absolute;top:-20px;width:9px;height:9px;animation:ctf-fall linear both;}",
@@ -141,20 +142,32 @@
   function finish(st) {
     spot.style.display = "none";
     confetti();
+    grantReward();
     bubble.className = "ctf-tour-bub ctf-center";
     bubble.style.left = ""; bubble.style.top = ""; bubble.style.bottom = ""; bubble.style.transform = "";
     bubble.innerHTML =
       '<div class="ctf-tour-reward"><div class="ctf-tour-medal">🏅</div>' +
       '<div class="ctf-tour-badge">Badge earned: Explorer — Welcome Aboard!</div>' +
       "<h3>" + st.t + "</h3><p>" + st.body + "</p>" +
+      '<p class="ctf-tour-gift">🎁 You unlocked the <b>⭐ Star Pin</b> — try it on your character in <b>Profile</b>!</p>' +
       '<button class="ctf-tour-next" data-act="go">🚀 Start Mission 1</button></div>';
     bubble.querySelector('[data-act="go"]').addEventListener("click", function () {
-      markDone(); end(true);
+      end(true);
       var cta = document.querySelector('.cta[href*="player.html"]') || document.querySelector('#continueTile');
       if (cta) location.href = cta.getAttribute("href");
     });
+  }
+
+  // real, persisted reward: a Welcome badge (counts on the home) that also
+  // unlocks the ⭐ Star Pin accessory (see avatar.js unlockedFromBadges).
+  function grantReward() {
     markDone();
-    try { if (window.CTFDB && window.CTFDB.enabled && window.CTFDB.logEvent) window.CTFDB.logEvent("tour_complete", {}); } catch (e) {}
+    try {
+      if (window.CTFDB && window.CTFDB.enabled) {
+        if (window.CTFDB.awardBadge) window.CTFDB.awardBadge("kids-welcome", { module: "platform", track: "kids" });
+        if (window.CTFDB.logEvent) window.CTFDB.logEvent("tour_complete", {});
+      }
+    } catch (e) {}
   }
 
   function confetti() {
@@ -207,11 +220,27 @@
     return true;
   }
 
+  // bind any "Replay the tour" link (#replayTour) — works even after the
+  // one-time auto-run has been used up
+  function bindReplay() {
+    var rt = document.getElementById("replayTour");
+    if (rt && !rt._ctfBound) {
+      rt._ctfBound = 1;
+      rt.addEventListener("click", function (e) {
+        e.preventDefault();
+        if (document.querySelector(".ctf-tour-ov")) return;   // already running
+        try { localStorage.removeItem(DONE_KEY); } catch (e2) {}
+        start();
+      });
+    }
+  }
+  function init() { bindReplay(); maybeStart(); }
+
   window.CTFTour = { start: start, maybeStart: maybeStart, reset: function () { try { localStorage.removeItem(DONE_KEY); } catch (e) {} } };
 
   // auto-run on the home page once a character exists
   if (/\/platform\/(index\.html)?($|\?|#)/.test(location.pathname + location.search) || /platform\/?$/.test(location.pathname)) {
-    if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", maybeStart);
-    else maybeStart();
+    if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init);
+    else init();
   }
 })();

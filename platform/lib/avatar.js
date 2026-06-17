@@ -207,6 +207,7 @@
   function unlockedFromBadges(badgeKeys) {
     var set = {};
     (badgeKeys || []).forEach(function (k) {
+      if (/-welcome$/.test(String(k))) set.starpin = true;   // onboarding-tour reward
       var m = String(k).match(/-m(\d+)$/);
       if (m && REWARDS[+m[1]]) set[REWARDS[+m[1]].key] = true;
     });
