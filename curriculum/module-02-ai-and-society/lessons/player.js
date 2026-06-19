@@ -496,7 +496,7 @@
   fetch("content/" + TRACK + ".json").then(function (r) { return r.json(); }).then(function (data) {
     DATA = data;
     document.body.classList.add(data.cls);
-    document.title = "Code the Future — " + (TRACK === "kids" ? "What Is AI? (Kids)" : "What Is AI? (Adults)");
+    document.title = "Code the Future — " + (data.title || "Lesson") + (TRACK === "kids" ? " (Kids)" : " (Adults)");
     STEPS = flatten(data);
     build();
     var savedRaw = localStorage.getItem(POSKEY);
