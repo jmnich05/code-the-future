@@ -9,6 +9,13 @@
 (function () {
   "use strict";
   var DONE_KEY = "ctf:tour:v1:done";
+  var AT_KEY = "ctf:tour:v1:at";   // resume marker (step index) — persists across the home→board hop
+  function pageOf(st) { return (st && st.page) || "home"; }
+  function currentPage() { return /\/board\.html/.test(location.pathname) ? "board" : "home"; }
+  function pageURL(pg) { return pg === "board" ? "board.html" : "index.html"; }
+  function atMarker() { try { var v = localStorage.getItem(AT_KEY); return v == null ? null : parseInt(v, 10); } catch (e) { return null; } }
+  function setAt(n) { try { localStorage.setItem(AT_KEY, String(n)); } catch (e) {} }
+  function clearAt() { try { localStorage.removeItem(AT_KEY); } catch (e) {} }
 
   function profileName() {
     try { var p = JSON.parse(localStorage.getItem("ctf:profile") || "null"); return (p && p.display_name) || "Explorer"; }
@@ -23,24 +30,25 @@
   // fallback (the tile OR the nav link) so a step never gets skipped.
   function steps() {
     return [
-      { center: true, t: "Welcome, " + NAME + "! 👋",
+      { page: "home", center: true, t: "Welcome, " + NAME + "! 👋",
         body: "I'm your guide, and I'm going to show you around your new home. There's no rush — read each step, then tap Continue. Ready to explore?",
         cta: "Show me around →" },
-      { sel: '#continueTile, a[href="missions.html"]', t: "Your missions live here 🚀",
+      { page: "home", sel: '#continueTile, a[href="missions.html"]', t: "Your missions live here 🚀",
         body: "This is where your learning missions are. Each one takes about 10 minutes, and you earn a shiny badge every single time you finish one." },
-      { sel: "#continueTile", t: "Pick up where you left off ↩️",
+      { page: "home", sel: "#continueTile", t: "Pick up where you left off ↩️",
         body: "The platform remembers exactly where you stopped. Whenever you come back, just tap Continue and you'll start right where you left off — you can never lose your place." },
-      { sel: '.me-dock, a.tile[href="profile.html"]', t: "This is YOU 🧑‍🚀",
+      { page: "home", sel: '.me-dock, a.tile[href="profile.html"]', t: "This is YOU 🧑‍🚀",
         body: "Up here is your very own character — that's you on the platform! Tap it any time to change your hair, your colors, and your gear." },
-      { sel: 'a.tile[href="profile.html"], .me-dock', t: "Earn badges and gear 🏅",
-        body: "Every mission you finish earns a badge and unlocks new gear — capes, hats, jetpacks and more. Come back to your character to try them on and show them off." },
-      { sel: 'a.tile[href="board.html"], a[href="board.html"]', t: "Your message board 💬",
-        body: "This is your cohort board — your clubhouse. Say hi to the other kids learning with you, share the cool things you make, and ask questions any time." },
-      { sel: 'a.tile[href="board.html"], a[href="board.html"]', t: "Team up with your cohort 🤝",
-        body: "You're not learning alone! When friends are online you'll see them here, and you can cheer each other on as you go through the missions together." },
-      { sel: 'a.tile[href="board.html"], a[href="board.html"]', t: "How to reach your teacher 🧑‍🏫",
-        body: "Need a grown-up? Open the board and tap “Ask in Help” to send a message to your teachers, Jon and Kenya. They can always see your messages, and they're here to help you whenever you're stuck." },
-      { finish: true, t: "You're all set, " + NAME + "! 🎉",
+      { page: "home", sel: 'a.tile[href="profile.html"], .me-dock', t: "Earn badges and gear 🏅",
+        body: "Every mission you finish earns a badge and unlocks new gear — capes, hats, jetpacks and more. Come back to your character to try them on. Next, let's go see where you talk with your cohort!" },
+      // ---- these live on the BOARD page; the tour walks the kid there ----
+      { page: "board", sel: '#viewFeed, .composer, #centerPanel', t: "Your message board 💬",
+        body: "Here it is — your cohort board, your clubhouse! Type in this box to share the cool things you make with the other kids learning with you." },
+      { page: "board", sel: '.panel, #channels', t: "Rooms for your cohort 🤝",
+        body: "Over here are your rooms — Announcements, Show & Tell, and a Live Chat that lights up when friends are online. You're never learning alone!" },
+      { page: "board", sel: '.teacher-cta, #askJon', t: "How to reach your teacher 🧑‍🏫",
+        body: "Need a grown-up? Tap “Ask in Help” to send a message straight to your teachers, Jon and Kenya. They can always see your messages, and they're here whenever you're stuck." },
+      { page: "board", finish: true, t: "You're all set, " + NAME + "! 🎉",
         body: "That's the whole tour — you know your way around now. Here's your very first reward, and then you can start Mission 1. Let's build the future!" }
     ];
   }
@@ -98,7 +106,7 @@
   function stopAudio() { if (tts) { try { tts.pause(); } catch (e) {} tts = null; } }
 
   function show(n) {
-    i = n;
+    i = n; setAt(n);   // persist progress so a reload (or the page hop) resumes here
     var st = STEPS[n];
     var narr = st.t.replace(/[\u{1F000}-\u{1FFFF}☀-➿‍️]/gu, "") + ". " + st.body;
 
@@ -109,7 +117,11 @@
     var tgt = document.querySelector(st.sel);
     if (!tgt) { place(null, st); speak(narr); return; }   // NEVER skip — show centered
     tgt.scrollIntoView({ block: "center" });   // instant — so the rect is accurate
-    setTimeout(function () { place(tgt.getBoundingClientRect(), st); speak(narr); }, 120);
+    setTimeout(function () {
+      var r = tgt.getBoundingClientRect();
+      if (!r.width || !r.height) { place(null, st); speak(narr); return; }   // hidden target → center
+      place(r, st); speak(narr);
+    }, 120);
   }
 
   function place(rect, st) {
@@ -121,12 +133,16 @@
       spot.style.width = (rect.width + pad * 2) + "px"; spot.style.height = (rect.height + pad * 2) + "px";
     } else { spot.style.display = "none"; }
 
+    var nxt = STEPS[i + 1];
+    var crossing = nxt && !st.finish && pageOf(nxt) !== pageOf(st);
+    var nextLabel = st.cta || (crossing ? "Take me there →" : "Continue →");
+
     bubble.className = "ctf-tour-bub" + (rect ? "" : " ctf-center");
     bubble.innerHTML =
       "<h3>" + st.t + "</h3><p>" + st.body + "</p>" +
       '<div class="ctf-tour-row"><span class="ctf-tour-prog">' + (i + 1) + " / " + total + "</span>" +
       '<button class="ctf-tour-mute" title="Sound on/off">' + (audioOn ? "🔊" : "🔇") + "</button>" +
-      '<button class="ctf-tour-next" data-act="next">' + (st.cta || "Continue →") + "</button></div>";
+      '<button class="ctf-tour-next" data-act="next">' + nextLabel + "</button></div>";
 
     if (rect) {
       // measure the rendered bubble, then place below / above / clamped so it's
@@ -176,7 +192,14 @@
   function advance() {
     if (!dwellReady) { nudgeNext(); return; }   // still reading — can't skip ahead
     stopAudio();
-    if (i < STEPS.length - 1) show(i + 1);
+    if (i >= STEPS.length - 1) return;
+    var next = i + 1, nst = STEPS[next];
+    if (pageOf(nst) !== currentPage()) {   // the next stop lives on another page — take them there
+      setAt(next);
+      location.href = pageURL(pageOf(nst));
+      return;
+    }
+    show(next);
   }
 
   function finish(st) {
@@ -192,9 +215,9 @@
       '<p class="ctf-tour-gift">🎁 You unlocked the <b>⭐ Star Pin</b> — try it on your character in <b>Profile</b>!</p>' +
       '<button class="ctf-tour-next" data-act="go">🚀 Start Mission 1</button></div>';
     bubble.querySelector('[data-act="go"]').addEventListener("click", function () {
-      end(true);
-      var cta = document.querySelector('.cta[href*="player.html"]') || document.querySelector('#continueTile');
-      if (cta) location.href = cta.getAttribute("href");
+      clearAt(); end(true);
+      var cta = document.querySelector('.cta[href*="player.html"], #continueTile');
+      location.href = cta ? cta.getAttribute("href") : "../curriculum/module-01-what-is-ai/lessons/player.html?track=kids";
     });
   }
 
@@ -240,23 +263,36 @@
   }
   function onKey(e) { if (e.key === "ArrowRight" || e.key === "Enter") { e.preventDefault(); advance(); } }
 
-  function start() {
+  function startAt(n) {
     NAME = profileName();
     STEPS = steps();
     css();
-    ov = document.createElement("div"); ov.className = "ctf-tour-ov";
-    spot = document.createElement("div"); spot.className = "ctf-tour-spot"; spot.style.display = "none";
-    bubble = document.createElement("div"); bubble.className = "ctf-tour-bub ctf-center";
-    ov.appendChild(spot); ov.appendChild(bubble); document.body.appendChild(ov);
-    document.addEventListener("keydown", onKey);
-    window.addEventListener("resize", function () { if (STEPS[i] && STEPS[i].sel) show(i); });
-    show(0);
+    if (!ov || !ov.parentNode) {
+      ov = document.createElement("div"); ov.className = "ctf-tour-ov";
+      spot = document.createElement("div"); spot.className = "ctf-tour-spot"; spot.style.display = "none";
+      bubble = document.createElement("div"); bubble.className = "ctf-tour-bub ctf-center";
+      ov.appendChild(spot); ov.appendChild(bubble); document.body.appendChild(ov);
+      document.addEventListener("keydown", onKey);
+      window.addEventListener("resize", function () { if (STEPS[i] && STEPS[i].sel) show(i); });
+    }
+    show(n);
   }
+  function start() { clearAt(); startAt(0); }   // fresh run from the top (used by the replay link)
 
+  // Decide whether to auto-run/resume on this page. Progress is persisted on every
+  // step (setAt), so this resumes correctly after the home→board hop or a reload.
   function maybeStart() {
     if (done() || !hasProfile()) return false;
-    // wait a tick so the home tiles have laid out
-    setTimeout(start, 400);
+    NAME = profileName(); STEPS = steps();
+    var at = atMarker();
+    if (at == null) {
+      // never started: first-run only kicks off on the home page
+      if (currentPage() === "home") { setTimeout(function () { startAt(0); }, 400); return true; }
+      return false;
+    }
+    if (!STEPS[at]) { clearAt(); return false; }
+    if (pageOf(STEPS[at]) === currentPage()) { setTimeout(function () { startAt(at); }, 350); return true; }
+    location.replace(pageURL(pageOf(STEPS[at])));   // mid-tour but on the wrong page — go resume it
     return true;
   }
 
@@ -276,10 +312,12 @@
   }
   function init() { bindReplay(); maybeStart(); }
 
-  window.CTFTour = { start: start, maybeStart: maybeStart, reset: function () { try { localStorage.removeItem(DONE_KEY); } catch (e) {} } };
+  window.CTFTour = { start: start, maybeStart: maybeStart, reset: function () { try { localStorage.removeItem(DONE_KEY); } catch (e) {} clearAt(); } };
 
-  // auto-run on the home page once a character exists
-  if (/\/platform\/(index\.html)?($|\?|#)/.test(location.pathname + location.search) || /platform\/?$/.test(location.pathname)) {
+  // auto-run on the home page (first run) and resume on the board page (mid-tour)
+  if (/\/platform\/(index|board)\.html/.test(location.pathname) ||
+      /\/platform\/($|\?|#)/.test(location.pathname + location.search) ||
+      /platform\/?$/.test(location.pathname)) {
     if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init);
     else init();
   }
