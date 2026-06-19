@@ -9,6 +9,12 @@
     "Pixel Detective", "Word Wizard", "Attention Ace", "Neuron Navigator",
     "Time Traveler", "Smart Boss", "Future Maker", "AI Explorer — Level 1"
   ];
+  // Module 2 — "AI and Our World" badge names (keys: kids-mod2-N)
+  var KIDS_NAMES_M2 = [
+    "Returning Builder", "World Spotter", "Healer's Helper", "Planet Protector",
+    "Team Captain", "Wise Builder", "Privacy Guard", "Fair Player",
+    "Freedom Keeper", "Rule Maker", "World Builder", "AI Explorer — Level 2"
+  ];
   var COLORS = [
     ["#3D74FF", "#26C7D1"], ["#26C7D1", "#2FBF71"], ["#FF5A38", "#FFB320"],
     ["#7C5CFF", "#3D74FF"], ["#12B2BC", "#7C5CFF"], ["#FFB320", "#FF6FB5"],
@@ -65,8 +71,12 @@
   }
 
   function nameFor(key) {
-    var m = String(key || "").match(/-m(\d+)$/);
+    key = String(key || "");
+    var m2 = key.match(/-mod2-(\d+)$/);
+    if (m2) return KIDS_NAMES_M2[parseInt(m2[1], 10) - 1] || ("Mission " + m2[1]);
+    var m = key.match(/-m(\d+)$/);
     if (m) return KIDS_NAMES[parseInt(m[1], 10) - 1] || ("Mission " + m[1]);
+    if (/module-02[\w-]*-complete$/.test(key)) return "Module 2 Complete";
     if (/complete$/.test(key)) return "Module 1 Complete";
     return key;
   }
@@ -77,5 +87,5 @@
     return 1;
   }
 
-  window.CTFBadge = { render: render, nameFor: nameFor, numFor: numFor, NAMES: KIDS_NAMES };
+  window.CTFBadge = { render: render, renderSvg: renderSvg, nameFor: nameFor, numFor: numFor, NAMES: KIDS_NAMES, NAMES_M2: KIDS_NAMES_M2 };
 })();

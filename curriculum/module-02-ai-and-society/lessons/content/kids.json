@@ -1,0 +1,581 @@
+{
+ "track": "kids",
+ "cls": "track-kids",
+ "title": "AI and Our World",
+ "eyebrow": "Module 2 · Ages 8–11",
+ "unitWord": "Mission",
+ "total": 12,
+ "missions": [
+  {
+   "n": 0,
+   "kind": "intro",
+   "title": "How this module works (read this first)",
+   "meta": "",
+   "beats": [
+    {
+     "type": "text",
+     "html": "<p>Welcome back, Future Builder! Last week you learned <em>what AI is</em> — that a regular machine follows rules, and AI <strong>learns from examples</strong>. Huge. This week we go bigger. You're going on <strong>12 new Missions</strong> about what AI actually <em>does</em> out in the world: the amazing stuff — helping doctors, the planet, and scientists — and the tricky stuff — big questions about fairness, privacy, and who gets to decide. Finish a Mission, earn a <strong>badge</strong>, move on. Collect all 12, then a brand-new <strong>Big Mission</strong> where you build something good with real AI. Ready? Let's go. 🚀</p>"
+    }
+   ]
+  },
+  {
+   "n": 1,
+   "kind": "unit",
+   "title": "Welcome Back, Future Builder",
+   "meta": "~10 minutes",
+   "beats": [
+    {
+     "type": "image",
+     "html": "<div class=\"lesson-art\"><img src=\"../assets/art/mission-1.svg\" alt=\"\" loading=\"lazy\"><p class=\"art-cap\">You're back — and this week, AI gets bigger than apps.</p></div>"
+    },
+    {
+     "type": "text",
+     "html": "<p>Remember the toaster from last week? A toaster does the same thing every time. And the cook who tasted a thousand meals and can invent a brand-new dish? That's AI — it <em>learns</em>. You already know the single biggest idea in all of AI. Most grown-ups still can't explain it, and you can. Take a second to feel good about that.</p>"
+    },
+    {
+     "type": "text",
+     "html": "<p>Now here's the question for this whole week: if someone hands you the most powerful tool humans have ever built… <strong>what happens next?</strong></p>"
+    },
+    {
+     "type": "text",
+     "html": "<p>Because that's what AI is. Not just a fun app that draws dragons — a tool so powerful it's starting to change <em>big</em> things: how doctors find sickness, how we power cities, how scientists solve mysteries that have been stuck for a hundred years. That's the exciting part, and we'll start there.</p>"
+    },
+    {
+     "type": "text",
+     "html": "<p>But a tool this powerful also comes with big <em>choices</em>. Who gets to use it? Is it fair? Is your private stuff safe? Who decides where it goes next? Those are some of the most important questions in the whole world right now — and grown-ups are figuring them out at the very same time you are. You're not too young for these questions. You're actually the <em>perfect</em> age, because you're going to grow up living inside the answers.</p>"
+    },
+    {
+     "type": "text",
+     "html": "<p>So this week you get to think like a real builder: not just <em>\"what can AI do?\"</em> but <em>\"what should we do with it — and who gets to choose?\"</em> Spoiler: part of the answer is <strong>you</strong>.</p>"
+    },
+    {
+     "type": "text",
+     "html": "<p>Let's start with a quick one. No wrong answers — we'll come back to it at the very end and see how your thinking grew.</p>"
+    },
+    {
+     "type": "widget",
+     "html": "<div class=\"ctf\"><div data-ctf-widget=\"poll\" data-ctf-id=\"kids-m1-warmup\">\n    <script type=\"application/json\">{\n      \"eyebrow\":\"🚀 Welcome back\",\"title\":\"What's the most AMAZING thing AI could do for the world?\",\n      \"prompt\":\"No wrong answers — pick one or type your own. We'll come back to it in Mission 12 to see how your thinking grew.\",\"columns\":2,\n      \"options\":[{\"emoji\":\"🩺\",\"label\":\"Help cure diseases\"},{\"emoji\":\"🌎\",\"label\":\"Help the planet\"},{\"emoji\":\"🛠️\",\"label\":\"Help people build cool things\"},{\"emoji\":\"🧠\",\"label\":\"Help everyone learn\"}],\n      \"freeText\":true,\"placeholder\":\"Or describe your own big idea…\",\n      \"thanks\":\"Saved! Remember your answer — you'll see it again in Mission 12.\"\n    }</script>\n  </div></div>"
+    },
+    {
+     "type": "text",
+     "html": "<p>And one fast warm-up to wake up your Module 1 brain — sort these into <em>what AI does</em> vs. <em>what's still a person's job</em>. Trust your gut!</p>"
+    },
+    {
+     "type": "widget",
+     "html": "<div class=\"ctf\"><div data-ctf-widget=\"sort\" data-ctf-id=\"kids-m1-recap\">\n    <script type=\"application/json\">{\n      \"eyebrow\":\"Warm up your Module 1 brain\",\"title\":\"AI's job, or a human's job?\",\n      \"prompt\":\"AI is a speedy <span class=\\\"ctf-q\\\">pattern</span> helper. Humans bring the <span class=\\\"ctf-q\\\">judgment</span>. Sort each one!\",\n      \"buckets\":[\"AI can do this\",\"Only a human\"],\n      \"items\":[\n        {\"emoji\":\"🖼️\",\"label\":\"Find the pattern in a million photos\",\"bucket\":0},\n        {\"emoji\":\"⚖️\",\"label\":\"Decide what's fair\",\"bucket\":1},\n        {\"emoji\":\"📧\",\"label\":\"Read 10,000 emails super fast\",\"bucket\":0},\n        {\"emoji\":\"❤️\",\"label\":\"Care how someone feels\",\"bucket\":1},\n        {\"emoji\":\"🌦️\",\"label\":\"Guess the weather from tons of data\",\"bucket\":0},\n        {\"emoji\":\"💡\",\"label\":\"Decide which idea is worth building\",\"bucket\":1}\n      ],\n      \"thanks\":\"Nice — AI brings the speed, humans bring the judgment. That's the whole week!\",\n      \"complete\":{\"icon\":\"🎖️\",\"badge\":\"Badge earned: Returning Builder\",\"sub\":\"Mission 1 of 12\",\"progress\":8}\n    }</script>\n  </div></div>"
+    },
+    {
+     "type": "complete",
+     "html": "<h3>✅ Mission 1 Complete!</h3><p>Welcome back. You showed up curious again — that never stops being your superpower.</p><p>🎖️ <strong>Badge earned: Returning Builder</strong><br><strong>Progress:</strong> ▰▱▱▱▱▱▱▱▱▱▱▱ (1/12)<br><strong>Next up → Mission 2: AI Is Already Out There</strong></p>"
+    }
+   ]
+  },
+  {
+   "n": 2,
+   "kind": "unit",
+   "title": "AI Is Already Out There",
+   "meta": "~10 minutes",
+   "beats": [
+    {
+     "type": "image",
+     "html": "<div class=\"lesson-art\"><img src=\"../assets/art/mission-2.svg\" alt=\"\" loading=\"lazy\"><p class=\"art-cap\">AI is already woven through the whole world — not just your screen.</p></div>"
+    },
+    {
+     "type": "text",
+     "html": "<p>When you think of AI, you probably picture a chatbot or a phone. But AI is <em>way</em> bigger than your screen. It's already woven into the whole world around you, quietly doing jobs you never see.</p>"
+    },
+    {
+     "type": "text",
+     "html": "<p>Think about a single normal day. A doctor's computer helps spot a problem on an X-ray. A farmer's drone checks which plants need water. A weather app warns a whole city that a storm is coming. A maps app reroutes thousands of cars around a traffic jam at once. An app instantly translates a kid's words into a different language so two friends can talk. None of that is on <em>your</em> phone — but it's all AI, all happening right now.</p>"
+    },
+    {
+     "type": "text",
+     "html": "<p>Here's a way to picture it. A hundred years ago, <strong>electricity</strong> was a brand-new novelty — a single light bulb people gathered around to stare at. Then, bit by bit, it slipped behind <em>everything</em>: the lights, the fridge, the school, the hospital, the whole city. You don't even think about it anymore — you just flip a switch. AI is doing the same thing, right now, in your lifetime. It's moving from \"wow, a chatbot!\" to quietly running behind big parts of the world.</p>"
+    },
+    {
+     "type": "text",
+     "html": "<p>That's actually why this module matters. When something becomes <em>that</em> important and <em>that</em> common, it stops being just a cool toy and starts being something we all have to think about carefully — how it's used, and whether it's used well. So this week we're going to visit the big places AI is showing up: hospitals, the planet, jobs, and the giant questions that come with all of it.</p>"
+    },
+    {
+     "type": "video",
+     "html": "<div class=\"lesson-video\"><div class=\"vframe\"><iframe src=\"https://www.youtube-nocookie.com/embed/oJC8VIDSx_Q?rel=0&modestbranding=1\" title=\"How AI Works in Everyday Life\" loading=\"lazy\" allow=\"accelerometer; encrypted-media; picture-in-picture; web-share\" allowfullscreen></iframe></div><p class=\"vcap\">🍿 Video break! A quick look at AI quietly helping all around us — maps, photos, translation, and more.<br><span class=\"vcredit\">“How AI Works in Everyday Life” · Google · YouTube</span></p></div>"
+    },
+    {
+     "type": "widget",
+     "html": "<div class=\"ctf\"><div data-ctf-widget=\"sort\" data-ctf-id=\"kids-m2-sort\">\n    <script type=\"application/json\">{\n      \"eyebrow\":\"AI is already out there\",\"title\":\"Where's the AI hiding?\",\n      \"prompt\":\"Some of these <span class=\\\"ctf-q\\\">learn and guess</span> (AI). Some just follow fixed steps (a plain machine). Sort them!\",\n      \"buckets\":[\"AI is helping here\",\"Just a plain machine\"],\n      \"items\":[\n        {\"emoji\":\"🏥\",\"label\":\"Hospital computer spotting a problem on a scan\",\"bucket\":0},\n        {\"emoji\":\"🗺️\",\"label\":\"A paper map\",\"bucket\":1},\n        {\"emoji\":\"🚜\",\"label\":\"Farm sensor deciding which plants need water\",\"bucket\":0},\n        {\"emoji\":\"⏰\",\"label\":\"A wind-up clock\",\"bucket\":1},\n        {\"emoji\":\"🌦️\",\"label\":\"Weather app warning a city about a storm\",\"bucket\":0},\n        {\"emoji\":\"🔦\",\"label\":\"A flashlight\",\"bucket\":1},\n        {\"emoji\":\"🗣️\",\"label\":\"App translating between two languages\",\"bucket\":0},\n        {\"emoji\":\"🚪\",\"label\":\"A door hinge\",\"bucket\":1}\n      ],\n      \"thanks\":\"You found the AI hiding all over the real world!\",\n      \"complete\":{\"icon\":\"🎖️\",\"badge\":\"Badge earned: World Spotter\",\"sub\":\"Mission 2 of 12\",\"progress\":16}\n    }</script>\n  </div></div>"
+    },
+    {
+     "type": "complete",
+     "html": "<h3>✅ Mission 2 Complete!</h3><p>You can now spot AI out in the wild, not just in apps. Eyes open, Future Builder. 🌍</p><p>🎖️ <strong>Badge earned: World Spotter</strong><br><strong>Progress:</strong> ▰▰▱▱▱▱▱▱▱▱▱▱ (2/12)<br><strong>Next up → Mission 3: AI the Doctor's Helper</strong></p>"
+    }
+   ]
+  },
+  {
+   "n": 3,
+   "kind": "unit",
+   "title": "AI the Doctor's Helper",
+   "meta": "~10 minutes",
+   "beats": [
+    {
+     "type": "image",
+     "html": "<div class=\"lesson-art\"><img src=\"../assets/art/mission-3.svg\" alt=\"\" loading=\"lazy\"><p class=\"art-cap\">AI helps doctors spot what tired eyes might miss — like a metal detector for sickness.</p></div>"
+    },
+    {
+     "type": "text",
+     "html": "<p>Here's one of the most hopeful things AI does in the whole world: it helps doctors keep people healthy.</p>"
+    },
+    {
+     "type": "text",
+     "html": "<p>Remember Mission 5 from last week, when you taught a computer to <em>see</em> by finding patterns in pixels? The exact same trick is now helping doctors. A doctor can look at an X-ray or a scan, but they're human — they get tired, and some patterns are really, really faint. An AI that has studied <em>millions</em> of scans can quietly point and say, \"Hey, look right here.\" It catches little patterns a tired human eye might miss. Earlier catches mean people get help sooner — and sometimes that's a very big deal.</p>"
+    },
+    {
+     "type": "text",
+     "html": "<p>Think of it like a <strong>metal detector for sickness</strong>. The metal detector doesn't dig up the treasure or decide what to do — it just <em>beeps</em> so the person knows exactly where to look. The AI beeps; the doctor looks; the doctor decides. That last part matters: the AI is the helper, never the boss. A real human doctor always makes the final call, because caring for a person takes judgment and kindness, and that's a human superpower.</p>"
+    },
+    {
+     "type": "text",
+     "html": "<p>And it gets even more amazing. To invent a new medicine, scientists used to test ideas one at a time, by hand, for <em>years</em>. AI can help test millions of ideas incredibly fast — like trying a million keys in a lock in the time it used to take to try a few. That's helping people work on diseases that have hurt families for a very, very long time. Some of the kids reading this might grow up to be the scientist — with AI as their helper — who finally cracks one of them.</p>"
+    },
+    {
+     "type": "text",
+     "html": "<p>So when people say \"AI is going to change the world,\" <em>this</em> is a big part of what they mean. A faster, sharper helper for the people whose whole job is helping us.</p>"
+    },
+    {
+     "type": "widget",
+     "html": "<div class=\"ctf\"><div data-ctf-widget=\"reveal\" data-ctf-id=\"kids-m3-reveal\">\n    <script type=\"application/json\">{\n      \"eyebrow\":\"Healer's helper\",\"title\":\"What is it? Reveal the scan\",\n      \"prompt\":\"An AI sees a blurry pattern first, then clearer — just like reading an X-ray. Tap “Reveal more,” then make your guess.\",\n      \"emoji\":\"🦴\",\"levels\":[24,16,9,4,0],\"options\":[\"A cloud\",\"A bone\",\"A snake\",\"A road\"],\"answer\":1,\n      \"explain\":\"It's a bone! That's the same pattern-reading AI uses to help doctors spot things on an X-ray early — but a human doctor always makes the final call. 🩺\",\n      \"complete\":{\"icon\":\"🎖️\",\"badge\":\"Badge earned: Healer's Helper\",\"sub\":\"Mission 3 of 12\",\"progress\":25}\n    }</script>\n  </div></div>"
+    },
+    {
+     "type": "complete",
+     "html": "<h3>✅ Mission 3 Complete!</h3><p>You just learned how AI helps keep people healthy. That's a superpower worth cheering for. 🩺</p><p>🎖️ <strong>Badge earned: Healer's Helper</strong><br><strong>Progress:</strong> ▰▰▰▱▱▱▱▱▱▱▱▱ (3/12)<br><strong>Next up → Mission 4: AI and the Planet</strong></p>"
+    }
+   ]
+  },
+  {
+   "n": 4,
+   "kind": "unit",
+   "title": "AI and the Planet",
+   "meta": "~10 minutes",
+   "beats": [
+    {
+     "type": "image",
+     "html": "<div class=\"lesson-art\"><img src=\"../assets/art/mission-4.svg\" alt=\"\" loading=\"lazy\"><p class=\"art-cap\">AI helps with giant jobs: clean energy, weather, and taking care of the planet.</p></div>"
+    },
+    {
+     "type": "text",
+     "html": "<p>Some problems are too big for any one person to solve alone — like taking care of our whole planet. Good news: this is another place AI is becoming an amazing helper.</p>"
+    },
+    {
+     "type": "text",
+     "html": "<p><strong>Clean energy.</strong> Think about all the power a city uses — lights, trains, schools, homes. Some of it comes from wind and sun, which are clean but tricky, because the wind doesn't always blow and the sun goes down at night. AI helps figure out the smartest way to use that energy: store some for later, send some where it's needed <em>right now</em>, and waste as little as possible. It's like a super-careful helper making sure not a single bit of clean power gets thrown away.</p>"
+    },
+    {
+     "type": "text",
+     "html": "<p><strong>Weather and safety.</strong> Remember how AI learns from tons of examples? Now imagine an AI that has studied a <em>billion</em> past storms. It gets really good at guessing what a storm will do next — which means warning people earlier so they can get somewhere safe. Earlier warnings save lives.</p>"
+    },
+    {
+     "type": "text",
+     "html": "<p><strong>Giant science puzzles.</strong> Some mysteries are so huge that scientists were stuck on them for <em>decades</em>. Not long ago, an AI helped figure out the shapes of almost every tiny protein inside living things — a puzzle people had worked on for ages. Cracking puzzles like that helps us understand nature, grow better food, and invent new things.</p>"
+    },
+    {
+     "type": "text",
+     "html": "<p>Here's the big idea: AI is great at looking at <em>enormous</em> amounts of information and finding the smartest pattern — way more than a person could ever hold in their head. So for problems that are really about huge numbers — a whole city's power, a whole planet's weather — it's an incredible teammate. The humans still decide <em>what we care about and what to do</em>. The AI helps us do it better.</p>"
+    },
+    {
+     "type": "widget",
+     "html": "<div class=\"ctf\"><div data-ctf-widget=\"slider\" data-ctf-id=\"kids-m4-slider\">\n    <script type=\"application/json\">{\n      \"eyebrow\":\"Planet protector\",\"title\":\"Power-Up the City\",\n      \"prompt\":\"Drag the dial to choose how much clean power the city uses <span class=\\\"ctf-q\\\">right now</span> vs. saves for tonight. Watch what happens — AI helps people find the smart balance!\",\n      \"min\":0,\"max\":100,\"value\":50,\"unit\":\"%\",\"label\":\"of clean power used now\",\n      \"bands\":[\n        {\"max\":30,\"text\":\"Using very little now means lots of clean power gets wasted later. Slide up! 🌙\"},\n        {\"max\":70,\"text\":\"Nice balance — AI helps shift power so almost none gets wasted. ⚡\"},\n        {\"max\":100,\"text\":\"Using it ALL now leaves nothing for tonight! AI helps find the sweet spot in the middle.\"}\n      ],\n      \"complete\":{\"icon\":\"🎖️\",\"badge\":\"Badge earned: Planet Protector\",\"sub\":\"Mission 4 of 12\",\"progress\":33}\n    }</script>\n  </div></div>"
+    },
+    {
+     "type": "complete",
+     "html": "<h3>✅ Mission 4 Complete!</h3><p>You just saw AI help take care of the whole planet. Earth thanks you. 🌎</p><p>🎖️ <strong>Badge earned: Planet Protector</strong><br><strong>Progress:</strong> ▰▰▰▰▱▱▱▱▱▱▱▱ (4/12)<br><strong>Next up → Mission 5: AI at Work</strong></p>"
+    }
+   ]
+  },
+  {
+   "n": 5,
+   "kind": "unit",
+   "title": "AI at Work",
+   "meta": "~10 minutes",
+   "beats": [
+    {
+     "type": "image",
+     "html": "<div class=\"lesson-art\"><img src=\"../assets/art/mission-5.svg\" alt=\"\" loading=\"lazy\"><p class=\"art-cap\">Code does the loop, AI does the judgment, humans handle the exceptions.</p></div>"
+    },
+    {
+     "type": "text",
+     "html": "<p>You've probably heard a grown-up wonder, \"Is AI going to change jobs?\" The honest answer is <em>yes</em> — and once you understand <em>how</em>, it's a lot less scary and a lot more interesting.</p>"
+    },
+    {
+     "type": "text",
+     "html": "<p>Here's the secret rule, and it's the heart of this whole camp:</p>"
+    },
+    {
+     "type": "quote",
+     "html": "<blockquote><p>**Code handles the loop. AI handles the judgment inside the loop. Humans handle the</p><p>exceptions.**</p></blockquote>"
+    },
+    {
+     "type": "text",
+     "html": "<p>Let's unpack that with a real example. Imagine a job where someone has to read ten thousand customer emails a week. A computer <strong>loop</strong> can zip through all ten thousand. The <strong>AI</strong> can read each one and make a smart guess — \"this one's a happy thank-you, this one's a problem.\" And when a weird, tricky, or sad one shows up that needs real care? That's an <strong>exception</strong> — and a <em>human</em> steps in to handle it with kindness and good judgment.</p>"
+    },
+    {
+     "type": "text",
+     "html": "<p>See what happened? The AI didn't <em>replace</em> the person. It took the boring, repeating part — reading the same kind of thing ten thousand times — so the human could spend their time on the part that actually needs a human: caring, deciding, creating. A <strong>dishwasher</strong> didn't end cooking. It freed the cook to cook <em>more</em>. AI is like that for lots of jobs.</p>"
+    },
+    {
+     "type": "text",
+     "html": "<p>It's true that some jobs will change, and that can feel uncertain — that's a real feeling, and it's okay to wonder about it. But here's the part that doesn't make the news: new tools also <em>create</em> brand-new jobs. Someone has to teach the AI, check the AI, and decide what it should and shouldn't do. (Hmm — who's getting really good at understanding AI right now? <em>You.</em>) When your parents were kids, \"app maker\" and \"video creator\" weren't jobs at all.</p>"
+    },
+    {
+     "type": "text",
+     "html": "<p>So the future of work isn't \"robots take over.\" It's <strong>teams</strong> — humans and AI, each doing what they're best at, with the human as the captain making the calls that matter.</p>"
+    },
+    {
+     "type": "video",
+     "html": "<div class=\"lesson-video\"><div class=\"vframe\"><iframe src=\"https://www.youtube-nocookie.com/embed/zNxw5gJtHLc?rel=0&modestbranding=1\" title=\"Ethics &amp; AI: Privacy &amp; the Future of Work\" loading=\"lazy\" allow=\"accelerometer; encrypted-media; picture-in-picture; web-share\" allowfullscreen></iframe></div><p class=\"vcap\">🍿 Video break! How AI is changing the way grown-ups work.<br><span class=\"vcredit\">“Ethics &amp; AI: Privacy &amp; the Future of Work” · Code.org · YouTube</span></p></div>"
+    },
+    {
+     "type": "widget",
+     "html": "<div class=\"ctf\"><div data-ctf-widget=\"sort\" data-ctf-id=\"kids-m5-sort\">\n    <script type=\"application/json\">{\n      \"eyebrow\":\"Team captain\",\"title\":\"Who does what — AI, human, or both?\",\n      \"prompt\":\"Remember the rule: <span class=\\\"ctf-q\\\">code does the loop, AI does the judgment, humans handle the exceptions.</span> Sort each job!\",\n      \"buckets\":[\"AI does the loop\",\"Human's judgment\",\"Both, together\"],\n      \"items\":[\n        {\"emoji\":\"🖼️\",\"label\":\"Sort 10,000 photos\",\"bucket\":0},\n        {\"emoji\":\"🏆\",\"label\":\"Pick the most beautiful photo\",\"bucket\":1},\n        {\"emoji\":\"🚩\",\"label\":\"Flag a weird one for a person to check\",\"bucket\":2},\n        {\"emoji\":\"📧\",\"label\":\"Read 10,000 emails fast\",\"bucket\":0},\n        {\"emoji\":\"😢\",\"label\":\"Comfort someone who's upset\",\"bucket\":1},\n        {\"emoji\":\"🤝\",\"label\":\"Decide a tricky case together\",\"bucket\":2}\n      ],\n      \"thanks\":\"That's the team: AI runs the loop, humans bring the judgment, and the best stuff happens together!\",\n      \"complete\":{\"icon\":\"🎖️\",\"badge\":\"Badge earned: Team Captain\",\"sub\":\"Mission 5 of 12\",\"progress\":42}\n    }</script>\n  </div></div>"
+    },
+    {
+     "type": "complete",
+     "html": "<h3>✅ Mission 5 Complete!</h3><p>You just learned how grown-ups and AI work as a team. Captain's hat: earned. 🧢</p><p>🎖️ <strong>Badge earned: Team Captain</strong><br><strong>Progress:</strong> ▰▰▰▰▰▱▱▱▱▱▱▱ (5/12)<br><strong>Next up → Mission 6: Every Tool Can Help or Hurt</strong></p>"
+    }
+   ]
+  },
+  {
+   "n": 6,
+   "kind": "unit",
+   "title": "Every Tool Can Help or Hurt",
+   "meta": "~10 minutes",
+   "beats": [
+    {
+     "type": "image",
+     "html": "<div class=\"lesson-art\"><img src=\"../assets/art/mission-6.svg\" alt=\"\" loading=\"lazy\"><p class=\"art-cap\">A tool isn't good or bad — the choices we make with it are.</p></div>"
+    },
+    {
+     "type": "text",
+     "html": "<p>Okay — you've seen the amazing side: AI helping doctors, the planet, and people at work. Now we turn a corner. Because the most powerful tool in the world comes with the most important <em>choices</em> in the world, and a smart builder thinks about both.</p>"
+    },
+    {
+     "type": "text",
+     "html": "<p>Here's the key idea, and it's small enough to fit in your pocket: <strong>a tool isn't good or bad by itself. The choices people make with it are what matter.</strong></p>"
+    },
+    {
+     "type": "text",
+     "html": "<p>Think about a <strong>hammer</strong>. A hammer can build a cozy treehouse… or smash a window. Same hammer. The difference is the person holding it and what they choose to do. Think about <strong>fire</strong>: it cooks your dinner and keeps you warm, or it burns things down. The fire isn't good or evil — it depends on how it's used.</p>"
+    },
+    {
+     "type": "text",
+     "html": "<p>AI is exactly the same, just <em>way</em> more powerful — which means the choices matter <em>way</em> more. The same AI that recommends you a perfect new book could, if someone set it up that way, only ever show you one kind of thing and never let you discover anything new. The same AI that helps a doctor could be used carelessly somewhere it shouldn't be. Same tool — totally different outcome — depending on the <em>choices</em>.</p>"
+    },
+    {
+     "type": "text",
+     "html": "<p>That's why, from here on, we don't just ask <em>\"What can AI do?\"</em> We ask two more grown-up questions:</p>"
+    },
+    {
+     "type": "list",
+     "html": "<ol><li><strong>Should we?</strong> Just because we <em>can</em> do something doesn't always mean it's a good idea.</li><li><strong>Who gets to choose?</strong> Who decides how this powerful tool gets used — and is that fair?</li></ol>"
+    },
+    {
+     "type": "text",
+     "html": "<p>You don't need to be scared of these questions. They're actually the <em>exciting</em> part, because they're where humans stay in charge of the future. For the next few Missions, you get to be a \"help or hurt\" detective — and you'll be surprised how good you already are at it.</p>"
+    },
+    {
+     "type": "video",
+     "html": "<div class=\"lesson-video\"><div class=\"vframe\"><iframe src=\"https://www.youtube-nocookie.com/embed/dWRnCXbUDgA?rel=0&modestbranding=1\" title=\"Why AI Matters\" loading=\"lazy\" allow=\"accelerometer; encrypted-media; picture-in-picture; web-share\" allowfullscreen></iframe></div><p class=\"vcap\">🍿 Video break! Why being careful and responsible with AI really matters.<br><span class=\"vcredit\">“Why AI Matters” · Code.org · YouTube</span></p></div>"
+    },
+    {
+     "type": "widget",
+     "html": "<div class=\"ctf\"><div data-ctf-widget=\"quiz\" data-ctf-id=\"kids-m6-helphurt\">\n    <script type=\"application/json\">{\n      \"eyebrow\":\"Wise builder\",\"title\":\"Help or Hurt? — Detective challenge\",\n      \"prompt\":\"Same powerful tool, different choices. You decide: does each one help people, or could it hurt them?\",\n      \"questions\":[\n        {\"q\":\"An app recommends a great new book… then ONLY ever shows you that one kind of book, forever.\",\"options\":[\"Totally helps!\",\"It could hurt — you'd never discover anything new\",\"It's broken\",\"Books are boring\"],\"answer\":1},\n        {\"q\":\"A town uses AI to help firefighters reach fires faster.\",\"options\":[\"Helps — faster help saves people\",\"Hurts\",\"Too scary\",\"Only if it rains\"],\"answer\":0},\n        {\"q\":\"Someone uses AI to make a fake message pretending to be your friend.\",\"options\":[\"Helps\",\"Hurts — that's tricking people, and it's not fair\",\"Funny\",\"Depends on the emoji\"],\"answer\":1}\n      ],\n      \"perfect\":\"You're a natural Help-or-Hurt detective! Same tool, different choices — and YOU can tell the difference.\",\n      \"passText\":\"Good thinking! The trick: ask who it helps, and who it might hurt.\",\n      \"complete\":{\"icon\":\"🎖️\",\"badge\":\"Badge earned: Wise Builder\",\"sub\":\"Mission 6 of 12\",\"progress\":50}\n    }</script>\n  </div></div>"
+    },
+    {
+     "type": "complete",
+     "html": "<h3>✅ Mission 6 Complete!</h3><p>You just leveled up from <em>\"what can it do?\"</em> to <em>\"what should we do?\"</em> That's wisdom. 🛠️</p><p>🎖️ <strong>Badge earned: Wise Builder</strong><br><strong>Progress:</strong> ▰▰▰▰▰▰▱▱▱▱▱▱ (6/12)<br><strong>Next up → Mission 7: Your Stuff Is Yours</strong></p>"
+    }
+   ]
+  },
+  {
+   "n": 7,
+   "kind": "unit",
+   "title": "Your Stuff Is Yours",
+   "meta": "~10 minutes",
+   "beats": [
+    {
+     "type": "image",
+     "html": "<div class=\"lesson-art\"><img src=\"../assets/art/mission-7.svg\" alt=\"\" loading=\"lazy\"><p class=\"art-cap\">Your information is like your belongings: you get a say in who sees it.</p></div>"
+    },
+    {
+     "type": "text",
+     "html": "<p>Time for your first big builder question, and it's one you can actually use <em>today</em>: <strong>privacy</strong>.</p>"
+    },
+    {
+     "type": "text",
+     "html": "<p>Remember how AI gets smart? It learns from <strong>data</strong> — tons of examples. Here's the thing: <em>you</em> make data all day long, just by living your life. What you watch, what you search, where you go, what you type, what time you wake up. Little trails of information, everywhere you go online. Grown-ups have a name for that trail: your <strong>digital footprint</strong>.</p>"
+    },
+    {
+     "type": "text",
+     "html": "<p>Some of that is genuinely helpful! It's <em>why</em> an app can remember your favorite show or pick a song you'll love. That's the nice side. But it's also worth being thoughtful about, because your information is a little like your <strong>belongings</strong> — and you should get a say in who sees it.</p>"
+    },
+    {
+     "type": "text",
+     "html": "<p>Here's a way to feel the difference. You have a <strong>diary</strong> and you have a <strong>class bulletin board</strong>. Some things you happily pin to the bulletin board for everyone — your favorite color, a drawing you're proud of. Other things stay in the diary, just for you and people you trust — your home address, your passwords, where you'll be on Saturday. Smart people aren't scared of this; they're just <em>thoughtful</em> about which is which.</p>"
+    },
+    {
+     "type": "text",
+     "html": "<p>So here's your privacy power, three simple moves:</p>"
+    },
+    {
+     "type": "list",
+     "html": "<ol><li><strong>Think before you share.</strong> Ask, \"Is this a bulletin-board thing or a diary thing?\"</li><li><strong>Keep the diary stuff private</strong> — your full name, address, phone, passwords, where you are. Those are <em>yours</em>.</li><li><strong>When you're not sure, ask a grown-up you trust.</strong> That's not babyish — that's exactly what smart people do.</li></ol>"
+    },
+    {
+     "type": "text",
+     "html": "<p>This isn't about being scared of the internet. It's about being the <em>boss</em> of your own information — which, after Module 1, you already know is the whole vibe here. You're in charge.</p>"
+    },
+    {
+     "type": "video",
+     "html": "<div class=\"lesson-video\"><div class=\"vframe\"><iframe src=\"https://www.youtube-nocookie.com/embed/kHYkWtI7004?rel=0&modestbranding=1\" title=\"The Digital Footprint\" loading=\"lazy\" allow=\"accelerometer; encrypted-media; picture-in-picture; web-share\" allowfullscreen></iframe></div><p class=\"vcap\">🍿 Video break! The trail of info you leave online — your digital footprint.<br><span class=\"vcredit\">“The Digital Footprint” · Common Sense Education · YouTube</span></p></div>"
+    },
+    {
+     "type": "widget",
+     "html": "<div class=\"ctf\"><div data-ctf-widget=\"sort\" data-ctf-id=\"kids-m7-sort\">\n    <script type=\"application/json\">{\n      \"eyebrow\":\"Privacy guard\",\"title\":\"Share it, keep it, or ask first?\",\n      \"prompt\":\"Your info is like your <span class=\\\"ctf-q\\\">belongings</span>. Some is bulletin-board stuff, some is diary stuff. Sort each one!\",\n      \"buckets\":[\"Okay to share\",\"Keep private\",\"Ask a grown-up\"],\n      \"items\":[\n        {\"emoji\":\"🎨\",\"label\":\"Your favorite color\",\"bucket\":0},\n        {\"emoji\":\"🏠\",\"label\":\"Your full home address\",\"bucket\":1},\n        {\"emoji\":\"🎮\",\"label\":\"Your game high score\",\"bucket\":0},\n        {\"emoji\":\"🔑\",\"label\":\"Your password\",\"bucket\":1},\n        {\"emoji\":\"📸\",\"label\":\"A photo you want to post online\",\"bucket\":2},\n        {\"emoji\":\"📅\",\"label\":\"Exactly where you'll be on Saturday\",\"bucket\":1}\n      ],\n      \"thanks\":\"You're the boss of your own info — diary stuff stays in the diary!\",\n      \"complete\":{\"icon\":\"🎖️\",\"badge\":\"Badge earned: Privacy Guard\",\"sub\":\"Mission 7 of 12\",\"progress\":58}\n    }</script>\n  </div></div>"
+    },
+    {
+     "type": "complete",
+     "html": "<h3>✅ Mission 7 Complete!</h3><p>You're now the boss of your own information. Diary stuff stays in the diary. 🔒</p><p>🎖️ <strong>Badge earned: Privacy Guard</strong><br><strong>Progress:</strong> ▰▰▰▰▰▰▰▱▱▱▱▱ (7/12)<br><strong>Next up → Mission 8: Who Holds the Biggest Tools?</strong></p>"
+    }
+   ]
+  },
+  {
+   "n": 8,
+   "kind": "unit",
+   "title": "Who Holds the Biggest Tools?",
+   "meta": "~10 minutes",
+   "beats": [
+    {
+     "type": "image",
+     "html": "<div class=\"lesson-art\"><img src=\"../assets/art/mission-8.svg\" alt=\"\" loading=\"lazy\"><p class=\"art-cap\">What if one kid owned every ball at recess? Who holds the biggest tools matters.</p></div>"
+    },
+    {
+     "type": "text",
+     "html": "<p>Here's a question that even a lot of grown-ups haven't stopped to think about: the most powerful AI is really, really expensive and hard to build. So <em>who actually has it?</em></p>"
+    },
+    {
+     "type": "text",
+     "html": "<p>Picture recess. Imagine one kid showed up owning <strong>every single ball, every jump rope, and the whole field.</strong> Not because they're mean — maybe they're perfectly nice! But if everybody else has to come ask that one kid every time they want to play… that's a little bit uncomfortable, right? Even with a nice kid, it just doesn't feel <em>fair</em> for one person to hold all of it.</p>"
+    },
+    {
+     "type": "text",
+     "html": "<p>Right now, the strongest AI tools in the world are a bit like that. Building a giant, powerful AI takes enormous computers and a <em>lot</em> of money, so only a few big companies and a few countries have the very biggest ones. That's not a movie villain thing — it's just how expensive and new this is. But it raises a real fairness question, and you're old enough to ask it: <strong>if a tool can shape the whole world, is it okay for only a few groups to hold the biggest ones?</strong></p>"
+    },
+    {
+     "type": "text",
+     "html": "<p>Why does it matter? Because tools shape what the world becomes. Whoever holds the most powerful tools has a lot of say in <em>what gets built and who it's built for</em>. So lots of people think it's important that AI doesn't stay locked up with just a few — that more people, in more places, get to use it, learn it, and have a voice in it. (People like you, learning it right now, are part of spreading it out.)</p>"
+    },
+    {
+     "type": "text",
+     "html": "<p>There's no bad guy in this Mission. There's just a fairness question worth caring about: <strong>the biggest tools should help everybody, not just whoever happens to own the field.</strong></p>"
+    },
+    {
+     "type": "video",
+     "html": "<div class=\"lesson-video\"><div class=\"vframe\"><iframe src=\"https://www.youtube-nocookie.com/embed/tJQSyzBUAew?rel=0&modestbranding=1\" title=\"Ethics &amp; AI: Equal Access and Algorithmic Bias\" loading=\"lazy\" allow=\"accelerometer; encrypted-media; picture-in-picture; web-share\" allowfullscreen></iframe></div><p class=\"vcap\">🍿 Video break! Why fair access to powerful AI tools matters for everyone.<br><span class=\"vcredit\">“Ethics &amp; AI: Equal Access and Algorithmic Bias” · Code.org · YouTube</span></p></div>"
+    },
+    {
+     "type": "widget",
+     "html": "<div class=\"ctf\"><div data-ctf-widget=\"slider\" data-ctf-id=\"kids-m8-slider\">\n    <script type=\"application/json\">{\n      \"eyebrow\":\"Fair player\",\"title\":\"Fair Share: who gets the tools?\",\n      \"prompt\":\"Imagine the world's most powerful AI tools. Drag the dial to share more of them with everyone — and watch the fairness meter.\",\n      \"min\":0,\"max\":100,\"value\":50,\"unit\":\"%\",\"label\":\"of the AI tools shared with everyone\",\n      \"bands\":[\n        {\"max\":30,\"text\":\"Most tools stuck with just a few — lopsided, like one kid owning every ball at recess. Slide up to share!\"},\n        {\"max\":70,\"text\":\"Getting fairer — more people get to use and shape AI.\"},\n        {\"max\":100,\"text\":\"Shared widely — lots of people in lots of places can build with AI. That's the fair goal! ⚖️\"}\n      ],\n      \"complete\":{\"icon\":\"🎖️\",\"badge\":\"Badge earned: Fair Player\",\"sub\":\"Mission 8 of 12\",\"progress\":66}\n    }</script>\n  </div></div>"
+    },
+    {
+     "type": "complete",
+     "html": "<h3>✅ Mission 8 Complete!</h3><p>You just thought about fairness on a world-sized scale. That's big-kid thinking. ⚖️</p><p>🎖️ <strong>Badge earned: Fair Player</strong><br><strong>Progress:</strong> ▰▰▰▰▰▰▰▰▱▱▱▱ (8/12)<br><strong>Next up → Mission 9: Tools, Rules, and Freedom</strong></p>"
+    }
+   ]
+  },
+  {
+   "n": 9,
+   "kind": "unit",
+   "title": "Tools, Rules, and Freedom",
+   "meta": "~10 minutes",
+   "beats": [
+    {
+     "type": "image",
+     "html": "<div class=\"lesson-art\"><img src=\"../assets/art/mission-9.svg\" alt=\"\" loading=\"lazy\"><p class=\"art-cap\">A flashlight lights your way home — or gets shined in your face. Same tool, different choice.</p></div>"
+    },
+    {
+     "type": "text",
+     "html": "<p>This Mission has the biggest idea in the whole module, and it builds right on the last one. We're going to take it slow and start somewhere comfy.</p>"
+    },
+    {
+     "type": "text",
+     "html": "<p><strong>Good rules help everybody.</strong> Think about a traffic light, or taking turns on the swings, or raising your hand. Rules can be <em>kind</em> — they keep people safe and make sure everybody gets a fair turn. A world with zero rules would actually be scary. So rules aren't the bad guy here. Hold onto that.</p>"
+    },
+    {
+     "type": "text",
+     "html": "<p>Now the bigger idea. A super-powerful tool can be used <strong>to help people</strong>… or it can be used <strong>to boss people around.</strong> Same tool, very different choice — just like the hammer.</p>"
+    },
+    {
+     "type": "text",
+     "html": "<p>Here's the friendly way to picture it: a <strong>flashlight</strong>. A flashlight can help you find your way home in the dark — that's helping. Or someone could shine it right in your face to push you around — that's bossing. Same flashlight. The difference is the <em>choice</em> of the person holding it.</p>"
+    },
+    {
+     "type": "text",
+     "html": "<p>Powerful AI is the same. Used one way, it helps a city save energy, helps a doctor, helps you learn. Used another way, a powerful tool could be used to watch people <em>all the time</em>, or to control what they're allowed to do or say. In some places in the world, powerful tools do get used to boss people around instead of to help them.</p>"
+    },
+    {
+     "type": "text",
+     "html": "<p>Now — that's not here to scare you. (If it feels like a big thought, that's okay; big thoughts are allowed, and you can always talk about it with a grown-up you trust.) It's here because it's the <em>most important reason</em> people care so much about <strong>who controls AI and how it's used.</strong> This is exactly why the questions from the last few Missions matter: <em>should we?</em> and <em>who gets to choose?</em> The answer the world is working toward is this: good rules, and lots of different people having a say, keep powerful tools on the <strong>helping</strong> side.</p>"
+    },
+    {
+     "type": "text",
+     "html": "<p>And that's a hopeful ending, not a scary one. Tools don't decide how they're used — <strong>people do.</strong> Rules, fairness, and many voices are how we keep the flashlight pointed at the path home. And your generation gets to be some of those voices.</p>"
+    },
+    {
+     "type": "widget",
+     "html": "<div class=\"ctf\"><div data-ctf-widget=\"sort\" data-ctf-id=\"kids-m9-sort\">\n    <script type=\"application/json\">{\n      \"eyebrow\":\"Freedom keeper\",\"title\":\"Helps people, or bosses them around?\",\n      \"prompt\":\"Same powerful tool — like a flashlight that lights your way OR shines in your face. Sort each one by the <span class=\\\"ctf-q\\\">choice</span> behind it.\",\n      \"buckets\":[\"Helps people\",\"Bosses people around\"],\n      \"items\":[\n        {\"emoji\":\"🔦\",\"label\":\"AI that helps a city save energy\",\"bucket\":0},\n        {\"emoji\":\"👀\",\"label\":\"A tool that watches everyone all the time\",\"bucket\":1},\n        {\"emoji\":\"🩺\",\"label\":\"AI that helps a doctor spot sickness\",\"bucket\":0},\n        {\"emoji\":\"🤐\",\"label\":\"A tool that controls what people are allowed to say\",\"bucket\":1},\n        {\"emoji\":\"📚\",\"label\":\"AI that helps you learn something new\",\"bucket\":0},\n        {\"emoji\":\"🚦\",\"label\":\"Good rules that keep everyone safe\",\"bucket\":0}\n      ],\n      \"thanks\":\"Good rules and many voices keep powerful tools on the HELPING side. 🔦\",\n      \"complete\":{\"icon\":\"🎖️\",\"badge\":\"Badge earned: Freedom Keeper\",\"sub\":\"Mission 9 of 12\",\"progress\":75}\n    }</script>\n  </div></div>"
+    },
+    {
+     "type": "complete",
+     "html": "<h3>✅ Mission 9 Complete!</h3><p>You just thought carefully about one of the hardest questions there is — and stayed hopeful. That's real courage. 🔦</p><p>🎖️ <strong>Badge earned: Freedom Keeper</strong><br><strong>Progress:</strong> ▰▰▰▰▰▰▰▰▰▱▱▱ (9/12)<br><strong>Next up → Mission 10: Who Decides the Future of AI?</strong></p>"
+    }
+   ]
+  },
+  {
+   "n": 10,
+   "kind": "unit",
+   "title": "Who Decides the Future of AI?",
+   "meta": "~10 minutes",
+   "beats": [
+    {
+     "type": "image",
+     "html": "<div class=\"lesson-art\"><img src=\"../assets/art/mission-10.svg\" alt=\"\" loading=\"lazy\"><p class=\"art-cap\">Nobody decides alone — the future of AI is steered by lots of voices, including yours.</p></div>"
+    },
+    {
+     "type": "text",
+     "html": "<p>After the last couple of Missions, you might be thinking: <em>okay, this is a super powerful tool, and how it's used really matters… so who's actually in charge of all this?</em> Brilliant question. Let's answer it — and the answer is full of hope.</p>"
+    },
+    {
+     "type": "text",
+     "html": "<p>Here's the big one: <strong>nobody should decide alone.</strong> Not one company. Not one ruler. Not even one country. Something this powerful and this important is meant to be steered by <em>lots</em> of people, together.</p>"
+    },
+    {
+     "type": "text",
+     "html": "<p>How do people steer something big and shared? The same ways humans have always made big group decisions:</p>"
+    },
+    {
+     "type": "list",
+     "html": "<ul><li>They make <strong>rules</strong> together — agreements about what's okay and what's not.</li><li>Grown-ups <strong>vote</strong> for leaders who help make those rules.</li><li>People <strong>speak up</strong> — they say what they think is fair, and that actually changes things.</li><li>Some grown-ups have a whole <strong>job</strong> of keeping powerful tools safe and fair for everybody.</li><li>And <strong>new builders</strong> — hi, that's you — bring fresh ideas nobody older even thought of.</li></ul>"
+    },
+    {
+     "type": "text",
+     "html": "<p>Think about the rules of a big playground game that <em>everyone</em> plays. The game works best when everyone helps agree on the rules — not when one kid makes them all up and bosses everyone around (you just learned why that's no fun in Mission 8!). The future of AI is like that game. It works best when <em>lots</em> of voices help shape it.</p>"
+    },
+    {
+     "type": "text",
+     "html": "<p>And here's the part that should make you sit up: <strong>the future of AI isn't decided yet.</strong> It's being figured out <em>right now</em>, while you're a kid — which means your voice is part of it. What you think is fair, what you'd build, what rules you'd want — that all counts. Most kids never realize they get a say in something this big. You just did.</p>"
+    },
+    {
+     "type": "video",
+     "html": "<div class=\"lesson-video\"><div class=\"vframe\"><iframe src=\"https://www.youtube-nocookie.com/embed/RzkD_rTEBYs?rel=0&modestbranding=1\" title=\"How Will AI Change the World?\" loading=\"lazy\" allow=\"accelerometer; encrypted-media; picture-in-picture; web-share\" allowfullscreen></iframe></div><p class=\"vcap\">🍿 Video break! Big ideas about how people get to shape what AI does next.<br><span class=\"vcredit\">“How Will AI Change the World?” · TED-Ed · YouTube</span></p></div>"
+    },
+    {
+     "type": "widget",
+     "html": "<div class=\"ctf\"><div data-ctf-widget=\"poll\" data-ctf-id=\"kids-m10-rule\">\n    <script type=\"application/json\">{\n      \"eyebrow\":\"Rule maker\",\"title\":\"Make a rule for AI\",\"prompt\":\"You get a say in the future of AI! Pick one rule you think AI should ALWAYS follow — or write your own. It goes on the cohort wall.\",\"columns\":2,\n      \"options\":[{\"emoji\":\"🪪\",\"label\":\"Always tell you it's an AI\"},{\"emoji\":\"🔒\",\"label\":\"Never share your secrets\"},{\"emoji\":\"⚖️\",\"label\":\"Be fair to everyone\"},{\"emoji\":\"✋\",\"label\":\"Let a human make the big calls\"}],\n      \"freeText\":true,\"placeholder\":\"Or write your own rule for AI…\",\n      \"thanks\":\"Your rule is on the wall — that's you helping steer the future! 🗳️\",\n      \"complete\":{\"icon\":\"🎖️\",\"badge\":\"Badge earned: Rule Maker\",\"sub\":\"Mission 10 of 12\",\"progress\":83}\n    }</script>\n  </div></div>"
+    },
+    {
+     "type": "complete",
+     "html": "<h3>✅ Mission 10 Complete!</h3><p>You just put a rule for AI on the wall. That's you, helping steer the future. 🗳️</p><p>🎖️ <strong>Badge earned: Rule Maker</strong><br><strong>Progress:</strong> ▰▰▰▰▰▰▰▰▰▰▱▱ (10/12)<br><strong>Next up → Mission 11: You Get to Help Build It</strong></p>"
+    }
+   ]
+  },
+  {
+   "n": 11,
+   "kind": "unit",
+   "title": "You Get to Help Build It",
+   "meta": "~10 minutes",
+   "beats": [
+    {
+     "type": "image",
+     "html": "<div class=\"lesson-art\"><img src=\"../assets/art/mission-11.svg\" alt=\"\" loading=\"lazy\"><p class=\"art-cap\">You don't just use AI — you get to help build it: curiosity + judgment + kindness.</p></div>"
+    },
+    {
+     "type": "text",
+     "html": "<p>Let's pull this whole week together, because you've come a <em>long</em> way. You learned that AI is powerful and already changing the world (Missions 2–5). You learned it comes with real choices about fairness, privacy, power, and control (Missions 6–10). So here's the big finish: *<em>the people who get to shape all of this are the kids growing up </em>with<em> it. That's you.</em>*</p>"
+    },
+    {
+     "type": "text",
+     "html": "<p>You're not just going to <em>use</em> AI. You get to help <em>build</em> it and <em>guide</em> it. And here's the secret about what makes a <em>good</em> builder — it's not just being clever with the tool. A great builder needs <strong>three</strong> things:</p>"
+    },
+    {
+     "type": "list",
+     "html": "<ul><li><strong>Curiosity</strong> — to wonder, to ask \"what if?\", to keep trying. (You've had this since Mission 1.)</li><li><strong>Judgment</strong> — to ask the grown-up questions: <em>Should we? Is this fair? Who could this help or hurt?</em> (You practiced this all module.)</li><li><strong>Kindness</strong> — to build things that are good <em>for people</em>, not just cool or powerful.</li></ul>"
+    },
+    {
+     "type": "text",
+     "html": "<p>That's the whole secret of this camp, actually. The most powerful thing in the future isn't the AI — it's a curious, careful, kind human deciding what to do with it. A robot can sort a million photos, but only a person can decide which idea is worth building, who it should help, and what's fair. AI brings the speed; <em>you</em> bring the wisdom. Together, that's an unstoppable team — with you as the captain.</p>"
+    },
+    {
+     "type": "text",
+     "html": "<p>So get curious. Ask the big questions. Dream up wild ideas — <em>and</em> ask if they're fair and kind before you build them. The future isn't something that just happens <em>to</em> you. <strong>You get to help build it</strong> — and now you know how to build it <em>well</em>.</p>"
+    },
+    {
+     "type": "video",
+     "html": "<div class=\"lesson-video\"><div class=\"vframe\"><iframe src=\"https://www.youtube-nocookie.com/embed/nKIu9yen5nc?rel=0&modestbranding=1\" title=\"What Most Schools Don't Teach\" loading=\"lazy\" allow=\"accelerometer; encrypted-media; picture-in-picture; web-share\" allowfullscreen></iframe></div><p class=\"vcap\">🍿 Video break! You can be a builder of technology — not just a user of it.<br><span class=\"vcredit\">“What Most Schools Don't Teach” · Code.org · YouTube</span></p></div>"
+    },
+    {
+     "type": "widget",
+     "html": "<div class=\"ctf\"><div data-ctf-widget=\"poll\" data-ctf-id=\"kids-m11-code\">\n    <script type=\"application/json\">{\n      \"eyebrow\":\"World builder\",\"title\":\"Write your Builder's Code\",\"prompt\":\"A great builder = curiosity + judgment + kindness. Pick the promise you most want to build by — or add your own.\",\"columns\":2,\n      \"options\":[{\"emoji\":\"🔍\",\"label\":\"I'll stay curious\"},{\"emoji\":\"⚖️\",\"label\":\"I'll think about fairness\"},{\"emoji\":\"🔒\",\"label\":\"I'll protect people's privacy\"},{\"emoji\":\"🙋\",\"label\":\"I'll ask when I'm not sure\"}],\n      \"freeText\":true,\"placeholder\":\"Or add your own promise…\",\n      \"thanks\":\"That's your Builder's Code. The future needs builders like you. 🌟\",\n      \"complete\":{\"icon\":\"🎖️\",\"badge\":\"Badge earned: World Builder\",\"sub\":\"Mission 11 of 12\",\"progress\":91}\n    }</script>\n  </div></div>"
+    },
+    {
+     "type": "complete",
+     "html": "<h3>✅ Mission 11 Complete!</h3><p>You wrote your own Builder's Code. That's the kind of person the future needs. 🌟</p><p>🎖️ <strong>Badge earned: World Builder</strong><br><strong>Progress:</strong> ▰▰▰▰▰▰▰▰▰▰▰▱ (11/12)<br><strong>Next up → Mission 12: You Did It!</strong></p>"
+    }
+   ]
+  },
+  {
+   "n": 12,
+   "kind": "unit",
+   "title": "You Did It!",
+   "meta": "~10 minutes",
+   "beats": [
+    {
+     "type": "image",
+     "html": "<div class=\"lesson-art\"><img src=\"../assets/art/mission-12.svg\" alt=\"\" loading=\"lazy\"><p class=\"art-cap\">You did it — Level 2. Look how big you can think about AI now.</p></div>"
+    },
+    {
+     "type": "text",
+     "html": "<p>Look how big your thinking got this week. Twelve Missions ago, AI was a tool that draws dragons. Now you can talk about how it's changing medicine, the planet, and jobs — <em>and</em> you can think clearly about fairness, privacy, power, and who gets to decide. That's not just \"knowing about AI.\" That's <em>wisdom</em> about AI. Let's pull it all together.</p>"
+    },
+    {
+     "type": "text",
+     "html": "<p><strong>The Big Ideas you unlocked this module:</strong> - AI is <strong>already out there</strong>, changing big parts of the world — hospitals, the planet,   science, and jobs (Missions 2–5). - The work rule: <strong>code does the loop, AI does the judgment, humans handle the exceptions</strong>   (Mission 5). - A tool isn't good or bad — <strong>the choices are</strong> (the hammer, Mission 6). - Your information is <strong>yours</strong> — be the boss of your privacy (Mission 7). - The biggest tools are held by a <strong>few</strong> today, and fairness means <strong>sharing</strong> the power   (Missions 8–9). - <strong>Nobody decides alone</strong> — the future of AI is steered by lots of people, <strong>including you</strong>   (Mission 10). - A great builder = <strong>curiosity + judgment + kindness</strong> (Mission 11).</p>"
+    },
+    {
+     "type": "text",
+     "html": "<p>Here's your challenge: tonight, teach <em>one</em> of these ideas to a grown-up. Maybe the hammer rule, maybe the recess-ball fairness idea, maybe \"code does the loop.\" If you can teach it, you really own it — and you might just teach <em>them</em> something brand new.</p>"
+    },
+    {
+     "type": "text",
+     "html": "<p>Then take the quiz, look back at what you said about AI in Mission 1, and get ready — because now you get to <em>build</em> something good with real AI in the Big Mission.</p>"
+    },
+    {
+     "type": "widget",
+     "html": "<div class=\"ctf\"><div data-ctf-widget=\"quiz\" data-ctf-id=\"kids-m12-quiz\">\n    <script type=\"application/json\">{\n      \"eyebrow\":\"🏆 Final check\",\"title\":\"Show what you know\",\"revisit\":\"kids-m1-warmup\",\"revisitText\":\"Back in Mission 1, you said the most amazing thing AI could do was:\",\n      \"questions\":[\n        {\"q\":\"Where can you find AI in the real world?\",\"options\":[\"Only in chatbots\",\"In hospitals, farms, weather, and maps too\",\"Nowhere\",\"Only in phones\"],\"answer\":1},\n        {\"q\":\"How does AI help doctors?\",\"options\":[\"It replaces them\",\"It spots patterns early — but a human makes the final call\",\"It does surgery alone\",\"It can't\"],\"answer\":1},\n        {\"q\":\"The work rule: code does the loop, AI does the judgment, and humans handle the…\",\"options\":[\"snacks\",\"exceptions\",\"weekends\",\"wifi\"],\"answer\":1},\n        {\"q\":\"A tool like AI is…\",\"options\":[\"always good\",\"always bad\",\"not good or bad — the choices people make matter\",\"alive\"],\"answer\":2},\n        {\"q\":\"Your home address and passwords are…\",\"options\":[\"bulletin-board stuff\",\"diary stuff — keep them private\",\"fun to share with anyone\",\"data the AI needs\"],\"answer\":1},\n        {\"q\":\"Who gets to decide the future of AI?\",\"options\":[\"one company\",\"one ruler\",\"lots of people together — including you\",\"nobody\"],\"answer\":2}\n      ],\n      \"perfect\":\"6 for 6 — you don't just know what AI IS, you know what it MEANS. Level 2 unlocked! 🎉\",\"passText\":\"Strong finish! Peek back at any you missed, then claim your badge.\",\n      \"complete\":{\"icon\":\"🏆\",\"badge\":\"Module 2 Complete: AI Explorer — Level 2!\",\"sub\":\"All 12 badges earned\",\"progress\":100}\n    }</script>\n  </div></div>"
+    },
+    {
+     "type": "complete",
+     "html": "<h3>🏆 Module 2 Complete!</h3><p>🎖️ <strong>Badge earned: AI Explorer — Level 2!</strong><br><strong>Progress:</strong> ▰▰▰▰▰▰▰▰▰▰▰▰ (12/12) ✅</p><p>You don't just understand what AI <em>is</em> anymore — you understand what it <em>means</em>, and what <em>you</em> get to do about it. That's rare, and it's powerful. Now for the best part — it's time to build something good with real AI. <strong>On to the Big Mission →</strong></p>"
+    }
+   ]
+  },
+  {
+   "kind": "capstone",
+   "title": "Build an AI Helper for the World",
+   "meta": "",
+   "beats": [
+    {
+     "type": "capstone",
+     "html": "<p class=\"cap-eyebrow\">🚀 The Big Mission</p><h2>Build an AI Helper for the World</h2><p>You earned all 12 badges. Time for the best part — build something good with a real AI, then check it like a true builder.</p><a class=\"cap-btn\" href=\"../capstone/kids-big-mission.html\">Start the Big Mission →</a>"
+    }
+   ]
+  }
+ ]
+}

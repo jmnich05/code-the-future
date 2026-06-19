@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Big Mission — Build an AI Helper for the World</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --blue:#2A5FF0;--blue-bright:#3D74FF;--teal:#12B2BC;--teal-bright:#26C7D1;--teal-300:#5BDCE6;
+    --coral:#FF5A38;--coral-bright:#FF7556;--amber:#FFC74D;
+    --space-900:#070C1A;--space-800:#0A1226;--space-700:#0F1B3A;
+    --ink-50:#F6F8FC;--ink-200:#DDE2EC;--ink-300:#BCC3D2;--ink-400:#8A93A8;
+    --line:rgba(255,255,255,.12);
+    --display:'Space Grotesk',sans-serif;--body:'Plus Jakarta Sans',sans-serif;--mono:'JetBrains Mono',monospace;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:var(--body);color:var(--ink-50);min-height:100vh;background:
+    radial-gradient(900px 500px at 80% -10%, rgba(38,199,209,.16), transparent 60%),
+    radial-gradient(800px 600px at 0% 110%, rgba(42,95,240,.18), transparent 60%),
+    linear-gradient(160deg,var(--space-700),var(--space-900));}
+  .wrap{max-width:760px;margin:0 auto;padding:26px clamp(16px,4vw,30px) 80px;}
+  .top{display:flex;align-items:center;gap:12px;margin-bottom:8px;}
+  .top svg{width:38px;height:38px}
+  .top .ey{font-family:var(--mono);font-size:.7rem;letter-spacing:.16em;text-transform:uppercase;color:var(--teal-300)}
+  .steps-rail{display:flex;gap:8px;margin:18px 0 26px}
+  .srail{flex:1;height:6px;border-radius:999px;background:rgba(255,255,255,.1)}
+  .srail.on{background:linear-gradient(90deg,var(--blue-bright),var(--teal-bright))}
+  h1{font-family:var(--display);font-weight:700;font-size:2rem;line-height:1.1;letter-spacing:-.01em;margin-bottom:8px}
+  h1 i{font-style:normal;color:var(--teal-300)}
+  h2{font-family:var(--display);font-weight:600;font-size:1.4rem;margin-bottom:6px}
+  .lead{color:var(--ink-300);font-size:1.05rem;line-height:1.5;margin-bottom:20px;max-width:60ch}
+  .step{display:none;animation:fade .4s ease}
+  .step.on{display:block}
+  @keyframes fade{from{opacity:0;transform:translateY(8px)}}
+  .kick{font-family:var(--mono);font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;color:var(--teal-300);margin-bottom:8px;display:block}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:18px}
+  @media(max-width:560px){.grid{grid-template-columns:1fr}}
+  .pick{text-align:left;background:rgba(255,255,255,.05);border:2px solid var(--line);border-radius:16px;padding:16px;cursor:pointer;color:#fff;font-family:var(--body);transition:border-color .15s,transform .15s}
+  .pick:hover{border-color:var(--teal-300);transform:translateY(-2px)}
+  .pick.sel{border-color:var(--teal-bright);background:rgba(38,199,209,.12)}
+  .pick .em{font-size:1.6rem;display:block;margin-bottom:6px}
+  .pick b{font-family:var(--display);font-size:1.05rem;display:block}
+  .pick span{font-size:.85rem;color:var(--ink-300)}
+  label.fld{display:block;margin:14px 0}
+  label.fld .lbl{font-family:var(--mono);font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-400);margin-bottom:6px;display:block}
+  input,textarea{width:100%;background:rgba(0,0,0,.25);border:1px solid var(--line);color:#fff;font-family:var(--body);font-size:1.05rem;padding:13px 15px;border-radius:13px}
+  textarea{min-height:64px;resize:vertical}
+  .facts-rows{display:flex;flex-direction:column;gap:8px}
+  .btn{font-family:var(--display);font-weight:600;border:none;border-radius:999px;padding:15px 30px;font-size:1.05rem;cursor:pointer;background:linear-gradient(120deg,var(--coral),var(--amber));color:#2a1500}
+  .btn:disabled{opacity:.45;cursor:default}
+  .btn.ghost{background:rgba(255,255,255,.07);color:#fff;border:1px solid var(--line)}
+  .nav{display:flex;justify-content:space-between;gap:10px;margin-top:22px}
+  .answer{margin-top:16px;border-radius:16px;padding:18px 20px;background:linear-gradient(160deg,rgba(38,199,209,.16),rgba(42,95,240,.12));border:1px solid rgba(91,220,230,.4);display:none}
+  .answer.show{display:block;animation:fade .4s ease}
+  .answer .who{font-family:var(--mono);font-size:.66rem;letter-spacing:.12em;text-transform:uppercase;color:var(--teal-300);margin-bottom:6px}
+  .answer .body{font-size:1.15rem;line-height:1.45}
+  .check{background:rgba(255,255,255,.05);border:1px solid var(--line);border-radius:16px;padding:16px 18px;margin-bottom:12px}
+  .check .q{font-family:var(--display);font-weight:600;font-size:1.1rem;margin-bottom:4px}
+  .check .hint{color:var(--ink-300);font-size:.9rem;margin-bottom:10px}
+  .check .opts{display:flex;gap:8px;flex-wrap:wrap}
+  .chip{font:inherit;font-weight:600;font-size:.9rem;cursor:pointer;color:#fff;background:rgba(255,255,255,.07);border:1px solid var(--line);border-radius:999px;padding:9px 16px}
+  .chip.sel{background:var(--teal);border-color:var(--teal);color:#042}
+  .share{text-align:center;border-radius:22px;padding:32px 26px;background:radial-gradient(120% 160% at 50% -20%, rgba(61,116,255,.4), transparent 60%),linear-gradient(160deg,var(--space-700),var(--space-900));border:1px solid var(--line)}
+  .share .big{font-size:2.6rem;margin-bottom:8px}
+  .share h2{font-size:1.7rem}
+  .share .card{margin:18px auto;max-width:440px;text-align:left;background:rgba(255,255,255,.05);border:1px solid var(--line);border-radius:16px;padding:18px 20px}
+  .share .card .row{margin:6px 0;font-size:1rem}
+  .share .card .row b{color:var(--teal-300)}
+  .muted{color:var(--ink-400);font-size:.85rem;text-align:center;margin-top:10px}
+  a.exit{color:var(--ink-400);text-decoration:none;font-family:var(--mono);font-size:.78rem}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <svg viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <defs><linearGradient id="s" x1="28" y1="100" x2="96" y2="28" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#fff"></stop><stop offset="1" stop-color="#3FD0DA"></stop></linearGradient></defs>
+      <path d="M30 98 L60 68" stroke="url(#s)" stroke-width="11" stroke-linecap="round"></path><path d="M60 68 L46 40" stroke="url(#s)" stroke-width="11" stroke-linecap="round"></path><path d="M60 68 L92 32" stroke="url(#s)" stroke-width="11" stroke-linecap="round"></path><path d="M91 52 L92 32 L72 35" stroke="#FF7556" stroke-width="11" stroke-linecap="round" stroke-linejoin="round"></path><circle cx="30" cy="98" r="8" fill="#fff"></circle><circle cx="60" cy="68" r="8" fill="#fff"></circle><circle cx="46" cy="40" r="7.5" fill="#FFC74D"></circle>
+    </svg>
+    <div><span class="ey">The Big Mission · Module 2</span></div>
+    <a class="exit" href="../lessons/player.html?track=kids" style="margin-left:auto">✕ Back to missions</a>
+  </div>
+
+  <div class="steps-rail">
+    <div class="srail on" data-r="0"></div><div class="srail" data-r="1"></div>
+    <div class="srail" data-r="2"></div><div class="srail" data-r="3"></div>
+  </div>
+
+  <!-- STEP 0 — pick a problem -->
+  <div class="step on" data-step="0">
+    <h1>Build an <i>AI Helper</i> for the world</h1>
+    <p class="lead">You learned what AI can do — now build something <b>good</b> with it. Pick a real problem you care about. Your helper will use a real AI, and you'll check it like a true builder.</p>
+    <span class="kick">Step 1 · Pick a problem to solve</span>
+    <div class="grid" id="problems">
+      <button class="pick" data-p="helping new kids feel welcome at school"><span class="em">🧑‍🤝‍🧑</span><b>Lonely new kids</b><span>Help new kids feel welcome</span></button>
+      <button class="pick" data-p="stopping food from being wasted"><span class="em">🍎</span><b>Wasted food</b><span>Help people waste less food</span></button>
+      <button class="pick" data-p="keeping our parks and streets clean"><span class="em">🌎</span><b>Litter</b><span>Help keep places clean</span></button>
+      <button class="pick" data-p="helping grandparents with everyday things"><span class="em">👵</span><b>Helping grandparents</b><span>Make everyday things easier</span></button>
+      <button class="pick" data-p="making hard homework easier to understand"><span class="em">✏️</span><b>Hard homework</b><span>Explain tricky things simply</span></button>
+      <button class="pick" data-p="cheering people up when they feel sad"><span class="em">💛</span><b>Tough days</b><span>Help cheer people up</span></button>
+    </div>
+    <label class="fld"><span class="lbl">…or write your own problem</span><input id="ownProblem" placeholder="A problem in your home, school, city, or planet…"></label>
+    <div class="nav"><span></span><button class="btn" id="to1" disabled>Next →</button></div>
+  </div>
+
+  <!-- STEP 1 — design -->
+  <div class="step" data-step="1">
+    <span class="kick">Step 2 · Design your helper</span>
+    <h2>Give your AI helper its job</h2>
+    <p class="lead">Remember from Module 1 and 2: an AI is a base brain + the <b>name</b>, <b>job</b>, and <b>examples</b> you give it.</p>
+    <label class="fld"><span class="lbl">Name your helper</span><input id="hName" maxlength="24" placeholder="e.g. Welcome Bot, Buddy, Captain Clean"></label>
+    <label class="fld"><span class="lbl">What does it do? (one sentence)</span><input id="hJob" maxlength="120" placeholder="It helps…"></label>
+    <span class="lbl" style="font-family:var(--mono);font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-400)">Teach it 2–3 facts it should know</span>
+    <div class="facts-rows" style="margin-top:6px">
+      <input class="hFact" maxlength="140" placeholder="Fact 1 — something true that helps it do its job">
+      <input class="hFact" maxlength="140" placeholder="Fact 2">
+      <input class="hFact" maxlength="140" placeholder="Fact 3 (optional)">
+    </div>
+    <div class="nav"><button class="btn ghost" data-back="0">← Back</button><button class="btn" id="to2" disabled>Next →</button></div>
+  </div>
+
+  <!-- STEP 2 — ask it -->
+  <div class="step" data-step="2">
+    <span class="kick">Step 3 · Wake it up</span>
+    <h2 id="askTitle">Ask your helper</h2>
+    <p class="lead">Ask it a question about the problem it solves. It will answer using your name, job, and facts — for real.</p>
+    <label class="fld"><span class="lbl">Your question</span><input id="hQ" maxlength="160" placeholder="What should a new kid do on their first day?"></label>
+    <button class="btn" id="runBtn">▶ Run my helper</button>
+    <div class="answer" id="answer"><div class="who" id="aWho">Your helper says</div><div class="body" id="aBody"></div></div>
+    <div class="nav"><button class="btn ghost" data-back="1">← Back</button><button class="btn" id="to3" disabled>Next: check it →</button></div>
+  </div>
+
+  <!-- STEP 3 — ethics checkpoint -->
+  <div class="step" data-step="3">
+    <span class="kick">Step 4 · The builder's checkpoint</span>
+    <h2>Is it good <i>and</i> safe?</h2>
+    <p class="lead">A great builder doesn't just ask "does it work?" — they ask "is it fair, is it safe, who could it hurt?" Check your helper.</p>
+    <div class="check"><div class="q">⚖️ Is it fair to <em>everyone</em>?</div><div class="hint">Could it leave anyone out, or only help some kids?</div><div class="opts" data-c="fair"><button class="chip">Yes, fair to all</button><button class="chip">I'll fix that</button></div></div>
+    <div class="check"><div class="q">🔒 Does it respect privacy?</div><div class="hint">Does it keep people's private stuff (names, where they live) safe?</div><div class="opts" data-c="priv"><button class="chip">Yes, it's careful</button><button class="chip">I'll fix that</button></div></div>
+    <div class="check"><div class="q">💭 Who could it accidentally hurt — and how would you fix it?</div><div class="hint">Every powerful tool needs a human checking it. That's you.</div><textarea id="harm" placeholder="One way it could go wrong, and how I'd fix it…"></textarea></div>
+    <div class="nav"><button class="btn ghost" data-back="2">← Back</button><button class="btn" id="finish" disabled>Finish my Big Mission 🚀</button></div>
+  </div>
+
+  <!-- SHARE -->
+  <div class="step" data-step="share">
+    <div class="share">
+      <div class="big">🎉</div>
+      <h2>You built it.</h2>
+      <p class="lead" style="margin:8px auto 0;color:var(--ink-200)">You designed a real AI helper for the world — and you checked it like a true builder. That's exactly what the future needs.</p>
+      <div class="card">
+        <div class="row"><b>Helper:</b> <span id="sName"></span></div>
+        <div class="row"><b>Its job:</b> <span id="sJob"></span></div>
+        <div class="row"><b>Solves:</b> <span id="sProblem"></span></div>
+        <div class="row"><b>Builder:</b> a Code the Future Future Builder 🌟</div>
+      </div>
+      <p class="muted">Show this to your mentor at the next library session — you'll pitch it to the room.</p>
+      <div style="margin-top:18px"><a class="btn" href="../lessons/player.html?track=kids" style="text-decoration:none;display:inline-block">← Back to missions</a></div>
+    </div>
+  </div>
+</div>
+
+<script>
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+const state={problem:"",name:"",job:"",facts:[],q:"",fair:"",priv:"",harm:""};
+
+function go(n){
+  $$(".step").forEach(s=>s.classList.toggle("on", s.dataset.step==String(n)));
+  $$(".srail").forEach((r,i)=>r.classList.toggle("on", i<=(+n||0)));
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+
+// step 0 — problem
+$$("#problems .pick").forEach(b=>b.addEventListener("click",()=>{
+  $$("#problems .pick").forEach(x=>x.classList.remove("sel")); b.classList.add("sel");
+  $("#ownProblem").value=""; state.problem=b.dataset.p; $("#to1").disabled=false;
+}));
+$("#ownProblem").addEventListener("input",e=>{
+  $$("#problems .pick").forEach(x=>x.classList.remove("sel"));
+  state.problem=e.target.value.trim(); $("#to1").disabled=!state.problem;
+});
+$("#to1").addEventListener("click",()=>go(1));
+
+// step 1 — design
+function checkDesign(){
+  state.name=$("#hName").value.trim(); state.job=$("#hJob").value.trim();
+  state.facts=$$(".hFact").map(i=>i.value.trim()).filter(Boolean);
+  $("#to2").disabled=!(state.name && state.job && state.facts.length>=1);
+}
+["#hName","#hJob"].forEach(s=>$(s).addEventListener("input",checkDesign));
+$$(".hFact").forEach(i=>i.addEventListener("input",checkDesign));
+$("#to2").addEventListener("click",()=>{ $("#askTitle").textContent="Ask "+state.name; go(2); });
+
+// step 2 — run it. Prefer the structured /api/buildlab endpoint; fall back to
+// the always-present /api/ai (so the capstone works on any deploy), then a
+// local mock so the flow is demoable on a plain file server.
+async function runAI(){
+  try{
+    const r=await fetch("/api/buildlab",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({
+      name:state.name, topic:state.problem, personality:"helpful, kind, and encouraging",
+      rules:["always be kind","keep people's private information safe","be fair to everyone"],
+      facts:state.facts, question:state.q
+    })});
+    if(r.ok) return (await r.json()).text||"(it didn't say anything)";
+  }catch(e){/* fall through */}
+  try{
+    const prompt='You ARE an AI helper named "'+state.name+'" built by a kid. Your job: '+state.job+
+      '. You help with: '+state.problem+'. Things you were taught: '+(state.facts.join("; ")||"(not much yet)")+
+      '. Always be kind, keep private info safe, and be fair. A kid asks: "'+state.q+
+      '". Answer in 1-3 short, friendly sentences using only what you were taught.';
+    const r2=await fetch("/api/ai",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({mode:"kids",prompt})});
+    if(r2.ok) return (await r2.json()).text||"(it didn't say anything)";
+    throw new Error("ai "+r2.status);
+  }catch(err){
+    if(location.hostname==="localhost"||location.hostname==="127.0.0.1")
+      return "[local preview — deploy to talk to the real AI] Hi, I'm "+state.name+"! "+(state.facts[0]||"I'm here to help.");
+    throw err;
+  }
+}
+$("#hQ").addEventListener("input",e=>state.q=e.target.value.trim());
+$("#runBtn").addEventListener("click",async()=>{
+  if(!state.q) return;
+  const b=$("#runBtn"); b.disabled=true; b.textContent="…thinking";
+  $("#aWho").textContent=state.name+" says";
+  try{ $("#aBody").textContent=await runAI(); }
+  catch(e){ $("#aBody").textContent="(couldn't reach the AI — "+e.message+")"; }
+  $("#answer").classList.add("show"); $("#to3").disabled=false;
+  b.disabled=false; b.textContent="▶ Run again";
+});
+$("#to3").addEventListener("click",()=>go(3));
+
+// step 3 — ethics checkpoint
+$$(".check .opts").forEach(o=>o.querySelectorAll(".chip").forEach(c=>c.addEventListener("click",()=>{
+  o.querySelectorAll(".chip").forEach(x=>x.classList.remove("sel")); c.classList.add("sel");
+  state[o.dataset.c]=c.textContent; checkEthics();
+})));
+$("#harm").addEventListener("input",e=>{state.harm=e.target.value.trim();checkEthics();});
+function checkEthics(){ $("#finish").disabled=!(state.fair && state.priv && state.harm); }
+$("#finish").addEventListener("click",()=>{
+  $("#sName").textContent=state.name; $("#sJob").textContent=state.job; $("#sProblem").textContent=state.problem;
+  go("share");
+});
+
+// back buttons
+$$("[data-back]").forEach(b=>b.addEventListener("click",()=>go(+b.dataset.back)));
+</script>
+</body>
+</html>

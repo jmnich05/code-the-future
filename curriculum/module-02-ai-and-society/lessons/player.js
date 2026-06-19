@@ -7,9 +7,8 @@
   "use strict";
   var qs = new URLSearchParams(location.search);
   var TRACK = qs.get("track") === "adults" ? "adults" : "kids";
-  var POSKEY = "ctf:pos:" + TRACK;
-
-  var MODULE = "module-01-what-is-ai";
+  var MODULE = "module-02-ai-and-society";
+  var POSKEY = "ctf:pos:" + MODULE + ":" + TRACK;
   var stage, label, fill, backBtn, nextBtn, hint;
   var DATA, STEPS = [], pos = 0, animating = false, revealTimer = null, hadLocalPos = false;
   // anti-skip-spam: a minimum dwell on each genuinely-NEW beat before you can
@@ -21,7 +20,7 @@
   // furthest step ever reached — the high-water mark. Replays move `pos` back,
   // but `furthest` never decreases, and it's what we sync to the cloud so a
   // fresh browser can never wipe out real progress.
-  var MAXKEY = "ctf:max:" + TRACK;
+  var MAXKEY = "ctf:max:" + MODULE + ":" + TRACK;
   var furthest = 0, cloudReady = false;
   // ---- drip pacing: 3 parts, unlocked on days 0 / +2 / +4 ------------------
   var PARTS = [
@@ -39,10 +38,10 @@
   try {
     if (new URLSearchParams(location.search).get("unlock") === "all") localStorage.setItem("ctf:unlockall", "1");
     paceBypass = localStorage.getItem("ctf:unlockall") === "1";
-    paceAnchor = localStorage.getItem("ctf:firstplay");
+    paceAnchor = localStorage.getItem("ctf:firstplay:" + MODULE);
     if (!paceAnchor || paceAnchor > localDate()) {  // self-heal future-dated anchors
       paceAnchor = localDate();
-      localStorage.setItem("ctf:firstplay", paceAnchor);
+      localStorage.setItem("ctf:firstplay:" + MODULE, paceAnchor);
     }
   } catch (e) { paceAnchor = localDate(); }
   function stepMission(st) {
@@ -151,7 +150,7 @@
     // if we're sitting on a complete beat that rendered before DB init, award now
     var st = STEPS[pos];
     if (st && st.kind === "beat" && st.b.type === "complete" && st.m && st.m.n) {
-      d.awardBadge(TRACK + "-m" + st.m.n, { module: MODULE, track: TRACK });
+      d.awardBadge(TRACK + "-mod2-" + st.m.n, { module: MODULE, track: TRACK });
     }
     // ALWAYS reconcile with the cloud: merge the high-water mark from wherever
     // this kid played before (other browser, other device, cleared storage)
@@ -235,16 +234,16 @@
       if (type === "complete") {
         var medal = "";
         if (window.CTFBadge && step.m && step.m.n) {
-          var rw = window.CTFAvatar && window.CTFAvatar.REWARDS && window.CTFAvatar.REWARDS[step.m.n];
-          medal = '<div class="badge-medal">' + window.CTFBadge.render(step.m.n) +
-            '<div class="badge-name">' + window.CTFBadge.NAMES[step.m.n - 1] + '</div>' +
-            (rw ? '<div class="badge-gift">🎁 New gear unlocked: <b>' + rw.emoji + " " + rw.label + '</b> — try it on your character!</div>' : '') +
-            '</div>';
+          // Module 2 badges: distinct names + the module-neutral medal art.
+          var bname = window.CTFBadge.nameFor ? window.CTFBadge.nameFor("kids-mod2-" + step.m.n) : "";
+          var bart = window.CTFBadge.renderSvg ? window.CTFBadge.renderSvg(step.m.n) : window.CTFBadge.render(step.m.n);
+          medal = '<div class="badge-medal">' + bart +
+            '<div class="badge-name">' + bname + '</div></div>';
         }
         beat.innerHTML = medal + '<div class="wrap">' + step.b.html + "</div>";
         confetti();
         var dd = db();
-        if (dd && step.m && step.m.n) { dd.awardBadge(TRACK + "-m" + step.m.n, { module: MODULE, track: TRACK }); dd.logEvent("mission_complete", { module: MODULE, track: TRACK, n: step.m.n }); }
+        if (dd && step.m && step.m.n) { dd.awardBadge(TRACK + "-mod2-" + step.m.n, { module: MODULE, track: TRACK }); dd.logEvent("mission_complete", { module: MODULE, track: TRACK, n: step.m.n }); }
       } else if (type === "capstone") {
         beat.innerHTML = '<div class="inner">' + step.b.html + "</div>";
         var dc = db(); if (dc) dc.awardBadge(TRACK + "-" + MODULE + "-complete", { module: MODULE, track: TRACK });

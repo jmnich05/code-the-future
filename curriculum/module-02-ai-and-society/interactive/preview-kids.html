@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Code the Future — Module 2 · Kids (all 12 Missions)</title>
+<link rel="stylesheet" href="ctf-widgets.css">
+<style>
+  body{ margin:0; background:#F6F8FC; font-family:'Plus Jakarta Sans',system-ui,sans-serif; color:#2A3349; }
+  .page{ max-width:720px; margin:0 auto; padding:0 16px 80px; }
+  .hero{ background:linear-gradient(160deg,#0F1B3A 0%,#070C1A 100%); color:#fff; border-radius:0 0 28px 28px; padding:40px 28px 34px; box-shadow:0 18px 40px rgba(12,19,34,.12); }
+  .hero .eyebrow{ font-family:'JetBrains Mono',monospace; font-size:12px; letter-spacing:.12em; text-transform:uppercase; color:#26C7D1; margin:0 0 10px; }
+  .hero h1{ font-family:'Space Grotesk',sans-serif; font-weight:700; letter-spacing:-.02em; font-size:2rem; line-height:1.1; margin:0 0 8px; }
+  .hero h1 .accent{ color:#3D74FF; }
+  .hero p{ margin:0; opacity:.85; max-width:46ch; }
+  .step{ font-family:'JetBrains Mono',monospace; font-size:12px; letter-spacing:.1em; text-transform:uppercase; color:#5F6B82; margin:34px 8px 2px; }
+  .toolbar{ max-width:640px; margin:8px auto 0; text-align:right; }
+  .linkbtn{ font:inherit; font-size:.85rem; background:none; border:none; color:#2A5FF0; cursor:pointer; text-decoration:underline; }
+  footer{ text-align:center; color:#8A93A8; font-size:.8rem; margin-top:50px; font-family:'JetBrains Mono',monospace; }
+</style>
+</head>
+<body>
+<div class="hero">
+  <p class="eyebrow">◆ Module 2 · AI and Our World · Type A (Ages 8–11)</p>
+  <h1>All 12 <span class="accent">Missions</span></h1>
+  <p>Every interactive widget for the kids' track, in order. Progress saves as you go.</p>
+</div>
+<div class="page">
+  <div class="toolbar"><button class="linkbtn" onclick="CTFWidgets.reset();location.reload()">↺ Reset my progress</button></div>
+
+  <p class="step">Mission 1 · welcome-back poll</p>
+  <div class="ctf"><div data-ctf-widget="poll" data-ctf-id="kids-m1-warmup">
+    <script type="application/json">{
+      "eyebrow":"🚀 Welcome back","title":"What's the most AMAZING thing AI could do for the world?",
+      "prompt":"No wrong answers — pick one or type your own. We'll come back to it in Mission 12 to see how your thinking grew.","columns":2,
+      "options":[{"emoji":"🩺","label":"Help cure diseases"},{"emoji":"🌎","label":"Help the planet"},{"emoji":"🛠️","label":"Help people build cool things"},{"emoji":"🧠","label":"Help everyone learn"}],
+      "freeText":true,"placeholder":"Or describe your own big idea…",
+      "thanks":"Saved! Remember your answer — you'll see it again in Mission 12."
+    }</script>
+  </div></div>
+
+  <p class="step">Mission 1 · recap — AI's job or a human's?</p>
+  <div class="ctf"><div data-ctf-widget="sort" data-ctf-id="kids-m1-recap">
+    <script type="application/json">{
+      "eyebrow":"Warm up your Module 1 brain","title":"AI's job, or a human's job?",
+      "prompt":"AI is a speedy <span class=\"ctf-q\">pattern</span> helper. Humans bring the <span class=\"ctf-q\">judgment</span>. Sort each one!",
+      "buckets":["AI can do this","Only a human"],
+      "items":[
+        {"emoji":"🖼️","label":"Find the pattern in a million photos","bucket":0},
+        {"emoji":"⚖️","label":"Decide what's fair","bucket":1},
+        {"emoji":"📧","label":"Read 10,000 emails super fast","bucket":0},
+        {"emoji":"❤️","label":"Care how someone feels","bucket":1},
+        {"emoji":"🌦️","label":"Guess the weather from tons of data","bucket":0},
+        {"emoji":"💡","label":"Decide which idea is worth building","bucket":1}
+      ],
+      "thanks":"Nice — AI brings the speed, humans bring the judgment. That's the whole week!",
+      "complete":{"icon":"🎖️","badge":"Badge earned: Returning Builder","sub":"Mission 1 of 12","progress":8}
+    }</script>
+  </div></div>
+
+  <p class="step">Mission 2 · where's the AI?</p>
+  <div class="ctf"><div data-ctf-widget="sort" data-ctf-id="kids-m2-sort">
+    <script type="application/json">{
+      "eyebrow":"AI is already out there","title":"Where's the AI hiding?",
+      "prompt":"Some of these <span class=\"ctf-q\">learn and guess</span> (AI). Some just follow fixed steps (a plain machine). Sort them!",
+      "buckets":["AI is helping here","Just a plain machine"],
+      "items":[
+        {"emoji":"🏥","label":"Hospital computer spotting a problem on a scan","bucket":0},
+        {"emoji":"🗺️","label":"A paper map","bucket":1},
+        {"emoji":"🚜","label":"Farm sensor deciding which plants need water","bucket":0},
+        {"emoji":"⏰","label":"A wind-up clock","bucket":1},
+        {"emoji":"🌦️","label":"Weather app warning a city about a storm","bucket":0},
+        {"emoji":"🔦","label":"A flashlight","bucket":1},
+        {"emoji":"🗣️","label":"App translating between two languages","bucket":0},
+        {"emoji":"🚪","label":"A door hinge","bucket":1}
+      ],
+      "thanks":"You found the AI hiding all over the real world!",
+      "complete":{"icon":"🎖️","badge":"Badge earned: World Spotter","sub":"Mission 2 of 12","progress":16}
+    }</script>
+  </div></div>
+
+  <p class="step">Mission 3 · read the scan</p>
+  <div class="ctf"><div data-ctf-widget="reveal" data-ctf-id="kids-m3-reveal">
+    <script type="application/json">{
+      "eyebrow":"Healer's helper","title":"What is it? Reveal the scan",
+      "prompt":"An AI sees a blurry pattern first, then clearer — just like reading an X-ray. Tap “Reveal more,” then make your guess.",
+      "emoji":"🦴","levels":[24,16,9,4,0],"options":["A cloud","A bone","A snake","A road"],"answer":1,
+      "explain":"It's a bone! That's the same pattern-reading AI uses to help doctors spot things on an X-ray early — but a human doctor always makes the final call. 🩺",
+      "complete":{"icon":"🎖️","badge":"Badge earned: Healer's Helper","sub":"Mission 3 of 12","progress":25}
+    }</script>
+  </div></div>
+
+  <p class="step">Mission 4 · power-up the city</p>
+  <div class="ctf"><div data-ctf-widget="slider" data-ctf-id="kids-m4-slider">
+    <script type="application/json">{
+      "eyebrow":"Planet protector","title":"Power-Up the City",
+      "prompt":"Drag the dial to choose how much clean power the city uses <span class=\"ctf-q\">right now</span> vs. saves for tonight. Watch what happens — AI helps people find the smart balance!",
+      "min":0,"max":100,"value":50,"unit":"%","label":"of clean power used now",
+      "bands":[
+        {"max":30,"text":"Using very little now means lots of clean power gets wasted later. Slide up! 🌙"},
+        {"max":70,"text":"Nice balance — AI helps shift power so almost none gets wasted. ⚡"},
+        {"max":100,"text":"Using it ALL now leaves nothing for tonight! AI helps find the sweet spot in the middle."}
+      ],
+      "complete":{"icon":"🎖️","badge":"Badge earned: Planet Protector","sub":"Mission 4 of 12","progress":33}
+    }</script>
+  </div></div>
+
+  <p class="step">Mission 5 · who does what?</p>
+  <div class="ctf"><div data-ctf-widget="sort" data-ctf-id="kids-m5-sort">
+    <script type="application/json">{
+      "eyebrow":"Team captain","title":"Who does what — AI, human, or both?",
+      "prompt":"Remember the rule: <span class=\"ctf-q\">code does the loop, AI does the judgment, humans handle the exceptions.</span> Sort each job!",
+      "buckets":["AI does the loop","Human's judgment","Both, together"],
+      "items":[
+        {"emoji":"🖼️","label":"Sort 10,000 photos","bucket":0},
+        {"emoji":"🏆","label":"Pick the most beautiful photo","bucket":1},
+        {"emoji":"🚩","label":"Flag a weird one for a person to check","bucket":2},
+        {"emoji":"📧","label":"Read 10,000 emails fast","bucket":0},
+        {"emoji":"😢","label":"Comfort someone who's upset","bucket":1},
+        {"emoji":"🤝","label":"Decide a tricky case together","bucket":2}
+      ],
+      "thanks":"That's the team: AI runs the loop, humans bring the judgment, and the best stuff happens together!",
+      "complete":{"icon":"🎖️","badge":"Badge earned: Team Captain","sub":"Mission 5 of 12","progress":42}
+    }</script>
+  </div></div>
+
+  <p class="step">Mission 6 · help or hurt?</p>
+  <div class="ctf"><div data-ctf-widget="quiz" data-ctf-id="kids-m6-helphurt">
+    <script type="application/json">{
+      "eyebrow":"Wise builder","title":"Help or Hurt? — Detective challenge",
+      "prompt":"Same powerful tool, different choices. You decide: does each one help people, or could it hurt them?",
+      "questions":[
+        {"q":"An app recommends a great new book… then ONLY ever shows you that one kind of book, forever.","options":["Totally helps!","It could hurt — you'd never discover anything new","It's broken","Books are boring"],"answer":1},
+        {"q":"A town uses AI to help firefighters reach fires faster.","options":["Helps — faster help saves people","Hurts","Too scary","Only if it rains"],"answer":0},
+        {"q":"Someone uses AI to make a fake message pretending to be your friend.","options":["Helps","Hurts — that's tricking people, and it's not fair","Funny","Depends on the emoji"],"answer":1}
+      ],
+      "perfect":"You're a natural Help-or-Hurt detective! Same tool, different choices — and YOU can tell the difference.",
+      "passText":"Good thinking! The trick: ask who it helps, and who it might hurt.",
+      "complete":{"icon":"🎖️","badge":"Badge earned: Wise Builder","sub":"Mission 6 of 12","progress":50}
+    }</script>
+  </div></div>
+
+  <p class="step">Mission 7 · share or keep?</p>
+  <div class="ctf"><div data-ctf-widget="sort" data-ctf-id="kids-m7-sort">
+    <script type="application/json">{
+      "eyebrow":"Privacy guard","title":"Share it, keep it, or ask first?",
+      "prompt":"Your info is like your <span class=\"ctf-q\">belongings</span>. Some is bulletin-board stuff, some is diary stuff. Sort each one!",
+      "buckets":["Okay to share","Keep private","Ask a grown-up"],
+      "items":[
+        {"emoji":"🎨","label":"Your favorite color","bucket":0},
+        {"emoji":"🏠","label":"Your full home address","bucket":1},
+        {"emoji":"🎮","label":"Your game high score","bucket":0},
+        {"emoji":"🔑","label":"Your password","bucket":1},
+        {"emoji":"📸","label":"A photo you want to post online","bucket":2},
+        {"emoji":"📅","label":"Exactly where you'll be on Saturday","bucket":1}
+      ],
+      "thanks":"You're the boss of your own info — diary stuff stays in the diary!",
+      "complete":{"icon":"🎖️","badge":"Badge earned: Privacy Guard","sub":"Mission 7 of 12","progress":58}
+    }</script>
+  </div></div>
+
+  <p class="step">Mission 8 · fair share</p>
+  <div class="ctf"><div data-ctf-widget="slider" data-ctf-id="kids-m8-slider">
+    <script type="application/json">{
+      "eyebrow":"Fair player","title":"Fair Share: who gets the tools?",
+      "prompt":"Imagine the world's most powerful AI tools. Drag the dial to share more of them with everyone — and watch the fairness meter.",
+      "min":0,"max":100,"value":50,"unit":"%","label":"of the AI tools shared with everyone",
+      "bands":[
+        {"max":30,"text":"Most tools stuck with just a few — lopsided, like one kid owning every ball at recess. Slide up to share!"},
+        {"max":70,"text":"Getting fairer — more people get to use and shape AI."},
+        {"max":100,"text":"Shared widely — lots of people in lots of places can build with AI. That's the fair goal! ⚖️"}
+      ],
+      "complete":{"icon":"🎖️","badge":"Badge earned: Fair Player","sub":"Mission 8 of 12","progress":66}
+    }</script>
+  </div></div>
+
+  <p class="step">Mission 9 · helps or bosses?</p>
+  <div class="ctf"><div data-ctf-widget="sort" data-ctf-id="kids-m9-sort">
+    <script type="application/json">{
+      "eyebrow":"Freedom keeper","title":"Helps people, or bosses them around?",
+      "prompt":"Same powerful tool — like a flashlight that lights your way OR shines in your face. Sort each one by the <span class=\"ctf-q\">choice</span> behind it.",
+      "buckets":["Helps people","Bosses people around"],
+      "items":[
+        {"emoji":"🔦","label":"AI that helps a city save energy","bucket":0},
+        {"emoji":"👀","label":"A tool that watches everyone all the time","bucket":1},
+        {"emoji":"🩺","label":"AI that helps a doctor spot sickness","bucket":0},
+        {"emoji":"🤐","label":"A tool that controls what people are allowed to say","bucket":1},
+        {"emoji":"📚","label":"AI that helps you learn something new","bucket":0},
+        {"emoji":"🚦","label":"Good rules that keep everyone safe","bucket":0}
+      ],
+      "thanks":"Good rules and many voices keep powerful tools on the HELPING side. 🔦",
+      "complete":{"icon":"🎖️","badge":"Badge earned: Freedom Keeper","sub":"Mission 9 of 12","progress":75}
+    }</script>
+  </div></div>
+
+  <p class="step">Mission 10 · make a rule for AI</p>
+  <div class="ctf"><div data-ctf-widget="poll" data-ctf-id="kids-m10-rule">
+    <script type="application/json">{
+      "eyebrow":"Rule maker","title":"Make a rule for AI","prompt":"You get a say in the future of AI! Pick one rule you think AI should ALWAYS follow — or write your own. It goes on the cohort wall.","columns":2,
+      "options":[{"emoji":"🪪","label":"Always tell you it's an AI"},{"emoji":"🔒","label":"Never share your secrets"},{"emoji":"⚖️","label":"Be fair to everyone"},{"emoji":"✋","label":"Let a human make the big calls"}],
+      "freeText":true,"placeholder":"Or write your own rule for AI…",
+      "thanks":"Your rule is on the wall — that's you helping steer the future! 🗳️",
+      "complete":{"icon":"🎖️","badge":"Badge earned: Rule Maker","sub":"Mission 10 of 12","progress":83}
+    }</script>
+  </div></div>
+
+  <p class="step">Mission 11 · builder's code</p>
+  <div class="ctf"><div data-ctf-widget="poll" data-ctf-id="kids-m11-code">
+    <script type="application/json">{
+      "eyebrow":"World builder","title":"Write your Builder's Code","prompt":"A great builder = curiosity + judgment + kindness. Pick the promise you most want to build by — or add your own.","columns":2,
+      "options":[{"emoji":"🔍","label":"I'll stay curious"},{"emoji":"⚖️","label":"I'll think about fairness"},{"emoji":"🔒","label":"I'll protect people's privacy"},{"emoji":"🙋","label":"I'll ask when I'm not sure"}],
+      "freeText":true,"placeholder":"Or add your own promise…",
+      "thanks":"That's your Builder's Code. The future needs builders like you. 🌟",
+      "complete":{"icon":"🎖️","badge":"Badge earned: World Builder","sub":"Mission 11 of 12","progress":91}
+    }</script>
+  </div></div>
+
+  <p class="step">Mission 12 · you did it!</p>
+  <div class="ctf"><div data-ctf-widget="quiz" data-ctf-id="kids-m12-quiz">
+    <script type="application/json">{
+      "eyebrow":"🏆 Final check","title":"Show what you know","revisit":"kids-m1-warmup","revisitText":"Back in Mission 1, you said the most amazing thing AI could do was:",
+      "questions":[
+        {"q":"Where can you find AI in the real world?","options":["Only in chatbots","In hospitals, farms, weather, and maps too","Nowhere","Only in phones"],"answer":1},
+        {"q":"How does AI help doctors?","options":["It replaces them","It spots patterns early — but a human makes the final call","It does surgery alone","It can't"],"answer":1},
+        {"q":"The work rule: code does the loop, AI does the judgment, and humans handle the…","options":["snacks","exceptions","weekends","wifi"],"answer":1},
+        {"q":"A tool like AI is…","options":["always good","always bad","not good or bad — the choices people make matter","alive"],"answer":2},
+        {"q":"Your home address and passwords are…","options":["bulletin-board stuff","diary stuff — keep them private","fun to share with anyone","data the AI needs"],"answer":1},
+        {"q":"Who gets to decide the future of AI?","options":["one company","one ruler","lots of people together — including you","nobody"],"answer":2}
+      ],
+      "perfect":"6 for 6 — you don't just know what AI IS, you know what it MEANS. Level 2 unlocked! 🎉","passText":"Strong finish! Peek back at any you missed, then claim your badge.",
+      "complete":{"icon":"🏆","badge":"Module 2 Complete: AI Explorer — Level 2!","sub":"All 12 badges earned","progress":100}
+    }</script>
+  </div></div>
+
+  <footer>CODE THE FUTURE · MODULE 2 · KIDS · 12 MISSIONS</footer>
+</div>
+<script src="ctf-widgets.js"></script>
+</body>
+</html>
