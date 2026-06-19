@@ -5,7 +5,7 @@
 //
 // The ElevenLabs key stays server-side: set ELEVENLABS_API_KEY in Netlify
 // env vars (and locally in capstone/.env). Optional: ELEVENLABS_VOICE_ID
-// (defaults to "Rachel", a warm clear narrator voice).
+// (defaults to the project's chosen narrator voice — Jon's ElevenLabs voice).
 // Built for the lesson player's "Read to me" accessibility button.
 // ==========================================================================
 
@@ -21,7 +21,7 @@ export default async (req) => {
   const text = (body.text || "").toString().replace(/\s+/g, " ").trim().slice(0, 900);
   if (!text) return json({ error: "Nothing to read." }, 400);
 
-  const voice = process.env.ELEVENLABS_VOICE_ID || "21m00Tcm4TlvDq8ikWAM"; // Rachel
+  const voice = process.env.ELEVENLABS_VOICE_ID || "VZL4mFdzQmqG9QkUfhNw"; // Jon's chosen narrator voice
 
   try {
     const r = await fetch(

@@ -104,7 +104,7 @@ const server = createServer(async (req, res) => {
     let body = {}; try { body = JSON.parse(raw || "{}"); } catch { return send(res, 400, { error: "Invalid JSON" }); }
     const text = (body.text || "").toString().replace(/\s+/g, " ").trim().slice(0, 900);
     if (!text) return send(res, 400, { error: "Nothing to read." });
-    const voice = process.env.ELEVENLABS_VOICE_ID || "21m00Tcm4TlvDq8ikWAM";
+    const voice = process.env.ELEVENLABS_VOICE_ID || "VZL4mFdzQmqG9QkUfhNw"; // Jon's chosen narrator voice
     try {
       const r = await fetch("https://api.elevenlabs.io/v1/text-to-speech/" + voice + "?output_format=mp3_44100_64", {
         method: "POST", headers: { "xi-api-key": ekey, "Content-Type": "application/json" },
