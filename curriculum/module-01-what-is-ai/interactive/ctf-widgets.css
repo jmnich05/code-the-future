@@ -334,3 +334,44 @@
 .ctf-mai-send:disabled{ opacity:.55; cursor:default; }
 .ctf-mai-note{ font-size:.98rem; line-height:1.5; color:var(--ink-700,#2A3349); background:var(--amber-50,#FFF7E6); border:1px solid var(--amber-100,#FFECC2); border-radius:14px; padding:11px 14px; }
 .ctf-mai-note b{ color:var(--ink-900,#0C1322); }
+
+/* ---- Crack the Secret Rule (pattern detective) ---- */
+.ctf-rule{ display:flex; flex-direction:column; gap:14px; }
+.ctf-rule-pips,.ctf-fc-pips{ display:flex; gap:6px; justify-content:center; }
+.ctf-rule-pip,.ctf-fc-pip{ width:22px; height:6px; border-radius:3px; background:var(--ink-200,#DDE2EC); }
+.ctf-rule-pip.on,.ctf-fc-pip.on{ background:var(--blue-600,#2A5FF0); }
+.ctf-rule-pip.done,.ctf-fc-pip.done{ background:var(--teal-500,#12B2BC); }
+.ctf-rule-title{ font-family:var(--font-display); font-weight:600; font-size:1.15rem; color:var(--ink-900,#0C1322); text-align:center; }
+.ctf-rule-ex{ display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+.ctf-rule-col{ border-radius:14px; padding:12px; }
+.ctf-rule-col.yes{ background:var(--teal-50,#E4FBFC); border:1px solid var(--teal-100,#C2F5F8); }
+.ctf-rule-col.no{ background:var(--ink-50,#F6F8FC); border:1px solid var(--ink-200,#DDE2EC); }
+.ctf-rule-col-h{ font-family:var(--font-mono); font-size:11px; letter-spacing:.05em; text-transform:uppercase; color:var(--ink-500,#5F6B82); margin-bottom:8px; text-align:center; }
+.ctf-rule-items{ display:flex; flex-wrap:wrap; gap:6px; justify-content:center; }
+.ctf-rule-chip{ display:inline-flex; align-items:center; gap:4px; background:var(--white,#fff); border:1px solid var(--ink-200,#DDE2EC); border-radius:999px; padding:5px 10px; font-size:.85rem; font-weight:600; color:var(--ink-700,#2A3349); }
+.ctf-rule-chip .em{ font-size:1.15rem; }
+.ctf-rule-q{ text-align:center; font-weight:700; color:var(--ink-900,#0C1322); }
+.ctf-rule-tests{ display:flex; flex-direction:column; align-items:center; gap:14px; }
+.ctf-rule-card{ display:flex; flex-direction:column; align-items:center; gap:4px; background:var(--white,#fff); border:2px solid var(--ink-200,#DDE2EC); border-radius:18px; padding:16px 30px; box-shadow:var(--shadow-sm); transition:border-color .2s, background .2s; }
+.ctf-rule-card .em{ font-size:3rem; line-height:1; }
+.ctf-rule-card .lb{ font-weight:700; color:var(--ink-900,#0C1322); }
+.ctf-rule-card.right{ border-color:var(--teal-500,#12B2BC); background:var(--teal-50,#E4FBFC); }
+.ctf-rule-card.wrong{ border-color:var(--amber-400,#FFB320); background:var(--amber-50,#FFF7E6); }
+.ctf-rule-btns,.ctf-fc-btns{ display:flex; gap:10px; }
+.ctf-rule-btn,.ctf-fc-btn{ font:inherit; font-weight:700; font-size:1rem; cursor:pointer; border-radius:999px; padding:11px 22px; border:2px solid var(--ink-200,#DDE2EC); background:var(--white,#fff); color:var(--ink-900,#0C1322); transition:border-color .14s, color .14s; }
+.ctf-rule-btn.yes:hover,.ctf-fc-btn.trust:hover{ border-color:var(--teal-500,#12B2BC); color:var(--teal-700,#0B6E76); }
+.ctf-rule-btn.no:hover{ border-color:var(--amber-400,#FFB320); }
+.ctf-fc-btn.check:hover{ border-color:var(--blue-600,#2A5FF0); color:var(--blue-700,#1E45C2); }
+.ctf-rule-btn:disabled,.ctf-fc-btn:disabled{ opacity:.6; cursor:default; }
+.ctf-rule-crack{ font-size:1.12rem; line-height:1.5; text-align:center; color:var(--ink-900,#0C1322); background:var(--blue-50,#EAF1FF); border-radius:14px; padding:16px 18px; }
+.ctf-rule-crack b{ color:var(--blue-700,#1E45C2); }
+.ctf-rule-finished,.ctf-fc-finished{ text-align:center; font-size:1.18rem; font-weight:700; color:var(--ink-900,#0C1322); padding:16px; }
+.ctf-fc-finished b{ color:var(--teal-600,#0E9099); }
+
+/* ---- Catch the AI's Mistake (fact-checker) ---- */
+.ctf-fc{ display:flex; flex-direction:column; gap:16px; align-items:center; }
+.ctf-fc-bubble{ display:flex; align-items:flex-start; gap:10px; max-width:94%; background:var(--ink-100,#ECEFF5); border:2px solid var(--ink-200,#DDE2EC); border-radius:18px; border-top-left-radius:5px; padding:14px 18px; transition:border-color .2s, background .2s; }
+.ctf-fc-bubble .av{ font-size:1.7rem; line-height:1; flex:none; }
+.ctf-fc-bubble .txt{ font-size:1.15rem; line-height:1.4; color:var(--ink-900,#0C1322); font-weight:600; }
+.ctf-fc-bubble.true{ border-color:var(--teal-500,#12B2BC); background:var(--teal-50,#E4FBFC); }
+.ctf-fc-bubble.false{ border-color:var(--coral-500,#FF5A38); background:var(--coral-50,#FFF0EC); }

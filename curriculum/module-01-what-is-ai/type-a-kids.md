@@ -161,7 +161,7 @@ That word — **pattern** — is one of the most important words in this whole c
 loud once: *pattern*. You'll hear it a lot, because finding patterns is the secret behind
 almost everything AI does.
 
-`[INTERACTIVE: "spot the pattern" — show 4–5 examples, learner guesses the hidden rule, then a 6th is revealed to check the guess.]`
+`[INTERACTIVE: "Crack the Secret Rule" — a pattern-detective game. Study a few examples, then predict new ones and get instant feedback until you crack the hidden rule. Three mysteries, no multiple choice — pure discovery, just like learning a concept from examples.]`
 
 ### ✅ Mission 3 Complete!
 **You just unlocked:**
@@ -527,7 +527,7 @@ boss of AI:
 You bring the caring, the checking, and the good choices. The AI brings the speed. Together,
 that's a great team — with you as the captain.
 
-`[INTERACTIVE: "is the AI right?" — show a few AI answers, learner decides which to trust and which to double-check.]`
+`[INTERACTIVE: "Catch the AI's Mistake" — the AI makes confident claims, some true, some sneakily wrong. The kid is the fact-checker: trust it, or double-check it? Reveals which were right and why. Teaches confident ≠ correct.]`
 
 ### ✅ Mission 10 Complete!
 **You just unlocked:**
@@ -577,7 +577,7 @@ So get curious. Ask big questions. Dream up wild, impossible ideas — then use 
 to start building them. The future isn't something that just happens *to* you. **You're going
 to help build it.**
 
-`[INTERACTIVE: "imagine your future" — pick a dream job, see one way AI might help you do it, and add your dream to the class wall.]`
+`[INTERACTIVE: "Build your future with AI" — kid types their big dream (open-ended), a REAL AI riffs on one concrete way AI could help them do it. Imaginative, experimental, uses real AI.]`
 
 ### ✅ Mission 11 Complete!
 **You just unlocked:**

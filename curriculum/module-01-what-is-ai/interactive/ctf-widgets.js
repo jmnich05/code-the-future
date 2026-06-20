@@ -939,7 +939,8 @@
       busy = true; send.disabled = true;
       push(bubble('me', q)); input.value = '';
       var typing = push(el('div', 'ctf-mai-msg ai ctf-mai-typing', '<span class="ctf-mai-av">🤖</span><span class="ctf-mai-txt">· · ·</span>'));
-      fetch('/api/ai', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ mode: 'kids', prompt: q }) })
+      var sendPrompt = cfg.promptTemplate ? cfg.promptTemplate.replace('{q}', q) : q;
+      fetch('/api/ai', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ mode: 'kids', prompt: sendPrompt }) })
         .then(function (r) { return r.json().then(function (d) { return { ok: r.ok, d: d }; }); })
         .then(function (res) {
           typing.remove();
@@ -966,8 +967,125 @@
     input.addEventListener('keydown', function (e) { if (e.key === 'Enter') { e.preventDefault(); ask(); } });
   }
 
+  // =========================================================================
+  // CRACK THE SECRET RULE — a pattern-detective game. Study a few examples,
+  // predict new ones, get feedback, and figure out the hidden rule — exactly
+  // how you (and AI) learn a concept from examples. Open-ended discovery.
+  // =========================================================================
+  function renderRule(root, cfg, id) {
+    root.innerHTML = header(cfg);
+    var wrap = el('div', 'ctf-rule'); root.appendChild(wrap);
+    var fb = el('div', 'ctf-feedback'); root.appendChild(fb);
+    var done = completionCard(cfg); if (done) root.appendChild(done);
+    var rounds = cfg.rounds || [], ri = 0;
+    var prior = id ? load(id + ':answer') : null;
+    if (prior && prior.done) { finishedView(); fb.classList.add('show'); reveal(done, (cfg.complete && cfg.complete.progress) || 100); }
+    else playRound();
+
+    function exCol(title, items, yes) {
+      var c = el('div', 'ctf-rule-col ' + (yes ? 'yes' : 'no'));
+      c.appendChild(el('div', 'ctf-rule-col-h', title));
+      var g = el('div', 'ctf-rule-items');
+      (items || []).forEach(function (it) { g.appendChild(el('span', 'ctf-rule-chip', '<span class="em">' + esc(it.emoji) + '</span>' + esc(it.label || ''))); });
+      c.appendChild(g); return c;
+    }
+    function playRound() {
+      var R = rounds[ri]; wrap.innerHTML = '';
+      var pips = el('div', 'ctf-rule-pips');
+      for (var p = 0; p < rounds.length; p++) pips.appendChild(el('i', 'ctf-rule-pip ' + (p < ri ? 'done' : p === ri ? 'on' : '')));
+      wrap.appendChild(pips);
+      wrap.appendChild(el('div', 'ctf-rule-title', 'Meet the <b>' + esc(R.name || 'Zorbs') + '</b> — what makes one a ' + esc(R.name || 'Zorb') + '? 🤔'));
+      var ex = el('div', 'ctf-rule-ex');
+      ex.appendChild(exCol('✅ ARE ' + esc(R.name || 'Zorbs'), R.yes, true));
+      ex.appendChild(exCol('🚫 are NOT', R.no, false));
+      wrap.appendChild(ex);
+      wrap.appendChild(el('div', 'ctf-rule-q', 'Now YOU spot them!'));
+      var tests = R.tests || [], ti = 0;
+      var tw = el('div', 'ctf-rule-tests'); wrap.appendChild(tw);
+      showTest();
+      function showTest() {
+        if (ti >= tests.length) { cracked(); return; }
+        tw.innerHTML = ''; var t = tests[ti];
+        tw.appendChild(el('div', 'ctf-rule-card', '<span class="em">' + esc(t.emoji) + '</span><span class="lb">' + esc(t.label || '') + '</span>'));
+        var btns = el('div', 'ctf-rule-btns');
+        var yes = el('button', 'ctf-rule-btn yes', '✓ ' + esc(R.name || 'Zorb'));
+        var no = el('button', 'ctf-rule-btn no', '🚫 Nope');
+        btns.appendChild(yes); btns.appendChild(no); tw.appendChild(btns);
+        function judge(g) {
+          yes.disabled = no.disabled = true;
+          var right = (g === !!t.zorb);
+          tw.querySelector('.ctf-rule-card').classList.add(right ? 'right' : 'wrong');
+          fb.className = 'ctf-feedback show ' + (right ? 'good' : 'info');
+          fb.innerHTML = (right ? '✅ ' : '🤔 ') + esc(t.why || (t.zorb ? 'It IS one!' : 'It is NOT one.'));
+          setTimeout(function () { ti++; fb.classList.remove('show'); showTest(); }, 1150);
+        }
+        yes.onclick = function () { judge(true); }; no.onclick = function () { judge(false); };
+      }
+      function cracked() {
+        tw.innerHTML = '<div class="ctf-rule-crack">🔑 You cracked it!<br><b>' + esc(R.reveal) + '</b></div>';
+        var nx = el('button', 'ctf-btn ctf-rule-next', ri < rounds.length - 1 ? 'Next mystery →' : 'Finish 🎉');
+        tw.appendChild(nx);
+        nx.onclick = function () { if (ri < rounds.length - 1) { ri++; playRound(); } else finishRule(); };
+      }
+    }
+    function finishRule() {
+      if (id) save(id + ':answer', { done: true });
+      finishedView();
+      fb.className = 'ctf-feedback show good';
+      fb.innerHTML = cfg.thanks || "You learned each rule from just a few examples — that's EXACTLY how AI learns! 🧠";
+      reveal(done, (cfg.complete && cfg.complete.progress) || 100); markDone(id);
+    }
+    function finishedView() { wrap.innerHTML = '<div class="ctf-rule-finished">🕵️ Pattern Detective! You cracked all ' + rounds.length + ' secret rules.</div>'; }
+  }
+
+  // =========================================================================
+  // CATCH THE AI'S MISTAKE — the AI makes confident claims; YOU decide trust
+  // vs double-check. Teaches: sounding sure ≠ being right; humans are the check.
+  // =========================================================================
+  function renderFactCheck(root, cfg, id) {
+    root.innerHTML = header(cfg);
+    var wrap = el('div', 'ctf-fc'); root.appendChild(wrap);
+    var fb = el('div', 'ctf-feedback'); root.appendChild(fb);
+    var done = completionCard(cfg); if (done) root.appendChild(done);
+    var claims = cfg.claims || [], ci = 0, caught = 0;
+    var prior = id ? load(id + ':answer') : null;
+    if (prior && prior.done) { wrap.innerHTML = '<div class="ctf-fc-finished">🔍 Fact-Checker! You judged every claim.</div>'; fb.classList.add('show'); reveal(done, (cfg.complete && cfg.complete.progress) || 100); return; }
+    showClaim();
+    function showClaim() {
+      if (ci >= claims.length) { finish(); return; }
+      var c = claims[ci]; wrap.innerHTML = '';
+      var pips = el('div', 'ctf-fc-pips');
+      for (var p = 0; p < claims.length; p++) pips.appendChild(el('i', 'ctf-fc-pip ' + (p < ci ? 'done' : p === ci ? 'on' : '')));
+      wrap.appendChild(pips);
+      wrap.appendChild(el('div', 'ctf-fc-bubble', '<span class="av">🤖</span><span class="txt">' + esc(c.text) + '</span>'));
+      var btns = el('div', 'ctf-fc-btns');
+      var trust = el('button', 'ctf-fc-btn trust', '✅ Trust it');
+      var check = el('button', 'ctf-fc-btn check', '🔍 Double-check');
+      btns.appendChild(trust); btns.appendChild(check); wrap.appendChild(btns);
+      function judge(trusted) {
+        trust.disabled = check.disabled = true;
+        var smart = (trusted === !!c.ok);
+        if (!c.ok && !trusted) caught++;
+        wrap.querySelector('.ctf-fc-bubble').classList.add(c.ok ? 'true' : 'false');
+        fb.className = 'ctf-feedback show ' + (smart ? 'good' : 'info');
+        fb.innerHTML = (c.ok ? '✅ Yep, that one\'s TRUE. ' : '🔍 That one\'s WRONG! ') + esc(c.why || '');
+        var nx = el('button', 'ctf-btn ctf-fc-next', ci < claims.length - 1 ? 'Next claim →' : 'See my score →');
+        wrap.appendChild(nx); nx.onclick = function () { ci++; fb.classList.remove('show'); showClaim(); };
+      }
+      trust.onclick = function () { judge(true); }; check.onclick = function () { judge(false); };
+    }
+    function finish() {
+      var wrong = claims.filter(function (c) { return !c.ok; }).length;
+      if (id) save(id + ':answer', { done: true });
+      wrap.innerHTML = '<div class="ctf-fc-finished">🔍 You caught <b>' + caught + ' of ' + wrong + '</b> sneaky mistakes!</div>';
+      fb.className = 'ctf-feedback show good';
+      fb.innerHTML = cfg.thanks || "AI sounds super sure even when it's wrong — so YOU are always the checker. 🕵️";
+      reveal(done, (cfg.complete && cfg.complete.progress) || 100); markDone(id);
+    }
+  }
+
   // ---- registry + boot ----------------------------------------------------
-  var RENDERERS = { poll: renderPoll, sort: renderSort, choice: renderChoice, nextword: renderNextWord, attention: renderAttention, quiz: renderQuiz, timeline: renderTimeline, reveal: renderReveal, slider: renderSlider, trainer: renderTrainer, match: renderMatch, draw: renderDraw, wordchain: renderWordChain, order: renderOrder, neuron: renderNeuron, arcade: renderArcade, meetai: renderMeetAI };
+  var RENDERERS = { poll: renderPoll, sort: renderSort, choice: renderChoice, nextword: renderNextWord, attention: renderAttention, quiz: renderQuiz, timeline: renderTimeline, reveal: renderReveal, slider: renderSlider, trainer: renderTrainer, match: renderMatch, draw: renderDraw, wordchain: renderWordChain, order: renderOrder, neuron: renderNeuron, arcade: renderArcade, meetai: renderMeetAI, rule: renderRule, factcheck: renderFactCheck };
 
   function hydrate(node) {
     if (node.getAttribute('data-ctf-ready')) return;
