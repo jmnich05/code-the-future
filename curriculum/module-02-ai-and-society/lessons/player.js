@@ -17,6 +17,7 @@
   // Re-reads and replays are never gated. Tune with these three constants.
   var DWELL_FLOOR = 2200, DWELL_PER_WORD = 200, DWELL_CAP = 9000;
   var dwellTimer = null, dwellReady = true;
+  var widgetReady = true;   // gate: a beat's activity must be played through once before Continue
   // furthest step ever reached — the high-water mark. Replays move `pos` back,
   // but `furthest` never decreases, and it's what we sync to the cloud so a
   // fresh browser can never wipe out real progress.
@@ -255,6 +256,8 @@
     stage.scrollTop = 0;
 
     if (type === "widget" && window.CTFWidgets) window.CTFWidgets.init(stage);
+    // gate Continue until the activity on this beat has been played through once
+    widgetReady = widgetsComplete(beat);
 
     var dur = applyReveal(beat, type);
     animating = true; clearTimeout(revealTimer);
@@ -268,6 +271,16 @@
 
     save();
     syncControls();
+  }
+
+  // true when every interactive widget on this beat is finished (or there are none)
+  function widgetsComplete(beat) {
+    if (!window.CTFWidgets || !window.CTFWidgets.isDone) return true;
+    var nodes = beat.querySelectorAll("[data-ctf-id]");
+    for (var k = 0; k < nodes.length; k++) {
+      if (!window.CTFWidgets.isDone(nodes[k].getAttribute("data-ctf-id"))) return false;
+    }
+    return true;
   }
 
   function setupDwell(beat, type, isNew) {
@@ -304,11 +317,17 @@
       else if (atEnd) nextBtn.textContent = "Finish";
       else nextBtn.textContent = animating ? "Skip →" : "Continue →";
     }
-    hint.textContent = animating ? "tap to reveal" : (!dwellReady ? "keep reading…" : (step.kind === "title" ? "tap anywhere to begin" : ""));
+    // dim Continue while the activity is still unfinished
+    nextBtn.classList.toggle("gated", !animating && !widgetReady);
+    hint.textContent = animating ? "tap to reveal"
+      : (!widgetReady ? "▶ finish the activity to continue"
+      : (!dwellReady ? "keep reading…"
+      : (step.kind === "title" ? "tap anywhere to begin" : "")));
   }
 
   function next() {
     if (animating) { finishReveal(); return; }
+    if (!widgetReady) { nudgeNext(); return; }   // must play through the activity first
     if (!dwellReady) { nudgeNext(); return; }   // still charging — can't skip yet
     if (pos < STEPS.length - 1) {
       var nxm = stepMission(STEPS[pos + 1]);
@@ -398,6 +417,17 @@
 
     nextBtn.addEventListener("click", next);
     backBtn.addEventListener("click", prev);
+
+    // an activity just finished — lift the gate on Continue if this beat is now done
+    document.addEventListener("ctf:widget-done", function () {
+      if (widgetReady) return;
+      if (widgetsComplete(stage)) {
+        widgetReady = true;
+        nextBtn.classList.remove("gated");
+        if (dwellReady) { nextBtn.classList.remove("charging"); nextBtn.classList.add("ready"); }
+        syncControls();
+      }
+    });
 
     // 🎵 Study beats dock
     var musicBtn = document.getElementById("pMusic");

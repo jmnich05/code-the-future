@@ -149,6 +149,9 @@ body::after{ width:42vmax; height:42vmax; right:-14vmax; bottom:-16vmax;
 @keyframes nextpop{ 0%{ transform:scale(1); } 45%{ transform:scale(1.06); } 100%{ transform:scale(1); } }
 .p-next.nudge{ animation:nudge .42s; }
 @keyframes nudge{ 0%,100%{ transform:translateX(0); } 20%{ transform:translateX(-5px); } 60%{ transform:translateX(5px); } }
+/* dimmed while the beat's activity hasn't been played through yet */
+.p-next.gated{ filter:grayscale(.5) brightness(.82); box-shadow:none; }
+.p-next.gated:hover{ transform:none; filter:grayscale(.5) brightness(.82); }
 
 @media (prefers-reduced-motion: reduce){
   body::before, body::after{ animation:none !important; }

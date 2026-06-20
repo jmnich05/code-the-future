@@ -52,7 +52,10 @@
     var ans = load(id + ':answer'), score = load(id + ':score');
     var resp = {}; if (ans) resp.answer = ans; if (score != null) resp.score = score;
     if (window.CTFDB && window.CTFDB.enabled) window.CTFDB.saveWidgetResponse(id, { response: resp, isComplete: true });
+    // let the lesson player know this activity is finished (it gates "Continue")
+    try { document.dispatchEvent(new CustomEvent('ctf:widget-done', { detail: { id: id } })); } catch (e) {}
   }
+  function isDone(id) { return load(id + ':done') === true; }
 
   // =========================================================================
   // POLL — pick an option (and/or free text). Saves the answer; can revisit.
@@ -898,5 +901,5 @@
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', function () { init(); });
   else init();
 
-  window.CTFWidgets = { init: init, hydrate: hydrate, reset: function () { Object.keys(localStorage).forEach(function (k) { if (k.indexOf(NS) === 0) localStorage.removeItem(k); }); } };
+  window.CTFWidgets = { init: init, hydrate: hydrate, isDone: isDone, reset: function () { Object.keys(localStorage).forEach(function (k) { if (k.indexOf(NS) === 0) localStorage.removeItem(k); }); } };
 })();
