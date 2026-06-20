@@ -234,18 +234,24 @@
       type = step.b.type;
       beat.className = "beat t-" + type;
       if (type === "complete") {
-        var medal = "";
-        if (window.CTFBadge && step.m && step.m.n) {
-          var rw = window.CTFAvatar && window.CTFAvatar.REWARDS && window.CTFAvatar.REWARDS[step.m.n];
-          medal = '<div class="badge-medal">' + window.CTFBadge.render(step.m.n) +
-            '<div class="badge-name">' + window.CTFBadge.NAMES[step.m.n - 1] + '</div>' +
-            (rw ? '<div class="badge-gift">🎁 New gear unlocked: <b>' + rw.emoji + " " + rw.label + '</b> — try it on your character!</div>' : '') +
-            '</div>';
-        }
-        beat.innerHTML = medal + '<div class="wrap">' + step.b.html + "</div>";
+        var n = step.m && step.m.n, total = 12;
+        var rw = window.CTFAvatar && window.CTFAvatar.REWARDS && window.CTFAvatar.REWARDS[n];
+        var medalImg = (window.CTFBadge && n) ? window.CTFBadge.render(n) : "";
+        var badgeName = (window.CTFBadge && window.CTFBadge.NAMES && n) ? window.CTFBadge.NAMES[n - 1] : "";
+        var dots = ""; for (var d = 1; d <= total; d++) dots += '<i class="' + (d <= n ? "on" : "") + '"></i>';
+        beat.innerHTML =
+          '<div class="cc">' +
+            '<div class="cc-medal">' + medalImg + '</div>' +
+            '<div class="cc-title">' + DATA.unitWord + " " + n + ' Complete!</div>' +
+            (badgeName ? '<div class="cc-badge">' + esc(badgeName) + '</div>' : '') +
+            '<div class="cc-dots">' + dots + '</div><div class="cc-count">' + n + ' of ' + total + '</div>' +
+            (rw ? '<div class="cc-gift">🎁 New gear: <b>' + esc(rw.emoji + " " + rw.label) + '</b></div>' : '') +
+            (step.b.affirmation ? '<div class="cc-aff">' + step.b.affirmation + '</div>' : '') +
+            (step.b.nextUp ? '<div class="cc-next"><span>Next up</span> ' + esc(step.b.nextUp) + '</div>' : '') +
+          '</div>';
         confetti();
         var dd = db();
-        if (dd && step.m && step.m.n) { dd.awardBadge(TRACK + "-m" + step.m.n, { module: MODULE, track: TRACK }); dd.logEvent("mission_complete", { module: MODULE, track: TRACK, n: step.m.n }); }
+        if (dd && n) { dd.awardBadge(TRACK + "-m" + n, { module: MODULE, track: TRACK }); dd.logEvent("mission_complete", { module: MODULE, track: TRACK, n: n }); }
       } else if (type === "capstone") {
         beat.innerHTML = '<div class="inner">' + step.b.html + "</div>";
         var dc = db(); if (dc) dc.awardBadge(TRACK + "-" + MODULE + "-complete", { module: MODULE, track: TRACK });

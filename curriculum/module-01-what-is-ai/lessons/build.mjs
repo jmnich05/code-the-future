@@ -186,7 +186,25 @@ function buildUnit(unitText, ctx) {
     beats.push({ type: blockType(f0), html });
     pendingHead = "";
   }
-  if (completeBuf.length) beats.push({ type: "complete", html: completeBuf.map(blockHtml).join("") });
+  if (completeBuf.length) {
+    // distill the recap into a clean, visual card: one affirmation line + what's next.
+    // (the badge + progress are shown visually by the player, so we drop the text/ASCII versions)
+    const clines = completeBuf.flat();
+    let affirmation = "", nextUp = "";
+    for (const raw of clines) {
+      const l = raw.trim();
+      if (!l) continue;
+      if (/^#{2,4}\s/.test(l)) continue;                 // "### Mission N Complete!" heading
+      if (/you just unlocked/i.test(l)) continue;        // sub-header
+      if (/^[-*]\s/.test(l)) continue;                   // unlocked bullets
+      if (/badge earned/i.test(l)) continue;             // medal already shows the badge
+      if (/^\**\s*progress/i.test(l)) continue;          // ASCII bar → visual dots
+      const nm = l.match(/next up\s*(?:[→-]+|:)\s*(.+)/i);
+      if (nm) { nextUp = nm[1].replace(/\*\*/g, "").replace(/[.\s]+$/, "").trim(); continue; }
+      if (!affirmation) affirmation = inline(l);          // the one motivating prose line
+    }
+    beats.push({ type: "complete", affirmation, nextUp });
+  }
 
   // lead visuals after the title: original concept art, then any PD photo
   const lead = [];

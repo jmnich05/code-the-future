@@ -66,7 +66,8 @@
     },
     {
      "type": "complete",
-     "html": "<h3>✅ Mission 1 Complete!</h3><p>Awesome start. You showed up curious — that's the #1 superpower here.</p><p>🎖️ <strong>Badge earned: Future Builder</strong><br><strong>Progress:</strong> ▰▱▱▱▱▱▱▱▱▱▱▱ (1/12)<br><strong>Next up → Mission 2: Meet AI — What Even Is It?</strong></p>"
+     "affirmation": "Awesome start. You showed up curious — that's the #1 superpower here.",
+     "nextUp": "Mission 2: Meet AI — What Even Is It?"
     }
    ]
   },
@@ -130,7 +131,8 @@
     },
     {
      "type": "complete",
-     "html": "<h3>✅ Mission 2 Complete!</h3><p>You can now explain the single biggest idea in all of AI. Not bad for 10 minutes!</p><p>🎖️ <strong>Badge earned: AI Spotter</strong><br><strong>Progress:</strong> ▰▰▱▱▱▱▱▱▱▱▱▱ (2/12)<br><strong>Next up → Mission 3: How You Learned What a Dog Is</strong></p>"
+     "affirmation": "You can now explain the single biggest idea in all of AI. Not bad for 10 minutes!",
+     "nextUp": "Mission 3: How You Learned What a Dog Is"
     }
    ]
   },
@@ -186,7 +188,8 @@
     },
     {
      "type": "complete",
-     "html": "<h3>✅ Mission 3 Complete!</h3><p>You just figured out how your own brain works. That's genuinely cool.</p><p>🎖️ <strong>Badge earned: Pattern Finder</strong><br><strong>Progress:</strong> ▰▰▰▱▱▱▱▱▱▱▱▱ (3/12)<br><strong>Next up → Mission 4: AI Learns the Same Way You Do</strong></p>"
+     "affirmation": "You just figured out how your own brain works. That's genuinely cool.",
+     "nextUp": "Mission 4: AI Learns the Same Way You Do"
     }
    ]
   },
@@ -246,7 +249,8 @@
     },
     {
      "type": "complete",
-     "html": "<h3>✅ Mission 4 Complete!</h3><p>You now understand how AI learns. That's something a lot of grown-ups can't explain!</p><p>🎖️ <strong>Badge earned: Brain Trainer</strong><br><strong>Progress:</strong> ▰▰▰▰▱▱▱▱▱▱▱▱ (4/12)<br><strong>Next up → Mission 5: Teaching a Computer to SEE</strong></p>"
+     "affirmation": "You now understand how AI learns. That's something a lot of grown-ups can't explain!",
+     "nextUp": "Mission 5: Teaching a Computer to SEE"
     }
    ]
   },
@@ -298,7 +302,8 @@
     },
     {
      "type": "complete",
-     "html": "<h3>✅ Mission 5 Complete!</h3><p>You taught a computer to see in your head. Detective work, level: expert. 🔍</p><p>🎖️ <strong>Badge earned: Pixel Detective</strong><br><strong>Progress:</strong> ▰▰▰▰▰▱▱▱▱▱▱▱ (5/12)<br><strong>Next up → Mission 6: How AI Reads Words</strong></p>"
+     "affirmation": "You taught a computer to see in your head. Detective work, level: expert. 🔍",
+     "nextUp": "Mission 6: How AI Reads Words"
     }
    ]
   },
@@ -362,7 +367,8 @@
     },
     {
      "type": "complete",
-     "html": "<h3>✅ Mission 6 Complete!</h3><p>Peanut butter and… <em>knowledge!</em> You just learned how chatbots actually talk.</p><p>🎖️ <strong>Badge earned: Word Wizard</strong><br><strong>Progress:</strong> ▰▰▰▰▰▰▱▱▱▱▱▱ (6/12)<br><strong>Next up → Mission 7: The Attention Trick</strong></p>"
+     "affirmation": "Peanut butter and… <em>knowledge!</em> You just learned how chatbots actually talk.",
+     "nextUp": "Mission 7: The Attention Trick"
     }
    ]
   },
@@ -410,7 +416,8 @@
     },
     {
      "type": "complete",
-     "html": "<h3>✅ Mission 7 Complete!</h3><p>You now know a secret word most adults have never heard. Keep it in your back pocket. 😎</p><p>🎖️ <strong>Badge earned: Attention Ace</strong><br><strong>Progress:</strong> ▰▰▰▰▰▰▰▱▱▱▱▱ (7/12)<br><strong>Next up → Mission 8: Is AI Like a Brain?</strong></p>"
+     "affirmation": "You now know a secret word most adults have never heard. Keep it in your back pocket. 😎",
+     "nextUp": "Mission 8: Is AI Like a Brain?"
     }
    ]
   },
@@ -474,7 +481,8 @@
     },
     {
      "type": "complete",
-     "html": "<h3>✅ Mission 8 Complete!</h3><p>You can now explain how AI is like a brain <em>and</em> how it's totally different. Big brain move.</p><p>🎖️ <strong>Badge earned: Neuron Navigator</strong><br><strong>Progress:</strong> ▰▰▰▰▰▰▰▰▱▱▱▱ (8/12)<br><strong>Next up → Mission 9: The Story of AI</strong></p>"
+     "affirmation": "You can now explain how AI is like a brain <em>and</em> how it's totally different. Big brain move.",
+     "nextUp": "Mission 9: The Story of AI"
     }
    ]
   },
@@ -526,7 +534,8 @@
     },
     {
      "type": "complete",
-     "html": "<h3>✅ Mission 9 Complete!</h3><p>You time-traveled through the whole story of AI in 10 minutes. ⏳</p><p>🎖️ <strong>Badge earned: Time Traveler</strong><br><strong>Progress:</strong> ▰▰▰▰▰▰▰▰▰▱▱▱ (9/12)<br><strong>Next up → Mission 10: What AI Is Great At (and What It's Not)</strong></p>"
+     "affirmation": "right as you were growing up.",
+     "nextUp": "Mission 10: What AI Is Great At (and What It's Not)"
     }
    ]
   },
@@ -586,7 +595,8 @@
     },
     {
      "type": "complete",
-     "html": "<h3>✅ Mission 10 Complete!</h3><p>Knowing when <em>not</em> to trust a computer? That's real wisdom. Boss-level unlocked.</p><p>🎖️ <strong>Badge earned: Smart Boss</strong><br><strong>Progress:</strong> ▰▰▰▰▰▰▰▰▰▰▱▱ (10/12)<br><strong>Next up → Mission 11: The Future Is Yours</strong></p>"
+     "affirmation": "unfair (\"bias\").",
+     "nextUp": "Mission 11: The Future Is Yours"
     }
    ]
   },
@@ -630,7 +640,8 @@
     },
     {
      "type": "complete",
-     "html": "<h3>✅ Mission 11 Complete!</h3><p>Your imagination is the most powerful tool in this whole room. Use it. 🌟</p><p>🎖️ <strong>Badge earned: Future Maker</strong><br><strong>Progress:</strong> ▰▰▰▰▰▰▰▰▰▰▰▱ (11/12)<br><strong>Next up → Mission 12: You Did It!</strong></p>"
+     "affirmation": "Your imagination is the most powerful tool in this whole room. Use it. 🌟",
+     "nextUp": "Mission 12: You Did It!"
     }
    ]
   },
@@ -666,7 +677,8 @@
     },
     {
      "type": "complete",
-     "html": "<h3>🏆 Module 1 Complete!</h3><p>🎖️ <strong>Badge earned: AI Explorer — Level 1!</strong><br><strong>Progress:</strong> ▰▰▰▰▰▰▰▰▰▰▰▰ (12/12) ✅</p><p>You officially understand what AI is. Most adults can't say that. Now for the best part — it's time to actually <em>use</em> AI yourself. <strong>On to the Big Mission →</strong></p>"
+     "affirmation": "<strong>You earned all 12 badges:</strong>",
+     "nextUp": ""
     }
    ]
   },

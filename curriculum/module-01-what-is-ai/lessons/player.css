@@ -79,7 +79,24 @@ body{ margin:0; background:var(--ink-50); color:var(--ink-700); font-family:var(
 .beat.t-title .meta{ font-family:var(--font-mono); font-size:13px; letter-spacing:.08em; text-transform:uppercase; color:var(--ink-400); margin-top:14px; }
 
 /* complete beat */
-.beat.t-complete{ max-width:600px; }
+.beat.t-complete{ max-width:560px; }
+/* ---- clean, visual mission-complete card ---- */
+.cc{ text-align:center; background:var(--grad-spark); color:#fff; border-radius:var(--radius-xl); padding:30px 28px 26px; box-shadow:var(--shadow-lg); }
+.cc-medal .ctf-badge-svg{ width:128px; height:128px; margin:0 auto; display:block; filter:drop-shadow(0 12px 26px rgba(12,19,34,.35)); }
+.cc-medal img,.cc-medal svg{ width:128px; height:128px; }
+.cc-title{ font-family:var(--font-display); font-weight:700; font-size:1.9rem; line-height:1.1; margin:12px 0 4px; color:#fff; }
+.cc-badge{ display:inline-block; font-family:var(--font-display); font-weight:700; font-size:1.05rem; background:rgba(255,255,255,.20); border-radius:999px; padding:5px 16px; margin-bottom:16px; }
+.cc-dots{ display:flex; gap:7px; justify-content:center; flex-wrap:wrap; max-width:300px; margin:0 auto 6px; }
+.cc-dots i{ width:13px; height:13px; border-radius:50%; background:rgba(255,255,255,.30); }
+.cc-dots i.on{ background:#fff; box-shadow:0 0 0 3px rgba(255,255,255,.18); }
+.cc-count{ font-family:var(--font-mono); font-size:.82rem; letter-spacing:.08em; opacity:.85; margin-bottom:18px; }
+.cc-gift{ font-size:1rem; background:rgba(255,255,255,.16); border-radius:14px; padding:9px 14px; margin:0 auto 14px; max-width:92%; }
+.cc-gift b{ color:#fff; }
+.cc-aff{ font-size:1.2rem; line-height:1.45; margin:0 auto 18px; max-width:34ch; }
+.cc-aff strong{ color:#fff; font-weight:700; }
+.cc-next{ display:inline-flex; align-items:center; gap:9px; font-size:1.05rem; font-weight:600; background:rgba(7,12,26,.20); border-radius:999px; padding:10px 18px; }
+.cc-next span{ font-family:var(--font-mono); font-size:.7rem; letter-spacing:.12em; text-transform:uppercase; opacity:.82; }
+@media (max-width:520px){ .cc-title{ font-size:1.6rem; } .cc-aff{ font-size:1.08rem; } .cc-dots i{ width:11px; height:11px; } }
 .t-complete .wrap{ border-radius:var(--radius-xl); padding:34px 34px; }
 .t-complete h3{ margin:0 0 .4em; }
 .t-complete p,.t-complete li{ font-size:1.2rem; }

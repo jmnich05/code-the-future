@@ -66,7 +66,8 @@
     },
     {
      "type": "complete",
-     "html": "<h3>✅ Mission 1 Complete!</h3><p>Welcome back. You showed up curious again — that never stops being your superpower.</p><p>🎖️ <strong>Badge earned: Returning Builder</strong><br><strong>Progress:</strong> ▰▱▱▱▱▱▱▱▱▱▱▱ (1/12)<br><strong>Next up → Mission 2: AI Is Already Out There</strong></p>"
+     "affirmation": "Welcome back. You showed up curious again — that never stops being your superpower.",
+     "nextUp": "Mission 2: AI Is Already Out There"
     }
    ]
   },
@@ -106,7 +107,8 @@
     },
     {
      "type": "complete",
-     "html": "<h3>✅ Mission 2 Complete!</h3><p>You can now spot AI out in the wild, not just in apps. Eyes open, Future Builder. 🌍</p><p>🎖️ <strong>Badge earned: World Spotter</strong><br><strong>Progress:</strong> ▰▰▱▱▱▱▱▱▱▱▱▱ (2/12)<br><strong>Next up → Mission 3: AI the Doctor's Helper</strong></p>"
+     "affirmation": "You can now spot AI out in the wild, not just in apps. Eyes open, Future Builder. 🌍",
+     "nextUp": "Mission 3: AI the Doctor's Helper"
     }
    ]
   },
@@ -146,7 +148,8 @@
     },
     {
      "type": "complete",
-     "html": "<h3>✅ Mission 3 Complete!</h3><p>You just learned how AI helps keep people healthy. That's a superpower worth cheering for. 🩺</p><p>🎖️ <strong>Badge earned: Healer's Helper</strong><br><strong>Progress:</strong> ▰▰▰▱▱▱▱▱▱▱▱▱ (3/12)<br><strong>Next up → Mission 4: AI and the Planet</strong></p>"
+     "affirmation": "You just learned how AI helps keep people healthy. That's a superpower worth cheering for. 🩺",
+     "nextUp": "Mission 4: AI and the Planet"
     }
    ]
   },
@@ -186,7 +189,8 @@
     },
     {
      "type": "complete",
-     "html": "<h3>✅ Mission 4 Complete!</h3><p>You just saw AI help take care of the whole planet. Earth thanks you. 🌎</p><p>🎖️ <strong>Badge earned: Planet Protector</strong><br><strong>Progress:</strong> ▰▰▰▰▱▱▱▱▱▱▱▱ (4/12)<br><strong>Next up → Mission 5: AI at Work</strong></p>"
+     "affirmation": "You just saw AI help take care of the whole planet. Earth thanks you. 🌎",
+     "nextUp": "Mission 5: AI at Work"
     }
    ]
   },
@@ -238,7 +242,8 @@
     },
     {
      "type": "complete",
-     "html": "<h3>✅ Mission 5 Complete!</h3><p>You just learned how grown-ups and AI work as a team. Captain's hat: earned. 🧢</p><p>🎖️ <strong>Badge earned: Team Captain</strong><br><strong>Progress:</strong> ▰▰▰▰▰▱▱▱▱▱▱▱ (5/12)<br><strong>Next up → Mission 6: Every Tool Can Help or Hurt</strong></p>"
+     "affirmation": "You just learned how grown-ups and AI work as a team. Captain's hat: earned. 🧢",
+     "nextUp": "Mission 6: Every Tool Can Help or Hurt"
     }
    ]
   },
@@ -290,7 +295,8 @@
     },
     {
      "type": "complete",
-     "html": "<h3>✅ Mission 6 Complete!</h3><p>You just leveled up from <em>\"what can it do?\"</em> to <em>\"what should we do?\"</em> That's wisdom. 🛠️</p><p>🎖️ <strong>Badge earned: Wise Builder</strong><br><strong>Progress:</strong> ▰▰▰▰▰▰▱▱▱▱▱▱ (6/12)<br><strong>Next up → Mission 7: Your Stuff Is Yours</strong></p>"
+     "affirmation": "You just leveled up from <em>\"what can it do?\"</em> to <em>\"what should we do?\"</em> That's wisdom. 🛠️",
+     "nextUp": "Mission 7: Your Stuff Is Yours"
     }
    ]
   },
@@ -342,7 +348,8 @@
     },
     {
      "type": "complete",
-     "html": "<h3>✅ Mission 7 Complete!</h3><p>You're now the boss of your own information. Diary stuff stays in the diary. 🔒</p><p>🎖️ <strong>Badge earned: Privacy Guard</strong><br><strong>Progress:</strong> ▰▰▰▰▰▰▰▱▱▱▱▱ (7/12)<br><strong>Next up → Mission 8: Who Holds the Biggest Tools?</strong></p>"
+     "affirmation": "You're now the boss of your own information. Diary stuff stays in the diary. 🔒",
+     "nextUp": "Mission 8: Who Holds the Biggest Tools?"
     }
    ]
   },
@@ -386,7 +393,8 @@
     },
     {
      "type": "complete",
-     "html": "<h3>✅ Mission 8 Complete!</h3><p>You just thought about fairness on a world-sized scale. That's big-kid thinking. ⚖️</p><p>🎖️ <strong>Badge earned: Fair Player</strong><br><strong>Progress:</strong> ▰▰▰▰▰▰▰▰▱▱▱▱ (8/12)<br><strong>Next up → Mission 9: Tools, Rules, and Freedom</strong></p>"
+     "affirmation": "You just thought about fairness on a world-sized scale. That's big-kid thinking. ⚖️",
+     "nextUp": "Mission 9: Tools, Rules, and Freedom"
     }
    ]
   },
@@ -434,7 +442,8 @@
     },
     {
      "type": "complete",
-     "html": "<h3>✅ Mission 9 Complete!</h3><p>You just thought carefully about one of the hardest questions there is — and stayed hopeful. That's real courage. 🔦</p><p>🎖️ <strong>Badge earned: Freedom Keeper</strong><br><strong>Progress:</strong> ▰▰▰▰▰▰▰▰▰▱▱▱ (9/12)<br><strong>Next up → Mission 10: Who Decides the Future of AI?</strong></p>"
+     "affirmation": "You just thought carefully about one of the hardest questions there is — and stayed hopeful. That's real courage. 🔦",
+     "nextUp": "Mission 10: Who Decides the Future of AI?"
     }
    ]
   },
@@ -482,7 +491,8 @@
     },
     {
      "type": "complete",
-     "html": "<h3>✅ Mission 10 Complete!</h3><p>You just put a rule for AI on the wall. That's you, helping steer the future. 🗳️</p><p>🎖️ <strong>Badge earned: Rule Maker</strong><br><strong>Progress:</strong> ▰▰▰▰▰▰▰▰▰▰▱▱ (10/12)<br><strong>Next up → Mission 11: You Get to Help Build It</strong></p>"
+     "affirmation": "You just put a rule for AI on the wall. That's you, helping steer the future. 🗳️",
+     "nextUp": "Mission 11: You Get to Help Build It"
     }
    ]
   },
@@ -526,7 +536,8 @@
     },
     {
      "type": "complete",
-     "html": "<h3>✅ Mission 11 Complete!</h3><p>You wrote your own Builder's Code. That's the kind of person the future needs. 🌟</p><p>🎖️ <strong>Badge earned: World Builder</strong><br><strong>Progress:</strong> ▰▰▰▰▰▰▰▰▰▰▰▱ (11/12)<br><strong>Next up → Mission 12: You Did It!</strong></p>"
+     "affirmation": "You wrote your own Builder's Code. That's the kind of person the future needs. 🌟",
+     "nextUp": "Mission 12: You Did It!"
     }
    ]
   },
@@ -562,7 +573,8 @@
     },
     {
      "type": "complete",
-     "html": "<h3>🏆 Module 2 Complete!</h3><p>🎖️ <strong>Badge earned: AI Explorer — Level 2!</strong><br><strong>Progress:</strong> ▰▰▰▰▰▰▰▰▰▰▰▰ (12/12) ✅</p><p>You don't just understand what AI <em>is</em> anymore — you understand what it <em>means</em>, and what <em>you</em> get to do about it. That's rare, and it's powerful. Now for the best part — it's time to build something good with real AI. <strong>On to the Big Mission →</strong></p>"
+     "affirmation": "<strong>You earned all 12 badges:</strong>",
+     "nextUp": ""
     }
    ]
   },
