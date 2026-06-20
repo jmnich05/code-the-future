@@ -318,7 +318,7 @@ body::after{ width:42vmax; height:42vmax; right:-14vmax; bottom:-16vmax;
 
 /* ============ Module 2 sidekick pet picker (full-screen) ============ */
 .pet-picker{ position:fixed; inset:0; z-index:9000; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:10px; padding:24px; overflow-y:auto;
-  background:radial-gradient(120% 120% at 50% 30%, rgba(22,42,95,.98), rgba(7,12,26,.99)); opacity:0; transition:opacity .4s; }
+  background:radial-gradient(120% 120% at 50% 30%, #16306b, #070C1A); opacity:0; transition:opacity .4s; }
 .pet-picker.show{ opacity:1; } .pet-picker.out{ opacity:0; }
 .pp-head{ font-family:var(--font-display); font-weight:700; font-size:clamp(1.5rem,4vw,2.1rem); color:#fff; text-align:center; text-shadow:0 4px 20px rgba(0,0,0,.5); }
 .pp-sub{ color:#cdd8ef; font-size:1.05rem; text-align:center; max-width:42ch; margin-bottom:6px; }
@@ -340,3 +340,5 @@ body::after{ width:42vmax; height:42vmax; right:-14vmax; bottom:-16vmax;
 .pp-pick .ctf-pet{ animation:pp-bob 2s ease-in-out infinite; }
 @keyframes pp-pop{ 0%{ transform:scale(.4); opacity:0; } 60%{ transform:scale(1.15); } 100%{ transform:scale(1); opacity:1; } }
 @media (prefers-reduced-motion:reduce){ .pp-emoji,.pp-pick .ctf-pet{ animation:none; } }
+
+.pet-picker.preview .pp-card{ cursor:default; pointer-events:none; }

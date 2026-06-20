@@ -250,6 +250,7 @@
         confetti();
         var dd = db();
         if (dd && n) { dd.awardBadge(TRACK + "-mod2-" + n, { module: MODULE, track: TRACK }); dd.logEvent("mission_complete", { module: MODULE, track: TRACK, n: n }); }
+        if (n === total) maybePetEarn();   // finished the last mission → earn your sidekick pet
       } else if (type === "capstone") {
         beat.innerHTML = '<div class="inner">' + step.b.html + "</div>";
         var dc = db(); if (dc) dc.awardBadge(TRACK + "-" + MODULE + "-complete", { module: MODULE, track: TRACK });
@@ -389,23 +390,46 @@
     for (var i = 0; i < 46; i++) { var p = document.createElement("i"); p.style.left = (Math.random() * 100) + "%"; p.style.background = colors[i % colors.length]; p.style.animationDelay = (Math.random() * .5) + "s"; p.style.animationDuration = (1.5 + Math.random() * 1.3) + "s"; p.style.width = p.style.height = (7 + Math.random() * 9) + "px"; if (i % 3 === 0) p.style.borderRadius = "50%"; h.appendChild(p); }
     host.appendChild(h); setTimeout(function () { if (h.parentNode) h.parentNode.removeChild(h); }, 3400);
   }
-  function maybePetPicker() {
+  function petCards() {
+    return window.CTFAvatar.PETS.map(function (p) {
+      return '<button class="pp-card" data-id="' + p.id + '" style="--c1:' + p.c1 + ';--c2:' + p.c2 + '">' +
+        '<span class="pp-emoji">' + p.emoji + '</span><span class="pp-name">' + p.name + '</span></button>';
+    }).join("");
+  }
+  // shown ONCE at the start of Module 2: a preview of the reward you can earn
+  function maybePetPreview() {
     if (!window.CTFAvatar || !window.CTFAvatar.PETS) return;
-    if (chosenPet()) return;                       // already has a sidekick
-    setTimeout(petPicker, 650);
+    if (chosenPet()) return;                                 // already earned one
+    var seen = false; try { seen = localStorage.getItem("ctf:m2:petpreview") === "1"; } catch (e) {}
+    if (seen) return;
+    try { localStorage.setItem("ctf:m2:petpreview", "1"); } catch (e) {}
+    setTimeout(petPreview, 650);
+  }
+  function petPreview() {
+    var ov = document.createElement("div"); ov.className = "pet-picker preview";
+    ov.innerHTML =
+      '<div class="pp-head">🎁 Finish Module 2 to earn a sidekick! 🎁</div>' +
+      '<div class="pp-sub">Complete all 12 missions and ONE of these little friends is yours to keep — it\'ll tag along with you forever. Here\'s who\'s waiting!</div>' +
+      '<div class="pp-grid">' + petCards() + '</div>' +
+      '<button class="pp-go">Let\'s earn one! →</button>';
+    document.body.appendChild(ov);
+    requestAnimationFrame(function () { ov.classList.add("show"); });
+    ov.querySelector(".pp-go").onclick = function () { ov.classList.add("out"); setTimeout(function () { if (ov.parentNode) ov.remove(); }, 350); };
+  }
+  // fired when the LAST mission is completed → now they choose & earn their pet
+  function maybePetEarn() {
+    if (!window.CTFAvatar || !window.CTFAvatar.PETS) return;
+    if (chosenPet()) return;                                 // already claimed
+    setTimeout(petPicker, 700);
   }
   function petPicker() {
     var A = window.CTFAvatar, sel = null;
     var ov = document.createElement("div"); ov.className = "pet-picker";
-    var cards = A.PETS.map(function (p) {
-      return '<button class="pp-card" data-id="' + p.id + '" style="--c1:' + p.c1 + ';--c2:' + p.c2 + '">' +
-        '<span class="pp-emoji">' + p.emoji + '</span><span class="pp-name">' + p.name + '</span></button>';
-    }).join("");
     ov.innerHTML =
-      '<div class="pp-head">✨ Choose your sidekick! ✨</div>' +
-      '<div class="pp-sub">A little friend to tag along with you all through Module 2. Pick your favorite!</div>' +
-      '<div class="pp-grid">' + cards + '</div>' +
-      '<button class="pp-go" disabled>Pick one to continue</button>';
+      '<div class="pp-head">🎉 You finished Module 2! 🎉</div>' +
+      '<div class="pp-sub">You earned a sidekick pet — pick the friend you want to keep!</div>' +
+      '<div class="pp-grid">' + petCards() + '</div>' +
+      '<button class="pp-go" disabled>Pick your reward</button>';
     document.body.appendChild(ov);
     requestAnimationFrame(function () { ov.classList.add("show"); });
     var go = ov.querySelector(".pp-go");
@@ -422,7 +446,7 @@
       var p = A.petById(sel);
       ov.classList.add("chosen");
       ov.querySelector(".pp-head").textContent = "🎉 Meet " + p.name + "! 🎉";
-      ov.querySelector(".pp-sub").textContent = "Find " + p.name + " waiting for you on your Profile.";
+      ov.querySelector(".pp-sub").textContent = p.name + " is yours forever — find it on your Profile!";
       ov.querySelector(".pp-grid").innerHTML = '<div class="pp-pick">' + A.renderPet(sel, { size: 150 }) + '</div>';
       petBurst(ov);
       go.textContent = "Let's go! →";
@@ -601,7 +625,7 @@
     var mn0 = stepMission(STEPS[pos]);
     if (mn0 && isLocked(mn0)) { bootTarget = pos; pos = lastUnlockedIndex(); }
     render();
-    maybePetPicker();   // first time into Module 2 → pick a sidekick pet
+    maybePetPreview();   // first time into Module 2 → preview the pet rewards
     // Supabase may finish initializing after this script runs:
     if (db()) onDbReady(); else window.addEventListener("ctfdb:ready", onDbReady, { once: true });
   }).catch(function (e) {
