@@ -60,28 +60,31 @@
   function renderPoll(root, cfg, id) {
     root.innerHTML = header(cfg);
     var prior = id ? load(id + ':answer') : null;
-    var opts = el('div', 'ctf-options' + (cfg.columns === 2 ? ' cols-2' : ''));
-    var chosen = prior && prior.choice;
+    var notepad = !!cfg.notepad;   // open notepad mode: no buttons, just type your own words
 
-    (cfg.options || []).forEach(function (o) {
-      var label = typeof o === 'string' ? o : o.label, emoji = typeof o === 'object' ? o.emoji : null;
-      var b = el('button', 'ctf-opt', (emoji ? '<span class="emoji">' + esc(emoji) + '</span>' : '') + '<span>' + esc(label) + '</span>');
-      if (chosen === label) b.classList.add('is-selected');
-      b.addEventListener('click', function () {
-        opts.querySelectorAll('.ctf-opt').forEach(function (x) { x.classList.remove('is-selected'); });
-        b.classList.add('is-selected');
-        persist(label);
+    if (!notepad) {
+      var opts = el('div', 'ctf-options' + (cfg.columns === 2 ? ' cols-2' : ''));
+      var chosen = prior && prior.choice;
+      (cfg.options || []).forEach(function (o) {
+        var label = typeof o === 'string' ? o : o.label, emoji = typeof o === 'object' ? o.emoji : null;
+        var b = el('button', 'ctf-opt', (emoji ? '<span class="emoji">' + esc(emoji) + '</span>' : '') + '<span>' + esc(label) + '</span>');
+        if (chosen === label) b.classList.add('is-selected');
+        b.addEventListener('click', function () {
+          opts.querySelectorAll('.ctf-opt').forEach(function (x) { x.classList.remove('is-selected'); });
+          b.classList.add('is-selected');
+          persist(label);
+        });
+        opts.appendChild(b);
       });
-      opts.appendChild(b);
-    });
-    root.appendChild(opts);
+      root.appendChild(opts);
+    }
 
     var input;
-    if (cfg.freeText) {
-      input = el('input', 'ctf-input');
-      input.type = 'text';
+    if (notepad || cfg.freeText) {
+      input = notepad ? el('textarea', 'ctf-input ctf-notepad') : el('input', 'ctf-input');
+      if (!notepad) input.type = 'text'; else input.rows = 4;
       input.placeholder = cfg.placeholder || 'Type your answer…';
-      input.style.marginTop = '12px';
+      input.style.marginTop = notepad ? '4px' : '12px';
       if (prior && prior.text) input.value = prior.text;
       input.addEventListener('input', function () { persist(undefined, input.value); });
       root.appendChild(input);
@@ -91,16 +94,20 @@
     fb.textContent = cfg.thanks || 'Saved! We\'ll come back to this later.';
     root.appendChild(fb);
     var done = completionCard(cfg); if (done) root.appendChild(done);
-    if (prior) { fb.classList.add('show'); reveal(done, (cfg.complete && cfg.complete.progress) || 100); }
+    var hasAnswer = prior && (prior.choice || (prior.text && prior.text.trim()));
+    if (hasAnswer) { fb.classList.add('show'); reveal(done, (cfg.complete && cfg.complete.progress) || 100); }
 
     function persist(choice, text) {
       var cur = load(id + ':answer') || {};
       if (choice !== undefined) cur.choice = choice;
       if (text !== undefined) cur.text = text;
       if (id) save(id + ':answer', cur);
-      fb.classList.add('show');
-      reveal(done, (cfg.complete && cfg.complete.progress) || 100);
-      markDone(id);
+      // only celebrate once there's a real answer (a notepad starts empty)
+      if (cur.choice || (cur.text && cur.text.trim())) {
+        fb.classList.add('show');
+        reveal(done, (cfg.complete && cfg.complete.progress) || 100);
+        markDone(id);
+      }
     }
   }
 

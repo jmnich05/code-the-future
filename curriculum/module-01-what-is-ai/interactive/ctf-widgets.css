@@ -134,6 +134,12 @@
   background:var(--white); transition:border-color 140ms, box-shadow 140ms;
 }
 .ctf-input:focus{ outline:none; border-color:var(--blue-600); box-shadow:var(--ring); }
+/* open-ended notepad: a roomy lined box for kids to write in their own words */
+.ctf-notepad{
+  min-height:120px; resize:vertical; line-height:1.7;
+  background:var(--white) repeating-linear-gradient(transparent, transparent 31px, var(--ink-100) 31px, var(--ink-100) 32px);
+  background-attachment:local;
+}
 
 /* --- Attention (clickable words) --- */
 .ctf-sentence{ font-family:var(--font-display); font-size:1.3rem; font-weight:500; line-height:1.7; color:var(--ink-900); margin:0 0 16px; }

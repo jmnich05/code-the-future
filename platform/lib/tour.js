@@ -34,7 +34,7 @@
         body: "I'm your guide, and I'm going to show you around your new home. There's no rush — read each step, then tap Continue. Ready to explore?",
         cta: "Show me around →" },
       { page: "home", sel: '#continueTile, a[href="missions.html"]', t: "Your missions live here 🚀",
-        body: "This is where your learning missions are. Each one takes about 10 minutes, and you earn a shiny badge every single time you finish one." },
+        body: "This is where your learning missions are. Each one takes about 10 minutes, and you earn a badge for your collection every single time you finish one." },
       { page: "home", sel: "#continueTile", t: "Pick up where you left off ↩️",
         body: "The platform remembers exactly where you stopped. Whenever you come back, just tap Continue and you'll start right where you left off — you can never lose your place." },
       { page: "home", sel: '.me-dock, a.tile[href="profile.html"]', t: "This is YOU 🧑‍🚀",
