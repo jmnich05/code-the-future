@@ -10,6 +10,12 @@
 <style>
   .pcard{ margin-top:18px; padding:30px; display:grid; grid-template-columns:220px 1fr; gap:28px; align-items:start; }
   @media (max-width:680px){ .pcard{ grid-template-columns:1fr; justify-items:center; text-align:center; } }
+  .pet-slot{ position:absolute; right:-8px; bottom:-6px; animation:pet-bob 2.6s ease-in-out infinite; }
+  .pet-slot:empty{ display:none; }
+  @keyframes pet-bob{ 50%{ transform:translateY(-6px); } }
+  .pet-cap{ font-size:.85rem; color:var(--ink-600,#44506A); margin-top:12px; }
+  .pet-cap:empty{ display:none; }
+  .pet-cap b{ color:var(--ink-900); font-family:var(--font-display); }
   .pname{ font-size:2.2rem; }
   .stats{ display:flex; gap:10px; flex-wrap:wrap; margin:14px 0; }
   .stat{ background:var(--ink-50); border:1px solid var(--ink-200); border-radius:var(--radius-md); padding:12px 16px; min-width:92px; }
@@ -36,7 +42,11 @@
 <div class="wrap">
   <div class="card pcard">
     <div style="text-align:center">
-      <div class="avatar lg" id="avatar"></div>
+      <div class="char-wrap" style="position:relative;display:inline-block">
+        <div class="avatar lg" id="avatar"></div>
+        <div id="petSlot" class="pet-slot"></div>
+      </div>
+      <div id="petCap" class="pet-cap"></div>
     </div>
     <div style="width:100%">
       <p class="eyebrow" id="cohort">◆ Code the Future</p>
@@ -74,7 +84,7 @@
 </div>
 
 <script src="lib/config.js"></script>
-<script src="lib/avatar.js"></script>
+<script src="lib/avatar.js?v=2"></script>
 <script src="lib/badge.js"></script>
 <script src="lib/filter.js"></script>
 <script src="profile.js"></script>
@@ -93,6 +103,9 @@
 
   function paint(){
     document.getElementById("avatar").innerHTML = A.render(profile.avatar||A.DEFAULT);
+    var petId = profile.avatar && profile.avatar.pet, pet = (petId && A.petById) ? A.petById(petId) : null;
+    document.getElementById("petSlot").innerHTML = (pet && A.renderPet) ? A.renderPet(petId, {size:74}) : "";
+    document.getElementById("petCap").innerHTML = pet ? ('🐾 Sidekick: <b>' + pet.name + '</b>') : "";
     document.getElementById("pname").textContent = profile.display_name || "Explorer";
     document.getElementById("tagline").textContent = profile.tagline || "";
     var bd = document.getElementById("badges");

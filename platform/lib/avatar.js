@@ -218,8 +218,34 @@
     return null;
   }
 
+  // ---- Sidekick pets (Module 2 reward) -------------------------------------
+  // A little friend that tags along with the character on the profile.
+  var PETS = [
+    { id: "pup",     name: "Pip",     emoji: "🐶", c1: "#FFE0B8", c2: "#FFB35C" },
+    { id: "kit",     name: "Mochi",   emoji: "🐱", c1: "#FFD2E6", c2: "#FF8FBF" },
+    { id: "fox",     name: "Rusty",   emoji: "🦊", c1: "#FFC59E", c2: "#FF7A45" },
+    { id: "dragon",  name: "Ember",   emoji: "🐉", c1: "#A8EEBB", c2: "#33C46A" },
+    { id: "owl",     name: "Hoot",    emoji: "🦉", c1: "#D2C2FF", c2: "#8C6BFF" },
+    { id: "turtle",  name: "Shelly",  emoji: "🐢", c1: "#AFF1DC", c2: "#2BC79E" },
+    { id: "dino",    name: "Rex",     emoji: "🦕", c1: "#C8EEA6", c2: "#74C940" },
+    { id: "penguin", name: "Waddle",  emoji: "🐧", c1: "#C2DCFF", c2: "#5B97FF" },
+    { id: "bunny",   name: "Hops",    emoji: "🐰", c1: "#FFDDEC", c2: "#FF9DC6" },
+    { id: "unicorn", name: "Sparkle", emoji: "🦄", c1: "#EAD6FF", c2: "#B98BFF" },
+    { id: "robot",   name: "Bolt",    emoji: "🤖", c1: "#C8E8FF", c2: "#56B6F0" },
+    { id: "jelly",   name: "Glow",    emoji: "🪼", c1: "#D8E5FF", c2: "#7EA8FF" }
+  ];
+  function petById(id) { for (var i = 0; i < PETS.length; i++) if (PETS[i].id === id) return PETS[i]; return null; }
+  // a round companion bubble (profile / dock). opts.size in px.
+  function renderPet(id, opts) {
+    var p = petById(id); if (!p) return "";
+    var sz = (opts && opts.size) || 64;
+    return '<span class="ctf-pet" title="' + p.name + '" style="display:inline-flex;align-items:center;justify-content:center;width:' + sz + 'px;height:' + sz + 'px;border-radius:50%;' +
+      'background:radial-gradient(circle at 50% 32%,' + p.c1 + ',' + p.c2 + ');box-shadow:0 6px 18px rgba(12,19,34,.22);font-size:' + Math.round(sz * 0.56) + 'px;line-height:1">' + p.emoji + '</span>';
+  }
+
   window.CTFAvatar = {
     render: render, random: random,
+    PETS: PETS, petById: petById, renderPet: renderPet,
     COLORS: Object.keys(COLORS), BG: Object.keys(BG), FACES: FACES, ACCS: ACCS,
     HAIR: HAIR, BROWS: BROWS, MOUTHS: MOUTHS,
     BASE_ACCS: BASE_ACCS, REWARDS: REWARDS, REWARD_KEYS: REWARD_KEYS,
