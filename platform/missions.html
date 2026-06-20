@@ -6,7 +6,7 @@
 <title>Missions — Code the Future</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&family=JetBrains+Mono:wght@500;600&family=Pacifico&display=swap" rel="stylesheet">
 <style>
   :root{
     --blue:#2A5FF0;--blue-bright:#3D74FF;--teal:#12B2BC;--teal-bright:#26C7D1;--teal-300:#5BDCE6;
@@ -17,7 +17,13 @@
   html,body{height:100%}
   body{font-family:var(--body);color:#fff;overflow:hidden;
     background:radial-gradient(1000px 600px at 50% -10%, #16264f, #0A1226 70%)}
-  .app{height:100dvh;display:grid;grid-template-rows:auto 1fr auto}
+  .app{height:100dvh;display:grid;grid-template-rows:auto auto 1fr}
+
+  /* postcard-style "Welcome to ___" above the map */
+  .welcome{text-align:center;line-height:1;padding:0 16px 4px}
+  .welcome .w-sm{display:block;font-family:var(--mono);font-size:.72rem;letter-spacing:.34em;text-transform:uppercase;color:#9fb4d9;margin-bottom:3px}
+  .welcome .w-big{font-family:'Pacifico',cursive;font-size:clamp(1.6rem,4.2vw,2.5rem);color:#FFE6B8;
+    text-shadow:0 2px 0 rgba(8,14,30,.45),0 8px 22px rgba(0,0,0,.4)}
 
   .top{flex:none;display:flex;align-items:center;gap:13px;padding:13px 20px;z-index:20}
   .back{display:flex;align-items:center;gap:7px;color:#cfe0ff;text-decoration:none;font-weight:600;font-size:.9rem;
@@ -37,7 +43,7 @@
      fits the viewport keeping aspect); nodes overlay by % and stay aligned. */
   .mapwrap{position:relative;border-radius:20px;overflow:hidden;line-height:0;
     box-shadow:0 24px 60px rgba(0,0,0,.5),0 0 0 1px rgba(255,255,255,.08)}
-  .mapwrap img.bg{display:block;max-width:100%;max-height:calc(100dvh - 104px);width:auto;height:auto}
+  .mapwrap img.bg{display:block;max-width:100%;max-height:calc(100dvh - 162px);width:auto;height:auto}
   .mapwrap .veil{position:absolute;inset:0;background:radial-gradient(120% 120% at 50% 40%, transparent 55%, rgba(10,18,38,.28))}
   .pathsvg{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
 
@@ -91,6 +97,8 @@
     <div class="prog"><span class="lbl" id="progLbl">—</span><span class="bar"><i id="progBar"></i></span></div>
   </div>
 
+  <div class="welcome" id="welcome"></div>
+
   <div class="scene">
     <div class="mapwrap" id="mapwrap">
       <img class="bg" src="assets/louisville-map.png" alt="Illustrated map of Louisville">
@@ -111,7 +119,7 @@ import { CTFDB } from "./lib/ctf-db.js";
 const ROUTES = {
   "module-01-what-is-ai": {
     label:"Module 1 · What Is AI?", badge:"kids-m", player:"../curriculum/module-01-what-is-ai/lessons/player.html?track=kids",
-    map:"assets/louisville-map.png", alt:"Illustrated map of downtown Louisville",
+    map:"assets/louisville-map.png", alt:"Illustrated map of downtown Louisville", welcome:"Louisville",
     stops:[
       {t:"Welcome, Future Builder",icon:"🌊",place:"Waterfront Park",x:12,y:25},
       {t:"Meet AI: What Even Is It?",icon:"🌉",place:"Big Four Bridge",x:27,y:14},
@@ -129,7 +137,7 @@ const ROUTES = {
   },
   "module-02-ai-and-society": {
     label:"Module 2 · AI & Our World", badge:"kids-mod2-", player:"../curriculum/module-02-ai-and-society/lessons/player.html?track=kids",
-    map:"assets/cherokee-park-map.png", alt:"Illustrated map of Cherokee Park, Louisville",
+    map:"assets/cherokee-park-map.png", alt:"Illustrated map of Cherokee Park, Louisville", welcome:"Cherokee Park",
     stops:[
       {t:"Welcome Back, Future Builder",icon:"🌳",place:"Park Entrance",x:12,y:78},
       {t:"AI Is Already Out There",icon:"🛝",place:"The Playground",x:15,y:54},
@@ -209,6 +217,8 @@ const _bg = mapwrap.querySelector('img.bg');
 function setMap(){
   const R = ROUTES[MODULE], want = R.map;
   if (R.alt) _bg.alt = R.alt;
+  const w = document.getElementById('welcome');
+  if (w && R.welcome) w.innerHTML = `<span class="w-sm">Welcome to</span><span class="w-big">${R.welcome}</span>`;
   if (_bg.getAttribute('src') === want){
     if (_bg.complete && _bg.naturalWidth) render(); else _bg.addEventListener('load', render, { once:true });
   } else {
