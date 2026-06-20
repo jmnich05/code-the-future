@@ -256,8 +256,8 @@ body::after{ width:42vmax; height:42vmax; right:-14vmax; bottom:-16vmax;
 .lock-card{ background:var(--grad-night); color:#fff; border-radius:var(--radius-xl); padding:44px 36px; box-shadow:var(--shadow-lg); }
 .lock-ico{ font-size:3.4rem; animation:medal-pop .6s var(--ease-spring) both; }
 .lock-card h2{ color:#fff; font-size:2rem; margin:.4em 0 .3em; }
-.lock-card p{ font-size:1.15rem; opacity:.92; margin:.4em auto; max-width:44ch; }
-.lock-card .lock-sub{ font-size:.98rem; opacity:.75; }
+.lock-card p{ font-size:1.15rem; color:#fff; opacity:.95; margin:.4em auto; max-width:44ch; }
+.lock-card .lock-sub{ font-size:.98rem; color:#fff; opacity:.82; }
 .lock-btn{ display:inline-block; margin-top:18px; text-decoration:none; font-family:var(--font-display); font-weight:700; font-size:1.05rem;
   color:#fff; background:linear-gradient(120deg,var(--blue-600),var(--teal-600)); border-radius:999px; padding:14px 30px; }
 
