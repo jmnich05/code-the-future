@@ -108,7 +108,7 @@ ever…
 You've been hanging out with AI for a while. Today you finally get to understand your old
 friend.
 
-`[INTERACTIVE: drag-and-sort game — sort objects into "Follows Rules" (toaster, calculator, light switch) vs. "Learns" (AI helper, self-driving car), with instant feedback.]`
+`[INTERACTIVE: Say hi to a real AI — an open-ended chat playground. Kids type anything (or tap an idea), a REAL AI replies, and they experiment, tinker, and discover it *guesses* the next words (and is sometimes wrong). Their first real meeting with AI — no right answers, all play.]`
 
 ### ✅ Mission 2 Complete!
 **You just unlocked:**

@@ -885,8 +885,89 @@
     setHud();
   }
 
+  // =========================================================================
+  // MEET AI — an open-ended FIRST chat with a real AI. No right answers: kids
+  // type anything (or tap an idea), watch it reply, and discover it *guesses*
+  // (and is sometimes wrong). Built for experimenting, failing, and tinkering.
+  // =========================================================================
+  function renderMeetAI(root, cfg, id) {
+    root.innerHTML = header(cfg);
+    var wrap = el('div', 'ctf-meetai');
+
+    var log = el('div', 'ctf-mai-log');
+    function bubble(who, text) {
+      var b = el('div', 'ctf-mai-msg ' + (who === 'ai' ? 'ai' : 'me'));
+      b.innerHTML = (who === 'ai' ? '<span class="ctf-mai-av">🤖</span>' : '') +
+        '<span class="ctf-mai-txt">' + esc(text) + '</span>';
+      return b;
+    }
+    function push(b) { log.appendChild(b); log.scrollTop = log.scrollHeight; return b; }
+    push(bubble('ai', cfg.greeting || "Hi! 👋 I'm a real AI living inside this lesson. Ask me anything — or tap an idea below!"));
+    wrap.appendChild(log);
+
+    var row = el('div', 'ctf-mai-row');
+    var input = el('input', 'ctf-input ctf-mai-input'); input.type = 'text';
+    input.placeholder = cfg.placeholder || 'Type a message to the AI…'; input.maxLength = 200;
+    var send = el('button', 'ctf-mai-send', 'Send ➤');
+    row.appendChild(input); row.appendChild(send);
+
+    var chips = el('div', 'ctf-mai-chips');
+    (cfg.ideas || ["Tell me a joke 🤪", "Why is the sky blue? 🌈", "Make up a tiny robot story 🤖", "What's your favorite animal? 🐾"]).forEach(function (idea) {
+      var c = el('button', 'ctf-mai-chip', esc(idea));
+      c.addEventListener('click', function () { input.value = idea; input.focus(); });
+      chips.appendChild(c);
+    });
+    wrap.appendChild(chips);
+    wrap.appendChild(row);
+    root.appendChild(wrap);
+
+    var fb = el('div', 'ctf-feedback good');
+    fb.textContent = cfg.thanks || "You just talked with a real AI! 🎉";
+    root.appendChild(fb);
+    var done = completionCard(cfg); if (done) root.appendChild(done);
+
+    var sent = 0, busy = false, prior = id ? load(id + ':answer') : null;
+    if (prior && prior.sent) { sent = prior.sent; fb.classList.add('show'); }
+
+    function ask() {
+      var q = input.value.trim();
+      if (!q || busy) return;
+      if (window.CTFFilter && window.CTFFilter.clean) {
+        var ck = window.CTFFilter.clean(q);
+        if (ck && ck.blocked) { input.value = ''; push(bubble('ai', "Let's keep it kind and fun! Try asking me something else. 😊")); return; }
+      }
+      busy = true; send.disabled = true;
+      push(bubble('me', q)); input.value = '';
+      var typing = push(el('div', 'ctf-mai-msg ai ctf-mai-typing', '<span class="ctf-mai-av">🤖</span><span class="ctf-mai-txt">· · ·</span>'));
+      fetch('/api/ai', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ mode: 'kids', prompt: q }) })
+        .then(function (r) { return r.json().then(function (d) { return { ok: r.ok, d: d }; }); })
+        .then(function (res) {
+          typing.remove();
+          push(bubble('ai', (res.ok && res.d.text) ? res.d.text : ((res.d && res.d.error) || "Hmm, I got shy! Ask me again?")));
+          busy = false; send.disabled = false;
+          sent++; if (id) save(id + ':answer', { sent: sent });
+          fb.classList.add('show');
+          reveal(done, (cfg.complete && cfg.complete.progress) || 100); markDone(id);
+          if (sent === 2 && !wrap.querySelector('.ctf-mai-note')) {
+            var note = el('div', 'ctf-mai-note', cfg.tinkerNote ||
+              "🔎 Notice it answers a little differently each time? That's because it <b>guesses</b> the next words — it isn't looking up a saved answer. Sometimes it's even wrong, and that's totally OK. Try to surprise it!");
+            wrap.insertBefore(note, row);
+          }
+        })
+        .catch(function () {
+          typing.remove(); push(bubble('ai', "🙈 I couldn't connect — is the internet ok? Try again!"));
+          busy = false; send.disabled = false;
+          // count the attempt so a network hiccup can't trap the kid behind the gate
+          sent++; if (id) save(id + ':answer', { sent: sent });
+          fb.classList.add('show'); reveal(done, (cfg.complete && cfg.complete.progress) || 100); markDone(id);
+        });
+    }
+    send.addEventListener('click', ask);
+    input.addEventListener('keydown', function (e) { if (e.key === 'Enter') { e.preventDefault(); ask(); } });
+  }
+
   // ---- registry + boot ----------------------------------------------------
-  var RENDERERS = { poll: renderPoll, sort: renderSort, choice: renderChoice, nextword: renderNextWord, attention: renderAttention, quiz: renderQuiz, timeline: renderTimeline, reveal: renderReveal, slider: renderSlider, trainer: renderTrainer, match: renderMatch, draw: renderDraw, wordchain: renderWordChain, order: renderOrder, neuron: renderNeuron, arcade: renderArcade };
+  var RENDERERS = { poll: renderPoll, sort: renderSort, choice: renderChoice, nextword: renderNextWord, attention: renderAttention, quiz: renderQuiz, timeline: renderTimeline, reveal: renderReveal, slider: renderSlider, trainer: renderTrainer, match: renderMatch, draw: renderDraw, wordchain: renderWordChain, order: renderOrder, neuron: renderNeuron, arcade: renderArcade, meetai: renderMeetAI };
 
   function hydrate(node) {
     if (node.getAttribute('data-ctf-ready')) return;

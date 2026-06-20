@@ -16,7 +16,7 @@
   // advance. Content-proportional, so it completes faster than a kid actually
   // reads (never blocks a real reader) — but a spammer can't race to the reward.
   // Re-reads and replays are never gated. Tune with these three constants.
-  var DWELL_FLOOR = 2200, DWELL_PER_WORD = 200, DWELL_CAP = 9000;
+  var DWELL_FLOOR = 4400, DWELL_PER_WORD = 400, DWELL_CAP = 18000;
   var dwellTimer = null, dwellReady = true;
   var widgetReady = true;   // gate: a beat's activity must be played through once before Continue
   // furthest step ever reached — the high-water mark. Replays move `pos` back,
