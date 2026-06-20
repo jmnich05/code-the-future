@@ -315,3 +315,34 @@ body::after{ width:42vmax; height:42vmax; right:-14vmax; bottom:-16vmax;
   .music-dock{ width:min(340px, calc(100vw - 20px)); }
   .badge-medal img,.badge-medal svg{ width:120px; height:120px; }
 }
+
+/* ============ full-screen gear reveal (the piece lands on your character) ============ */
+.gear-reveal{ position:fixed; inset:0; z-index:9000; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:8px; padding:24px; overflow:hidden;
+  background:radial-gradient(120% 120% at 50% 38%, rgba(22,42,95,.97), rgba(7,12,26,.99)); opacity:0; transition:opacity .4s; }
+.gear-reveal.show{ opacity:1; }
+.gear-reveal.out{ opacity:0; }
+.gr-rays{ position:absolute; top:38%; left:50%; width:760px; height:760px; max-width:130vw; max-height:130vw; transform:translate(-50%,-50%); border-radius:50%; pointer-events:none;
+  background:conic-gradient(from 0deg, rgba(140,180,255,.13) 0 7deg, transparent 7deg 22deg); animation:gr-spin 16s linear infinite; }
+@keyframes gr-spin{ to{ transform:translate(-50%,-50%) rotate(360deg); } }
+.gr-stage{ position:relative; width:300px; height:300px; display:flex; align-items:center; justify-content:center; }
+.gr-char{ width:240px; height:240px; animation:gr-bob 2.8s ease-in-out infinite; }
+.gr-char svg{ width:100%; height:100%; display:block; border-radius:36px; filter:drop-shadow(0 18px 40px rgba(0,0,0,.55)); }
+@keyframes gr-bob{ 50%{ transform:translateY(-9px); } }
+.gr-piece{ position:absolute; top:-18%; left:50%; transform:translateX(-50%); font-size:4.6rem; line-height:1; pointer-events:none;
+  filter:drop-shadow(0 0 20px rgba(255,221,130,.95)); animation:gr-drop 1.15s cubic-bezier(.5,0,.7,1.35) forwards; }
+@keyframes gr-drop{ 0%{ top:-26%; opacity:0; transform:translateX(-50%) scale(.5) rotate(-40deg); } 22%{ opacity:1; } 100%{ top:34%; transform:translateX(-50%) scale(1) rotate(0); } }
+.gr-piece.poof{ animation:gr-poof .42s ease-out forwards; }
+@keyframes gr-poof{ to{ transform:translateX(-50%) scale(2.4); opacity:0; } }
+.gr-ring{ position:absolute; top:42%; left:50%; width:60px; height:60px; border-radius:50%; transform:translate(-50%,-50%) scale(0); border:6px solid #FFE08A; opacity:0; pointer-events:none; }
+.gr-stage.landed .gr-ring{ animation:gr-ring .65s ease-out forwards; }
+@keyframes gr-ring{ 0%{ transform:translate(-50%,-50%) scale(.2); opacity:.95; } 100%{ transform:translate(-50%,-50%) scale(4.8); opacity:0; } }
+.gr-stage.landed .gr-char{ animation:gr-bob 2.8s ease-in-out infinite, gr-pop .5s var(--ease-spring); }
+@keyframes gr-pop{ 0%{ transform:scale(1); } 42%{ transform:scale(1.13); } 100%{ transform:scale(1); } }
+.gr-head{ font-family:var(--font-mono); font-size:.82rem; letter-spacing:.22em; text-transform:uppercase; color:#FFE08A; opacity:0; animation:gr-up .5s .95s forwards; }
+.gr-name{ font-family:var(--font-display); font-weight:700; font-size:2.1rem; color:#fff; text-align:center; text-shadow:0 4px 22px rgba(0,0,0,.55); opacity:0; animation:gr-up .5s 1.2s forwards; }
+@keyframes gr-up{ from{ opacity:0; transform:translateY(12px); } to{ opacity:1; transform:none; } }
+.gr-btn{ margin-top:16px; font-family:var(--font-display); font-weight:700; font-size:1.15rem; color:#fff; border:none; border-radius:999px; padding:14px 36px; cursor:pointer;
+  background:linear-gradient(120deg,var(--coral-500,#FF5A38),var(--amber-400,#FFB320)); box-shadow:0 12px 30px rgba(255,90,56,.5); opacity:0; transform:translateY(10px); transition:opacity .3s, transform .3s; }
+.gr-btn.ready{ opacity:1; transform:none; }
+.gr-btn:disabled{ pointer-events:none; }
+@media (prefers-reduced-motion:reduce){ .gr-piece,.gr-char,.gr-rays{ animation:none !important; } .gr-piece{ top:34%; opacity:1; } }

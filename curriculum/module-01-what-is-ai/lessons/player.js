@@ -252,6 +252,7 @@
         confetti();
         var dd = db();
         if (dd && n) { dd.awardBadge(TRACK + "-m" + n, { module: MODULE, track: TRACK }); dd.logEvent("mission_complete", { module: MODULE, track: TRACK, n: n }); }
+        if (rw && n) maybeGearReveal(n, rw);   // big full-screen "gear lands on your character" moment
       } else if (type === "capstone") {
         beat.innerHTML = '<div class="inner">' + step.b.html + "</div>";
         var dc = db(); if (dc) dc.awardBadge(TRACK + "-" + MODULE + "-complete", { module: MODULE, track: TRACK });
@@ -373,6 +374,67 @@
       holder.appendChild(p);
     }
     stage.appendChild(holder);
+    setTimeout(function () { if (holder.parentNode) holder.parentNode.removeChild(holder); }, 3400);
+  }
+
+  // ---- full-screen gear reveal: the new piece lands on YOUR character --------
+  function myAvatar() {
+    try { var p = JSON.parse(localStorage.getItem("ctf:profile") || "null"); if (p && p.avatar && Object.keys(p.avatar).length) return p.avatar; } catch (e) {}
+    return (window.CTFAvatar && window.CTFAvatar.DEFAULT) || {};
+  }
+  function maybeGearReveal(n, rw) {
+    if (!window.CTFAvatar || !window.CTFAvatar.render) return;
+    var seenKey = "ctf:gearseen:" + MODULE + ":" + n, seen = false;
+    try { seen = localStorage.getItem(seenKey) === "1"; } catch (e) {}
+    if (seen) return;                                  // replay → skip the big auto reveal
+    try { localStorage.setItem(seenKey, "1"); } catch (e) {}
+    setTimeout(function () { gearReveal(rw); }, 500);   // let the card land first, then the moment
+  }
+  function gearReveal(rw) {
+    var cfg = myAvatar();
+    var afterCfg = {}; for (var k in cfg) afterCfg[k] = cfg[k]; afterCfg.acc = rw.key;
+    var before = window.CTFAvatar.render(cfg);
+    var after = window.CTFAvatar.render(afterCfg);
+
+    var ov = document.createElement("div"); ov.className = "gear-reveal";
+    ov.innerHTML =
+      '<div class="gr-rays"></div>' +
+      '<div class="gr-stage"><span class="gr-ring"></span>' +
+        '<div class="gr-char">' + before + '</div>' +
+        '<div class="gr-piece">' + rw.emoji + '</div></div>' +
+      '<div class="gr-head">✨ New gear unlocked! ✨</div>' +
+      '<div class="gr-name">' + esc(rw.emoji + " " + rw.label) + '</div>' +
+      '<button class="gr-btn" disabled>Wear it! →</button>';
+    document.body.appendChild(ov);
+    requestAnimationFrame(function () { ov.classList.add("show"); });
+
+    setTimeout(function () {
+      ov.querySelector(".gr-char").innerHTML = after;          // now wearing it
+      ov.querySelector(".gr-stage").classList.add("landed");   // pop + ring burst
+      ov.querySelector(".gr-piece").classList.add("poof");
+      burst(ov);
+      var btn = ov.querySelector(".gr-btn"); btn.disabled = false; btn.classList.add("ready");
+    }, 1150);
+
+    function close() { ov.classList.add("out"); setTimeout(function () { if (ov.parentNode) ov.remove(); }, 360); }
+    ov.querySelector(".gr-btn").addEventListener("click", close);
+  }
+  // a quick confetti burst attached to a given container (for overlays)
+  function burst(host) {
+    if (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    var colors = ["#3D74FF", "#26C7D1", "#FF5A38", "#FFB320", "#7C5CFF", "#2FBF71", "#FF6FB5"];
+    var holder = document.createElement("div"); holder.className = "confetti";
+    for (var i = 0; i < 44; i++) {
+      var p = document.createElement("i");
+      p.style.left = (Math.random() * 100) + "%";
+      p.style.background = colors[i % colors.length];
+      p.style.animationDelay = (Math.random() * 0.5) + "s";
+      p.style.animationDuration = (1.5 + Math.random() * 1.3) + "s";
+      p.style.width = p.style.height = (7 + Math.random() * 9) + "px";
+      if (i % 3 === 0) p.style.borderRadius = "50%";
+      holder.appendChild(p);
+    }
+    host.appendChild(holder);
     setTimeout(function () { if (holder.parentNode) holder.parentNode.removeChild(holder); }, 3400);
   }
   function esc(s) { return String(s).replace(/[&<>]/g, function (c) { return ({ "&": "&amp;", "<": "&lt;", ">": "&gt;" })[c]; }); }
