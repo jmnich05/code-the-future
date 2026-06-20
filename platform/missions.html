@@ -111,6 +111,7 @@ import { CTFDB } from "./lib/ctf-db.js";
 const ROUTES = {
   "module-01-what-is-ai": {
     label:"Module 1 · What Is AI?", badge:"kids-m", player:"../curriculum/module-01-what-is-ai/lessons/player.html?track=kids",
+    map:"assets/louisville-map.png", alt:"Illustrated map of downtown Louisville",
     stops:[
       {t:"Welcome, Future Builder",icon:"🌊",place:"Waterfront Park",x:12,y:25},
       {t:"Meet AI: What Even Is It?",icon:"🌉",place:"Big Four Bridge",x:27,y:14},
@@ -128,19 +129,20 @@ const ROUTES = {
   },
   "module-02-ai-and-society": {
     label:"Module 2 · AI & Our World", badge:"kids-mod2-", player:"../curriculum/module-02-ai-and-society/lessons/player.html?track=kids",
+    map:"assets/cherokee-park-map.png", alt:"Illustrated map of Cherokee Park, Louisville",
     stops:[
-      {t:"Welcome Back, Future Builder",icon:"🌊",place:"Waterfront Park",x:12,y:25},
-      {t:"AI Is Already Out There",icon:"🌉",place:"Big Four Bridge",x:27,y:14},
-      {t:"AI the Doctor's Helper",icon:"🏥",place:"Downtown",x:44,y:23},
-      {t:"AI and the Planet",icon:"🌳",place:"Cherokee Park",x:60,y:15},
-      {t:"AI at Work",icon:"🏙️",place:"Main Street",x:74,y:26},
-      {t:"Every Tool Can Help or Hurt",icon:"🔨",place:"Speed Art Museum",x:84,y:43},
-      {t:"Your Stuff Is Yours",icon:"🔒",place:"Churchill Downs",x:79,y:79},
-      {t:"Who Holds the Biggest Tools?",icon:"⚖️",place:"Cherokee Park",x:61,y:69},
-      {t:"Tools, Rules, and Freedom",icon:"🔦",place:"Belle of Louisville",x:45,y:80},
-      {t:"Who Decides the Future of AI?",icon:"🗳️",place:"Louisville Zoo",x:30,y:67},
-      {t:"You Get to Help Build It",icon:"🛠️",place:"Slugger Field",x:15,y:80},
-      {t:"You Did It!",icon:"🏆",place:"The Future",x:14,y:50},
+      {t:"Welcome Back, Future Builder",icon:"🌳",place:"Park Entrance",x:12,y:78},
+      {t:"AI Is Already Out There",icon:"🛝",place:"The Playground",x:15,y:54},
+      {t:"AI the Doctor's Helper",icon:"💧",place:"Beargrass Creek",x:27,y:37},
+      {t:"AI and the Planet",icon:"🌉",place:"Stone Bridge",x:31,y:18},
+      {t:"AI at Work",icon:"🌅",place:"The Meadow",x:48,y:15},
+      {t:"Every Tool Can Help or Hurt",icon:"🪨",place:"Big Rock",x:47,y:40},
+      {t:"Your Stuff Is Yours",icon:"🔒",place:"Creek Bend",x:40,y:61},
+      {t:"Who Holds the Biggest Tools?",icon:"⚾",place:"The Ball Field",x:58,y:73},
+      {t:"Tools, Rules, and Freedom",icon:"🛤️",place:"Scenic Loop",x:73,y:60},
+      {t:"Who Decides the Future of AI?",icon:"⛰️",place:"Hilltop Overlook",x:78,y:36},
+      {t:"You Get to Help Build It",icon:"⛺",place:"Hogan's Fountain",x:74,y:15},
+      {t:"You Did It!",icon:"🏆",place:"The Future",x:89,y:52},
     ]
   }
 };
@@ -198,20 +200,31 @@ function curCard(R, m, current, allDone){
   let c=document.getElementById('curcard'); if(c) c.remove();
   c=document.createElement('div'); c.className='cur'+(allDone?' done-all':''); c.id='curcard';
   c.innerHTML = allDone
-    ? `<div><div class="k">${R.label}</div><h3>🎉 Module complete!</h3><div class="sub">You traveled the whole city. Replay any stop anytime.</div></div><a class="go" href="${R.player}">Replay →</a>`
-    : `<div><div class="k">Mission ${current} · ${m.place}</div><h3>${m.t}</h3><div class="sub">Pick up where you left off across the city.</div></div><a class="go" href="${R.player}">${current>1?'Continue':'Start'} →</a>`;
+    ? `<div><div class="k">${R.label}</div><h3>🎉 Module complete!</h3><div class="sub">You traveled the whole map. Replay any stop anytime.</div></div><a class="go" href="${R.player}">Replay →</a>`
+    : `<div><div class="k">Mission ${current} · ${m.place}</div><h3>${m.t}</h3><div class="sub">Pick up where you left off across the map.</div></div><a class="go" href="${R.player}">${current>1?'Continue':'Start'} →</a>`;
   document.querySelector('.scene').appendChild(c);
+}
+
+const _bg = mapwrap.querySelector('img.bg');
+function setMap(){
+  const R = ROUTES[MODULE], want = R.map;
+  if (R.alt) _bg.alt = R.alt;
+  if (_bg.getAttribute('src') === want){
+    if (_bg.complete && _bg.naturalWidth) render(); else _bg.addEventListener('load', render, { once:true });
+  } else {
+    _bg.addEventListener('load', render, { once:true });   // map swaps → re-render once it lays out
+    _bg.src = want;
+  }
 }
 
 document.querySelectorAll('.mod').forEach(b=>b.onclick=async()=>{
   document.querySelectorAll('.mod').forEach(x=>x.classList.remove('on')); b.classList.add('on');
-  MODULE=b.dataset.mod; await loadProgress(); render();
+  MODULE=b.dataset.mod; await loadProgress(); setMap();
 });
 document.getElementById('ghost').textContent = qs.has("demo") ? "demo view" : "";
 
 await loadProgress();
-const _bg = mapwrap.querySelector('img.bg');
-if (_bg.complete && _bg.naturalWidth) render(); else _bg.addEventListener('load', render, { once:true });
+setMap();
 addEventListener('resize', ()=>{ clearTimeout(window._rt); window._rt=setTimeout(render,150); });
 </script>
 </body>
