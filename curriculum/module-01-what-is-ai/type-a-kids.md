@@ -365,7 +365,7 @@ are the big breakthrough that made today's chatbots so smart. Almost every famou
 heard of is a transformer underneath. You just learned the secret word that powers AI all
 over the world — and most adults have never even heard it.
 
-`[INTERACTIVE: "what does 'it' mean?" — highlight-the-words mini-game showing attention picking the right connection in different sentences.]`
+`[INTERACTIVE: "Attention Lab" — a visual sandbox of 7 fresh sentences (new ones, not the lesson examples). Kids tap a word to choose what the focus word ("it"/"he") pays attention to; a glowing beam draws the connection and the meaning changes — sensible or silly. They tweak it freely to see how one word changes everything.]`
 
 ### ✅ Mission 7 Complete!
 **You just unlocked:**

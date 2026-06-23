@@ -375,3 +375,26 @@
 .ctf-fc-bubble .txt{ font-size:1.15rem; line-height:1.4; color:var(--ink-900,#0C1322); font-weight:600; }
 .ctf-fc-bubble.true{ border-color:var(--teal-500,#12B2BC); background:var(--teal-50,#E4FBFC); }
 .ctf-fc-bubble.false{ border-color:var(--coral-500,#FF5A38); background:var(--coral-50,#FFF0EC); }
+
+/* ---- Attention Lab (tap a word, draw the attention beam) ---- */
+.ctf-al{ display:flex; flex-direction:column; gap:12px; }
+.al-tip{ color:var(--ink-700,#2A3349); font-size:1rem; }
+.al-tip b{ color:var(--blue-700,#1E45C2); }
+.al-stage{ position:relative; padding-top:48px; }
+.al-beams{ position:absolute; left:0; top:0; width:100%; height:100%; pointer-events:none; overflow:visible; }
+.al-sentence{ display:flex; flex-wrap:wrap; gap:7px 8px; font-family:var(--font-display); font-size:1.3rem; line-height:1.5; position:relative; z-index:1; }
+.al-chip{ color:var(--ink-900,#0C1322); padding:2px 4px; border-radius:8px; }
+.al-focus{ color:#fff; background:linear-gradient(120deg,var(--blue-600,#2A5FF0),var(--teal-500,#12B2BC)); padding:3px 11px; border-radius:10px; font-weight:700; box-shadow:0 4px 12px rgba(42,95,240,.35); animation:al-pulse 1.6s ease-in-out infinite; }
+@keyframes al-pulse{ 50%{ box-shadow:0 4px 20px rgba(38,199,209,.6); } }
+.al-opt{ cursor:pointer; background:var(--ink-50,#F6F8FC); border:2px dashed var(--ink-300,#BCC3D2); padding:2px 9px; border-radius:10px; transition:transform .14s, border-color .14s, background .14s, color .14s; }
+.al-opt:hover{ border-color:var(--blue-600,#2A5FF0); color:var(--blue-700,#1E45C2); transform:translateY(-2px); }
+.al-opt.on-ok{ background:var(--teal-50,#E4FBFC); border-style:solid; border-color:var(--teal-500,#12B2BC); color:var(--teal-700,#0B6E76); }
+.al-opt.on-bad{ background:var(--amber-50,#FFF7E6); border-style:solid; border-color:var(--amber-400,#FFB320); color:var(--ink-900,#0C1322); }
+.al-result{ display:none; font-size:1.05rem; line-height:1.5; border-radius:14px; padding:13px 16px; }
+.al-result.show{ display:block; animation:al-rise .25s ease; }
+@keyframes al-rise{ from{ opacity:0; transform:translateY(6px); } }
+.al-result.ok{ background:var(--teal-50,#E4FBFC); border:1px solid var(--teal-100,#C2F5F8); color:var(--ink-900,#0C1322); }
+.al-result.bad{ background:var(--amber-50,#FFF7E6); border:1px solid var(--amber-100,#FFECC2); color:var(--ink-900,#0C1322); }
+.al-why{ margin-top:9px; font-size:.95rem; color:var(--ink-700,#2A3349); border-top:1px dashed var(--ink-300,#BCC3D2); padding-top:9px; }
+.al-why b{ color:var(--ink-900,#0C1322); }
+.al-finished{ text-align:center; font-size:1.18rem; font-weight:700; color:var(--ink-900,#0C1322); padding:16px; }

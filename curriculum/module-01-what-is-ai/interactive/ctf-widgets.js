@@ -1084,8 +1084,81 @@
     }
   }
 
+  // =========================================================================
+  // ATTENTION LAB — tap a word to choose what the focus word ("it"/"he") pays
+  // attention to. A glowing beam draws the link and the meaning changes —
+  // sensible or silly. Tweak it freely across several sentences. Visual + play.
+  // =========================================================================
+  function renderAttentionLab(root, cfg, id) {
+    root.innerHTML = header(cfg);
+    var rounds = cfg.rounds || [], i = 0;
+    var area = el('div', 'ctf-al'); root.appendChild(area);
+    var fb = el('div', 'ctf-feedback'); root.appendChild(fb);
+    var actions = el('div', 'ctf-actions'); root.appendChild(actions);
+    var done = completionCard(cfg); if (done) root.appendChild(done);
+    var prior = id ? load(id + ':answer') : null;
+    if (prior && prior.done) { area.innerHTML = '<div class="al-finished">🔦 Attention Ace! You explored how every word connects.</div>'; fb.classList.add('show'); reveal(done, (cfg.complete && cfg.complete.progress) || 100); return; }
+    show();
+
+    function focusWord(R) { var f = (R.words || []).filter(function (w) { return w.focus; })[0]; return f ? f.w.replace(/[^A-Za-z']/g, '') : 'it'; }
+    function drawBeam(stage, svg, fromEl, toEl, ok) {
+      var sr = stage.getBoundingClientRect(), a = fromEl.getBoundingClientRect(), b = toEl.getBoundingClientRect();
+      var ax = a.left + a.width / 2 - sr.left, ay = a.top - sr.top, bx = b.left + b.width / 2 - sr.left, by = b.top - sr.top;
+      var midY = Math.min(ay, by) - 28;
+      svg.setAttribute('viewBox', '0 0 ' + sr.width + ' ' + sr.height);
+      svg.innerHTML = '';
+      var p = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+      p.setAttribute('d', 'M ' + ax + ' ' + ay + ' Q ' + ((ax + bx) / 2) + ' ' + midY + ' ' + bx + ' ' + by);
+      p.setAttribute('fill', 'none'); p.setAttribute('stroke', ok ? '#12B2BC' : '#FFB320');
+      p.setAttribute('stroke-width', '4'); p.setAttribute('stroke-linecap', 'round');
+      svg.appendChild(p);
+      var L = p.getTotalLength(); p.style.strokeDasharray = L; p.style.strokeDashoffset = L; p.style.transition = 'stroke-dashoffset .5s ease';
+      requestAnimationFrame(function () { p.style.strokeDashoffset = 0; });
+    }
+    function show() {
+      var R = rounds[i], found = false;
+      area.innerHTML = '';
+      if (rounds.length > 1) area.appendChild(el('p', 'ctf-roundlbl', 'Sentence ' + (i + 1) + ' of ' + rounds.length));
+      area.appendChild(el('p', 'al-tip', 'Tap a word to see what <b>' + esc(focusWord(R)) + '</b> connects to. Try a few — which one makes sense? 🔦'));
+      var stage = el('div', 'al-stage');
+      var svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg'); svg.setAttribute('class', 'al-beams');
+      stage.appendChild(svg);
+      var sent = el('div', 'al-sentence'); var focusEl = null;
+      (R.words || []).forEach(function (t) {
+        var c = el('span', 'al-chip', esc(t.w));
+        if (t.focus) { c.classList.add('al-focus'); focusEl = c; }
+        else if (t.opt) { c.classList.add('al-opt'); c.onclick = function () { pick(t, c); }; }
+        sent.appendChild(c);
+      });
+      stage.appendChild(sent); area.appendChild(stage);
+      var result = el('div', 'al-result'); area.appendChild(result);
+      fb.className = 'ctf-feedback'; actions.innerHTML = '';
+
+      function pick(t, c) {
+        sent.querySelectorAll('.al-opt').forEach(function (x) { x.classList.remove('on-ok', 'on-bad'); });
+        c.classList.add(t.ok ? 'on-ok' : 'on-bad');
+        if (focusEl) drawBeam(stage, svg, focusEl, c, t.ok);
+        result.className = 'al-result show ' + (t.ok ? 'ok' : 'bad');
+        result.innerHTML = t.result;
+        if (t.ok && !found) {
+          found = true;
+          if (R.why) result.innerHTML += '<div class="al-why">' + R.why + '</div>';
+          if (i < rounds.length - 1) {
+            var nx = el('button', 'ctf-btn', 'Next sentence →'); nx.onclick = function () { i++; show(); };
+            actions.innerHTML = ''; actions.appendChild(nx);
+          } else {
+            if (id) save(id + ':answer', { done: true });
+            reveal(done, (cfg.complete && cfg.complete.progress) || 100); markDone(id);
+            fb.className = 'ctf-feedback show good';
+            fb.innerHTML = cfg.thanks || "You see it now — attention is just deciding which words connect. That's the trick behind every chatbot! 🔦";
+          }
+        }
+      }
+    }
+  }
+
   // ---- registry + boot ----------------------------------------------------
-  var RENDERERS = { poll: renderPoll, sort: renderSort, choice: renderChoice, nextword: renderNextWord, attention: renderAttention, quiz: renderQuiz, timeline: renderTimeline, reveal: renderReveal, slider: renderSlider, trainer: renderTrainer, match: renderMatch, draw: renderDraw, wordchain: renderWordChain, order: renderOrder, neuron: renderNeuron, arcade: renderArcade, meetai: renderMeetAI, rule: renderRule, factcheck: renderFactCheck };
+  var RENDERERS = { poll: renderPoll, sort: renderSort, choice: renderChoice, nextword: renderNextWord, attention: renderAttention, quiz: renderQuiz, timeline: renderTimeline, reveal: renderReveal, slider: renderSlider, trainer: renderTrainer, match: renderMatch, draw: renderDraw, wordchain: renderWordChain, order: renderOrder, neuron: renderNeuron, arcade: renderArcade, meetai: renderMeetAI, rule: renderRule, factcheck: renderFactCheck, attentionlab: renderAttentionLab };
 
   function hydrate(node) {
     if (node.getAttribute('data-ctf-ready')) return;

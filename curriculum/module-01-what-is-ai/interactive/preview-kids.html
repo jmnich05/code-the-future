@@ -166,17 +166,27 @@
   </div></div>
 
   <p class="step">Mission 7 · the attention trick</p>
-  <div class="ctf"><div data-ctf-widget="attention" data-ctf-id="kids-m7-attention">
+  <div class="ctf"><div data-ctf-widget="attentionlab" data-ctf-id="kids-m7-attention">
     <script type="application/json">{
-      "eyebrow":"The attention trick","title":"What does “it” mean?","prompt":"Click the word that <span class=\"ctf-q\">it</span> is really talking about. Two sentences — the second one is sneaky!",
+      "eyebrow":"The attention lab","title":"Wire up the AI's attention 🔦",
+      "prompt":"AI figures out tricky words by <span class=\"ctf-q\">paying attention</span> to the word that matters. Tap a word to connect it — watch the beam, and see if the meaning makes sense or gets silly. You're in charge of where it looks!",
       "rounds":[
-        {"tokens":["The ",{"w":"dog","ref":false}," chased the ",{"w":"ball","ref":true}," because ",{"w":"it","target":true}," was bouncy."],
-         "hint":"Hint: which one is bouncy?",
-         "explain":"“It” means the <b>ball</b>, because balls are bouncy. Your brain paid <b>attention</b> to “bouncy.”"},
-        {"tokens":["The ",{"w":"trophy","ref":true}," didn't fit in the ",{"w":"suitcase","ref":false}," because ",{"w":"it","target":true}," was too big."],
-         "hint":"Hint: which one was too BIG?",
-         "explain":"The <b>trophy</b> was too big! Now flip it: if the sentence said “too small,” “it” would mean the suitcase. ONE word changes everything — that's why attention is such a superpower."}
+        {"words":[{"w":"The"},{"w":"cat","opt":true,"ok":true,"result":"🐱 The CAT was hungry — that's why it chased the mouse! Makes sense. ✅"},{"w":"chased"},{"w":"the"},{"w":"mouse","opt":true,"result":"🐭 A hungry mouse? But the mouse is the one running AWAY! Silly. 🤔"},{"w":"because"},{"w":"it","focus":true},{"w":"was"},{"w":"hungry."}],
+         "why":"Attention locked onto <b>hungry</b> — and the hungry one is the cat."},
+        {"words":[{"w":"I"},{"w":"poured"},{"w":"water","opt":true,"result":"💧 Dangerous water? But the water is what made it SAFE! 🤔"},{"w":"on"},{"w":"the"},{"w":"fire","opt":true,"ok":true,"result":"🔥 The FIRE was dangerous — so I put it out with water! ✅"},{"w":"because"},{"w":"it","focus":true},{"w":"was"},{"w":"dangerous."}],
+         "why":"<b>Dangerous</b> points straight to the fire, not the water."},
+        {"words":[{"w":"The"},{"w":"dog","opt":true,"ok":true,"result":"🐶 The DOG barked — dogs bark! That's what scared the kitten. ✅"},{"w":"scared"},{"w":"the"},{"w":"kitten","opt":true,"result":"🐱 A kitten that barked? Kittens go meow! 🤔"},{"w":"because"},{"w":"it","focus":true},{"w":"barked"},{"w":"loudly."}],
+         "why":"Attention follows <b>barked</b> right to the dog."},
+        {"words":[{"w":"The"},{"w":"ice","opt":true,"result":"🧊 Hot ice? Ice is COLD — that's exactly why it melts! 🤔"},{"w":"cube"},{"w":"melted"},{"w":"in"},{"w":"the"},{"w":"sun","opt":true,"ok":true,"result":"☀️ The SUN was hot — and hot sun melts ice! ✅"},{"w":"because"},{"w":"it","focus":true},{"w":"was"},{"w":"hot."}],
+         "why":"<b>Hot</b> belongs to the sun, not the ice."},
+        {"words":[{"w":"The"},{"w":"elephant","opt":true,"ok":true,"result":"🐘 The ELEPHANT was too big to fit through the door! ✅"},{"w":"couldn't"},{"w":"fit"},{"w":"through"},{"w":"the"},{"w":"door","opt":true,"result":"🚪 A too-BIG door? Then the elephant would stroll right through! 🤔"},{"w":"because"},{"w":"it","focus":true},{"w":"was"},{"w":"too"},{"w":"big."}],
+         "why":"Now flip ONE word — say <b>“too small”</b> — and “it” would suddenly mean the door! One word changes everything."},
+        {"words":[{"w":"Maya"},{"w":"hugged"},{"w":"her"},{"w":"brother","opt":true,"ok":true,"result":"🧒 Her BROTHER was scared — so Maya hugged him. ✅"},{"w":"because"},{"w":"he","focus":true},{"w":"was"},{"w":"scared."}],
+         "why":"The word <b>he</b> is the clue — Maya is a “she,” so it must be her brother!"},
+        {"words":[{"w":"The"},{"w":"bee","opt":true,"result":"🐝 A sweet-smelling bee? It's the flower's scent doing the work! 🤔"},{"w":"landed"},{"w":"on"},{"w":"the"},{"w":"flower","opt":true,"ok":true,"result":"🌸 The FLOWER smelled sweet — that's what drew the bee in! ✅"},{"w":"because"},{"w":"it","focus":true},{"w":"smelled"},{"w":"sweet."}],
+         "why":"<b>Smelled sweet</b> connects to the flower."}
       ],
+      "thanks":"You see it now — attention is just deciding which words connect. That's the trick behind every chatbot! 🔦",
       "complete":{"icon":"🎖️","badge":"Badge earned: Attention Ace","sub":"Mission 7 of 12","progress":58}
     }</script>
   </div></div>
