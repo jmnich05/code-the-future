@@ -684,12 +684,12 @@
   },
   {
    "kind": "capstone",
-   "title": "Now use AI yourself",
+   "title": "The Great Escape",
    "meta": "",
    "beats": [
     {
      "type": "capstone",
-     "html": "<p class=\"cap-eyebrow\">🚀 The Big Mission</p><h2>Now use AI yourself</h2><p>You earned all 12 badges. Time for the best part — talk to a real AI.</p><a class=\"cap-btn\" href=\"../capstone/kids-big-mission.html\">Start the Big Mission →</a>"
+     "html": "<p class=\"cap-eyebrow\">🚀 The Big Mission</p><h2>The Great Escape</h2><p>You earned all 12 badges. Now the grand finale — answer your way to the rocket, design your escape ship with a real AI, and blast off!</p><a class=\"cap-btn\" href=\"../capstone/kids-big-mission.html\">▶ Start the Great Escape</a>"
     }
    ]
   }

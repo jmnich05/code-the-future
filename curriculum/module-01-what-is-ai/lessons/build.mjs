@@ -33,7 +33,7 @@ const TRACKS = {
   kids: {
     md: "type-a-kids.md", out: "kids.json", cls: "track-kids",
     title: "What Is AI?", eyebrow: "Module 1 · Ages 8–11", unitWord: "Mission",
-    capstone: { href: "../capstone/kids-big-mission.html", eyebrow: "🚀 The Big Mission", h: "Now use AI yourself", p: "You earned all 12 badges. Time for the best part — talk to a real AI.", btn: "Start the Big Mission →" },
+    capstone: { href: "../capstone/kids-big-mission.html", eyebrow: "🚀 The Big Mission", h: "The Great Escape", p: "You earned all 12 badges. Now the grand finale — answer your way to the rocket, design your escape ship with a real AI, and blast off!", btn: "▶ Start the Great Escape" },
     figs: { "Is AI Like a Brain": ["neuron", "perceptron"], "The Story of AI": ["ada", "turing", "eliza", "shakey", "deepblue"], "What AI Is Great At": ["eniac"], "The Future Is Yours": ["rover", "galaxy"], "You Did It": ["deepfield"] }
   },
   adults: {
