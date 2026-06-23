@@ -968,6 +968,147 @@
   }
 
   // =========================================================================
+  // THE FUTURE MACHINE — a full-screen, animated fortune-teller cabinet. The
+  // kid whispers a dream (typed or tapped from a chip), the machine "reads the
+  // future" (orb swirls, bulbs chase, gears spin), then prints a paper ticket
+  // that scrolls out of a slot. Same engine as meetai — input + ideas + /api/ai
+  // — but reframed as a delightful object instead of a busy chat log.
+  // =========================================================================
+  function stripEmoji(s) {
+    // drop trailing emoji/symbols so the typed-in dream reads naturally
+    return String(s).replace(/[←-⇿⌀-➿⬀-⯿️‍\u{1F000}-\u{1FAFF}\u{1F1E6}-\u{1F1FF}]+/gu, '').replace(/\s+/g, ' ').trim();
+  }
+  function renderFutureMachine(root, cfg, id) {
+    root.innerHTML = header(cfg);
+    var wrap = el('div', 'ctf-fm');
+
+    // ---- the machine cabinet ------------------------------------------------
+    var cab = el('div', 'ctf-fm-cab');
+    cab.setAttribute('data-state', 'idle');
+
+    var marquee = el('div', 'ctf-fm-marquee');
+    var bulbs = el('div', 'ctf-fm-bulbs');
+    for (var i = 0; i < 11; i++) { var bl = el('i', 'ctf-fm-bulb'); bl.style.animationDelay = (i * 0.11) + 's'; bulbs.appendChild(bl); }
+    marquee.appendChild(bulbs);
+    marquee.appendChild(el('div', 'ctf-fm-name', esc(cfg.machineName || 'THE FUTURE MACHINE')));
+    cab.appendChild(marquee);
+
+    var screen = el('div', 'ctf-fm-screen');
+    screen.innerHTML =
+      '<div class="ctf-fm-orb">' +
+        '<span class="ctf-fm-orb-glow"></span>' +
+        '<span class="ctf-fm-swirl"></span>' +
+        '<span class="ctf-fm-stars">✦<i>✧</i><b>★</b></span>' +
+        '<span class="ctf-fm-eyes"><i></i><i></i></span>' +
+      '</div>' +
+      '<div class="ctf-fm-status"></div>' +
+      '<div class="ctf-fm-thinkbar"><span></span></div>';
+    cab.appendChild(screen);
+
+    var deco = el('div', 'ctf-fm-deco');
+    deco.innerHTML = '<span class="ctf-fm-gear g1">⚙️</span><span class="ctf-fm-knob"></span><span class="ctf-fm-knob"></span><span class="ctf-fm-gear g2">⚙️</span>';
+    cab.appendChild(deco);
+
+    var slot = el('div', 'ctf-fm-slot'); slot.innerHTML = '<span class="ctf-fm-slot-lip"></span><span class="ctf-fm-slot-mouth"></span>';
+    cab.appendChild(slot);
+
+    var tray = el('div', 'ctf-fm-tray');
+    cab.appendChild(tray);
+    wrap.appendChild(cab);
+
+    // ---- controls -----------------------------------------------------------
+    var row = el('div', 'ctf-fm-row');
+    var input = el('input', 'ctf-input ctf-fm-input'); input.type = 'text';
+    input.placeholder = cfg.placeholder || 'My big dream is…'; input.maxLength = 200;
+    var send = el('button', 'ctf-fm-send', esc(cfg.button || '🔮 Tell my future'));
+    row.appendChild(input); row.appendChild(send);
+    wrap.appendChild(row);
+
+    if (cfg.ideas && cfg.ideas.length) {
+      wrap.appendChild(el('div', 'ctf-fm-chips-label', esc(cfg.ideasLabel || 'or tap a dream to start')));
+      var chips = el('div', 'ctf-fm-chips');
+      cfg.ideas.forEach(function (idea) {
+        var c = el('button', 'ctf-fm-chip', esc(idea));
+        c.addEventListener('click', function () { input.value = stripEmoji(idea); input.focus(); });
+        chips.appendChild(c);
+      });
+      wrap.appendChild(chips);
+    }
+    root.appendChild(wrap);
+
+    var fb = el('div', 'ctf-feedback good');
+    fb.textContent = cfg.thanks || 'Your future is YOURS to build — and AI is a tool in your hands. 🚀';
+    root.appendChild(fb);
+    var done = completionCard(cfg); if (done) root.appendChild(done);
+
+    var status = screen.querySelector('.ctf-fm-status');
+    var IDLE = cfg.greeting || 'Whisper me your dream…';
+    status.textContent = IDLE;
+
+    var sent = 0, busy = false, prior = id ? load(id + ':answer') : null;
+    if (prior && prior.sent) { sent = prior.sent; fb.classList.add('show'); }
+    function setState(s) { cab.setAttribute('data-state', s); }
+
+    function printTicket(text) {
+      tray.innerHTML = '';
+      var t = el('div', 'ctf-fm-ticket');
+      t.innerHTML =
+        '<span class="ctf-fm-ticket-perf top"></span>' +
+        '<div class="ctf-fm-ticket-pad">' +
+          '<div class="ctf-fm-ticket-stars">✦ &nbsp; ✦ &nbsp; ✦</div>' +
+          '<div class="ctf-fm-ticket-h">' + esc(cfg.ticketTitle || 'YOUR FUTURE') + '</div>' +
+          '<div class="ctf-fm-ticket-sub">' + esc(cfg.ticketSub || 'as foreseen by the machine') + '</div>' +
+          '<div class="ctf-fm-ticket-body">' + esc(text) + '</div>' +
+          '<div class="ctf-fm-ticket-foot">' + esc(cfg.ticketFoot || '★ the future is YOURS to build ★') + '</div>' +
+        '</div>' +
+        '<span class="ctf-fm-ticket-perf bot"></span>';
+      tray.appendChild(t);
+      requestAnimationFrame(function () { t.classList.add('out'); });
+    }
+
+    function ask() {
+      var q = input.value.trim();
+      if (!q || busy) return;
+      if (window.CTFFilter && window.CTFFilter.clean) {
+        var ck = window.CTFFilter.clean(q);
+        if (ck && ck.blocked) { input.value = ''; setState('idle'); status.textContent = "Let's dream up something kind! Try again. 😊"; return; }
+      }
+      busy = true; send.disabled = true; input.disabled = true;
+      tray.innerHTML = '';
+      setState('thinking');
+      status.textContent = cfg.thinking || 'Reading the stars of your future';
+      var sendPrompt = cfg.promptTemplate ? cfg.promptTemplate.replace('{q}', q) : q;
+      var t0 = Date.now();
+      fetch('/api/ai', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ mode: 'kids', prompt: sendPrompt }) })
+        .then(function (r) { return r.json().then(function (d) { return { ok: r.ok, d: d }; }); })
+        .then(function (res) {
+          var text = (res.ok && res.d.text) ? res.d.text : ((res.d && res.d.error) || 'The crystal went foggy! Ask me again?');
+          // let the machine "work" for at least a beat so the reveal feels earned
+          var wait = Math.max(0, 1400 - (Date.now() - t0));
+          setTimeout(function () {
+            setState('print');
+            status.textContent = cfg.printed || 'Your future is ready! 🎟️';
+            printTicket(text);
+            setTimeout(function () { setState('done'); status.textContent = cfg.again || 'Dream up another? ✨'; }, 1700);
+            busy = false; send.disabled = false; input.disabled = false; input.value = '';
+            sent++; if (id) save(id + ':answer', { sent: sent });
+            fb.classList.add('show');
+            reveal(done, (cfg.complete && cfg.complete.progress) || 100); markDone(id);
+          }, wait);
+        })
+        .catch(function () {
+          setState('idle'); status.textContent = '🙈 The machine lost the signal — try again!';
+          busy = false; send.disabled = false; input.disabled = false;
+          // count the attempt so a network hiccup can't trap the kid behind the gate
+          sent++; if (id) save(id + ':answer', { sent: sent });
+          fb.classList.add('show'); reveal(done, (cfg.complete && cfg.complete.progress) || 100); markDone(id);
+        });
+    }
+    send.addEventListener('click', ask);
+    input.addEventListener('keydown', function (e) { if (e.key === 'Enter') { e.preventDefault(); ask(); } });
+  }
+
+  // =========================================================================
   // CRACK THE SECRET RULE — a pattern-detective game. Study a few examples,
   // predict new ones, get feedback, and figure out the hidden rule — exactly
   // how you (and AI) learn a concept from examples. Open-ended discovery.
@@ -1210,7 +1351,7 @@
   }
 
   // ---- registry + boot ----------------------------------------------------
-  var RENDERERS = { poll: renderPoll, sort: renderSort, choice: renderChoice, nextword: renderNextWord, attention: renderAttention, quiz: renderQuiz, timeline: renderTimeline, reveal: renderReveal, slider: renderSlider, trainer: renderTrainer, match: renderMatch, draw: renderDraw, wordchain: renderWordChain, order: renderOrder, neuron: renderNeuron, arcade: renderArcade, meetai: renderMeetAI, rule: renderRule, factcheck: renderFactCheck, attentionlab: renderAttentionLab, storyline: renderStoryline };
+  var RENDERERS = { poll: renderPoll, sort: renderSort, choice: renderChoice, nextword: renderNextWord, attention: renderAttention, quiz: renderQuiz, timeline: renderTimeline, reveal: renderReveal, slider: renderSlider, trainer: renderTrainer, match: renderMatch, draw: renderDraw, wordchain: renderWordChain, order: renderOrder, neuron: renderNeuron, arcade: renderArcade, meetai: renderMeetAI, future: renderFutureMachine, rule: renderRule, factcheck: renderFactCheck, attentionlab: renderAttentionLab, storyline: renderStoryline };
 
   function hydrate(node) {
     if (node.getAttribute('data-ctf-ready')) return;
