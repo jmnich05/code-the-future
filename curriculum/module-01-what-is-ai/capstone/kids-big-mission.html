@@ -63,41 +63,85 @@ body{ font-family:var(--body); color:#EAF1FF; background:#070C1A; overflow:hidde
   animation:bob 4s ease-in-out infinite; }
 .charpod svg{ width:100%; height:100%; display:block; }
 
-/* ===== board / escape lane ===== */
-#board{ justify-content:flex-start; }
-.hud{ width:100%; max-width:760px; display:flex; align-items:center; justify-content:space-between; gap:12px; margin:6px 0 4px; }
-.hud .qn{ font-family:var(--mono); font-size:13px; letter-spacing:.12em; color:var(--teal); }
-.hud .meter{ flex:1; height:12px; border-radius:99px; background:rgba(255,255,255,.12); overflow:hidden; max-width:380px; }
-.hud .meter i{ display:block; height:100%; width:0; border-radius:99px; background:linear-gradient(90deg,#3FD08A,#7FE3FF); transition:width .6s var(--ease,cubic-bezier(.22,1,.36,1)); }
-.hud .steps{ font-family:var(--display); font-weight:700; font-size:.95rem; white-space:nowrap; }
+/* ===== board: the AI Lab (full-screen escape scene) ===== */
+#board{ justify-content:flex-start; align-items:stretch; padding:0; }
+.lab{ position:relative; flex:1 1 auto; width:100%; min-height:320px; overflow:hidden; --acc:#3D74FF;
+  background:radial-gradient(80% 60% at 50% 0%, rgba(255,255,255,.05), transparent 60%), linear-gradient(180deg,#0c1733 0%,#0a1228 60%,#080d1e 100%); }
+.lab .racks{ position:absolute; inset:0 0 28% 0; opacity:.5;
+  background:repeating-linear-gradient(90deg, rgba(127,227,255,.06) 0 6px, transparent 6px 14px, rgba(0,0,0,.22) 14px 18px, transparent 18px 120px); }
+.lab .racklights{ position:absolute; inset:0 0 30% 0; opacity:.85;
+  background-image:radial-gradient(2px 2px at 40px 30%, var(--acc), transparent), radial-gradient(2px 2px at 150px 56%, #7FE3FF, transparent), radial-gradient(2px 2px at 250px 20%, #FFD479, transparent), radial-gradient(2px 2px at 350px 62%, var(--acc), transparent);
+  background-size:420px 100%; animation:rackblink 2.6s steps(2) infinite; }
+@keyframes rackblink{ 50%{ opacity:.35 } }
+.lab .glow{ position:absolute; left:50%; top:8%; width:64%; height:64%; transform:translateX(-50%); pointer-events:none;
+  background:radial-gradient(circle, var(--acc), transparent 62%); filter:blur(26px); opacity:.3; transition:background .5s, opacity .5s; }
+.lab .floor{ position:absolute; left:0; right:0; bottom:0; height:30%; background:linear-gradient(0deg,#0a1430,#0a1430);
+  border-top:2px solid rgba(127,227,255,.2); }
+.lab .floor::before{ content:''; position:absolute; inset:0; opacity:.4;
+  background:repeating-linear-gradient(90deg, transparent 0 38px, rgba(127,227,255,.12) 38px 40px); }
 
-.lane-wrap{ position:relative; width:100%; max-width:820px; height:172px; margin:4px 0 2px; }
-.lane{ position:absolute; left:4%; right:4%; top:96px; height:8px; border-radius:99px;
-  background:repeating-linear-gradient(90deg, rgba(255,255,255,.28) 0 10px, transparent 10px 22px); }
-.tile{ position:absolute; top:78px; width:38px; height:38px; margin-left:-19px; border-radius:12px; transform:rotate(45deg);
-  background:linear-gradient(160deg,#21407a,#162a52); border:2px solid rgba(127,227,255,.35);
-  box-shadow:0 6px 16px rgba(0,0,0,.4); }
-.tile.done{ background:linear-gradient(160deg,#2f7d5f,#1f5a45); border-color:rgba(63,208,138,.6); }
-.tile .dot{ position:absolute; inset:0; display:flex; align-items:center; justify-content:center; transform:rotate(-45deg);
-  font-family:var(--mono); font-size:12px; color:rgba(255,255,255,.5); }
-.rocketbay{ position:absolute; top:30px; width:96px; height:120px; margin-left:-48px; display:flex; align-items:flex-end; justify-content:center; }
-.rocketbay .pad{ position:absolute; bottom:0; width:78px; height:14px; border-radius:8px; background:linear-gradient(#9fb6e6,#5b73a8); box-shadow:0 6px 16px rgba(0,0,0,.4); }
-.rocket{ position:relative; width:54px; height:96px; filter:drop-shadow(0 8px 18px rgba(0,0,0,.45)); }
-.rocket .body{ position:absolute; left:50%; bottom:14px; width:36px; height:62px; margin-left:-18px; border-radius:18px 18px 10px 10px;
-  background:linear-gradient(120deg,#EAF1FF,#9fb6e6); }
-.rocket .nose{ position:absolute; left:50%; bottom:64px; width:0; height:0; margin-left:-18px; border-left:18px solid transparent; border-right:18px solid transparent; border-bottom:22px solid #FF7A4D; }
-.rocket .win{ position:absolute; left:50%; bottom:44px; width:18px; height:18px; margin-left:-9px; border-radius:50%; background:#173b6e; box-shadow:inset 0 0 0 3px #7FE3FF; }
-.rocket .fin{ position:absolute; bottom:10px; width:14px; height:26px; background:#FF7A4D; border-radius:6px; }
-.rocket .fin.l{ left:2px; transform:skewX(18deg); } .rocket .fin.r{ right:2px; transform:skewX(-18deg); }
+.sector-tag{ position:absolute; top:12px; left:14px; z-index:6; font-family:var(--mono); font-size:11.5px; letter-spacing:.14em; text-transform:uppercase;
+  color:#cfe3ff; background:rgba(8,14,30,.62); border:1px solid rgba(127,227,255,.25); border-radius:8px; padding:6px 10px; }
+.sector-tag b{ color:var(--acc); }
+.escape-hud{ position:absolute; top:12px; right:14px; z-index:6; display:flex; align-items:center; gap:9px;
+  background:rgba(8,14,30,.62); border:1px solid rgba(127,227,255,.25); border-radius:10px; padding:7px 11px; }
+.escape-hud .lamp{ width:11px; height:11px; border-radius:50%; background:#2f7d5f; box-shadow:0 0 8px #3FD08A; }
+.escape-hud.alert .lamp{ background:#FF5A38; box-shadow:0 0 12px #FF5A38; animation:lamp .4s steps(2) infinite; }
+@keyframes lamp{ 50%{ opacity:.3 } }
+.escape-hud .emeter{ width:104px; height:9px; border-radius:99px; background:rgba(255,255,255,.14); overflow:hidden; }
+.escape-hud .emeter i{ display:block; height:100%; width:0; background:linear-gradient(90deg,#3FD08A,#7FE3FF); transition:width .6s var(--ease,cubic-bezier(.22,1,.36,1)); }
+.escape-hud .epct{ font-family:var(--display); font-weight:700; font-size:.82rem; }
 
-.token{ position:absolute; top:54px; width:62px; height:62px; margin-left:-31px; border-radius:16px; overflow:hidden;
-  box-shadow:0 10px 24px rgba(0,0,0,.5); border:2px solid rgba(255,255,255,.55); z-index:3;
-  transition:left .55s cubic-bezier(.34,1.56,.64,1); }
-.token svg{ width:100%; height:100%; display:block; }
-.token.hop{ animation:hop .55s ease; }
-@keyframes hop{ 0%{ transform:translateY(0) } 45%{ transform:translateY(-34px) rotate(-6deg) } 100%{ transform:translateY(0) } }
-.token.back{ animation:backhop .55s ease; }
-@keyframes backhop{ 0%{ transform:translateY(0) } 45%{ transform:translateY(-20px) rotate(8deg) } 100%{ transform:translateY(0) } }
+.hero{ position:absolute; left:50%; bottom:21%; width:140px; height:140px; margin-left:-70px; z-index:4; border-radius:24px; overflow:hidden;
+  box-shadow:0 18px 40px rgba(0,0,0,.5); border:3px solid rgba(255,255,255,.6); animation:bob 3.4s ease-in-out infinite; }
+.hero svg{ width:100%; height:100%; display:block; }
+@media (max-width:560px){ .hero{ width:104px; height:104px; margin-left:-52px; } }
+.hero.cheer{ animation:cheer .7s var(--ease-spring,cubic-bezier(.34,1.56,.64,1)); }
+@keyframes cheer{ 0%{ transform:translateY(0) } 40%{ transform:translateY(-42px) rotate(-4deg) scale(1.05) } 100%{ transform:translateY(0) } }
+.hero.stumble{ animation:stumble .6s ease; }
+@keyframes stumble{ 0%{ transform:translate(0,0) } 22%{ transform:translate(-30px,0) rotate(-9deg) } 50%{ transform:translate(-22px,0) rotate(-9deg) } 80%{ transform:translate(0,0) rotate(0) } }
+.hero-light{ position:absolute; left:50%; bottom:18%; width:200px; height:44px; margin-left:-100px; z-index:3; border-radius:50%;
+  background:radial-gradient(circle, var(--acc), transparent 70%); filter:blur(7px); opacity:.45; transition:background .5s; }
+
+.sentinel{ position:absolute; top:15%; right:15%; width:88px; height:78px; z-index:5; animation:patrol 5s ease-in-out infinite; }
+@keyframes patrol{ 0%,100%{ transform:translate(0,0) } 50%{ transform:translate(-26px,12px) } }
+.sentinel .rotor{ position:absolute; left:50%; top:4px; width:48px; height:8px; margin-left:-24px; border-radius:99px; background:rgba(127,227,255,.5); animation:rotor .25s linear infinite; }
+@keyframes rotor{ 50%{ transform:scaleX(.4); opacity:.7 } }
+.sentinel .hull{ position:absolute; left:50%; top:14px; width:74px; height:44px; margin-left:-37px; border-radius:24px;
+  background:linear-gradient(160deg,#5a6b92,#2c3756); box-shadow:0 8px 18px rgba(0,0,0,.45), inset 0 2px 0 rgba(255,255,255,.15); }
+.sentinel .eye{ position:absolute; left:50%; top:24px; width:26px; height:26px; margin-left:-13px; border-radius:50%;
+  background:radial-gradient(circle at 40% 35%, #d6fbff, var(--teal) 60%, #0E9099); box-shadow:0 0 12px var(--teal); transition:background .2s, box-shadow .2s; }
+.sentinel .pupil{ position:absolute; left:50%; top:31px; width:9px; height:9px; margin-left:-4px; border-radius:50%; background:#06121f; }
+.sentinel.mad .eye{ background:radial-gradient(circle at 40% 35%, #ffd2c8, #FF5A38 60%, #b3260f); box-shadow:0 0 16px #FF5A38; }
+.sentinel.mad{ animation:madshake .12s linear infinite; }
+@keyframes madshake{ 0%{ transform:translate(0,0) } 50%{ transform:translate(2px,-2px) } 100%{ transform:translate(-2px,2px) } }
+.zap{ position:absolute; height:4px; z-index:5; transform-origin:left center; opacity:0;
+  background:linear-gradient(90deg,#FF5A38,#FFD479); box-shadow:0 0 10px #FF5A38; }
+.zap.fire{ animation:zap .5s ease; }
+@keyframes zap{ 0%{ opacity:0; transform:scaleX(0) } 30%{ opacity:1; transform:scaleX(1) } 100%{ opacity:0; transform:scaleX(1) } }
+
+.blastdoor{ position:absolute; right:0; top:0; bottom:30%; width:66px; z-index:2; }
+.blastdoor .leaf{ position:absolute; left:0; right:0; height:50%; transition:transform .5s ease; box-shadow:inset 0 0 0 2px rgba(0,0,0,.4);
+  background:repeating-linear-gradient(45deg,#FFB320 0 13px,#23304f 13px 26px); }
+.blastdoor .leaf.t{ top:0; } .blastdoor .leaf.b{ bottom:0; }
+.blastdoor.open .leaf.t{ transform:translateY(-100%); } .blastdoor.open .leaf.b{ transform:translateY(100%); }
+
+.alarm{ position:absolute; inset:0; z-index:7; pointer-events:none; opacity:0;
+  background:radial-gradient(120% 90% at 50% 50%, transparent 38%, rgba(255,40,20,.42)); box-shadow:inset 0 0 80px rgba(255,40,20,.5); }
+.alarm.on{ animation:alarm 1.5s ease; }
+@keyframes alarm{ 0%,100%{ opacity:0 } 15%,45%,75%{ opacity:1 } 30%,60%{ opacity:.2 } }
+.wipe{ position:absolute; inset:0; z-index:8; pointer-events:none; transform:translateX(-110%);
+  background:linear-gradient(90deg, transparent, rgba(127,227,255,.45), transparent); }
+.wipe.go{ animation:wipe .7s ease; }
+@keyframes wipe{ to{ transform:translateX(110%) } }
+.toast{ position:absolute; top:28%; left:50%; z-index:9; opacity:0; max-width:80%; transform:translate(-50%,0);
+  font-family:var(--display); font-weight:700; font-size:1.05rem; text-align:center; padding:11px 18px; border-radius:14px;
+  background:rgba(8,14,30,.88); border:1px solid rgba(127,227,255,.4); box-shadow:0 16px 40px rgba(0,0,0,.5); }
+.toast.show{ animation:toast 1.8s ease; }
+@keyframes toast{ 0%{ opacity:0; transform:translate(-50%,8px) } 12%,80%{ opacity:1; transform:translate(-50%,-6px) } 100%{ opacity:0; transform:translate(-50%,-18px) } }
+
+.terminal{ width:100%; display:flex; justify-content:center; padding:14px 16px max(14px,env(safe-area-inset-bottom));
+  background:linear-gradient(180deg, transparent, rgba(6,10,22,.55) 35%); }
 
 /* ===== question card ===== */
 .qcard{ width:100%; max-width:680px; background:rgba(12,20,40,.72); backdrop-filter:blur(8px);
@@ -115,6 +159,12 @@ body{ font-family:var(--body); color:#EAF1FF; background:#070C1A; overflow:hidde
 .qfb{ min-height:1.4em; margin-top:12px; font-weight:700; font-size:1rem; opacity:0; transition:opacity .2s; }
 .qfb.show{ opacity:1; }
 .qfb.good{ color:#7FF0B8; } .qfb.bad{ color:#FFC0A8; }
+.qcard.event{ text-align:center; }
+.qcard.event .qtext{ font-size:clamp(1.05rem,3.2vw,1.32rem); margin-bottom:12px; }
+.qcard.event.good{ border-color:rgba(63,208,138,.5); }
+.qcard.event.bad{ border-color:rgba(255,90,56,.5); }
+.qcard.event.choice{ border-color:rgba(155,123,255,.5); }
+.opt.evbtn{ display:block; width:100%; text-align:center; font-family:var(--display); font-weight:700; background:rgba(127,227,255,.12); border-color:rgba(127,227,255,.4); }
 
 /* ===== finale: design the ship ===== */
 .panel{ width:100%; max-width:640px; background:rgba(12,20,40,.7); border:1px solid rgba(127,227,255,.25);
@@ -214,7 +264,8 @@ body{ font-family:var(--body); color:#EAF1FF; background:#070C1A; overflow:hidde
 }
 
 @media (prefers-reduced-motion:reduce){
-  .stars,.planet,.charpod,.token,.launchpod,.flame,.shake,.crawl,.confetti i{ animation:none !important; }
+  .stars,.planet,.charpod,.launchpod,.flame,.shake,.crawl,.confetti i,
+  .hero,.sentinel,.sentinel .rotor,.racklights,.hero.cheer,.hero.stumble{ animation:none !important; }
   .launchpod.go{ transform:translateY(-128vh); transition:transform 2s ease-in; }
   .crawl{ position:static; transform:none; padding:30px 18px; }
 }
@@ -287,63 +338,80 @@ body{ font-family:var(--body); color:#EAF1FF; background:#070C1A; overflow:hidde
     s.innerHTML = '';
     s.appendChild(el('p','kicker','🚀 The Big Mission · Module 1'));
     s.appendChild(el('h1','t-big','The <span class="grad">Great Escape</span>'));
-    s.appendChild(el('p','lede','You are locked in the AI Lab, '+esc(heroName)+'! Answer the control panel to power your escape rocket. Get it right, hop forward. Get it wrong, slip back. Reach the rocket… then design your getaway ship and BLAST OFF.'));
+    s.appendChild(el('p','lede','You are locked deep inside the AI Lab, '+esc(heroName)+'! Crack the lab terminals to blast through each sector toward the Launch Bay. Answer right and a door flies open — answer wrong and a Sentinel drags you back. Watch for surprise lab events! Reach the rocket, design your ship, and ESCAPE.'));
     var pod = el('div','charpod'); pod.innerHTML = avatarSVG; s.appendChild(pod);
-    var go = el('button','btn','▶  Start the escape');
+    var go = el('button','btn','▶  Enter the lab');
     go.style.marginTop = '20px';
     go.addEventListener('click', startBoard);
     s.appendChild(go);
-    s.appendChild(el('p','mini','10 questions from everything you learned. You can do this!'));
+    s.appendChild(el('p','mini','6 sectors · lab terminals, surprise events, and one Sentinel between you and freedom.'));
   }
 
-  // ======================= BOARD ===========================================
-  var laneWrap, token, meterFill, stepsLbl, qnLbl, qhost;
-  function renderBoardScene(){
+  // ======================= BOARD: escape the AI Lab ========================
+  // A full-screen lab scene. The hero (the kid's avatar) is centre stage; a
+  // Sentinel drone guards the exit. Right answers blast a door open and move
+  // them to the next themed SECTOR; wrong answers trip the alarm and the
+  // Sentinel drags them back. Random "lab events" add forks and surprises.
+  var SECTORS = [
+    { name:'Holding Cell',  acc:'#3D74FF' },
+    { name:'Data Vault',    acc:'#26C7D1' },
+    { name:'Training Room', acc:'#9B7BFF' },
+    { name:'Vision Lab',    acc:'#FF8A5C' },
+    { name:'Language Core', acc:'#3FD08A' },
+    { name:'Neural Hub',    acc:'#FF6CA6' },
+    { name:'Launch Bay',    acc:'#FFD479' }
+  ];
+  var lab, hero, sentinel, zapEl, blast, alarmEl, wipeEl, toastEl, sectorTag, emeterFill, epctEl, escHud, qhost;
+  var busyTurn = false;
+
+  function buildLab(){
     var s = $('board'); s.innerHTML='';
-    var hud = el('div','hud');
-    qnLbl = el('div','qn','QUESTION 1');
-    var meter = el('div','meter'); meterFill = el('i'); meter.appendChild(meterFill);
-    stepsLbl = el('div','steps','');
-    hud.appendChild(qnLbl); hud.appendChild(meter); hud.appendChild(stepsLbl);
-    s.appendChild(hud);
+    lab = el('div','lab');
+    lab.innerHTML =
+      '<div class="racks"></div><div class="racklights"></div><div class="glow"></div>'+
+      '<div class="blastdoor"><div class="leaf t"></div><div class="leaf b"></div></div>'+
+      '<div class="floor"></div>'+
+      '<div class="sector-tag"></div>'+
+      '<div class="escape-hud"><span class="lamp"></span><div class="emeter"><i></i></div><span class="epct">0%</span></div>'+
+      '<div class="sentinel"><div class="rotor"></div><div class="hull"></div><div class="eye"></div><div class="pupil"></div></div>'+
+      '<div class="hero-light"></div><div class="zap"></div>'+
+      '<div class="hero"></div>'+
+      '<div class="alarm"></div><div class="wipe"></div><div class="toast"></div>';
+    s.appendChild(lab);
+    var term = el('div','terminal'); qhost = el('div'); qhost.style.cssText='width:100%;display:flex;justify-content:center;';
+    term.appendChild(qhost); s.appendChild(term);
 
-    laneWrap = el('div','lane-wrap');
-    laneWrap.appendChild(el('div','lane'));
-    // tiles 0..GOAL-1 are stepping stones; GOAL is the rocket bay
-    for(var i=0;i<GOAL;i++){
-      var t = el('div','tile'); t.style.left = pct(i); t.setAttribute('data-i',i);
-      t.appendChild(el('span','dot', (i===0?'★':'')));
-      laneWrap.appendChild(t);
-    }
-    var bay = el('div','rocketbay'); bay.style.left = pct(GOAL);
-    bay.innerHTML = '<div class="pad"></div><div class="rocket"><div class="nose"></div><div class="body"></div><div class="win"></div><div class="fin l"></div><div class="fin r"></div></div>';
-    laneWrap.appendChild(bay);
-
-    token = el('div','token'); token.innerHTML = avatarSVG; token.style.left = pct(pos);
-    laneWrap.appendChild(token);
-    s.appendChild(laneWrap);
-
-    qhost = el('div'); qhost.style.width='100%'; qhost.style.display='flex'; qhost.style.justifyContent='center';
-    s.appendChild(qhost);
-    updateHud();
+    hero = lab.querySelector('.hero'); hero.innerHTML = avatarSVG;
+    sentinel = lab.querySelector('.sentinel'); zapEl = lab.querySelector('.zap'); blast = lab.querySelector('.blastdoor');
+    alarmEl = lab.querySelector('.alarm'); wipeEl = lab.querySelector('.wipe'); toastEl = lab.querySelector('.toast');
+    sectorTag = lab.querySelector('.sector-tag'); emeterFill = lab.querySelector('.emeter i'); epctEl = lab.querySelector('.epct'); escHud = lab.querySelector('.escape-hud');
+    paintSector();
   }
-  function pct(i){ return (4 + (i/GOAL)*92) + '%'; }
-  function updateHud(){
-    meterFill.style.width = Math.round((pos/GOAL)*100) + '%';
-    var left = Math.max(0, GOAL-pos);
-    stepsLbl.textContent = left===0 ? '🚀 At the rocket!' : (left+' step'+(left===1?'':'s')+' to the rocket');
-    qnLbl.textContent = 'QUESTION ' + (asked+1);
-    laneWrap.querySelectorAll('.tile').forEach(function(t){ t.classList.toggle('done', (+t.getAttribute('data-i'))<pos); });
+  function paintSector(){
+    var sec = SECTORS[Math.max(0, Math.min(GOAL, pos))];
+    lab.style.setProperty('--acc', sec.acc);
+    sectorTag.innerHTML = 'Sector '+pos+' / '+GOAL+' · <b>'+esc(sec.name)+'</b>';
+    var p = Math.round((pos/GOAL)*100);
+    emeterFill.style.width = p+'%'; epctEl.textContent = p+'%';
   }
+  function toast(msg){ toastEl.innerHTML = msg; toastEl.classList.remove('show'); void toastEl.offsetWidth; toastEl.classList.add('show'); }
 
-  function startBoard(){ show('board'); renderBoardScene(); setTimeout(askQuestion, 420); }
+  function startBoard(){ show('board'); buildLab(); setTimeout(nextTurn, 650); }
+
+  function nextTurn(){
+    if(pos >= GOAL){ setTimeout(startFinale, 450); return; }
+    if(asked >= MAXQ){ toast('🚀 An escape pod boosts you to the Launch Bay!'); advance(GOAL-pos); setTimeout(startFinale, 1500); return; }
+    // ~28% of turns (never the first) are a surprise lab event
+    if(asked > 0 && Math.random() < 0.28){ labEvent(); return; }
+    askQuestion();
+  }
 
   function nextQ(){ if(bi>=bank.length){ bank=shuffle(QUESTIONS); bi=0; } return bank[bi++]; }
 
   function askQuestion(){
     var Q = nextQ();
     var card = el('div','qcard');
-    card.appendChild(el('p','qtag','CONTROL PANEL · '+esc(Q.tag)));
+    card.appendChild(el('p','qtag','⌨ LAB TERMINAL · '+esc(Q.tag)));
     card.appendChild(el('h2','qtext', esc(Q.q)));
     var opts = el('div','opts');
     Q.o.forEach(function(text, i){
@@ -354,40 +422,91 @@ body{ font-family:var(--body); color:#EAF1FF; background:#070C1A; overflow:hidde
     card.appendChild(opts);
     var fb = el('div','qfb'); card.appendChild(fb);
     qhost.innerHTML=''; qhost.appendChild(card);
-    requestAnimationFrame(function(){ card.style.transition='opacity .35s, transform .35s'; });
   }
 
   function answer(Q, choice, opts, fb){
-    var btns = opts.querySelectorAll('.opt');
-    btns.forEach(function(b){ b.disabled=true; });
+    if(busyTurn) return; busyTurn = true;
+    var btns = opts.querySelectorAll('.opt'); btns.forEach(function(b){ b.disabled=true; });
     var right = (choice===Q.a);
-    btns[Q.a].classList.add('right');
-    if(!right) btns[choice].classList.add('wrong');
+    btns[Q.a].classList.add('right'); if(!right) btns[choice].classList.add('wrong');
     asked++;
-    if(right){
-      correct++;
-      fb.className='qfb show good'; fb.textContent='✅ '+Q.why;
-      moveToken(Math.min(GOAL, pos+1), 'hop');
-    } else {
-      fb.className='qfb show bad'; fb.textContent='↩️ '+Q.why;
-      moveToken(Math.max(0, pos-1), 'back');
-    }
-    setTimeout(function(){
-      if(pos>=GOAL){ startFinale(); return; }
-      if(asked>=MAXQ){ // friendly boost so nobody is ever stuck
-        pos=GOAL; updateHud(); token.style.left=pct(pos);
-        setTimeout(startFinale, 700); return;
-      }
-      askQuestion();
-    }, right ? 1500 : 1900);
+    if(right){ correct++; fb.className='qfb show good'; fb.textContent='✅ '+Q.why; advance(1); }
+    else { fb.className='qfb show bad'; fb.textContent='🚨 Security override! '+Q.why; setback(); }
+    setTimeout(function(){ busyTurn=false; nextTurn(); }, right ? 1700 : 2100);
   }
 
-  function moveToken(newPos, kind){
-    token.classList.remove('hop','back'); void token.offsetWidth;
-    token.classList.add(kind);
-    pos = newPos;
-    // move horizontally midway through the hop arc
-    setTimeout(function(){ token.style.left = pct(pos); updateHud(); }, 120);
+  // --- outcomes -----------------------------------------------------------
+  function advance(n){
+    pos = Math.min(GOAL, pos + (n||1));
+    blast.classList.add('open');
+    hero.classList.remove('cheer'); void hero.offsetWidth; hero.classList.add('cheer');
+    setTimeout(function(){
+      wipeEl.classList.remove('go'); void wipeEl.offsetWidth; wipeEl.classList.add('go');
+      setTimeout(paintSector, 330);                 // change room at the peak of the wipe
+      setTimeout(function(){ blast.classList.remove('open'); }, 720);
+    }, 360);
+  }
+  function setback(){
+    pos = Math.max(0, pos - 1);
+    escHud.classList.add('alert');
+    alarmEl.classList.remove('on'); void alarmEl.offsetWidth; alarmEl.classList.add('on');
+    sentinel.classList.add('mad'); fireZap();
+    setTimeout(function(){ hero.classList.remove('stumble'); void hero.offsetWidth; hero.classList.add('stumble'); }, 180);
+    setTimeout(paintSector, 520);
+    setTimeout(function(){ escHud.classList.remove('alert'); sentinel.classList.remove('mad'); }, 1500);
+  }
+  function fireZap(){
+    var lb = lab.getBoundingClientRect(), eb = sentinel.querySelector('.eye').getBoundingClientRect(), hb = hero.getBoundingClientRect();
+    var x1 = eb.left+eb.width/2 - lb.left, y1 = eb.top+eb.height/2 - lb.top;
+    var x2 = hb.left+hb.width/2 - lb.left, y2 = hb.top+hb.height/3 - lb.top;
+    var dx = x2-x1, dy = y2-y1, len = Math.sqrt(dx*dx+dy*dy), ang = Math.atan2(dy,dx)*180/Math.PI;
+    zapEl.style.left = x1+'px'; zapEl.style.top = y1+'px'; zapEl.style.width = len+'px'; zapEl.style.transform = 'rotate('+ang+'deg)';
+    zapEl.classList.remove('fire'); void zapEl.offsetWidth; zapEl.classList.add('fire');
+  }
+
+  // --- random lab events (different decisions & outcomes) -----------------
+  var EVENTS = [
+    { t:'good', text:'⚡  Power surge! A blast door springs open — you DASH ahead!', d:1 },
+    { t:'good', text:'🤖  A friendly cleaner-bot points you to a secret vent — shortcut!', d:1 },
+    { t:'good', text:'💾  You swipe a dropped keycard — the next lock clicks open!', d:1 },
+    { t:'bad',  text:'🧲  A magnet-bot yanks your keycard away! Security pulls you back.', d:-1 },
+    { t:'bad',  text:'🚨  Firewall lockdown! Red lights everywhere — back you go.', d:-1 }
+  ];
+  function labEvent(){
+    if(Math.random() < 0.34){ return doorChoice(); }   // a third of events are a real choice
+    var E = EVENTS[Math.floor(Math.random()*EVENTS.length)];
+    var card = el('div','qcard event '+E.t);
+    card.appendChild(el('p','qtag','⚠ LAB EVENT'));
+    card.appendChild(el('h2','qtext', esc(E.text)));
+    var go = el('button','opt evbtn', E.d>0 ? 'Go go go! →' : 'Oh no… keep going →');
+    card.appendChild(go); card.appendChild(el('div','qfb'));
+    qhost.innerHTML=''; qhost.appendChild(card);
+    go.addEventListener('click', function(){
+      if(busyTurn) return; busyTurn=true; go.disabled=true;
+      if(E.d>0){ toast('✨ Shortcut!'); advance(1); } else { setback(); }
+      setTimeout(function(){ busyTurn=false; nextTurn(); }, E.d>0 ? 1500 : 2000);
+    });
+  }
+  function doorChoice(){
+    var winner = Math.random()<0.5 ? 0 : 1;
+    var card = el('div','qcard event choice');
+    card.appendChild(el('p','qtag','🚪 DECISION · CHOOSE YOUR ROUTE'));
+    card.appendChild(el('h2','qtext','Two doors ahead. Which do you trust?'));
+    var opts = el('div','opts');
+    var fb = el('div','qfb');
+    ['🚪  Left door','🚪  Right door'].forEach(function(lbl, i){
+      var b = el('button','opt', lbl);
+      b.addEventListener('click', function(){
+        if(busyTurn) return; busyTurn=true;
+        opts.querySelectorAll('.opt').forEach(function(x){ x.disabled=true; });
+        if(i===winner){ b.classList.add('right'); fb.className='qfb show good'; fb.textContent='✅ Clear path — you slip through!'; advance(1); }
+        else { b.classList.add('wrong'); opts.querySelectorAll('.opt')[winner].classList.add('right'); fb.className='qfb show bad'; fb.textContent='🚨 A guard-bot was waiting! Back a sector.'; setback(); }
+        setTimeout(function(){ busyTurn=false; nextTurn(); }, i===winner ? 1600 : 2100);
+      });
+      opts.appendChild(b);
+    });
+    card.appendChild(opts); card.appendChild(fb);
+    qhost.innerHTML=''; qhost.appendChild(card);
   }
 
   // ======================= FINALE: design the ship =========================
