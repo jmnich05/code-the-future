@@ -382,6 +382,16 @@
     try { var p = JSON.parse(localStorage.getItem("ctf:profile") || "null"); if (p && p.avatar && Object.keys(p.avatar).length) return p.avatar; } catch (e) {}
     return (window.CTFAvatar && window.CTFAvatar.DEFAULT) || {};
   }
+  // actually put the new gear ON the character and save it to their profile
+  function equipGear(key) {
+    try {
+      var p = JSON.parse(localStorage.getItem("ctf:profile") || "null") || {};
+      p.avatar = p.avatar && Object.keys(p.avatar).length ? p.avatar : Object.assign({}, (window.CTFAvatar && window.CTFAvatar.DEFAULT) || {});
+      p.avatar.acc = key;
+      localStorage.setItem("ctf:profile", JSON.stringify(p));
+      var d = db(); if (d && d.updateProfile) { d.updateProfile({ avatar: p.avatar }); if (d.logEvent) d.logEvent("gear_equipped", { acc: key }); }
+    } catch (e) {}
+  }
   function maybeGearReveal(n, rw) {
     if (!window.CTFAvatar || !window.CTFAvatar.render) return;
     var seenKey = "ctf:gearseen:" + MODULE + ":" + n, seen = false;
@@ -404,7 +414,11 @@
         '<div class="gr-piece">' + rw.emoji + '</div></div>' +
       '<div class="gr-head">✨ New gear unlocked! ✨</div>' +
       '<div class="gr-name">' + esc(rw.emoji + " " + rw.label) + '</div>' +
-      '<button class="gr-btn" disabled>Wear it! →</button>';
+      '<div class="gr-actions">' +
+        '<button class="gr-btn" data-act="wear" disabled>Wear it now! →</button>' +
+        '<button class="gr-btn gr-alt" data-act="closet" disabled>🎒 Save to my closet</button>' +
+      '</div>' +
+      '<div class="gr-note"></div>';
     document.body.appendChild(ov);
     requestAnimationFrame(function () { ov.classList.add("show"); });
 
@@ -413,11 +427,25 @@
       ov.querySelector(".gr-stage").classList.add("landed");   // pop + ring burst
       ov.querySelector(".gr-piece").classList.add("poof");
       burst(ov);
-      var btn = ov.querySelector(".gr-btn"); btn.disabled = false; btn.classList.add("ready");
+      ov.querySelectorAll(".gr-btn").forEach(function (b) { b.disabled = false; b.classList.add("ready"); });
     }, 1150);
 
     function close() { ov.classList.add("out"); setTimeout(function () { if (ov.parentNode) ov.remove(); }, 360); }
-    ov.querySelector(".gr-btn").addEventListener("click", close);
+    // confirm, then close shortly after so the kid sees what happened
+    function confirmClose(msg) {
+      var note = ov.querySelector(".gr-note"); if (note) { note.textContent = msg; note.classList.add("show"); }
+      ov.querySelectorAll(".gr-btn").forEach(function (b) { b.disabled = true; });
+      setTimeout(close, 950);
+    }
+    ov.querySelector('[data-act="wear"]').addEventListener("click", function () {
+      equipGear(rw.key);
+      var ch = ov.querySelector(".gr-char"); if (ch) ch.innerHTML = after;   // make sure it's shown on
+      confirmClose("✅ You're wearing your " + rw.label + "!");
+    });
+    ov.querySelector('[data-act="closet"]').addEventListener("click", function () {
+      // gear is already owned (the mission badge unlocks it) — just stash it for later
+      confirmClose("🎒 Saved! Find it anytime in Edit Character.");
+    });
   }
   // a quick confetti burst attached to a given container (for overlays)
   function burst(host) {

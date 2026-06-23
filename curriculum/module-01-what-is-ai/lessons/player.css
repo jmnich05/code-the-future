@@ -345,4 +345,9 @@ body::after{ width:42vmax; height:42vmax; right:-14vmax; bottom:-16vmax;
   background:linear-gradient(120deg,var(--coral-500,#FF5A38),var(--amber-400,#FFB320)); box-shadow:0 12px 30px rgba(255,90,56,.5); opacity:0; transform:translateY(10px); transition:opacity .3s, transform .3s; }
 .gr-btn.ready{ opacity:1; transform:none; }
 .gr-btn:disabled{ pointer-events:none; }
+.gr-actions{ display:flex; gap:12px; flex-wrap:wrap; justify-content:center; }
+.gr-btn.gr-alt{ background:transparent; border:2px solid rgba(255,255,255,.55); box-shadow:none; }
+.gr-btn.gr-alt:hover{ background:rgba(255,255,255,.12); }
+.gr-note{ min-height:1.3em; margin-top:14px; font-family:var(--font-display); font-weight:700; font-size:1.05rem; color:#FFE08A; opacity:0; transition:opacity .3s; }
+.gr-note.show{ opacity:1; }
 @media (prefers-reduced-motion:reduce){ .gr-piece,.gr-char,.gr-rays{ animation:none !important; } .gr-piece{ top:34%; opacity:1; } }
