@@ -171,6 +171,48 @@ body{ font-family:var(--body); color:#EAF1FF; background:#070C1A; overflow:hidde
 .crawl .cr-badge svg{ width:100%; height:100%; display:block; }
 .credits-skip{ position:absolute; bottom:22px; left:50%; transform:translateX(-50%); z-index:5; }
 
+/* ===== outro: what's next + parent report ===== */
+#outro{ justify-content:center; }
+.cards{ display:flex; gap:18px; flex-wrap:wrap; justify-content:center; max-width:880px; width:100%; }
+.card2{ flex:1 1 360px; max-width:430px; text-align:left; background:rgba(12,20,40,.72); border:1px solid rgba(127,227,255,.25);
+  border-radius:22px; padding:22px 24px; box-shadow:0 20px 50px rgba(0,0,0,.45); }
+.card2 .sub{ font-family:var(--mono); font-size:12px; letter-spacing:.14em; text-transform:uppercase; color:var(--teal); margin:0 0 6px; }
+.card2 h3{ font-family:var(--display); font-weight:700; font-size:1.45rem; margin:0 0 12px; }
+.card2 ul{ margin:0; padding-left:18px; }
+.card2 li{ margin:9px 0; line-height:1.45; font-size:1rem; }
+.card2 .pet{ margin-top:14px; padding:11px 13px; border-radius:13px; background:rgba(127,227,255,.1); border:1px dashed rgba(127,227,255,.45); font-weight:600; }
+.outro-actions{ display:flex; gap:12px; flex-wrap:wrap; justify-content:center; margin-top:24px; }
+
+/* the printable parent report (overlay on screen, clean sheet on paper) */
+.report{ position:fixed; inset:0; z-index:9999; background:rgba(7,12,26,.9); overflow:auto; padding:24px; }
+.report[hidden]{ display:none; }
+.sheet{ max-width:740px; margin:0 auto; background:#fff; color:#1B2233; border-radius:18px; padding:42px 46px;
+  box-shadow:0 30px 80px rgba(0,0,0,.5); font-family:var(--body); border-top:8px solid #3D74FF; }
+.sheet .brand{ font-family:var(--mono); font-size:12px; letter-spacing:.18em; text-transform:uppercase; color:#0E9099; }
+.sheet h1{ font-family:var(--display); font-size:2rem; line-height:1.1; margin:6px 0 2px; color:#0C1322; }
+.sheet .modline{ color:#5F6B82; font-weight:600; margin:0 0 16px; }
+.sheet .awarded{ display:flex; align-items:center; gap:14px; padding:14px 0; border-top:2px solid #ECEFF5; border-bottom:2px solid #ECEFF5; margin:8px 0 18px; }
+.sheet .awarded .nm{ font-family:var(--display); font-weight:700; font-size:1.5rem; color:#1E45C2; }
+.sheet .awarded .meta{ font-size:.92rem; color:#5F6B82; }
+.sheet .seal{ width:64px; height:64px; border-radius:14px; overflow:hidden; flex:0 0 auto; box-shadow:0 6px 16px rgba(12,19,34,.18); }
+.sheet .seal svg{ width:100%; height:100%; display:block; }
+.sheet h2{ font-family:var(--display); font-size:1.1rem; color:#0C1322; margin:20px 0 8px; }
+.sheet ul{ margin:0; padding-left:20px; } .sheet li{ margin:6px 0; line-height:1.45; font-size:.98rem; }
+.sheet .two{ display:grid; grid-template-columns:1fr 1fr; gap:8px 28px; }
+@media (max-width:560px){ .sheet .two{ grid-template-columns:1fr; } .sheet{ padding:30px 24px; } }
+.sheet .pnote{ margin-top:18px; padding:16px 18px; background:#F6F8FC; border-radius:12px; font-size:.95rem; }
+.sheet .pnote b{ color:#1E45C2; }
+.sheet .foot{ margin-top:22px; padding-top:14px; border-top:2px solid #ECEFF5; font-size:.85rem; color:#8A93A8; display:flex; justify-content:space-between; gap:10px; flex-wrap:wrap; }
+.report-bar{ position:sticky; top:0; z-index:2; max-width:740px; margin:0 auto 14px; padding:6px 0; display:flex; gap:10px; justify-content:flex-end; }
+
+@media print {
+  body{ background:#fff !important; }
+  #stage{ display:none !important; }
+  .no-print{ display:none !important; }
+  .report{ position:static; background:#fff; padding:0; overflow:visible; }
+  .sheet{ box-shadow:none; border-radius:0; max-width:none; border-top:6px solid #3D74FF; padding:0 6px; }
+}
+
 @media (prefers-reduced-motion:reduce){
   .stars,.planet,.charpod,.token,.launchpod,.flame,.shake,.crawl,.confetti i{ animation:none !important; }
   .launchpod.go{ transform:translateY(-128vh); transition:transform 2s ease-in; }
@@ -190,7 +232,9 @@ body{ font-family:var(--body); color:#EAF1FF; background:#070C1A; overflow:hidde
   <section id="finale" class="screen"></section>
   <section id="launch" class="screen"></section>
   <section id="credits" class="screen"></section>
+  <section id="outro" class="screen"></section>
 </div>
+<div id="report" class="report" hidden></div>
 
 <script src="/platform/lib/avatar.js"></script>
 <script src="/platform/lib/filter.js"></script>
@@ -234,7 +278,7 @@ body{ font-family:var(--body); color:#EAF1FF; background:#070C1A; overflow:hidde
   var bank = shuffle(QUESTIONS), bi = 0;
 
   function show(id){
-    ['title','board','finale','launch','credits'].forEach(function(s){ $(s).classList.toggle('on', s===id); });
+    ['title','board','finale','launch','credits','outro'].forEach(function(s){ $(s).classList.toggle('on', s===id); });
   }
 
   // ======================= TITLE ===========================================
@@ -453,10 +497,103 @@ body{ font-family:var(--body); color:#EAF1FF; background:#070C1A; overflow:hidde
       '<div style="margin-top:8px;font-size:1.2rem;opacity:.92">You officially understand AI — and you just used it to escape.</div>'+
       '<div class="cr-title" style="font-size:clamp(1.4rem,5vw,2.2rem)">Module 1 Complete 🏆</div>';
     s.appendChild(crawl);
-    var fin = el('button','btn ghost credits-skip','Back to Missions  →');
-    fin.addEventListener('click', function(){ try{ localStorage.setItem('ctf:bigmission:done','1'); }catch(e){} location.href='/platform/missions.html'; });
+    var fin = el('button','btn credits-skip','What’s next  →');
+    fin.addEventListener('click', renderOutro);
     s.appendChild(fin);
+    // when the credit crawl finishes on its own, glide into the outro
+    crawl.addEventListener('animationend', function(){ if($('credits').classList.contains('on')) renderOutro(); });
     try{ localStorage.setItem('ctf:bigmission:done','1'); }catch(e){}
+  }
+
+  // ======================= OUTRO: what's next + parent report ===============
+  function renderOutro(){
+    show('outro');
+    var s = $('outro'); s.innerHTML='';
+    s.appendChild(el('p','kicker','🎉 Module 1 complete · '+esc(heroName)));
+    s.appendChild(el('h1','t-big','You’re a <span class="grad">Future Builder</span>'));
+
+    var cards = el('div','cards'); cards.style.marginTop='22px';
+
+    // --- next week preview ---
+    var next = el('div','card2');
+    next.innerHTML =
+      '<p class="sub">📅 Next week · Module 2</p>'+
+      '<h3>AI and Our World</h3>'+
+      '<ul>'+
+        '<li>See where AI is <b>already</b> helping — doctors, maps, the planet, and more.</li>'+
+        '<li>Tackle the big questions: <b>privacy, fairness</b>, and who gets to decide what AI does.</li>'+
+        '<li>Become a <b>responsible builder</b> — use AI for good and spot when a tool could hurt.</li>'+
+      '</ul>'+
+      '<div class="pet">🐾 New reward: adopt a <b>sidekick pet</b> that travels with your character!</div>';
+    cards.appendChild(next);
+
+    // --- parent report ---
+    var rep = el('div','card2');
+    rep.innerHTML =
+      '<p class="sub">📄 For your grown-up</p>'+
+      '<h3>Your Module 1 Report</h3>'+
+      '<ul>'+
+        '<li>A printable certificate showing <b>what you learned</b> and the <b>skills you practiced</b>.</li>'+
+        '<li>Conversation starters so you can <b>teach a grown-up</b> what AI really is.</li>'+
+      '</ul>';
+    var pbtn = el('button','btn amber','🖨️  Print my report');
+    pbtn.style.marginTop='14px';
+    pbtn.addEventListener('click', openReport);
+    rep.appendChild(pbtn);
+    cards.appendChild(rep);
+    s.appendChild(cards);
+
+    var actions = el('div','outro-actions');
+    var back = el('button','btn','Back to Missions  →');
+    back.addEventListener('click', function(){ try{ localStorage.setItem('ctf:bigmission:done','1'); }catch(e){} location.href='/platform/missions.html'; });
+    actions.appendChild(back);
+    s.appendChild(actions);
+    try{ localStorage.setItem('ctf:bigmission:done','1'); }catch(e){}
+  }
+
+  function openReport(){
+    var when = new Date().toLocaleDateString(undefined, { year:'numeric', month:'long', day:'numeric' });
+    var seal = (window.CTFAvatar) ? window.CTFAvatar.render(AV) : '';
+    var r = $('report');
+    r.innerHTML =
+      '<div class="report-bar no-print">'+
+        '<button class="btn amber" id="rp-print">🖨️  Print this</button>'+
+        '<button class="btn ghost" id="rp-close">Close</button>'+
+      '</div>'+
+      '<div class="sheet">'+
+        '<div class="brand">◆ Code the Future · Certificate of Completion</div>'+
+        '<h1>Module 1 — What Is AI?</h1>'+
+        '<p class="modline">A 12-mission journey into how AI learns, thinks, and gets things done.</p>'+
+        '<div class="awarded">'+
+          '<div class="seal">'+seal+'</div>'+
+          '<div><div class="nm">'+esc(heroName)+'</div>'+
+          '<div class="meta">Completed '+esc(when)+' · Final challenge: '+correct+' / 10 correct 🎯</div></div>'+
+        '</div>'+
+        '<h2>What I learned</h2>'+
+        '<ul>'+
+          '<li><b>AI learns from examples</b> instead of only following fixed rules — unlike a toaster.</li>'+
+          '<li>AI finds <b>patterns</b>, the same way I learned what a dog is. The examples are called <b>data</b>, and teaching it is <b>training</b>.</li>'+
+          '<li>AI can learn to <b>see</b> (patterns in pixels) and use <b>words</b> (guessing the next word, over and over).</li>'+
+          '<li>The focus trick behind chatbots is <b>attention</b> — that kind of AI is a <b>transformer</b>.</li>'+
+          '<li>AI runs on a <b>neural network</b> inspired by the brain — but it is <b>not alive</b> and has <b>no feelings</b>.</li>'+
+          '<li>AI is powerful but can be <b>confidently wrong</b>, so a human <b>stays the boss</b> and checks its work.</li>'+
+          '<li>I <b>used a real AI myself</b> to design and launch my escape ship!</li>'+
+        '</ul>'+
+        '<h2>Skills I practiced</h2>'+
+        '<ul class="two">'+
+          '<li>Pattern recognition &amp; logical thinking</li>'+
+          '<li>Critical thinking &amp; fact-checking</li>'+
+          '<li>Writing clear prompts for an AI</li>'+
+          '<li>Using real AI tools responsibly</li>'+
+          '<li>Persistence &amp; problem-solving</li>'+
+          '<li>Explaining ideas in my own words</li>'+
+        '</ul>'+
+        '<div class="pnote"><b>For grown-ups:</b> Ask me to explain one of these ideas — teaching it shows I really get it. Try: “How is AI different from a toaster?” · “What is AI great at, and what is it bad at?” · “Why should a human always check what an AI says?”</div>'+
+        '<div class="foot"><span>Code the Future · codethefuture.net</span><span>Next up: Module 2 — AI and Our World</span></div>'+
+      '</div>';
+    r.hidden = false;
+    $('rp-print').addEventListener('click', function(){ window.print(); });
+    $('rp-close').addEventListener('click', function(){ r.hidden = true; r.innerHTML=''; });
   }
 
   // ---- boot ----------------------------------------------------------------
