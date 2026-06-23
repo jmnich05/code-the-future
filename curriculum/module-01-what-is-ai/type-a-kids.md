@@ -471,7 +471,7 @@ life — it kind of *arrived*, recently, with a bang. And you are here for the v
 the story. The chapters that haven't been written yet? Some of those are going to be written
 by you.
 
-`[INTERACTIVE: tap-through timeline — "a long time ago → computers → beating humans at games → about 10 years ago → just a few years ago → NOW (you're here!)" with a fun fact at each stop.]`
+`[INTERACTIVE: "The Story of AI" — a cinematic, build-it-yourself timeline. The kid taps to reveal each milestone of the last ~20 years (smartphones → Siri → AI sees → AlphaGo → transformers → AI writes → AI art → ChatGPT → AI agents → NOW), and an "AI smarts" meter climbs as the years pile up faster and faster. Visual storytelling that makes you FEEL the acceleration — not a quiz.]`
 
 ### ✅ Mission 9 Complete!
 **You just unlocked:**

@@ -1157,8 +1157,60 @@
     }
   }
 
+  // =========================================================================
+  // STORY OF AI — a cinematic, build-it-yourself timeline. Tap to reveal each
+  // milestone of the last ~20 years; an "AI smarts" meter climbs as the years
+  // bunch up — so kids FEEL how fast AI got smart. Storytelling, not a quiz.
+  // =========================================================================
+  function renderStoryline(root, cfg, id) {
+    root.innerHTML = header(cfg);
+    var ms = cfg.milestones || [];
+    var meter = el('div', 'sl-meter', '<div class="sl-mhead"><span>🧠 AI smarts</span><span class="sl-mlabel">just getting started…</span></div><div class="sl-bar"><i></i></div>');
+    root.appendChild(meter);
+    var track = el('div', 'sl-track'); root.appendChild(track);
+    var actions = el('div', 'ctf-actions'); root.appendChild(actions);
+    var fb = el('div', 'ctf-feedback'); root.appendChild(fb);
+    var done = completionCard(cfg); if (done) root.appendChild(done);
+    var bar = meter.querySelector('.sl-bar > i'), mlabel = meter.querySelector('.sl-mlabel');
+    var btn = el('button', 'ctf-btn', '▶ Start the story'); actions.appendChild(btn);
+
+    function setMeter(v) {
+      bar.style.width = v + '%';
+      mlabel.textContent = v >= 100 ? "…and now it's YOUR turn! 🚀" : v >= 75 ? 'mind-blowing 🤯' : v >= 50 ? 'really smart 🧠' : v >= 25 ? 'getting clever ✨' : 'just getting started…';
+    }
+    function addCard(m, animate) {
+      var c = el('div', 'sl-item' + (animate ? ' in' : ''),
+        '<div class="sl-dot">' + esc(m.icon || '•') + '</div>' +
+        '<div class="sl-card"><div class="sl-year">' + esc(m.year) + '</div>' +
+        '<div class="sl-title">' + esc(m.title) + '</div>' +
+        '<div class="sl-text">' + esc(m.text) + '</div></div>');
+      track.appendChild(c);
+      if (animate) { try { c.scrollIntoView({ block: 'nearest', behavior: 'smooth' }); } catch (e) {} }
+    }
+    function finishStory() {
+      btn.remove();
+      fb.className = 'ctf-feedback show good'; fb.innerHTML = cfg.thanks || '';
+      reveal(done, (cfg.complete && cfg.complete.progress) || 100); markDone(id);
+    }
+
+    var prior = id ? load(id + ':answer') : null;
+    if (prior && prior.done) { ms.forEach(function (m) { addCard(m); }); setMeter(100); finishStory(); return; }
+    var shown = (prior && prior.shown) ? Math.min(prior.shown, ms.length) : 0;
+    for (var k = 0; k < shown; k++) addCard(ms[k]);
+    if (shown > 0) { setMeter(ms[shown - 1].smarts); btn.textContent = 'Next →'; }
+
+    btn.onclick = function () {
+      if (shown >= ms.length) return;
+      var m = ms[shown]; shown++;
+      addCard(m, true); setMeter(m.smarts);
+      if (id) save(id + ':answer', { shown: shown });
+      if (shown >= ms.length) { if (id) save(id + ':answer', { shown: shown, done: true }); finishStory(); }
+      else btn.textContent = 'Next →';
+    };
+  }
+
   // ---- registry + boot ----------------------------------------------------
-  var RENDERERS = { poll: renderPoll, sort: renderSort, choice: renderChoice, nextword: renderNextWord, attention: renderAttention, quiz: renderQuiz, timeline: renderTimeline, reveal: renderReveal, slider: renderSlider, trainer: renderTrainer, match: renderMatch, draw: renderDraw, wordchain: renderWordChain, order: renderOrder, neuron: renderNeuron, arcade: renderArcade, meetai: renderMeetAI, rule: renderRule, factcheck: renderFactCheck, attentionlab: renderAttentionLab };
+  var RENDERERS = { poll: renderPoll, sort: renderSort, choice: renderChoice, nextword: renderNextWord, attention: renderAttention, quiz: renderQuiz, timeline: renderTimeline, reveal: renderReveal, slider: renderSlider, trainer: renderTrainer, match: renderMatch, draw: renderDraw, wordchain: renderWordChain, order: renderOrder, neuron: renderNeuron, arcade: renderArcade, meetai: renderMeetAI, rule: renderRule, factcheck: renderFactCheck, attentionlab: renderAttentionLab, storyline: renderStoryline };
 
   function hydrate(node) {
     if (node.getAttribute('data-ctf-ready')) return;
