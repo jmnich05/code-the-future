@@ -32,7 +32,7 @@ const TRACKS = {
 // real .jpg, if dropped in later, takes precedence over the SVG.
 const ART_MAP = { kids: { 1:"mission-1",2:"mission-2",3:"mission-3",4:"mission-4",5:"mission-5",6:"mission-6",7:"mission-7",8:"mission-8",9:"mission-9",10:"mission-10",11:"mission-11",12:"mission-12" } };
 const ART_CAPTIONS = {
-  1: "You're back — and this week, AI gets bigger than apps.",
+  1: "You're back — and this week, AI leaps off the screen and into the real world.",
   2: "AI is already woven through the whole world — not just your screen.",
   3: "AI helps doctors spot what tired eyes might miss — like a metal detector for sickness.",
   4: "AI helps with giant jobs: clean energy, weather, and taking care of the planet.",
