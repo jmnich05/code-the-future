@@ -329,7 +329,7 @@
       <p class="lede">And they get a weekly hands-on session with a <b>coach who works in the industry</b> and is passionate about the future, alongside a <b>psychologist who specializes in child development</b> and helped develop the platform and curriculum.</p>
       <div class="hero-ctas">
         <a class="btn btn-primary btn-big" href="#cohorts">Reserve a Spot</a>
-        <a class="btn btn-ghost btn-big" href="#film">▶ From the co-founder Jon Nichols</a>
+        <a class="btn btn-ghost btn-big" href="#film">▶ Walkthrough from co-founder Jon Nichols</a>
       </div>
       <div class="hero-meta">
         <span><b>12</b> game-like missions</span>
@@ -380,8 +380,8 @@
 <section class="filmsec" id="filmsec">
   <div class="wrap">
     <div class="sec-head reveal" style="margin-left:auto;margin-right:auto;text-align:center;max-width:560px">
-      <span class="kicker" style="color:var(--teal-bright);justify-content:center">Meet the founders</span>
-      <h2>Why we built this for Louisville kids.</h2>
+      <span class="kicker" style="color:var(--teal-bright);justify-content:center">Program walkthrough</span>
+      <h2>A walkthrough of the program &amp; platform — from co-founder Jon Nichols.</h2>
     </div>
     <div class="film reveal" id="film">
       <!-- VIDEO SLOT — when Jon's film is ready, set FILM_URL in the script
@@ -629,7 +629,7 @@
   /* =====================================================================
      EDIT ME — Jon: update these as real dates/openings are locked in.
      ===================================================================== */
-  var FILM_URL = "/platform/assets/film.mp4"; // the founder film (swap to a YouTube embed URL anytime)
+  var FILM_URL = "https://www.youtube-nocookie.com/embed/zUs5lakiMRM"; // walkthrough from co-founder Jon Nichols
   var COHORTS = [
     { name: "Founding Cohort · Summer", dates: "Takeoff: week of July 6, 2026", meta: "Weekly one-hour hands-on session at the public library + missions at home · ages 8–11",
       seats: "Sign-ups underway — limited seats remain", status: "Enrolling now", open: true },
@@ -645,7 +645,7 @@
     var film = document.getElementById("film");
     film.innerHTML = FILM_URL.indexOf(".mp4") > -1
       ? '<video src="' + FILM_URL + '" controls playsinline preload="metadata" poster="/platform/assets/film-poster.jpg"></video>'
-      : '<iframe src="' + FILM_URL + '" title="Code the Future film" allow="accelerometer; autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>';
+      : '<iframe src="' + FILM_URL + '" title="Walkthrough of the program and platform from Co-Founder Jon Nichols" allow="accelerometer; autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>';
   }
 
   // cohort cards + form session options
