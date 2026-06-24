@@ -120,7 +120,7 @@
 
 <script src="lib/config.js"></script>
 <script src="lib/avatar.js"></script>
-<script src="lib/badge.js"></script>
+<script src="lib/badge.js?v=2"></script>
 <script type="module">
   import { CTFDB } from "./lib/ctf-db.js";
   CTFDB.init().then(function(){ window.dispatchEvent(new Event("ctfdb:ready")); });
@@ -256,7 +256,8 @@
 
       var bimgs = bds.slice(0, 3).map(function(b){
         var n = window.CTFBadge.numFor(b.badge_key);
-        return n ? '<img src="assets/badges/badge-' + n + '.png" title="' + esc(window.CTFBadge.nameFor(b.badge_key)) + '" alt="">' : "";
+        var set = window.CTFBadge.setFor ? window.CTFBadge.setFor(b.badge_key) : "";
+        return n ? '<img src="assets/badges/badge-' + set + n + '.png" title="' + esc(window.CTFBadge.nameFor(b.badge_key)) + '" alt="">' : "";
       }).join("");
       if (bds.length > 3) bimgs += '<span class="more">+' + (bds.length - 3) + "</span>";
       if (!bds.length) bimgs = '<span class="more">—</span>';

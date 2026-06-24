@@ -85,7 +85,7 @@
 
 <script src="lib/config.js"></script>
 <script src="lib/avatar.js?v=2"></script>
-<script src="lib/badge.js"></script>
+<script src="lib/badge.js?v=2"></script>
 <script src="lib/filter.js"></script>
 <script src="profile.js"></script>
 <script type="module">
@@ -113,7 +113,7 @@
       var B = window.CTFBadge;
       var keys = badges.slice().sort(function(a,b){ return B.numFor(a) - B.numFor(b); });
       bd.innerHTML = '<div class="badge-case">' + keys.map(function(k){
-        return '<div class="badge-slot">' + B.render(B.numFor(k)) + '<span>' + B.nameFor(k) + '</span></div>';
+        return '<div class="badge-slot">' + (B.renderKey ? B.renderKey(k) : B.render(B.numFor(k))) + '<span>' + B.nameFor(k) + '</span></div>';
       }).join("") + '</div>';
     }
     document.getElementById("stats").innerHTML =

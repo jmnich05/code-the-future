@@ -81,11 +81,25 @@
     return key;
   }
   function numFor(key) {
-    var m = String(key || "").match(/-m(\d+)$/);
-    if (m) return parseInt(m[1], 10);
+    key = String(key || "");
+    var m2 = key.match(/-mod2-(\d+)$/); if (m2) return parseInt(m2[1], 10);
+    var m = key.match(/-m(\d+)$/);      if (m)  return parseInt(m[1], 10);
     if (/complete$/.test(key)) return 12;
     return 1;
   }
+  // which art set a badge key belongs to ("mod2-" → Module 2 art, "" → Module 1)
+  function setFor(key) {
+    return /-mod2-\d+$|module-02[\w-]*-complete$/.test(String(key || "")) ? "mod2-" : "";
+  }
+  // module-aware art <img> (with hidden SVG fallback) for a badge KEY
+  function renderKey(key) {
+    var n = numFor(key), set = setFor(key);
+    return '<span class="ctf-badge-svg" style="display:block;position:relative">' +
+      '<img src="' + ART_BASE + set + n + '.png" alt="" loading="lazy" ' +
+      'style="display:block;width:100%;height:100%;object-fit:contain" ' +
+      'onerror="this.style.display=\'none\';this.parentNode.querySelector(\'svg\').style.display=\'block\'">' +
+      renderSvg(n, { hidden: true }) + '</span>';
+  }
 
-  window.CTFBadge = { render: render, renderSvg: renderSvg, nameFor: nameFor, numFor: numFor, NAMES: KIDS_NAMES, NAMES_M2: KIDS_NAMES_M2 };
+  window.CTFBadge = { render: render, renderKey: renderKey, renderSvg: renderSvg, nameFor: nameFor, numFor: numFor, setFor: setFor, NAMES: KIDS_NAMES, NAMES_M2: KIDS_NAMES_M2 };
 })();

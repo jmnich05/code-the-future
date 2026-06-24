@@ -234,8 +234,7 @@
       beat.className = "beat t-" + type;
       if (type === "complete") {
         var n = step.m && step.m.n, total = 12;
-        var bart = (window.CTFBadge && window.CTFBadge.renderSvg) ? window.CTFBadge.renderSvg(n)
-                 : (window.CTFBadge && n) ? window.CTFBadge.render(n) : "";
+        var bart = (window.CTFBadge && window.CTFBadge.renderKey && n) ? window.CTFBadge.renderKey("kids-mod2-" + n) : "";
         var bname = (window.CTFBadge && window.CTFBadge.nameFor && n) ? window.CTFBadge.nameFor("kids-mod2-" + n) : "";
         var dots = ""; for (var d = 1; d <= total; d++) dots += '<i class="' + (d <= n ? "on" : "") + '"></i>';
         beat.innerHTML =
