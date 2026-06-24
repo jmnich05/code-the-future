@@ -76,10 +76,10 @@ than your screen. It's already woven into the whole world around you, quietly do
 you never see.
 
 Think about a single normal day. A doctor's computer helps spot a problem on an X-ray. A
-farmer's drone checks which plants need water. A weather app warns a whole city that a
-storm is coming. A maps app reroutes thousands of cars around a traffic jam at once. An app
-instantly translates a kid's words into a different language so two friends can talk. None
-of that is on *your* phone — but it's all AI, all happening right now.
+farmer's drone checks which plants need water. A weather system scans the skies and warns a
+whole city that a storm is coming. A city's traffic computers reroute thousands of cars
+around a jam at once. In a science lab, AI helps invent a brand-new medicine. You never tap
+a screen for any of it — but it's all AI, working out in the world right now.
 
 Here's a way to picture it. A hundred years ago, **electricity** was a brand-new novelty —
 a single light bulb people gathered around to stare at. Then, bit by bit, it slipped behind
