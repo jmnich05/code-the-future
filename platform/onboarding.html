@@ -79,7 +79,9 @@
     var st = document.getElementById("status");
     if (window.CTFDB && window.CTFDB.enabled) { await window.CTFDB.updateProfile(profile); window.CTFDB.logEvent("onboarded", {}); }
     else { st.textContent = "Saved on this device (cloud sync will catch up)."; }
-    location.href = "index.html";   // home: character dock + "Start Mission 1" = the obvious next step
+    // Before launch, stop at the "see you July 6" screen; on/after launch (or for
+    // testers) launch-soon.html forwards straight to the home. So always route there.
+    location.href = "launch-soon.html";
   };
 })();
 </script>

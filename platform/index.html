@@ -6,6 +6,19 @@
 <link rel="icon" type="image/svg+xml" href="/platform/assets/logo-icon-tile.svg">
 <link rel="apple-touch-icon" href="/platform/assets/touch-icon.png">
 <title>Code the Future — Louisville</title>
+<script>
+  // Pre-launch: an onboarded family landing on the home goes to the "see you
+  // July 6" screen instead of the missions hub. Testers (?unlock=all) and
+  // anyone on/after launch day fall through to the normal home.
+  (function(){
+    try {
+      var p = JSON.parse(localStorage.getItem("ctf:profile") || "null");
+      var preLaunch = new Date() < new Date(2026, 6, 6, 0, 0, 0);
+      var bypass = localStorage.getItem("ctf:unlockall") === "1";
+      if (p && p.onboarded && preLaunch && !bypass) location.replace("launch-soon.html");
+    } catch (e) {}
+  })();
+</script>
 <link rel="stylesheet" href="app.css">
 <style>
   body{ background:var(--ink-50); }
