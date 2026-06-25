@@ -364,21 +364,23 @@
           try {
             var PARTS = [{n:1,first:1,last:4,offset:0},{n:2,first:5,last:8,offset:2},{n:3,first:9,last:12,offset:4}];
             var anchor = (cohortsCache && cohortsCache[0] && cohortsCache[0].starts_on) || localStorage.getItem("ctf:firstplay");
+            if (!anchor || anchor < "2026-07-06") anchor = "2026-07-06";  // founding launch floor — nothing unlocks before July 6
             var isStaff = cohortsCache && cohortsCache[0] && cohortsCache[0].role === "staff";
             var bypass = localStorage.getItem("ctf:unlockall") === "1" || isStaff;
-            if (!bypass && anchor){
+            if (!bypass){
               var now = new Date();
-              var unlockedLast = 4;
+              var unlockedLast = 0;
               PARTS.forEach(function(p){ var d = new Date(anchor + "T00:00:00"); d.setDate(d.getDate() + p.offset); if (now >= d) unlockedLast = p.last; });
               var nextPart = PARTS.filter(function(p){ return p.first > unlockedLast; })[0];
               if (nextPart){
                 var ud = new Date(anchor + "T00:00:00"); ud.setDate(ud.getDate() + nextPart.offset);
-                lockedNote = " · Part " + nextPart.n + " unlocks " + ud.toLocaleDateString("en-US",{weekday:"long"}) + "!";
+                var farOut = (ud - now) > 6 * 86400000;
+                lockedNote = " · Part " + nextPart.n + " unlocks " + ud.toLocaleDateString("en-US", farOut ? {weekday:"long",month:"long",day:"numeric"} : {weekday:"long"}) + "!";
               }
               if (cur.n > unlockedLast){
-                showN = unlockedLast;
-                var clampStep = steps.filter(function(s){ return s.n === unlockedLast; })[0];
-                showTitle = clampStep ? clampStep.title : "";
+                showN = Math.max(1, unlockedLast);
+                var clampStep = steps.filter(function(s){ return s.n === showN; })[0];
+                showTitle = clampStep ? clampStep.title : showTitle;
               }
             }
           } catch(e){}

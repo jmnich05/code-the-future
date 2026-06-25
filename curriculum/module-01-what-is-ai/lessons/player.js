@@ -31,6 +31,10 @@
     { n: 3, first: 9, last: 12, offset: 4 }
   ];
   var paceBypass = false, paceAnchor = null;
+  // Founding launch floor: nobody's missions unlock before this date, no matter
+  // when they set up their account. Self-expires — a learner who first plays
+  // AFTER this date anchors to their own start, so late joiners aren't held back.
+  var LAUNCH_FLOOR = "2026-07-06";
   // LOCAL date, not toISOString (UTC) — an evening first-open used to stamp
   // tomorrow's date and lock Part 1 until the next day
   function localDate() {
@@ -53,7 +57,10 @@
     return null;                                // intro: always open
   }
   function partOf(m) { for (var i = 0; i < PARTS.length; i++) if (m >= PARTS[i].first && m <= PARTS[i].last) return PARTS[i]; return PARTS[0]; }
-  function unlockDate(part) { var d = new Date(paceAnchor + "T00:00:00"); d.setDate(d.getDate() + part.offset); return d; }
+  function unlockDate(part) {
+    var a = (paceAnchor && paceAnchor > LAUNCH_FLOOR) ? paceAnchor : LAUNCH_FLOOR;  // never before launch day
+    var d = new Date(a + "T00:00:00"); d.setDate(d.getDate() + part.offset); return d;
+  }
   function isLocked(m) {
     if (paceBypass || !m) return false;
     return new Date() < unlockDate(partOf(m));
@@ -62,7 +69,8 @@
     var d = unlockDate(part);
     var days = Math.ceil((d - new Date()) / 86400000);
     var wd = d.toLocaleDateString("en-US", { weekday: "long" });
-    return { weekday: wd, days: days };
+    var dateStr = d.toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" });
+    return { weekday: wd, days: days, dateStr: dateStr };
   }
   function lastUnlockedIndex() {
     for (var i = STEPS.length - 1; i >= 0; i--) {
@@ -85,18 +93,26 @@
   function showLock(part) {
     stopSpeaking();
     var u = unlockLabel(part);
+    // far-out locks name the actual date ("Monday, July 6"); near ones stay casual
+    var whenH = u.days <= 1 ? "tomorrow" : (u.days > 6 ? u.dateStr : "on " + u.weekday);
+    var whenP = u.days <= 1 ? "tomorrow" : (u.days > 6 ? u.dateStr : u.weekday);
+    // Part 1 locked = the learner hasn't started yet → a launch-day welcome, not a "rest" message
+    var preLaunch = part.n === 1;
     stage.innerHTML =
       '<div class="beat t-lock revealed"><div class="lock-card">' +
-      '<div class="lock-ico">🔒</div>' +
-      '<h2>Part ' + part.n + ' unlocks ' + (u.days <= 1 ? "tomorrow" : "on " + u.weekday) + '!</h2>' +
-      '<p>Amazing work today, Future Builder! 🎉 Your brain needs time to let all those new ideas settle in — that\'s real learning.</p>' +
-      '<p class="lock-sub">Missions ' + part.first + '–' + part.last + ' open ' + (u.days <= 1 ? "tomorrow" : u.weekday) + '. Until then: replay any mission, remix your homepage, customize your character, or say hi on the board!</p>' +
+      '<div class="lock-ico">' + (preLaunch ? "🚀" : "🔒") + '</div>' +
+      '<h2>' + (preLaunch ? "Liftoff is " + whenH : "Part " + part.n + " unlocks " + whenH) + '!</h2>' +
+      (preLaunch
+        ? '<p>Welcome aboard, Future Builder! 🚀 Your missions are fueled up and ready — they unlock on <b>launch day</b>. Until then, get set: build your character, explore your map, and watch the countdown!</p>'
+        : '<p>Amazing work today, Future Builder! 🎉 Your brain needs time to let all those new ideas settle in — that\'s real learning.</p>') +
+      '<p class="lock-sub">Missions ' + part.first + '–' + part.last + ' open ' + whenP + '. Until then: ' +
+        (preLaunch ? 'build your character, remix your homepage, or say hi on the board!' : 'replay any mission, remix your homepage, customize your character, or say hi on the board!') + '</p>' +
       '<a class="lock-btn" href="../../../platform/index.html">🏠 Back to home</a> ' +
-      '<button class="lock-btn lock-alt" onclick="document.getElementById(\'pMap\').click()">🗺️ Replay a mission</button>' +
+      (preLaunch ? '' : '<button class="lock-btn lock-alt" onclick="document.getElementById(\'pMap\').click()">🗺️ Replay a mission</button>') +
       '</div></div>';
     nextBtn.style.display = "none";
     hint.textContent = "";
-    label.textContent = "Part " + part.n + " · locked";
+    label.textContent = preLaunch ? "Locked until launch 🚀" : ("Part " + part.n + " · locked");
   }
 
   var ttsAudio = null, speaking = false;
