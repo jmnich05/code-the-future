@@ -15,7 +15,7 @@ We kept landing on the same thought: our kids are the first generation that will
 
 So we built the platform we wanted for our own kids. Designed specifically for ages eight to eleven. Exciting and fun — but honest and realistic about what AI is, and how to use it for good in the world.
 
-Game-like missions at home. A hands-on hour at the library every week. A safe, moderated community. And direct access to the two of us, every step of the way.
+Game-like missions at home. A hands-on 90 minutes at the library every week. A safe, moderated community. And direct access to the two of us, every step of the way.
 
 We can't wait to meet your builder. This is Code the Future.
 
