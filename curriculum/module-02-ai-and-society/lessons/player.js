@@ -30,6 +30,11 @@
     { n: 3, first: 9, last: 12, offset: 4 }
   ];
   var paceBypass = false, paceAnchor = null;
+  // Module 2 launch floor: missions stay locked until this date no matter when
+  // a learner first opens it. Self-expires (anyone who first plays after this
+  // date anchors to their own start). Module 1 launches 2026-07-06; Module 2
+  // follows the next week. Change this one line to move Module 2's launch.
+  var LAUNCH_FLOOR = "2026-07-13";
   // LOCAL date, not toISOString (UTC) — an evening first-open used to stamp
   // tomorrow's date and lock Part 1 until the next day
   function localDate() {
@@ -52,7 +57,10 @@
     return null;                                // intro: always open
   }
   function partOf(m) { for (var i = 0; i < PARTS.length; i++) if (m >= PARTS[i].first && m <= PARTS[i].last) return PARTS[i]; return PARTS[0]; }
-  function unlockDate(part) { var d = new Date(paceAnchor + "T00:00:00"); d.setDate(d.getDate() + part.offset); return d; }
+  function unlockDate(part) {
+    var a = (paceAnchor && paceAnchor > LAUNCH_FLOOR) ? paceAnchor : LAUNCH_FLOOR;  // never before launch day
+    var d = new Date(a + "T00:00:00"); d.setDate(d.getDate() + part.offset); return d;
+  }
   function isLocked(m) {
     if (paceBypass || !m) return false;
     return new Date() < unlockDate(partOf(m));
@@ -61,7 +69,8 @@
     var d = unlockDate(part);
     var days = Math.ceil((d - new Date()) / 86400000);
     var wd = d.toLocaleDateString("en-US", { weekday: "long" });
-    return { weekday: wd, days: days };
+    var dateStr = d.toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" });
+    return { weekday: wd, days: days, dateStr: dateStr };
   }
   function lastUnlockedIndex() {
     for (var i = STEPS.length - 1; i >= 0; i--) {
@@ -84,18 +93,24 @@
   function showLock(part) {
     stopSpeaking();
     var u = unlockLabel(part);
+    var whenH = u.days <= 1 ? "tomorrow" : (u.days > 6 ? u.dateStr : "on " + u.weekday);
+    var whenP = u.days <= 1 ? "tomorrow" : (u.days > 6 ? u.dateStr : u.weekday);
+    var preLaunch = part.n === 1;  // Module 2 itself hasn't opened yet
     stage.innerHTML =
       '<div class="beat t-lock revealed"><div class="lock-card">' +
-      '<div class="lock-ico">🔒</div>' +
-      '<h2>Part ' + part.n + ' unlocks ' + (u.days <= 1 ? "tomorrow" : "on " + u.weekday) + '!</h2>' +
-      '<p>Amazing work today, Future Builder! 🎉 Your brain needs time to let all those new ideas settle in — that\'s real learning.</p>' +
-      '<p class="lock-sub">Missions ' + part.first + '–' + part.last + ' open ' + (u.days <= 1 ? "tomorrow" : u.weekday) + '. Until then: replay any mission, remix your homepage, customize your character, or say hi on the board!</p>' +
+      '<div class="lock-ico">' + (preLaunch ? "🚀" : "🔒") + '</div>' +
+      '<h2>' + (preLaunch ? "Module 2 opens " + whenH : "Part " + part.n + " unlocks " + whenH) + '!</h2>' +
+      (preLaunch
+        ? '<p>Nice — you found the next adventure! 🚀 <b>Module 2: AI and Our World</b> is fueled up and opens on launch day. Keep building in Module 1 and watch for it!</p>'
+        : '<p>Amazing work today, Future Builder! 🎉 Your brain needs time to let all those new ideas settle in — that\'s real learning.</p>') +
+      '<p class="lock-sub">Missions ' + part.first + '–' + part.last + ' open ' + whenP + '. Until then: ' +
+        (preLaunch ? 'keep building in Module 1, remix your homepage, or say hi on the board!' : 'replay any mission, remix your homepage, customize your character, or say hi on the board!') + '</p>' +
       '<a class="lock-btn" href="../../../platform/index.html">🏠 Back to home</a> ' +
-      '<button class="lock-btn lock-alt" onclick="document.getElementById(\'pMap\').click()">🗺️ Replay a mission</button>' +
+      (preLaunch ? '' : '<button class="lock-btn lock-alt" onclick="document.getElementById(\'pMap\').click()">🗺️ Replay a mission</button>') +
       '</div></div>';
     nextBtn.style.display = "none";
     hint.textContent = "";
-    label.textContent = "Part " + part.n + " · locked";
+    label.textContent = preLaunch ? "Module 2 · locked 🚀" : ("Part " + part.n + " · locked");
   }
 
   var ttsAudio = null, speaking = false;
