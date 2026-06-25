@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<link rel="icon" type="image/svg+xml" href="/platform/assets/logo-icon-tile.svg">
+<link rel="apple-touch-icon" href="/platform/assets/touch-icon.png">
+<title>Code the Future — Founding Family Launchpad</title>
+<meta name="description" content="Your founding-cohort seat is reserved. Counting down to liftoff the week of July 6 — set up your account and meet the platform.">
+<meta name="robots" content="noindex">
+<meta property="og:title" content="Code the Future — Founding Family Launchpad">
+<meta property="og:description" content="Your seat is reserved. Counting down to liftoff — week of July 6.">
+<meta property="og:image" content="https://codethefuture.net/platform/assets/fb-share-landscape.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --blue:#2A5FF0; --blue-bright:#3D74FF; --teal:#12B2BC; --teal-bright:#26C7D1;
+    --coral:#FF5A38; --amber:#FFB320; --navy:#0A1226; --navy-deep:#070C1A;
+    --ink:#0C1322; --paper:#F6F8FE; --card:#FFFFFF; --line:rgba(12,19,34,.10);
+    --display:"Space Grotesk",sans-serif; --body:"Plus Jakarta Sans",sans-serif; --mono:"JetBrains Mono",monospace;
+  }
+  *{ box-sizing:border-box; }
+  html{ scroll-behavior:smooth; }
+  body{ margin:0; font-family:var(--body); color:var(--ink); background:var(--paper); -webkit-font-smoothing:antialiased; }
+  a{ color:inherit; }
+  .wrap{ max-width:1080px; margin:0 auto; padding:0 22px; }
+
+  /* ---------- top bar ---------- */
+  .topbar{ position:relative; z-index:5; display:flex; align-items:center; justify-content:space-between; padding:20px 0 0; }
+  .brand{ display:flex; align-items:center; gap:11px; font-family:var(--display); font-weight:700; font-size:1.15rem; color:#fff; }
+  .brand img{ width:30px; height:30px; }
+  .brand .f{ color:var(--teal-bright); }
+  .tag{ font-family:var(--mono); font-size:11px; letter-spacing:.16em; text-transform:uppercase; color:var(--teal-bright);
+    border:1px solid rgba(38,199,209,.4); border-radius:999px; padding:7px 13px; }
+
+  /* ---------- hero ---------- */
+  .hero{ position:relative; overflow:hidden; color:#fff;
+    background:linear-gradient(160deg,#0F1B3A 0%,var(--navy-deep) 62%,#060a16 100%); }
+  .hero::before{ content:""; position:absolute; inset:0; pointer-events:none;
+    background:radial-gradient(720px 420px at 84% -8%, rgba(61,116,255,.32), transparent 60%),
+              radial-gradient(620px 420px at 8% 108%, rgba(38,199,209,.22), transparent 60%); }
+  .stars{ position:absolute; inset:0; pointer-events:none; opacity:.8;
+    background-image:radial-gradient(1.6px 1.6px at 20% 30%,#fff,transparent),radial-gradient(1.4px 1.4px at 70% 22%,#cfe3ff,transparent),
+      radial-gradient(1.5px 1.5px at 45% 65%,#fff,transparent),radial-gradient(1.3px 1.3px at 88% 58%,#bfe9ff,transparent),
+      radial-gradient(1.4px 1.4px at 33% 84%,#fff,transparent),radial-gradient(1.2px 1.2px at 62% 90%,#cfe3ff,transparent);
+    animation:tw 5s ease-in-out infinite; }
+  @keyframes tw{ 0%,100%{ opacity:.85 } 50%{ opacity:.5 } }
+  .hero-inner{ position:relative; z-index:2; padding:30px 0 64px; text-align:center; }
+  .seat{ display:inline-flex; align-items:center; gap:8px; font-family:var(--mono); font-size:12px; letter-spacing:.12em; text-transform:uppercase;
+    background:rgba(63,208,138,.16); border:1px solid rgba(63,208,138,.5); color:#8af0bf; border-radius:999px; padding:8px 15px; margin:14px 0 18px; }
+  h1{ font-family:var(--display); font-weight:700; letter-spacing:-.02em; line-height:1.02; margin:0;
+    font-size:clamp(2.6rem,7.4vw,5rem); }
+  h1 .grad{ background:linear-gradient(110deg,#7FE3FF,#3D74FF 60%,#9B7BFF); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent; }
+  .sub{ max-width:36ch; margin:18px auto 0; font-size:1.18rem; color:rgba(255,255,255,.86); line-height:1.5; }
+  .sub b{ color:#fff; }
+
+  /* ---------- countdown ---------- */
+  .cd{ display:flex; justify-content:center; gap:12px; margin:34px 0 8px; flex-wrap:wrap; }
+  .cd .unit{ min-width:96px; padding:18px 12px 12px; border-radius:18px;
+    background:rgba(255,255,255,.06); border:1px solid rgba(127,227,255,.22); box-shadow:inset 0 1px 0 rgba(255,255,255,.08); }
+  .cd .n{ font-family:var(--display); font-weight:700; font-size:clamp(2.2rem,6vw,3.4rem); line-height:1; color:#fff;
+    text-shadow:0 0 26px rgba(127,227,255,.4); font-variant-numeric:tabular-nums; }
+  .cd .l{ font-family:var(--mono); font-size:11px; letter-spacing:.16em; text-transform:uppercase; color:var(--teal-bright); margin-top:9px; }
+  @media (max-width:520px){ .cd .unit{ min-width:70px; padding:14px 8px 10px; } }
+  .liftoff-note{ font-family:var(--mono); font-size:13px; letter-spacing:.06em; color:rgba(255,255,255,.7); margin-top:6px; }
+  .liftoff-note b{ color:var(--amber); }
+
+  /* ---------- buttons ---------- */
+  .ctas{ display:flex; gap:13px; justify-content:center; flex-wrap:wrap; margin-top:30px; }
+  .btn{ font-family:var(--display); font-weight:700; font-size:1.06rem; text-decoration:none; cursor:pointer; border:none;
+    padding:16px 28px; border-radius:999px; display:inline-flex; align-items:center; gap:9px; transition:transform .12s, box-shadow .2s; }
+  .btn-primary{ color:#06122b; background:linear-gradient(120deg,#7FE3FF,#3D74FF); box-shadow:0 14px 34px rgba(61,116,255,.5); }
+  .btn-primary:hover{ transform:translateY(-2px); box-shadow:0 18px 40px rgba(61,116,255,.6); }
+  .btn-ghost{ color:#fff; background:transparent; border:2px solid rgba(255,255,255,.5); }
+  .btn-ghost:hover{ background:rgba(255,255,255,.1); }
+  .hint{ margin-top:14px; font-size:.92rem; color:rgba(255,255,255,.66); }
+  .hint b{ color:#fff; }
+
+  /* ---------- sections ---------- */
+  section.block{ padding:64px 0; }
+  .sec-head{ text-align:center; max-width:60ch; margin:0 auto 30px; }
+  .kicker{ font-family:var(--mono); font-size:12px; letter-spacing:.16em; text-transform:uppercase; color:var(--blue); }
+  .sec-head h2{ font-family:var(--display); font-weight:700; font-size:clamp(1.7rem,4vw,2.5rem); margin:.3em 0 .2em; }
+  .sec-head p{ color:#44506a; font-size:1.08rem; line-height:1.55; }
+
+  /* video */
+  .film{ position:relative; max-width:900px; margin:0 auto; aspect-ratio:16/9; border-radius:22px; overflow:hidden;
+    box-shadow:0 30px 70px rgba(12,19,34,.22); background:#0F1B3A; }
+  .film iframe{ position:absolute; inset:0; width:100%; height:100%; border:0; }
+
+  /* what-you-get cards */
+  .grid{ display:grid; grid-template-columns:repeat(4,1fr); gap:16px; }
+  @media (max-width:880px){ .grid{ grid-template-columns:1fr 1fr; } }
+  @media (max-width:520px){ .grid{ grid-template-columns:1fr; } }
+  .card{ background:var(--card); border:1px solid var(--line); border-radius:18px; padding:22px; box-shadow:0 8px 20px rgba(12,19,34,.05); }
+  .card .em{ font-size:1.8rem; }
+  .card h3{ font-family:var(--display); font-size:1.12rem; margin:.5em 0 .3em; }
+  .card p{ color:#44506a; font-size:.96rem; line-height:1.5; margin:0; }
+
+  /* steps */
+  .steps{ background:linear-gradient(160deg,#0F1B3A,#070C1A); color:#fff; border-radius:26px; padding:42px 34px; }
+  .steps h2{ color:#fff; }
+  .steplist{ display:grid; grid-template-columns:repeat(3,1fr); gap:18px; margin-top:24px; }
+  @media (max-width:760px){ .steplist{ grid-template-columns:1fr; } }
+  .step{ display:flex; gap:14px; align-items:flex-start; }
+  .step .num{ flex:none; width:38px; height:38px; border-radius:50%; display:grid; place-items:center; font-family:var(--display); font-weight:700;
+    background:linear-gradient(120deg,#7FE3FF,#3D74FF); color:#06122b; }
+  .step b{ font-family:var(--display); font-size:1.05rem; display:block; margin-bottom:3px; }
+  .step span{ color:rgba(255,255,255,.78); font-size:.95rem; line-height:1.45; }
+
+  /* founders note */
+  .note{ max-width:720px; margin:0 auto; text-align:center; }
+  .note .quote{ font-size:1.22rem; line-height:1.6; color:var(--ink); font-weight:500; }
+  .note .who{ margin-top:16px; font-family:var(--mono); font-size:12px; letter-spacing:.08em; text-transform:uppercase; color:#44506a; }
+
+  footer{ text-align:center; padding:40px 0 56px; color:#7b86a0; font-size:.92rem; }
+  footer a{ color:var(--blue); font-weight:600; text-decoration:none; }
+
+  @media (prefers-reduced-motion:reduce){ .stars{ animation:none; } html{ scroll-behavior:auto; } }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="stars"></div>
+  <div class="wrap">
+    <div class="topbar">
+      <div class="brand"><img src="/platform/assets/logo-icon-tile.svg" alt="">Code the <span class="f">Future</span></div>
+      <span class="tag">Founding Family Launchpad</span>
+    </div>
+
+    <div class="hero-inner">
+      <span class="seat">🎉 Your seat is reserved</span>
+      <h1>T-minus to <span class="grad">liftoff.</span></h1>
+      <p class="sub">You're one of our <b>founding families</b>. We blast off the <b>week of July 6</b> — here's your countdown, your account, and a first look inside.</p>
+
+      <div class="cd" id="cd" role="timer" aria-label="Countdown to launch">
+        <div class="unit"><div class="n" id="dd">––</div><div class="l">Days</div></div>
+        <div class="unit"><div class="n" id="hh">––</div><div class="l">Hours</div></div>
+        <div class="unit"><div class="n" id="mm">––</div><div class="l">Minutes</div></div>
+        <div class="unit"><div class="n" id="ss">––</div><div class="l">Seconds</div></div>
+      </div>
+      <p class="liftoff-note" id="liftnote">until we light the engines on <b>Monday, July 6, 2026</b> 🚀</p>
+
+      <div class="ctas">
+        <a class="btn btn-primary" id="setupBtn" href="/platform/">🚀 Set up your account</a>
+        <a class="btn btn-ghost" href="#walkthrough">▶ Watch the walkthrough</a>
+      </div>
+      <p class="hint">First time in? Use <b>your explorer's name</b> as the username and the <b>access code we texted you</b> as the password. Then build your character — that's your login from here on.</p>
+    </div>
+  </div>
+</header>
+
+<section class="block" id="walkthrough">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="kicker">A look inside</span>
+      <h2>Walk through the platform with Jon</h2>
+      <p>A quick tour from co-founder Jon Nichols of what your explorer will actually do — the missions, the real AI tools, and the world they'll build.</p>
+    </div>
+    <div class="film">
+      <iframe src="https://www.youtube-nocookie.com/embed/zUs5lakiMRM" title="Walkthrough of the program and platform from Co-Founder Jon Nichols"
+        allow="accelerometer; autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>
+    </div>
+  </div>
+</section>
+
+<section class="block" style="padding-top:0">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="kicker">What your explorer gets</span>
+      <h2>Not videos about AI — real AI, in their hands.</h2>
+    </div>
+    <div class="grid">
+      <div class="card"><div class="em">🎮</div><h3>12 game-like missions</h3><p>They learn what AI is by using it — drawing for an AI that really "sees," training mini-models, and more.</p></div>
+      <div class="card"><div class="em">🦸</div><h3>A character + badges</h3><p>They build their own explorer and earn real badges as they go — collectible proof of what they've learned.</p></div>
+      <div class="card"><div class="em">📍</div><h3>A weekly library hour</h3><p>One hands-on hour each week at the public library with a coach, plus fun "missions" they do at home.</p></div>
+      <div class="card"><div class="em">🛡️</div><h3>Safe &amp; kid-first</h3><p>No ads, no personal info collected from kids, and a curriculum designed with a child psychologist.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="block" style="padding-top:0">
+  <div class="wrap">
+    <div class="steps">
+      <div class="sec-head" style="margin-bottom:6px">
+        <span class="kicker" style="color:var(--teal-bright)">Get ready in 3 steps</span>
+        <h2>Beat the countdown — set up today.</h2>
+      </div>
+      <div class="steplist">
+        <div class="step"><div class="num">1</div><div><b>Watch the walkthrough</b><span>Two minutes with Jon so you and your explorer know exactly what's coming.</span></div></div>
+        <div class="step"><div class="num">2</div><div><b>Create your account + character</b><span>Tap “Set up your account,” sign in with your name + access code, and build your buddy.</span></div></div>
+        <div class="step"><div class="num">3</div><div><b>July 6 — liftoff 🚀</b><span>Your first mission unlocks and we meet for our first library session. We'll text the time.</span></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="block" style="padding-top:0">
+  <div class="wrap note">
+    <span class="kicker">From the founders</span>
+    <p class="quote" style="margin-top:14px">“We built Code the Future for our own kids first — so they'd grow up understanding AI instead of being a little afraid of it. We can't wait to build it with yours. Thank you for being one of the very first.”</p>
+    <p class="who">Jon Nichols &amp; Kenya Guarnieri · Co-founders</p>
+  </div>
+</section>
+
+<footer>
+  Questions? Just reply to our text, or visit <a href="https://codethefuture.net">codethefuture.net</a>.<br>
+  © Code the Future · Louisville · Summer 2026
+</footer>
+
+<script>
+(function(){
+  // Liftoff target — week of July 6, 2026 (Mon 9:00am local).
+  var TARGET = new Date(2026, 6, 6, 9, 0, 0).getTime();
+  var dd=document.getElementById('dd'), hh=document.getElementById('hh'),
+      mm=document.getElementById('mm'), ss=document.getElementById('ss'),
+      note=document.getElementById('liftnote'), setup=document.getElementById('setupBtn');
+  function pad(n){ return (n<10?'0':'')+n; }
+  function tick(){
+    var diff = TARGET - Date.now();
+    if (diff <= 0){
+      dd.textContent='0'; hh.textContent='00'; mm.textContent='00'; ss.textContent='00';
+      note.innerHTML = "🚀 <b>We have liftoff!</b> Your missions are live — let's go.";
+      setup.textContent = "🚀 Enter the platform";
+      return false;
+    }
+    var s = Math.floor(diff/1000);
+    dd.textContent = Math.floor(s/86400);
+    hh.textContent = pad(Math.floor(s%86400/3600));
+    mm.textContent = pad(Math.floor(s%3600/60));
+    ss.textContent = pad(s%60);
+    return true;
+  }
+  tick();
+  var t = setInterval(function(){ if(tick()===false) clearInterval(t); }, 1000);
+})();
+</script>
+</body>
+</html>
