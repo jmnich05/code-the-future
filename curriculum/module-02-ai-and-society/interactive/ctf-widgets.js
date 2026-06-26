@@ -1051,8 +1051,148 @@
     intro();
   }
 
+  // =========================================================================
+  // AI AROUND THE WORLD (Mission 2) — a discovery game. AI is woven through
+  // the whole world, quietly doing jobs you never see. Travel a map to 5 real
+  // places; each is a quick hands-on moment that uncovers the hidden AI and
+  // what it does. Find all the invisible helpers to win. Mistakes just retry.
+  // =========================================================================
+  function renderAIWorld(root, cfg, id) {
+    root.innerHTML = header(cfg);
+    var wrap = el('div', 'ctf-aw'); root.appendChild(wrap);
+    var fb = el('div', 'ctf-feedback good'); fb.textContent = cfg.thanks || "AI is everywhere — quietly helping, and you never noticed. 🌍";
+    root.appendChild(fb);
+    var done = completionCard(cfg); if (done) root.appendChild(done);
+
+    var SPOTS = cfg.spots || [
+      { id:'hospital', icon:'🏥', name:'Hospital',      x:22, y:30, kind:'scan',    job:'AI helps doctors <b>spot problems in scans</b> that tired eyes might miss.' },
+      { id:'farm',     icon:'🌾', name:'Farm',          x:70, y:24, kind:'farm',    job:'AI <b>drones scan fields</b> and tell farmers exactly which plants are thirsty.' },
+      { id:'weather',  icon:'🌦️', name:'Weather Center', x:48, y:54, kind:'storm',   job:'AI <b>watches the skies</b> and warns whole cities before a storm hits.' },
+      { id:'traffic',  icon:'🚦', name:'Traffic Hub',    x:78, y:64, kind:'traffic', job:'AI <b>reroutes thousands of cars</b> at once around traffic jams.' },
+      { id:'lab',      icon:'🔬', name:'Science Lab',    x:26, y:70, kind:'lab',     job:'AI <b>tests millions of mixes</b> to help invent brand-new medicines.' }
+    ];
+    var found = {};
+
+    function countFound(){ return SPOTS.filter(function(s){ return found[s.id]; }).length; }
+
+    function map(){
+      wrap.setAttribute('data-screen','map');
+      var pins = SPOTS.map(function(s){
+        return '<button class="aw-pin'+(found[s.id]?' done':'')+'" style="left:'+s.x+'%;top:'+s.y+'%" data-id="'+s.id+'">'+
+          '<span class="aw-pico">'+(found[s.id]?'✅':s.icon)+'</span><span class="aw-plbl">'+esc(s.name)+'</span></button>';
+      }).join('');
+      wrap.innerHTML =
+        '<div class="aw-mapbg"></div>'+
+        '<div class="aw-top"><span class="aw-count">🔎 Found <b>'+countFound()+'</b> / '+SPOTS.length+'</span>'+
+          '<span class="aw-hint">Tap a place to uncover the hidden AI</span></div>'+
+        '<div class="aw-map">'+pins+'</div>';
+      wrap.querySelectorAll('.aw-pin').forEach(function(p){
+        p.addEventListener('click', function(){ var s=SPOTS.filter(function(x){return x.id===p.getAttribute('data-id');})[0]; openSpot(s); });
+      });
+    }
+
+    function openSpot(spot){
+      wrap.setAttribute('data-screen','spot');
+      wrap.innerHTML =
+        '<div class="aw-spotbg"></div>'+
+        '<div class="aw-shead"><button class="aw-back" data-back>‹ Map</button><span class="aw-stitle">'+spot.icon+' '+esc(spot.name)+'</span></div>'+
+        '<div class="aw-instr" data-instr></div>'+
+        '<div class="aw-stage" data-stage></div>'+
+        '<div class="aw-reveal" data-reveal></div>';
+      wrap.querySelector('[data-back]').addEventListener('click', map);
+      var stage = wrap.querySelector('[data-stage]'), instr = wrap.querySelector('[data-instr]');
+      buildScene(spot, stage, instr, function(){ solved(spot); });
+    }
+
+    function solved(spot){
+      found[spot.id] = true;
+      var rev = wrap.querySelector('[data-reveal]');
+      rev.innerHTML = '<div class="aw-card"><div class="aw-ctick">✨ AI found!</div><p>'+spot.job+'</p>'+
+        '<button class="aw-btn" data-next>'+(countFound()>=SPOTS.length ? 'See what you discovered →' : '← Keep exploring')+'</button></div>';
+      rev.classList.add('show');
+      wrap.querySelector('.aw-stage').classList.add('aw-dim');
+      rev.querySelector('[data-next]').addEventListener('click', function(){ countFound()>=SPOTS.length ? win() : map(); });
+    }
+
+    function win(){
+      wrap.setAttribute('data-screen','win');
+      wrap.innerHTML =
+        '<div class="aw-mapbg"></div>'+
+        '<div class="aw-winbox"><div class="aw-wico">🌍✨</div>'+
+          '<h2>You found AI hiding <b>all over the world!</b></h2>'+
+          '<p>Doctors, farms, weather, traffic, science labs — AI is woven through the whole world, quietly doing jobs you never see. It was there all along!</p>'+
+          '<div class="aw-found">'+SPOTS.map(function(s){return '<span>'+s.icon+'</span>';}).join('')+'</div>'+
+          '<button class="aw-btn" data-replay>🔁 Explore again</button>'+
+        '</div>';
+      wrap.querySelector('[data-replay]').addEventListener('click', function(){ found={}; map(); });
+      fb.classList.add('show'); reveal(done, (cfg.complete && cfg.complete.progress) || 100); markDone(id);
+    }
+
+    // ---- the 5 hands-on scenes (tap to solve, mistakes just nudge + retry) --
+    function buildScene(spot, stage, instr, onSolve){
+      function ok(){ onSolve(); }
+      function nudge(msg){ instr.setAttribute('data-bad','1'); instr.querySelector('.aw-nudge') ? (instr.querySelector('.aw-nudge').textContent=msg) : instr.insertAdjacentHTML('beforeend',' <span class="aw-nudge">'+esc(msg)+'</span>'); }
+
+      if (spot.kind === 'scan'){
+        instr.innerHTML = 'The AI highlighted a few spots on this scan. <b>Tap the one that looks different</b> — that\'s the problem.';
+        var pos=[[28,40],[60,30],[46,64],[74,58]], bad=Math.floor(Math.random()*4);
+        stage.innerHTML='<div class="aw-scan">'+pos.map(function(p,i){return '<button class="aw-spotdot'+(i===bad?' odd':'')+'" style="left:'+p[0]+'%;top:'+p[1]+'%" data-i="'+i+'"></button>';}).join('')+'</div>';
+        stage.querySelectorAll('.aw-spotdot').forEach(function(d){ d.addEventListener('click',function(){
+          if(+d.getAttribute('data-i')===bad){ d.classList.add('hit'); ok(); } else { d.classList.add('miss'); nudge('That spot looks normal — find the odd one out.'); setTimeout(function(){d.classList.remove('miss');},500); }
+        }); });
+      }
+      else if (spot.kind === 'farm'){
+        instr.innerHTML = 'The drone scanned the farm. <b>Tap every dry field</b> that needs water. 💧';
+        var n=9, dry={}; while(Object.keys(dry).length<4){ dry[Math.floor(Math.random()*n)]=true; }
+        var tiles=''; for(var i=0;i<n;i++){ tiles+='<button class="aw-field'+(dry[i]?' dry':'')+'" data-i="'+i+'">'+(dry[i]?'🟫':'🌱')+'</button>'; }
+        stage.innerHTML='<div class="aw-farm">'+tiles+'</div>';
+        var watered=0, total=Object.keys(dry).length;
+        stage.querySelectorAll('.aw-field').forEach(function(t){ t.addEventListener('click',function(){
+          if(t.classList.contains('done')) return;
+          if(t.classList.contains('dry')){ t.classList.add('done'); t.textContent='💧'; watered++; if(watered>=total) ok(); }
+          else { t.classList.add('miss'); nudge('That field\'s healthy — look for the brown, dry ones.'); setTimeout(function(){t.classList.remove('miss');},500); }
+        }); });
+      }
+      else if (spot.kind === 'storm'){
+        instr.innerHTML = 'A storm is rolling in! ⬇️ <b>Tap the city right in its path</b> so the AI can warn them in time.';
+        var hit=Math.floor(Math.random()*3);
+        stage.innerHTML='<div class="aw-sky">'+
+          '<div class="aw-stormrow">'+[0,1,2].map(function(i){return '<span class="aw-stormslot">'+(i===hit?'⛈️<b>⬇️</b>':'')+'</span>';}).join('')+'</div>'+
+          '<div class="aw-cities">'+[0,1,2].map(function(i){return '<button class="aw-city" data-i="'+i+'">🏙️<small>City '+(i+1)+'</small></button>';}).join('')+'</div></div>';
+        stage.querySelectorAll('.aw-city').forEach(function(c){ c.addEventListener('click',function(){
+          if(+c.getAttribute('data-i')===hit){ c.classList.add('hit'); ok(); } else { c.classList.add('miss'); nudge('Look up — which city is right under the storm cloud?'); setTimeout(function(){c.classList.remove('miss');},500); }
+        }); });
+      }
+      else if (spot.kind === 'traffic'){
+        instr.innerHTML = 'The main road is jammed! <b>Tap the open side road</b> to reroute the cars around it.';
+        var openSide=Math.random()<.5?0:1;
+        stage.innerHTML='<div class="aw-road"><div class="aw-jam">🚗🚕🚙 🚧</div>'+
+          '<button class="aw-detour" data-i="0">'+(openSide===0?'⬅️ Side road':'🚧 Closed')+'</button>'+
+          '<button class="aw-detour" data-i="1">'+(openSide===1?'Side road ➡️':'🚧 Closed')+'</button></div>';
+        stage.querySelectorAll('.aw-detour').forEach(function(b){ b.addEventListener('click',function(){
+          if(+b.getAttribute('data-i')===openSide){ b.classList.add('hit'); stage.querySelector('.aw-jam').classList.add('aw-flow'); stage.querySelector('.aw-jam').innerHTML='🚗  🚕  🚙  ✅'; setTimeout(ok,600); }
+          else { b.classList.add('miss'); nudge('That road is blocked too — try the other side.'); setTimeout(function(){b.classList.remove('miss');},500); }
+        }); });
+      }
+      else if (spot.kind === 'lab'){
+        instr.innerHTML = 'The AI says the cure <b>glows when two BLUES mix</b>. Tap the matching pair. 🔬';
+        var mixes=[['🔵','🔴'],['🔵','🔵'],['🔴','🔴']]; // index 1 correct, then shuffle
+        var order=[0,1,2].sort(function(){return Math.random()-.5;}); var correct=order.indexOf(1);
+        stage.innerHTML='<div class="aw-lab">'+order.map(function(m,i){return '<button class="aw-mix" data-i="'+i+'"><span>'+mixes[m][0]+'</span><b>+</b><span>'+mixes[m][1]+'</span></button>';}).join('')+'</div>';
+        stage.querySelectorAll('.aw-mix').forEach(function(b){ b.addEventListener('click',function(){
+          if(+b.getAttribute('data-i')===correct){ b.classList.add('hit'); b.innerHTML='<span>🔵</span><b>+</b><span>🔵</span> ✨'; setTimeout(ok,500); }
+          else { b.classList.add('miss'); nudge('Not a match — look for two blue dots.'); setTimeout(function(){b.classList.remove('miss');},500); }
+        }); });
+      }
+    }
+
+    var prior = id ? load(id + ':done') : null;
+    if (prior){ fb.classList.add('show'); reveal(done, (cfg.complete && cfg.complete.progress) || 100); }
+    map();
+  }
+
   // ---- registry + boot ----------------------------------------------------
-  var RENDERERS = { poll: renderPoll, sort: renderSort, choice: renderChoice, nextword: renderNextWord, attention: renderAttention, quiz: renderQuiz, timeline: renderTimeline, reveal: renderReveal, slider: renderSlider, trainer: renderTrainer, match: renderMatch, draw: renderDraw, wordchain: renderWordChain, order: renderOrder, neuron: renderNeuron, arcade: renderArcade, powercity: renderPowerCity };
+  var RENDERERS = { poll: renderPoll, sort: renderSort, choice: renderChoice, nextword: renderNextWord, attention: renderAttention, quiz: renderQuiz, timeline: renderTimeline, reveal: renderReveal, slider: renderSlider, trainer: renderTrainer, match: renderMatch, draw: renderDraw, wordchain: renderWordChain, order: renderOrder, neuron: renderNeuron, arcade: renderArcade, powercity: renderPowerCity, aiworld: renderAIWorld };
 
   function hydrate(node) {
     if (node.getAttribute('data-ctf-ready')) return;
