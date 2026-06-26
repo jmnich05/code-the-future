@@ -131,6 +131,8 @@
   }
   async function speakBeat() {
     var b = stage.querySelector(".beat"); if (!b) return;
+    // audio learning reads TEXT only — never narrate over an activity or a video
+    if (b.classList.contains("t-widget") || b.classList.contains("t-video")) { stopSpeaking(); return; }
     var text = (b.innerText || b.textContent || "").replace(/\s+/g, " ").trim().slice(0, 900);
     if (!text) return;   // image/art beats have nothing to read
     try {
