@@ -487,6 +487,8 @@ You're ready for the Big Mission now — a real chance to direct AI agents and b
 to finish, just like a modern developer. Bring your clear thinking, your taste, and your curiosity.
 The future is yours to build. Let's go. 🎉
 
+`[IMAGE: mission-12-b | You can direct AI to build now — that's a real 21st-century superpower.]`
+
 `[INTERACTIVE: "Final check" — a quick, fun recap of the whole module. Show what you know — you've earned it!]`
 
 `[CAPSTONE]`

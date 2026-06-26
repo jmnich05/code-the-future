@@ -34,7 +34,7 @@
    "beats": [
     {
      "type": "image",
-     "html": "<div class=\"lesson-art\"><img src=\"../assets/art/mission-1.svg\" alt=\"\" loading=\"lazy\"><p class=\"art-cap\">Code is a list of clear, exact steps — like a recipe a computer follows perfectly.</p></div>"
+     "html": "<div class=\"lesson-art\"><img src=\"../assets/art/mission-1.jpg\" alt=\"\" loading=\"lazy\"><p class=\"art-cap\">Code is a list of clear, exact steps — like a recipe a computer follows perfectly.</p></div>"
     },
     {
      "type": "text",
@@ -51,6 +51,10 @@
     {
      "type": "text",
      "html": "<p>A list of clear steps that gets a job done has a special name: an <strong>algorithm</strong>. That's a fancy word for something you already do every day. Brushing your teeth? Algorithm. Tying your shoes? Algorithm. Coding is the art of writing algorithms a computer can follow.</p>"
+    },
+    {
+     "type": "image",
+     "html": "<div class=\"lesson-art inline-art\"><img src=\"../assets/art/mission-1-b.jpg\" alt=\"\" loading=\"lazy\"><p class=\"art-cap\">Code is just a list of clear, exact steps — like a recipe a computer follows perfectly.</p></div>"
     },
     {
      "type": "video",
@@ -75,7 +79,7 @@
    "beats": [
     {
      "type": "image",
-     "html": "<div class=\"lesson-art\"><img src=\"../assets/art/mission-2.svg\" alt=\"\" loading=\"lazy\"><p class=\"art-cap\">A coding language lets humans write instructions a computer can run.</p></div>"
+     "html": "<div class=\"lesson-art\"><img src=\"../assets/art/mission-2.jpg\" alt=\"\" loading=\"lazy\"><p class=\"art-cap\">A coding language lets humans write instructions a computer can run.</p></div>"
     },
     {
      "type": "text",
@@ -102,6 +106,10 @@
      "html": "<p>The big idea: a coding language is a <strong>translator</strong>. You write something a human can almost read, and the language turns it into the on-off switches the computer actually needs. For a long time, humans had to write every one of those lines by hand — and that's the story of the next mission.</p>"
     },
     {
+     "type": "image",
+     "html": "<div class=\"lesson-art inline-art\"><img src=\"../assets/art/mission-2-b.jpg\" alt=\"\" loading=\"lazy\"><p class=\"art-cap\">A coding language is a translator between human ideas and a computer's on-off switches.</p></div>"
+    },
+    {
      "type": "video",
      "html": "<div class=\"lesson-video\"><div class=\"vframe\"><iframe src=\"https://www.youtube-nocookie.com/embed/Wchru8alhaE?rel=0&modestbranding=1\" title=\"Invention of Computer Programming Language\" loading=\"lazy\" allow=\"accelerometer; encrypted-media; picture-in-picture; web-share\" allowfullscreen></iframe></div><p class=\"vcap\">🍿 Video break! Where coding languages came from, and why we need them.<br><span class=\"vcredit\">“Invention of Computer Programming Language” · Peekaboo Kidz · YouTube</span></p></div>"
     },
@@ -124,7 +132,7 @@
    "beats": [
     {
      "type": "image",
-     "html": "<div class=\"lesson-art\"><img src=\"../assets/art/mission-3.svg\" alt=\"\" loading=\"lazy\"><p class=\"art-cap\">For decades, every app and game was typed out by hand, one careful line at a time.</p></div>"
+     "html": "<div class=\"lesson-art\"><img src=\"../assets/art/mission-3.jpg\" alt=\"\" loading=\"lazy\"><p class=\"art-cap\">For decades, every app and game was typed out by hand, one careful line at a time.</p></div>"
     },
     {
      "type": "text",
@@ -141,6 +149,10 @@
     {
      "type": "text",
      "html": "<p>This wasn't bad — it was amazing! Everything digital you've ever used was built this way. But it was <em>hard</em>, and it was <em>slow</em>, and only people who had spent years learning a coding language could do it at all. Hold onto that feeling — because in just a couple of missions, you'll see how wildly that changed.</p>"
+    },
+    {
+     "type": "image",
+     "html": "<div class=\"lesson-art inline-art\"><img src=\"../assets/art/mission-3-b.jpg\" alt=\"\" loading=\"lazy\"><p class=\"art-cap\">For decades, every app and game was typed out by hand — one careful line at a time.</p></div>"
     },
     {
      "type": "video",
@@ -165,7 +177,7 @@
    "beats": [
     {
      "type": "image",
-     "html": "<div class=\"lesson-art\"><img src=\"../assets/art/mission-4.svg\" alt=\"\" loading=\"lazy\"><p class=\"art-cap\">A 'bug' is a mistake in code — even one missing comma can stop everything.</p></div>"
+     "html": "<div class=\"lesson-art\"><img src=\"../assets/art/mission-4.jpg\" alt=\"\" loading=\"lazy\"><p class=\"art-cap\">A 'bug' is a mistake in code — even one missing comma can stop everything.</p></div>"
     },
     {
      "type": "text",
@@ -182,6 +194,10 @@
     {
      "type": "text",
      "html": "<p>But here's the secret that makes you a real builder: <strong>bugs are normal, and they are not failure.</strong> Every single coder, even the best in the world, writes bugs constantly. The skill isn't <em>never</em> making mistakes — it's staying calm, hunting them down, and fixing them. Mistakes are how you learn what the computer needs. So when something breaks today, smile: you just found a clue.</p>"
+    },
+    {
+     "type": "image",
+     "html": "<div class=\"lesson-art inline-art\"><img src=\"../assets/art/mission-4-b.jpg\" alt=\"\" loading=\"lazy\"><p class=\"art-cap\">A \"bug\" is a mistake in code — even one missing comma can stop everything. Finding it is called debugging.</p></div>"
     },
     {
      "type": "widget",
@@ -202,7 +218,7 @@
    "beats": [
     {
      "type": "image",
-     "html": "<div class=\"lesson-art\"><img src=\"../assets/art/mission-5.svg\" alt=\"\" loading=\"lazy\"><p class=\"art-cap\">Different jobs need different languages — the right tool for the job.</p></div>"
+     "html": "<div class=\"lesson-art\"><img src=\"../assets/art/mission-5.jpg\" alt=\"\" loading=\"lazy\"><p class=\"art-cap\">Different jobs need different languages — the right tool for the job.</p></div>"
     },
     {
      "type": "text",
@@ -225,6 +241,10 @@
      "html": "<p>There are tons more (and you'll meet <strong>SQL</strong> for asking questions of giant piles of data). The point isn't the names — it's the idea: a great builder picks the <strong>right tool for the job</strong>. And soon, you'll see, you can even ask an AI which tool fits and have it write in that language for you.</p>"
     },
     {
+     "type": "image",
+     "html": "<div class=\"lesson-art inline-art\"><img src=\"../assets/art/mission-5-b.jpg\" alt=\"\" loading=\"lazy\"><p class=\"art-cap\">Different coding languages are different tools — Python for AI, HTML for web pages, C++ for fast games.</p></div>"
+    },
+    {
      "type": "widget",
      "html": "<div class=\"ctf\"><div data-ctf-widget=\"toolmatch\" data-ctf-id=\"kids-m5-toolmatch\">\n    <script type=\"application/json\">{\n      \"eyebrow\":\"Toolsmith\",\"title\":\"Right Tool, Right Job\",\n      \"complete\":{\"icon\":\"🎖️\",\"badge\":\"Badge earned: Toolsmith\",\"sub\":\"Mission 5 of 12\",\"progress\":42}\n    }</script>\n  </div></div>"
     },
@@ -243,7 +263,7 @@
    "beats": [
     {
      "type": "image",
-     "html": "<div class=\"lesson-art\"><img src=\"../assets/art/mission-6.svg\" alt=\"\" loading=\"lazy\"><p class=\"art-cap\">In just two years, AI learned to write code — one of tech's fastest changes ever.</p></div>"
+     "html": "<div class=\"lesson-art\"><img src=\"../assets/art/mission-6.jpg\" alt=\"\" loading=\"lazy\"><p class=\"art-cap\">In just two years, AI learned to write code — one of tech's fastest changes ever.</p></div>"
     },
     {
      "type": "text",
@@ -260,6 +280,10 @@
     {
      "type": "text",
      "html": "<p>This is one of the fastest changes in the whole history of technology. It didn't creep in slowly over fifty years; it arrived in about two. The grown-ups who build software for a living are learning a brand-new way to work <em>right now</em>. And the cool part? You get to learn the new way from the very beginning — no \"old habits\" to unlearn.</p>"
+    },
+    {
+     "type": "image",
+     "html": "<div class=\"lesson-art inline-art\"><img src=\"../assets/art/mission-6-b.jpg\" alt=\"\" loading=\"lazy\"><p class=\"art-cap\">In just two years, coding changed from typing every line by hand to describing what you want and having AI write it.</p></div>"
     },
     {
      "type": "video",
@@ -284,7 +308,7 @@
    "beats": [
     {
      "type": "image",
-     "html": "<div class=\"lesson-art\"><img src=\"../assets/art/mission-7.svg\" alt=\"\" loading=\"lazy\"><p class=\"art-cap\">You tell an AI what to build with a clear prompt — clear thinking is the new superpower.</p></div>"
+     "html": "<div class=\"lesson-art\"><img src=\"../assets/art/mission-7.jpg\" alt=\"\" loading=\"lazy\"><p class=\"art-cap\">You tell an AI what to build with a clear prompt — clear thinking is the new superpower.</p></div>"
     },
     {
      "type": "text",
@@ -301,6 +325,10 @@
     {
      "type": "text",
      "html": "<p>Notice the pattern from this whole journey: a computer does exactly what you type, and an AI does its best with exactly what you describe. So the most important thing you bring isn't fast typing — it's <strong>clear thinking</strong> about what you actually want. The AI handles the \"how.\" You handle the \"what.\"</p>"
+    },
+    {
+     "type": "image",
+     "html": "<div class=\"lesson-art inline-art\"><img src=\"../assets/art/mission-7-b.jpg\" alt=\"\" loading=\"lazy\"><p class=\"art-cap\">A clear prompt gets you exactly what you want; a fuzzy prompt makes the AI guess. Clear thinking is the new superpower.</p></div>"
     },
     {
      "type": "widget",
@@ -321,7 +349,7 @@
    "beats": [
     {
      "type": "image",
-     "html": "<div class=\"lesson-art\"><img src=\"../assets/art/mission-8.svg\" alt=\"\" loading=\"lazy\"><p class=\"art-cap\">An agent doesn't just answer — it runs a loop: plan, do, check, fix, repeat.</p></div>"
+     "html": "<div class=\"lesson-art\"><img src=\"../assets/art/mission-8.jpg\" alt=\"\" loading=\"lazy\"><p class=\"art-cap\">An agent doesn't just answer — it runs a loop: plan, do, check, fix, repeat.</p></div>"
     },
     {
      "type": "text",
@@ -338,6 +366,10 @@
     {
      "type": "text",
      "html": "<p>But here's what matters most: an agent is powerful, but it's <strong>not the boss — you are.</strong> It can run a hundred steps in a minute, but <em>you</em> decide what it should build, and <em>you</em> check whether the result is actually good. The agent is an amazing helper with super-speed hands. The brain, the goal, and the final \"yes, that's right\" — those stay with you.</p>"
+    },
+    {
+     "type": "image",
+     "html": "<div class=\"lesson-art inline-art\"><img src=\"../assets/art/mission-8-b.jpg\" alt=\"\" loading=\"lazy\"><p class=\"art-cap\">An agent doesn't just answer — it runs a loop: plan, do, check, fix, repeat — until the job is done.</p></div>"
     },
     {
      "type": "video",
@@ -362,7 +394,7 @@
    "beats": [
     {
      "type": "image",
-     "html": "<div class=\"lesson-art\"><img src=\"../assets/art/mission-9.svg\" alt=\"\" loading=\"lazy\"><p class=\"art-cap\">A modern builder directs a whole team of AI agents at once, like a head chef.</p></div>"
+     "html": "<div class=\"lesson-art\"><img src=\"../assets/art/mission-9.jpg\" alt=\"\" loading=\"lazy\"><p class=\"art-cap\">A modern builder directs a whole team of AI agents at once, like a head chef.</p></div>"
     },
     {
      "type": "text",
@@ -379,6 +411,10 @@
     {
      "type": "text",
      "html": "<p>This is genuinely new. The most valuable builders today aren't the ones who can type the fastest — the AI types plenty fast. They're the ones who know <em>what's worth building</em>, can <em>tell good work from sloppy work</em>, and can <em>steer a team of agents</em> to a great result. That's a job you can start practicing right now.</p>"
+    },
+    {
+     "type": "image",
+     "html": "<div class=\"lesson-art inline-art\"><img src=\"../assets/art/mission-9-b.jpg\" alt=\"\" loading=\"lazy\"><p class=\"art-cap\">A modern builder is like a director or head chef — steering several AI agents at once, keeping everything pointed at a great result.</p></div>"
     },
     {
      "type": "video",
@@ -403,7 +439,7 @@
    "beats": [
     {
      "type": "image",
-     "html": "<div class=\"lesson-art\"><img src=\"../assets/art/mission-10.svg\" alt=\"\" loading=\"lazy\"><p class=\"art-cap\">AI brings the speed; humans bring taste, decisions, and what we stand behind.</p></div>"
+     "html": "<div class=\"lesson-art\"><img src=\"../assets/art/mission-10.jpg\" alt=\"\" loading=\"lazy\"><p class=\"art-cap\">AI brings the speed; humans bring taste, decisions, and what we stand behind.</p></div>"
     },
     {
      "type": "text",
@@ -426,6 +462,10 @@
      "html": "<p>Here's the heart of this whole module: AI changed <em>how</em> code gets written, but it didn't change who it's <em>for</em> or who's <em>in charge</em>. Machines bring the speed. <strong>You</strong> bring the taste, the decisions, and the responsibility. That's not a smaller job than coding used to be — it's a bigger, more human one.</p>"
     },
     {
+     "type": "image",
+     "html": "<div class=\"lesson-art inline-art\"><img src=\"../assets/art/mission-10-b.jpg\" alt=\"\" loading=\"lazy\"><p class=\"art-cap\">AI brings the speed; humans bring taste (what's good), decisions (what's right), and output (what we stand behind).</p></div>"
+    },
+    {
      "type": "widget",
      "html": "<div class=\"ctf\"><div data-ctf-widget=\"sort\" data-ctf-id=\"kids-m10-builderseye\">\n    <script type=\"application/json\">{\n      \"eyebrow\":\"Chief of Taste\",\"title\":\"Builder's Eye\",\n      \"prompt\":\"Your agents handed you their work. Use your <span class=\\\"ctf-q\\\">taste and judgment</span>: ship the good stuff, send the rest back to fix.\",\n      \"buckets\":[\"Ship it ✅\",\"Send it back 🔁\"],\n      \"items\":[\n        {\"emoji\":\"✨\",\"label\":\"A clean login screen that works great\",\"bucket\":0},\n        {\"emoji\":\"🐛\",\"label\":\"A button that crashes when you tap it\",\"bucket\":1},\n        {\"emoji\":\"🎨\",\"label\":\"A fun, clear game menu kids will love\",\"bucket\":0},\n        {\"emoji\":\"⚖️\",\"label\":\"A quiz that's unfair to some players\",\"bucket\":1},\n        {\"emoji\":\"✅\",\"label\":\"Code that passed every test\",\"bucket\":0},\n        {\"emoji\":\"🌀\",\"label\":\"A page with messy, confusing buttons\",\"bucket\":1}\n      ],\n      \"thanks\":\"That's taste — knowing what's good enough to ship and what needs another loop. The human always makes that call. ⭐\",\n      \"complete\":{\"icon\":\"🎖️\",\"badge\":\"Badge earned: Chief of Taste\",\"sub\":\"Mission 10 of 12\",\"progress\":83}\n    }</script>\n  </div></div>"
     },
@@ -444,7 +484,7 @@
    "beats": [
     {
      "type": "image",
-     "html": "<div class=\"lesson-art\"><img src=\"../assets/art/mission-11.svg\" alt=\"\" loading=\"lazy\"><p class=\"art-cap\">You bring the idea; the AI brings the speed. Describe, look, decide, improve.</p></div>"
+     "html": "<div class=\"lesson-art\"><img src=\"../assets/art/mission-11.jpg\" alt=\"\" loading=\"lazy\"><p class=\"art-cap\">You bring the idea; the AI brings the speed. Describe, look, decide, improve.</p></div>"
     },
     {
      "type": "text",
@@ -461,6 +501,10 @@
     {
      "type": "text",
      "html": "<p>Whatever you make today, remember: the AI was your helper, but the idea was yours, the choices were yours, and the finished thing is <em>yours</em>. You didn't just use a tool. You <strong>directed</strong> one. That's the whole skill — and you've got it.</p>"
+    },
+    {
+     "type": "image",
+     "html": "<div class=\"lesson-art inline-art\"><img src=\"../assets/art/mission-11-b.jpg\" alt=\"\" loading=\"lazy\"><p class=\"art-cap\">You bring the idea and the taste; the AI brings the speed. Describe, look, decide, improve — that's building now.</p></div>"
     },
     {
      "type": "widget",
@@ -481,7 +525,7 @@
    "beats": [
     {
      "type": "image",
-     "html": "<div class=\"lesson-art\"><img src=\"../assets/art/mission-12.svg\" alt=\"\" loading=\"lazy\"><p class=\"art-cap\">You did it — you understand how building really works now, and you can do it yourself.</p></div>"
+     "html": "<div class=\"lesson-art\"><img src=\"../assets/art/mission-12.jpg\" alt=\"\" loading=\"lazy\"><p class=\"art-cap\">You did it — you understand how building really works now, and you can do it yourself.</p></div>"
     },
     {
      "type": "text",
@@ -498,6 +542,10 @@
     {
      "type": "text",
      "html": "<p>You're ready for the Big Mission now — a real chance to direct AI agents and build something start to finish, just like a modern developer. Bring your clear thinking, your taste, and your curiosity. The future is yours to build. Let's go. 🎉</p>"
+    },
+    {
+     "type": "image",
+     "html": "<div class=\"lesson-art inline-art\"><img src=\"../assets/art/mission-12-b.jpg\" alt=\"\" loading=\"lazy\"><p class=\"art-cap\">You can direct AI to build now — that's a real 21st-century superpower.</p></div>"
     },
     {
      "type": "video",

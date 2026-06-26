@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<link rel="icon" type="image/svg+xml" href="/platform/assets/logo-icon-tile.svg">
+<link rel="apple-touch-icon" href="/platform/assets/touch-icon.png">
+<title>Code the Future — The Big Mission: Ship It!</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap');
+
+:root{
+  --display:'Space Grotesk','Trebuchet MS',system-ui,sans-serif;
+  --body:'Plus Jakarta Sans',system-ui,sans-serif;
+  --mono:'JetBrains Mono',ui-monospace,monospace;
+  --teal:#26C7D1; --blue:#3D74FF; --amber:#FFB320; --coral:#FF5A38; --green:#3FD08A; --purple:#9B7BFF;
+}
+*{ box-sizing:border-box; }
+html,body{ margin:0; height:100%; }
+body{ font-family:var(--body); color:#EAF1FF; background:#070C1A; overflow:hidden; }
+
+#stage{ position:fixed; inset:0; overflow:hidden;
+  background:radial-gradient(120% 90% at 80% -10%, rgba(155,123,255,.22), transparent 55%),
+             radial-gradient(120% 90% at 10% 110%, rgba(61,116,255,.30), transparent 55%),
+             linear-gradient(165deg,#101a3c 0%,#0A1024 55%,#070C1A 100%); }
+.stars{ position:absolute; inset:-20% -20%; pointer-events:none; background-repeat:repeat; background-size:340px 340px; }
+.stars.s1{ background-image:radial-gradient(1.6px 1.6px at 30px 40px,#fff,transparent),radial-gradient(1.4px 1.4px at 160px 120px,#cfe3ff,transparent),radial-gradient(1.8px 1.8px at 240px 280px,#fff,transparent),radial-gradient(1.2px 1.2px at 90px 250px,#bfe9ff,transparent); opacity:.9; animation:drift 60s linear infinite; }
+.stars.s2{ background-size:520px 520px; background-image:radial-gradient(1.2px 1.2px at 80px 90px,#9fc6ff,transparent),radial-gradient(1.5px 1.5px at 400px 300px,#fff,transparent),radial-gradient(1px 1px at 220px 460px,#cbe6ff,transparent); opacity:.55; animation:drift 100s linear infinite reverse; }
+.stars.tw{ animation:drift 60s linear infinite, tw 4s ease-in-out infinite; }
+@keyframes drift{ to{ transform:translateY(340px); } }
+@keyframes tw{ 0%,100%{ opacity:.85 } 50%{ opacity:.45 } }
+.planet{ position:absolute; right:-90px; top:8%; width:220px; height:220px; border-radius:50%;
+  background:radial-gradient(circle at 35% 30%, #b6a4ff, #6a52c8 60%, #3a2c7a); opacity:.45;
+  box-shadow:0 0 80px rgba(155,123,255,.35); animation:bob 9s ease-in-out infinite; }
+@keyframes bob{ 0%,100%{ transform:translateY(0) } 50%{ transform:translateY(-16px) } }
+
+.screen{ position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center;
+  padding:max(16px,env(safe-area-inset-top)) 18px 18px; text-align:center; opacity:0; transform:translateY(12px);
+  transition:opacity .5s ease, transform .5s ease; pointer-events:none; }
+.screen.on{ opacity:1; transform:none; pointer-events:auto; }
+
+.kicker{ font-family:var(--mono); font-size:13px; letter-spacing:.24em; text-transform:uppercase; color:var(--purple); margin:0 0 14px; }
+.t-big{ font-family:var(--display); font-weight:700; line-height:1; margin:0; font-size:clamp(2.6rem,9vw,5.2rem); letter-spacing:-.02em; text-shadow:0 6px 40px rgba(155,123,255,.35); }
+.t-big .grad{ background:linear-gradient(110deg,#9fb6ff,#9B7BFF 50%,#26C7D1); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent; }
+.lede{ max-width:32ch; font-size:1.12rem; opacity:.92; margin:18px 0 6px; line-height:1.5; }
+.btn{ font-family:var(--display); font-weight:700; font-size:1.15rem; color:#06122b; border:none; cursor:pointer;
+  padding:16px 34px; border-radius:999px; background:linear-gradient(120deg,#9fb6ff,#9B7BFF); box-shadow:0 14px 34px rgba(155,123,255,.5);
+  transition:transform .12s ease, box-shadow .2s ease; }
+.btn:hover{ transform:translateY(-2px); box-shadow:0 18px 40px rgba(155,123,255,.6); }
+.btn:active{ transform:translateY(0); }
+.btn.amber{ background:linear-gradient(120deg,#FFD479,#FF9F1C); box-shadow:0 14px 34px rgba(255,159,28,.5); }
+.btn.green{ background:linear-gradient(120deg,#9BF5C7,#26C7D1); box-shadow:0 14px 34px rgba(38,199,209,.5); }
+.btn.ghost{ background:transparent; color:#EAF1FF; border:2px solid rgba(255,255,255,.5); box-shadow:none; }
+.btn:disabled{ opacity:.5; cursor:not-allowed; transform:none; }
+.mini{ margin-top:18px; font-size:.92rem; opacity:.7; max-width:38ch; }
+.charpod{ width:118px; height:118px; border-radius:26px; overflow:hidden; margin:6px auto 0; box-shadow:0 16px 40px rgba(0,0,0,.45); animation:bob 4s ease-in-out infinite; }
+.charpod svg{ width:100%; height:100%; display:block; }
+
+/* ===== board: the build bay ===== */
+#bay{ justify-content:flex-start; align-items:stretch; padding:0; }
+.bay{ position:relative; flex:1 1 auto; width:100%; min-height:340px; overflow:hidden;
+  background:radial-gradient(80% 60% at 50% -8%, rgba(155,123,255,.10), transparent 60%), linear-gradient(180deg,#0e1330 0%,#0a1228 60%,#070d1e 100%); }
+.bay .gridlines{ position:absolute; inset:0; opacity:.10; pointer-events:none; background:
+  repeating-linear-gradient(0deg, rgba(127,227,255,.5) 0 1px, transparent 1px 44px),
+  repeating-linear-gradient(90deg, rgba(127,227,255,.5) 0 1px, transparent 1px 44px); }
+.bay-tag{ position:absolute; top:12px; left:14px; z-index:6; font-family:var(--mono); font-size:11.5px; letter-spacing:.12em; text-transform:uppercase;
+  color:#cfe3ff; background:rgba(8,14,30,.62); border:1px solid rgba(127,227,255,.25); border-radius:8px; padding:6px 10px; }
+.bay-tag b{ color:#FFD479; }
+.build-hud{ position:absolute; top:12px; right:14px; z-index:6; display:flex; align-items:center; gap:9px; background:rgba(8,14,30,.62); border:1px solid rgba(127,227,255,.25); border-radius:10px; padding:7px 11px; }
+.build-hud .bmeter{ width:120px; height:9px; border-radius:99px; background:rgba(255,255,255,.14); overflow:hidden; }
+.build-hud .bmeter i{ display:block; height:100%; width:0; background:linear-gradient(90deg,#9B7BFF,#5ad1ff,#3FD08A); transition:width .8s cubic-bezier(.22,1,.36,1); }
+.build-hud .bpct{ font-family:var(--display); font-weight:700; font-size:.82rem; min-width:36px; }
+
+/* the app being built — a phone screen that fills with blocks as you progress */
+.appframe{ position:absolute; left:50%; top:46%; transform:translate(-50%,-50%); width:150px; height:230px; z-index:3;
+  border-radius:24px; background:#0b1124; border:4px solid #2a3566; box-shadow:0 18px 44px rgba(0,0,0,.5), inset 0 0 0 2px rgba(127,227,255,.15); padding:12px 10px; }
+.appframe .scr{ width:100%; height:100%; border-radius:14px; background:#070b18; overflow:hidden; display:flex; flex-direction:column; gap:6px; padding:8px; }
+.appblock{ border-radius:7px; background:linear-gradient(90deg, rgba(155,123,255,.5), rgba(90,209,255,.5)); opacity:0; transform:translateY(8px); transition:opacity .5s, transform .5s; }
+.appblock.show{ opacity:1; transform:none; }
+.appblock.b0{ height:24px; } .appblock.b1{ height:40px; } .appblock.b2{ height:18px; } .appblock.b3{ height:30px; flex:1; } .appblock.b4{ height:20px; } .appblock.b5{ height:26px; background:linear-gradient(90deg,#3FD08A,#9BF5C7); }
+.appframe.glow{ box-shadow:0 0 50px 8px rgba(63,208,138,.6), inset 0 0 0 2px rgba(63,208,138,.4); border-color:#3FD08A; }
+
+.agents{ position:absolute; left:0; right:0; bottom:11%; display:flex; justify-content:center; gap:26px; z-index:4; }
+.agent{ width:54px; text-align:center; font-size:1.9rem; transition:transform .3s; }
+.agent small{ display:block; font-family:var(--mono); font-size:9px; color:#9fb6e6; margin-top:2px; letter-spacing:.04em; }
+.agent.work{ animation:abob 1.2s ease-in-out infinite; }
+@keyframes abob{ 50%{ transform:translateY(-8px); } }
+.agent.cheer{ animation:acheer .6s cubic-bezier(.34,1.56,.64,1); }
+@keyframes acheer{ 40%{ transform:translateY(-18px) scale(1.12) rotate(-6deg); } }
+
+.toast{ position:absolute; top:24%; left:50%; z-index:9; opacity:0; max-width:80%; transform:translate(-50%,0);
+  font-family:var(--display); font-weight:700; font-size:1.05rem; text-align:center; padding:11px 18px; border-radius:14px;
+  background:rgba(8,14,30,.9); border:1px solid rgba(127,227,255,.4); box-shadow:0 16px 40px rgba(0,0,0,.5); }
+.toast.show{ animation:toast 1.9s ease; }
+@keyframes toast{ 0%{ opacity:0; transform:translate(-50%,8px) } 12%,80%{ opacity:1; transform:translate(-50%,-6px) } 100%{ opacity:0; transform:translate(-50%,-18px) } }
+.bay.shaking{ animation:shake .35s ease; }
+@keyframes shake{ 0%{ transform:translate(0,0) } 25%{ transform:translate(-5px,2px) } 50%{ transform:translate(5px,-2px) } 75%{ transform:translate(-3px,-2px) } 100%{ transform:translate(0,0) } }
+
+.terminal{ width:100%; display:flex; justify-content:center; padding:14px 16px max(14px,env(safe-area-inset-bottom));
+  background:linear-gradient(180deg, transparent, rgba(6,10,22,.55) 35%); }
+.qcard{ width:100%; max-width:700px; background:rgba(12,20,40,.78); backdrop-filter:blur(8px);
+  border:1px solid rgba(127,227,255,.25); border-radius:22px; padding:18px 18px 20px; box-shadow:0 20px 50px rgba(0,0,0,.45); }
+.qtag{ font-family:var(--mono); font-size:11px; letter-spacing:.16em; text-transform:uppercase; color:var(--purple); margin:0 0 8px; }
+.qtext{ font-family:var(--display); font-weight:700; font-size:clamp(1.1rem,3.2vw,1.42rem); line-height:1.3; margin:0 0 14px; }
+.opts{ display:grid; grid-template-columns:1fr; gap:10px; }
+.opt{ font-family:var(--body); font-weight:600; font-size:1rem; text-align:left; color:#EAF1FF; cursor:pointer;
+  background:rgba(255,255,255,.06); border:1.5px solid rgba(255,255,255,.18); border-radius:14px; padding:13px 15px; transition:background .14s, border-color .14s, transform .1s; }
+.opt:hover:not(:disabled){ background:rgba(127,227,255,.14); border-color:rgba(127,227,255,.5); transform:translateX(3px); }
+.opt:disabled{ cursor:default; }
+.opt.right{ background:rgba(63,208,138,.22); border-color:var(--green); }
+.opt.wrong{ background:rgba(255,90,56,.18); border-color:var(--coral); }
+.qfb{ min-height:1.4em; margin-top:12px; font-weight:700; font-size:1rem; line-height:1.4; opacity:0; transition:opacity .2s; }
+.qfb.show{ opacity:1; } .qfb.good{ color:#7FF0B8; } .qfb.bad{ color:#FFC0A8; }
+
+/* finale */
+.panel{ width:100%; max-width:660px; background:rgba(12,20,40,.72); border:1px solid rgba(127,227,255,.25); border-radius:22px; padding:22px; box-shadow:0 20px 50px rgba(0,0,0,.45); }
+.chips{ display:flex; flex-wrap:wrap; gap:8px; justify-content:center; margin:4px 0 12px; }
+.chip{ font-family:var(--display); font-weight:600; font-size:.9rem; color:#cfe3ff; cursor:pointer; background:rgba(127,227,255,.1); border:1.5px solid rgba(127,227,255,.3); border-radius:999px; padding:8px 13px; transition:background .14s, transform .1s; }
+.chip:hover{ background:rgba(127,227,255,.2); transform:translateY(-1px); }
+.ta{ width:100%; min-height:84px; resize:vertical; font-family:var(--body); font-size:1.05rem; color:#fff; background:rgba(255,255,255,.06); border:1.5px solid rgba(127,227,255,.35); border-radius:16px; padding:14px; outline:none; }
+.ta:focus{ border-color:#9B7BFF; box-shadow:0 0 0 4px rgba(155,123,255,.18); }
+.ta::placeholder{ color:rgba(207,227,255,.5); }
+.blueprint{ margin-top:14px; text-align:left; font-family:var(--mono); font-size:.95rem; line-height:1.6; color:#CFE9FF; background:linear-gradient(180deg, rgba(30,20,60,.55), rgba(12,20,44,.55)); border:1px dashed rgba(155,123,255,.45); border-radius:14px; padding:16px; max-height:0; overflow:hidden; opacity:0; transition:max-height .7s ease, opacity .4s; }
+.blueprint.show{ max-height:460px; opacity:1; }
+.blueprint .bh{ font-family:var(--display); color:#c3b3ff; letter-spacing:.1em; font-size:.8rem; margin-bottom:8px; }
+.spin{ display:inline-block; width:16px; height:16px; border:3px solid rgba(127,227,255,.3); border-top-color:#9B7BFF; border-radius:50%; animation:sp .8s linear infinite; vertical-align:-3px; }
+@keyframes sp{ to{ transform:rotate(360deg) } }
+
+/* launch */
+.appbig{ position:relative; width:170px; height:170px; border-radius:38px; margin:0 auto; background:linear-gradient(150deg,#9B7BFF,#3D74FF 60%,#26C7D1); box-shadow:0 18px 50px rgba(61,116,255,.5); display:flex; align-items:center; justify-content:center; font-size:4.2rem; }
+.appbig.go{ animation:ship 2.4s cubic-bezier(.5,0,.4,1) forwards; }
+@keyframes ship{ 0%{ transform:translateY(0) scale(1) } 18%{ transform:translateY(8px) scale(.96) } 100%{ transform:translateY(-128vh) scale(.6) } }
+.confetti{ position:absolute; inset:0; pointer-events:none; overflow:hidden; }
+.confetti i{ position:absolute; top:-12px; width:9px; height:14px; border-radius:2px; animation:fall linear forwards; }
+@keyframes fall{ to{ transform:translateY(110vh) rotate(540deg); opacity:.9 } }
+
+/* credits */
+#credits{ overflow:hidden; }
+.crawl{ position:absolute; left:0; right:0; bottom:-10%; display:flex; flex-direction:column; align-items:center; gap:26px; padding:0 18px; animation:crawl 26s linear forwards; }
+@keyframes crawl{ from{ transform:translateY(0) } to{ transform:translateY(-160%) } }
+.crawl .cr-title{ font-family:var(--display); font-weight:700; font-size:clamp(1.8rem,6vw,3rem); color:#c3b3ff; }
+.crawl .cr-role{ font-family:var(--mono); font-size:13px; letter-spacing:.18em; text-transform:uppercase; color:var(--purple); margin-bottom:6px; }
+.crawl > div{ display:flex; flex-direction:column; align-items:center; gap:2px; }
+.crawl .cr-name{ font-family:var(--display); font-weight:700; font-size:1.5rem; }
+.crawl .cr-badge{ width:120px; height:120px; border-radius:28px; overflow:hidden; box-shadow:0 16px 40px rgba(0,0,0,.5); }
+.crawl .cr-badge svg{ width:100%; height:100%; display:block; }
+.credits-skip{ position:absolute; bottom:22px; left:50%; transform:translateX(-50%); z-index:5; }
+
+/* outro */
+#outro{ justify-content:center; }
+.cards{ display:flex; gap:18px; flex-wrap:wrap; justify-content:center; max-width:880px; width:100%; }
+.card2{ flex:1 1 360px; max-width:430px; text-align:left; background:rgba(12,20,40,.72); border:1px solid rgba(127,227,255,.25); border-radius:22px; padding:22px 24px; box-shadow:0 20px 50px rgba(0,0,0,.45); }
+.card2 .sub{ font-family:var(--mono); font-size:12px; letter-spacing:.14em; text-transform:uppercase; color:var(--purple); margin:0 0 6px; }
+.card2 h3{ font-family:var(--display); font-weight:700; font-size:1.45rem; margin:0 0 12px; }
+.card2 ul{ margin:0; padding-left:18px; } .card2 li{ margin:9px 0; line-height:1.45; font-size:1rem; }
+.card2 .pet{ margin-top:14px; padding:11px 13px; border-radius:13px; background:rgba(155,123,255,.12); border:1px dashed rgba(155,123,255,.45); font-weight:600; }
+.outro-actions{ display:flex; gap:12px; flex-wrap:wrap; justify-content:center; margin-top:24px; }
+
+/* report */
+.report{ position:fixed; inset:0; z-index:9999; background:rgba(7,12,26,.9); overflow:auto; padding:24px; }
+.report[hidden]{ display:none; }
+.sheet{ max-width:740px; margin:0 auto; background:#fff; color:#1B2233; border-radius:18px; padding:42px 46px; box-shadow:0 30px 80px rgba(0,0,0,.5); font-family:var(--body); border-top:8px solid #9B7BFF; }
+.sheet .brand{ font-family:var(--mono); font-size:12px; letter-spacing:.18em; text-transform:uppercase; color:#6a52c8; }
+.sheet h1{ font-family:var(--display); font-size:2rem; line-height:1.1; margin:6px 0 2px; color:#0C1322; }
+.sheet .modline{ color:#5F6B82; font-weight:600; margin:0 0 16px; }
+.sheet .awarded{ display:flex; align-items:center; gap:14px; padding:14px 0; border-top:2px solid #ECEFF5; border-bottom:2px solid #ECEFF5; margin:8px 0 18px; }
+.sheet .awarded .nm{ font-family:var(--display); font-weight:700; font-size:1.5rem; color:#5E3FC2; }
+.sheet .awarded .meta{ font-size:.92rem; color:#5F6B82; }
+.sheet .seal{ width:64px; height:64px; border-radius:14px; overflow:hidden; flex:0 0 auto; box-shadow:0 6px 16px rgba(12,19,34,.18); }
+.sheet .seal svg{ width:100%; height:100%; display:block; }
+.sheet h2{ font-family:var(--display); font-size:1.1rem; color:#0C1322; margin:20px 0 8px; }
+.sheet ul{ margin:0; padding-left:20px; } .sheet li{ margin:6px 0; line-height:1.45; font-size:.98rem; }
+.sheet .two{ display:grid; grid-template-columns:1fr 1fr; gap:8px 28px; }
+@media (max-width:560px){ .sheet .two{ grid-template-columns:1fr; } .sheet{ padding:30px 24px; } }
+.sheet .pnote{ margin-top:18px; padding:16px 18px; background:#F4F1FF; border-radius:12px; font-size:.95rem; }
+.sheet .pnote b{ color:#5E3FC2; }
+.sheet .foot{ margin-top:22px; padding-top:14px; border-top:2px solid #ECEFF5; font-size:.85rem; color:#8A93A8; display:flex; justify-content:space-between; gap:10px; flex-wrap:wrap; }
+.report-bar{ position:sticky; top:0; z-index:2; max-width:740px; margin:0 auto 14px; padding:6px 0; display:flex; gap:10px; justify-content:flex-end; }
+
+@media print {
+  body{ background:#fff !important; } #stage{ display:none !important; } .no-print{ display:none !important; }
+  .report{ position:static; background:#fff; padding:0; overflow:visible; }
+  .sheet{ box-shadow:none; border-radius:0; max-width:none; border-top:6px solid #9B7BFF; padding:0 6px; }
+}
+@media (prefers-reduced-motion:reduce){
+  .stars,.planet,.charpod,.confetti i,.agent.work,.agent.cheer,.crawl,.appbig.go,.bay.shaking{ animation:none !important; }
+  .appbig.go{ transform:translateY(-128vh); transition:transform 2s ease-in; }
+  .crawl{ position:static; transform:none; padding:30px 18px; }
+}
+</style>
+</head>
+<body>
+<div id="stage">
+  <div class="stars s1"></div>
+  <div class="stars s2 tw"></div>
+  <div class="planet"></div>
+  <section id="title" class="screen on"></section>
+  <section id="bay" class="screen"></section>
+  <section id="finale" class="screen"></section>
+  <section id="launch" class="screen"></section>
+  <section id="credits" class="screen"></section>
+  <section id="outro" class="screen"></section>
+</div>
+<div id="report" class="report" hidden></div>
+
+<script src="/platform/lib/avatar.js"></script>
+<script src="/platform/lib/filter.js"></script>
+<script>
+(function(){
+  "use strict";
+  var $ = function(id){ return document.getElementById(id); };
+  function el(tag, cls, html){ var n=document.createElement(tag); if(cls) n.className=cls; if(html!=null) n.innerHTML=html; return n; }
+  function esc(s){ return String(s==null?'':s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];}); }
+
+  function loadProfile(){ try{ var p=JSON.parse(localStorage.getItem('ctf:profile')||'null'); if(p) return p; }catch(e){} return {}; }
+  var profile = loadProfile();
+  var AV = (window.CTFAvatar) ? (profile.avatar && Object.keys(profile.avatar||{}).length ? profile.avatar : window.CTFAvatar.DEFAULT) : null;
+  var avatarSVG = (window.CTFAvatar) ? window.CTFAvatar.render(AV) : '🧑‍🚀';
+  var heroName = (profile.display_name || 'Builder').toString().slice(0,24);
+
+  // the build: each good decision (drawing on a Module-3 idea) assembles one
+  // block of your app and pushes the build bar toward 100% "ship-ready".
+  var STEPS = [
+    { tag:'Mission 7 · Clear prompts', q:'Time to build your app! What do you give your AI agents first?',
+      o:[ {t:'A clear plan and exact instructions for what to build', ok:true},
+          {t:'Just say “make something cool” and hope', ok:false},
+          {t:'Nothing — let them guess what I want', ok:false} ],
+      win:'Clear instructions = the agents build what you actually pictured. The block snaps in!' },
+    { tag:'Mission 7 · Fix the fuzzy prompt', q:'Your prompt was fuzzy and an agent built the WRONG screen. Now what?',
+      o:[ {t:'Describe exactly what I want and have it redo that part', ok:true},
+          {t:'Ship the wrong screen — close enough', ok:false},
+          {t:'Yell “bad AI!” and give up', ok:false} ],
+      win:'You sharpened the prompt and it rebuilt it right. That’s the loop!' },
+    { tag:'Mission 8 · The agent loop', q:'An agent ran the code and found a BUG. What should happen?',
+      o:[ {t:'Fix the bug, then run it again to check', ok:true},
+          {t:'Ignore the bug and keep going', ok:false},
+          {t:'Delete everything and restart from zero', ok:false} ],
+      win:'Plan, do, check, fix, repeat — you kept the loop going until it worked.' },
+    { tag:'Mission 10 · Your taste', q:'One agent’s work looks sloppy and a little unfair. Your call?',
+      o:[ {t:'Use my taste — send it back to fix before it ships', ok:true},
+          {t:'Ship it anyway, nobody will notice', ok:false},
+          {t:'Let the agent decide if it’s good', ok:false} ],
+      win:'That’s taste — you caught what wasn’t good enough. Only a human makes that call.' },
+    { tag:'Mission 10 · Who decides', q:'Everything runs! Who decides the app is actually GOOD and ready?',
+      o:[ {t:'I do — the human makes the final call', ok:true},
+          {t:'The agents decide on their own', ok:false},
+          {t:'Nobody — just ship whatever', ok:false} ],
+      win:'Right — the agents built it, but YOU own the final yes.' },
+    { tag:'Mission 8 · Ship check', q:'Last step before launch. What’s the smart move?',
+      o:[ {t:'Test it one more time, then ship it', ok:true},
+          {t:'Skip testing and ship immediately', ok:false},
+          {t:'Keep looping forever and never ship', ok:false} ],
+      win:'Tested and approved by you — it’s ship-ready! 🚀' }
+  ];
+  var GOOD_TOASTS = ['🎨 The Designer polished it!','🧪 The Tester gave a thumbs-up!','🐛 The Bug-Fixer squashed one!'];
+
+  function show(id){ ['title','bay','finale','launch','credits','outro'].forEach(function(s){ $(s).classList.toggle('on', s===id); }); }
+
+  // ===================== TITLE =====================
+  function renderTitle(){
+    var s=$('title'); s.innerHTML='';
+    s.appendChild(el('p','kicker','🚀 The Big Mission · Module 3'));
+    s.appendChild(el('h1','t-big','Ship <span class="grad">It!</span>'));
+    s.appendChild(el('p','lede','Time to build your first real app, '+esc(heroName)+' — the modern way. You’re the lead builder, directing a team of AI agents. Make the smart calls they can’t, assemble your app block by block, and launch it to the world. You bring the idea and the taste; they bring the speed.'));
+    var pod=el('div','charpod'); pod.innerHTML=avatarSVG; s.appendChild(pod);
+    var go=el('button','btn','▶  Enter the build bay'); go.style.marginTop='20px';
+    go.addEventListener('click', startBay); s.appendChild(go);
+    s.appendChild(el('p','mini','6 build decisions · get each right to assemble your app. A wrong call brings a bug — rethink it and try again.'));
+  }
+
+  // ===================== BUILD BAY =====================
+  var bay, bayTag, bFill, bpct, appBlocks, agentsEls, toastEl, qhost;
+  var si=0, built=0, busy=false;
+
+  function buildBay(){
+    var s=$('bay'); s.innerHTML='';
+    bay=el('div','bay');
+    bay.innerHTML='<div class="gridlines"></div>'+
+      '<div class="bay-tag"></div>'+
+      '<div class="build-hud">🛠️ <div class="bmeter"><i></i></div><span class="bpct">0%</span></div>'+
+      '<div class="appframe"><div class="scr">'+
+        '<span class="appblock b0"></span><span class="appblock b1"></span><span class="appblock b2"></span><span class="appblock b3"></span><span class="appblock b4"></span><span class="appblock b5"></span>'+
+      '</div></div>'+
+      '<div class="agents">'+
+        '<div class="agent work">🎨<small>Designer</small></div>'+
+        '<div class="agent work">🐛<small>Bug-Fixer</small></div>'+
+        '<div class="agent work">🧪<small>Tester</small></div>'+
+      '</div>'+
+      '<div class="toast"></div>';
+    s.appendChild(bay);
+    var term=el('div','terminal'); qhost=el('div'); qhost.style.cssText='width:100%;display:flex;justify-content:center;';
+    term.appendChild(qhost); s.appendChild(term);
+    bayTag=bay.querySelector('.bay-tag'); bFill=bay.querySelector('.bmeter i'); bpct=bay.querySelector('.bpct');
+    appBlocks=bay.querySelectorAll('.appblock'); agentsEls=bay.querySelectorAll('.agent'); toastEl=bay.querySelector('.toast');
+  }
+  function setBuild(){ var p=Math.round((built/STEPS.length)*100); bFill.style.width=p+'%'; bpct.textContent=p+'%'; }
+  function toast(msg){ toastEl.innerHTML=msg; toastEl.classList.remove('show'); void toastEl.offsetWidth; toastEl.classList.add('show'); }
+  function startBay(){ show('bay'); buildBay(); setTimeout(ask, 700); }
+
+  function ask(){
+    if(si>=STEPS.length){ return setTimeout(startFinale, 500); }
+    var s=STEPS[si];
+    bayTag.innerHTML='Build step '+(si+1)+' / '+STEPS.length+' · <b>'+esc(s.tag)+'</b>';
+    var order=s.o.map(function(o,i){return i;}).sort(function(){return Math.random()-0.5;});
+    var card=el('div','qcard');
+    card.appendChild(el('p','qtag','🛠️ YOUR CALL'));
+    card.appendChild(el('h2','qtext', esc(s.q)));
+    var opts=el('div','opts'), fb=el('div','qfb');
+    order.forEach(function(oi){ var b=el('button','opt', esc(s.o[oi].t)); b.addEventListener('click',function(){ choose(s,oi,b,opts,fb); }); opts.appendChild(b); });
+    card.appendChild(opts); card.appendChild(fb);
+    qhost.innerHTML=''; qhost.appendChild(card);
+  }
+  function choose(s, oi, btn, opts, fb){
+    if(busy) return;
+    var o=s.o[oi];
+    if(o.ok){
+      busy=true; opts.querySelectorAll('.opt').forEach(function(b){ b.disabled=true; });
+      btn.classList.add('right'); fb.className='qfb show good'; fb.textContent='✅ '+s.win;
+      if(appBlocks[built]) appBlocks[built].classList.add('show');
+      var a=agentsEls[built%3]; a.classList.remove('cheer'); void a.offsetWidth; a.classList.add('cheer');
+      built++; setBuild(); si++;
+      toast(GOOD_TOASTS[(built-1)%GOOD_TOASTS.length]);
+      setTimeout(function(){ busy=false; ask(); }, 1700);
+    } else {
+      btn.classList.add('wrong'); btn.disabled=true;
+      fb.className='qfb show bad'; fb.textContent='🐛 That brings a bug! A good lead builder wouldn’t ship that. Think again.';
+      bay.classList.remove('shaking'); void bay.offsetWidth; bay.classList.add('shaking');
+    }
+  }
+
+  // ===================== FINALE: describe your app =====================
+  function startFinale(){
+    show('finale');
+    var s=$('finale'); s.innerHTML='';
+    s.appendChild(el('p','kicker','🛠️ Final step · name your app'));
+    s.appendChild(el('h1','t-big','What did you <span class="grad">build</span>?'));
+    s.appendChild(el('p','lede','Your app is assembled, '+esc(heroName)+'! Tell a REAL AI what your app or game does — it’ll write the official ship notes, the way a lead builder announces a launch.'));
+    var panel=el('div','panel');
+    var chips=el('div','chips');
+    ['A game where you dodge asteroids in space','An app that helps kids learn their times tables','A drawing app that turns doodles into art','A friendly chatbot that tells jokes'].forEach(function(idea){
+      var c=el('button','chip', esc(idea)); c.addEventListener('click',function(){ ta.value=idea; ta.focus(); }); chips.appendChild(c);
+    });
+    panel.appendChild(chips);
+    var ta=el('textarea','ta'); ta.placeholder='My app/game is… (what does it do?)'; ta.maxLength=240; panel.appendChild(ta);
+    var row=el('div'); row.style.cssText='display:flex;gap:10px;justify-content:center;margin-top:14px;flex-wrap:wrap;';
+    var build=el('button','btn amber','✨  Write the ship notes'); row.appendChild(build); panel.appendChild(row);
+    var blue=el('div','blueprint'); panel.appendChild(blue);
+    var launchBtn=el('button','btn green','🚀  Ship it!'); launchBtn.style.cssText='margin-top:16px;display:none;'; panel.appendChild(launchBtn);
+    s.appendChild(panel);
+
+    var busy2=false;
+    function build_(){
+      var q=ta.value.trim(); if(!q){ ta.focus(); return; }
+      if(window.CTFFilter && window.CTFFilter.isClean && !window.CTFFilter.isClean(q)){ blue.classList.add('show'); blue.innerHTML='<div class="bh">SHIP NOTES</div>Let’s keep it kind and fun — describe a cool, friendly app and try again! 😊'; return; }
+      if(busy2) return; busy2=true; build.disabled=true; build.innerHTML='<span class="spin"></span>  Writing ship notes…';
+      blue.classList.add('show'); blue.innerHTML='<div class="bh">SHIP NOTES</div>Reading your build…';
+      var prompt='A kid just directed a team of AI agents to build their first app and is about to launch it. They described it as: "'+q+'". In 2-3 short, exciting sentences for a 9-year-old, write the official launch "ship notes" like a proud lead builder. Mention a detail they gave, name one cool feature, remind that THEY were the director who made the calls, and end with "Shipped!"';
+      fetch('/api/ai', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({ mode:'kids', prompt:prompt }) })
+        .then(function(r){ return r.json().then(function(d){ return {ok:r.ok, d:d}; }); })
+        .then(function(res){ showNotes((res.ok && res.d.text) ? res.d.text : fallback(q)); })
+        .catch(function(){ showNotes(fallback(q)); });
+    }
+    function fallback(q){ return 'Now shipping: your "'+q+'" is live! You directed the agents, made every call, and brought the taste that made it great. The build is yours, start to finish. Shipped!'; }
+    function showNotes(text){
+      blue.classList.add('show');
+      blue.innerHTML='<div class="bh">📦 SHIP NOTES — '+esc(heroName.toUpperCase())+'</div>'+esc(text);
+      build.innerHTML='✅ Ship notes ready!'; build.disabled=true; busy2=false;
+      launchBtn.style.display='inline-block';
+      launchBtn.addEventListener('click', doLaunch, { once:true });
+      launchBtn.scrollIntoView({ behavior:'smooth', block:'nearest' });
+    }
+    build.addEventListener('click', build_);
+  }
+
+  // ===================== LAUNCH =====================
+  function doLaunch(){
+    show('launch');
+    var s=$('launch'); s.innerHTML='';
+    s.appendChild(el('p','kicker','3… 2… 1… ship!'));
+    var app=el('div','appbig','📱'); s.appendChild(app);
+    var cap=el('p','lede','Your app is live in the world. You built it. 🚀'); cap.style.opacity='0'; s.appendChild(cap);
+    var conf=el('div','confetti'); s.appendChild(conf);
+    setTimeout(function(){ app.classList.add('go'); burst(conf,74); cap.style.transition='opacity .6s'; cap.style.opacity='.92'; }, 600);
+    setTimeout(showCredits, 3400);
+  }
+  function burst(host, n){
+    var colors=['#9B7BFF','#FFD479','#7FE3FF','#3FD08A','#3D74FF','#fff'];
+    for(var i=0;i<n;i++){ var c=el('i'); c.style.left=Math.random()*100+'%'; c.style.background=colors[i%colors.length];
+      c.style.animationDuration=(1.6+Math.random()*1.8)+'s'; c.style.animationDelay=(Math.random()*0.5)+'s';
+      c.style.transform='rotate('+(Math.random()*360)+'deg)'; host.appendChild(c); }
+  }
+
+  // ===================== CREDITS =====================
+  function showCredits(){
+    show('credits');
+    var s=$('credits'); s.innerHTML='';
+    var badge=(window.CTFAvatar) ? window.CTFAvatar.render(AV) : '';
+    var crawl=el('div','crawl');
+    crawl.innerHTML=
+      '<div class="cr-title">SHIP IT!</div>'+
+      '<div class="cr-badge">'+badge+'</div>'+
+      '<div><div class="cr-role">Lead builder</div><div class="cr-name">'+esc(heroName)+'</div></div>'+
+      '<div><div class="cr-role">Build steps nailed</div><div class="cr-name">'+built+' / '+STEPS.length+' 🛠️</div></div>'+
+      '<div><div class="cr-role">App designed by</div><div class="cr-name">'+esc(heroName)+', directing a team of agents 🤖</div></div>'+
+      '<div><div class="cr-role">Final call by</div><div class="cr-name">A human (you!)</div></div>'+
+      '<div><div class="cr-role">Powered by</div><div class="cr-name">Everything you learned in Module 3</div></div>'+
+      '<div style="margin-top:8px;font-size:1.2rem;opacity:.92">You don’t just use AI — you DIRECT it. That’s the new way to build.</div>'+
+      '<div class="cr-title" style="font-size:clamp(1.4rem,5vw,2.2rem)">Module 3 Complete 🏆</div>';
+    s.appendChild(crawl);
+    var fin=el('button','btn credits-skip','What’s next  →'); fin.addEventListener('click', renderOutro); s.appendChild(fin);
+    crawl.addEventListener('animationend', function(){ if($('credits').classList.contains('on')) renderOutro(); });
+    try{ localStorage.setItem('ctf:bigmission3:done','1'); }catch(e){}
+  }
+
+  // ===================== OUTRO =====================
+  function renderOutro(){
+    show('outro');
+    var s=$('outro'); s.innerHTML='';
+    s.appendChild(el('p','kicker','🎉 Module 3 complete · '+esc(heroName)));
+    s.appendChild(el('h1','t-big','You’re a <span class="grad">Future Coder</span>'));
+    var cards=el('div','cards'); cards.style.marginTop='22px';
+    var next=el('div','card2');
+    next.innerHTML=
+      '<p class="sub">🚀 Keep building</p>'+
+      '<h3>You can direct AI now</h3>'+
+      '<ul>'+
+        '<li>You know the <b>whole story</b> of how code gets made — by hand, then with AI.</li>'+
+        '<li>You can write a <b>clear prompt</b>, drive the <b>agent loop</b>, and steer a <b>team</b>.</li>'+
+        '<li>And you bring what AI can’t: <b>taste, decisions, and the final call</b>.</li>'+
+      '</ul>'+
+      '<div class="pet">🛠️ The best builders aren’t the fastest typers — they’re the clearest thinkers. That’s you.</div>';
+    cards.appendChild(next);
+    var rep=el('div','card2');
+    rep.innerHTML=
+      '<p class="sub">📄 For your grown-up</p>'+
+      '<h3>Your Module 3 Report</h3>'+
+      '<ul>'+
+        '<li>A printable certificate of <b>what you learned</b> about how coding really works now.</li>'+
+        '<li>Conversation starters about <b>AI agents, prompting, and human judgment</b>.</li>'+
+      '</ul>';
+    var pbtn=el('button','btn amber','🖨️  Print my report'); pbtn.style.marginTop='14px'; pbtn.addEventListener('click', openReport); rep.appendChild(pbtn);
+    cards.appendChild(rep); s.appendChild(cards);
+    var actions=el('div','outro-actions');
+    var back=el('button','btn','Back to Missions  →');
+    back.addEventListener('click', function(){ try{ localStorage.setItem('ctf:bigmission3:done','1'); }catch(e){} location.href='/platform/missions.html'; });
+    actions.appendChild(back); s.appendChild(actions);
+    try{ localStorage.setItem('ctf:bigmission3:done','1'); }catch(e){}
+  }
+
+  function openReport(){
+    var when=new Date().toLocaleDateString(undefined, { year:'numeric', month:'long', day:'numeric' });
+    var seal=(window.CTFAvatar) ? window.CTFAvatar.render(AV) : '';
+    var r=$('report');
+    r.innerHTML=
+      '<div class="report-bar no-print"><button class="btn amber" id="rp-print">🖨️  Print this</button><button class="btn ghost" id="rp-close">Close</button></div>'+
+      '<div class="sheet">'+
+        '<div class="brand">◆ Code the Future · Certificate of Completion</div>'+
+        '<h1>Module 3 — How Coding Got Done</h1>'+
+        '<p class="modline">A 12-mission journey from writing code by hand to directing AI agents.</p>'+
+        '<div class="awarded"><div class="seal">'+seal+'</div>'+
+          '<div><div class="nm">'+esc(heroName)+'</div><div class="meta">Completed '+esc(when)+' · Final challenge: '+built+' / '+STEPS.length+' build steps 🛠️</div></div></div>'+
+        '<h2>What I learned</h2>'+
+        '<ul>'+
+          '<li><b>Code</b> is clear, exact steps (an <b>algorithm</b>) a computer follows perfectly.</li>'+
+          '<li>People once wrote <b>every line by hand</b>, hunting <b>bugs</b> and picking the right <b>language</b> (Python, HTML, C++, SQL).</li>'+
+          '<li>In about two years, <b>AI learned to write code</b> — one of tech’s fastest changes.</li>'+
+          '<li>You build by writing a <b>clear prompt</b> and directing <b>agents</b> that run the loop: <b>plan, do, check, fix, repeat</b>.</li>'+
+          '<li>A modern builder <b>directs a team of agents</b> — and the human brings <b>taste, decisions, and the final call</b>.</li>'+
+          '<li>I <b>directed a real AI</b> to help build and ship my own app!</li>'+
+        '</ul>'+
+        '<h2>Skills I practiced</h2>'+
+        '<ul class="two">'+
+          '<li>Clear thinking &amp; planning</li>'+
+          '<li>Writing clear prompts</li>'+
+          '<li>Finding &amp; fixing bugs</li>'+
+          '<li>Directing AI agents</li>'+
+          '<li>Judgment &amp; good taste</li>'+
+          '<li>Taking responsibility for the result</li>'+
+        '</ul>'+
+        '<div class="pnote"><b>For grown-ups:</b> Ask me to explain one of these — teaching it shows I really get it. Try: “How did coding change in the last two years?” · “What is an AI agent, and what loop does it run?” · “If AI writes the code, what’s the human’s job?”</div>'+
+        '<div class="foot"><span>Code the Future · codethefuture.net</span><span>You can direct AI to build — that’s a 21st-century superpower.</span></div>'+
+      '</div>';
+    r.hidden=false;
+    $('rp-print').addEventListener('click', function(){ window.print(); });
+    $('rp-close').addEventListener('click', function(){ r.hidden=true; r.innerHTML=''; });
+  }
+
+  renderTitle();
+})();
+</script>
+</body>
+</html>
