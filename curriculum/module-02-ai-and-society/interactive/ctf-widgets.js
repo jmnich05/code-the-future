@@ -888,51 +888,100 @@
   // =========================================================================
   function renderPowerCity(root, cfg, id) {
     root.innerHTML = header(cfg);
-    var wrap = el('div', 'ctf-pc'); root.appendChild(wrap);
+    var hostInline = el('div', 'pc-launchwrap'); root.appendChild(hostInline);
     var fb = el('div', 'ctf-feedback good'); fb.textContent = cfg.thanks || "You balanced the city's power like a real grid AI! 🌱";
     root.appendChild(fb);
     var done = completionCard(cfg); if (done) root.appendChild(done);
 
+    // 8 time blocks across a day — solar peaks midday, demand peaks evening.
     var BLOCKS = cfg.blocks || [
-      { t:'Dawn',      ico:'🌅', solar:15, wind:20, demand:30, sky:'#37487e' },
-      { t:'Morning',   ico:'🌄', solar:40, wind:15, demand:35, sky:'#5a78c0' },
-      { t:'Midday',    ico:'🌞', solar:70, wind:10, demand:40, sky:'#7db4ff' },
-      { t:'Afternoon', ico:'🌤️', solar:45, wind:20, demand:45, sky:'#6a93d8' },
-      { t:'Evening',   ico:'🌆', solar:10, wind:25, demand:70, sky:'#bd6a48' },
-      { t:'Night',     ico:'🌙', solar:0,  wind:30, demand:40, sky:'#161e40' }
+      { t:'Dawn',        ico:'🌅', solar:10, wind:22, demand:28, sky:'#37487e' },
+      { t:'Morning',     ico:'🌄', solar:38, wind:16, demand:34, sky:'#5a78c0' },
+      { t:'Late Morning',ico:'⛅', solar:58, wind:12, demand:38, sky:'#79a6ee' },
+      { t:'Midday',      ico:'🌞', solar:80, wind:10, demand:42, sky:'#7db4ff' },
+      { t:'Afternoon',   ico:'🌤️', solar:50, wind:18, demand:48, sky:'#6a93d8' },
+      { t:'Evening',     ico:'🌆', solar:14, wind:24, demand:84, sky:'#bd6a48' },
+      { t:'Night',       ico:'🌙', solar:0,  wind:30, demand:60, sky:'#161e40' },
+      { t:'Late Night',  ico:'🌌', solar:0,  wind:26, demand:40, sky:'#0e1430' }
     ];
-    var BAT_CAP = cfg.battery || 70;
-    var S, played = false;
+    var BAT_CAP = cfg.battery || 65;
+    // Spontaneous grid disruptions — each modifies one block's numbers.
+    var EVENTS = [
+      { id:'storm',    ban:'⛈️ Storm rolling in!',     fore:'a storm — the sun will vanish',        apply:function(b){ b.solar = Math.round(b.solar*0.1); } },
+      { id:'cloud',    ban:'🌫️ Clouds covered the sun', fore:'clouds — less solar than usual',        apply:function(b){ b.solar = Math.round(b.solar*0.45); } },
+      { id:'heat',     ban:'🔥 Heat wave!',             fore:'a heat wave — everyone blasts the AC',  apply:function(b){ b.demand += 24; } },
+      { id:'turbine',  ban:'🔧 A wind turbine broke',   fore:'a turbine fault — wind power will drop', apply:function(b){ b.wind = Math.round(b.wind*0.4); } },
+      { id:'factory',  ban:'⚡ A big factory switched on', fore:'a factory powering up — demand spikes', apply:function(b){ b.demand += 18; } },
+      { id:'festival', ban:'🎉 City festival tonight!',  fore:'a festival tonight — huge demand',      apply:function(b){ b.demand += 28; } }
+    ];
+    var overlay = null, wrap = null, S = null;
 
-    // ---- screens -----------------------------------------------------------
-    function intro() {
+    function markGate(){ fb.classList.add('show'); reveal(done, (cfg.complete && cfg.complete.progress) || 100); markDone(id); }
+
+    // ---- inline launch card (clear goal) → full-screen takeover -------------
+    function launchCard(replayed){
+      hostInline.innerHTML =
+        '<div class="pc-launch">' +
+          '<div class="pc-lico">🏙️⚡</div>' +
+          '<h3>Power-Up the City</h3>' +
+          '<p><b>Your job:</b> keep the city\'s <b>lights on</b> (no blackouts) and the <b>air clean</b> (no smog) for a whole day — running on free sun and wind. They come and go, and <b>surprise events will hit the grid</b>. The trick: <b>store extra power</b> when you have it, so you survive the rushes. Your AI advisor forecasts what\'s coming.</p>' +
+          '<button class="pc-btn" data-go>' + (replayed ? '🔁 Play again' : '▶  Take control') + ' &nbsp;(full screen)</button>' +
+        '</div>';
+      hostInline.querySelector('[data-go]').addEventListener('click', openFull);
+    }
+
+    function openFull(){
+      overlay = el('div', 'ctf-fs'); wrap = el('div', 'ctf-pc'); overlay.appendChild(wrap);
+      document.body.appendChild(overlay);
+      try { document.documentElement.classList.add('ctf-fs-lock'); } catch(e){}
+      intro();
+    }
+    function closeFull(){
+      if (overlay && overlay.parentNode) overlay.remove(); overlay = null; wrap = null;
+      try { document.documentElement.classList.remove('ctf-fs-lock'); } catch(e){}
+    }
+
+    function intro(){
       wrap.setAttribute('data-screen', 'intro');
       wrap.innerHTML =
+        '<button class="pc-exit" data-exit title="Leave">✕</button>' +
         '<div class="pc-sky" style="--sky:#16224d"></div><div class="pc-stars"></div>' +
         '<div class="pc-introbox">' +
           '<div class="pc-introbot">🤖⚡</div>' +
-          '<h2>Keep the city <b>bright</b> — and the air <b>clean</b>.</h2>' +
-          '<p>You\'re the city\'s power chief! Run it on sun and wind, and <b>store extra power</b> for the evening when everyone comes home. I\'m your AI advisor — I\'ll predict what\'s coming.</p>' +
+          '<h2>Run the city for a day.</h2>' +
+          '<p>Keep the <b>lights on</b> and the <b>air clean</b>. Bank extra sun &amp; wind in your <b>battery</b> — then spend it when surprise events strike. I\'m your <b>AI advisor</b>; I\'ll forecast what\'s coming so you can plan.</p>' +
           '<button class="pc-btn" data-go>▶  Start the day</button>' +
-          '<p class="pc-mini">6 time blocks · keep the lights on with zero smog to ace it</p>' +
+          '<p class="pc-mini">8 time blocks · zero blackouts &amp; zero smog = perfect</p>' +
         '</div>';
       wrap.querySelector('[data-go]').addEventListener('click', start);
+      wrap.querySelector('[data-exit]').addEventListener('click', closeFull);
     }
 
-    function start() {
+    function planEvents(){
+      // assign a disruption to ~half the blocks (never the first — let them settle in)
+      S.events = BLOCKS.map(function(_, i){
+        if (i === 0) return null;
+        return Math.random() < 0.5 ? EVENTS[Math.floor(Math.random()*EVENTS.length)] : null;
+      });
+    }
+
+    function start(){
       S = { bi:0, battery:0, smog:0, blackouts:0, dirty:0, answered:false };
+      planEvents();
       wrap.setAttribute('data-screen', 'play');
       wrap.innerHTML =
+        '<button class="pc-exit" data-exit title="Leave">✕</button>' +
         '<div class="pc-sky"></div><div class="pc-stars"></div>' +
         '<div class="pc-arc"><span class="pc-sun">☀️</span></div>' +
         '<div class="pc-smog"></div>' +
         '<div class="pc-hud">' +
           '<div class="pc-time"></div>' +
           '<div class="pc-meters">' +
-            '<span class="pc-meter"><b>💡</b><span class="pc-bar"><i class="pc-power"></i></span></span>' +
-            '<span class="pc-meter"><b>🌱</b><span class="pc-bar"><i class="pc-clean"></i></span></span>' +
+            '<span class="pc-meter" title="Lights"><b>💡</b><span class="pc-bar"><i class="pc-power"></i></span></span>' +
+            '<span class="pc-meter" title="Clean air"><b>🌱</b><span class="pc-bar"><i class="pc-clean"></i></span></span>' +
           '</div>' +
         '</div>' +
+        '<div class="pc-eventban" data-eventban></div>' +
         '<div class="pc-scene">' +
           '<div class="pc-turbine">🗼<span class="pc-blades">✚</span></div>' +
           '<div class="pc-city"></div>' +
@@ -941,52 +990,68 @@
         '<div class="pc-advisor"><span class="pc-abot">🤖</span><div class="pc-bubble"></div></div>' +
         '<div class="pc-panel"></div>';
       var city = wrap.querySelector('.pc-city');
-      for (var i=0;i<8;i++){ var b=el('div','pc-bldg'); b.style.height=(46 + (i*37%70))+'px';
+      for (var i=0;i<9;i++){ var b=el('div','pc-bldg'); b.style.height=(46 + (i*37%80))+'px';
         var win=''; for(var w=0;w<8;w++) win+='<i></i>'; b.innerHTML='<div class="pc-wins">'+win+'</div>'; city.appendChild(b); }
+      wrap.querySelector('[data-exit]').addEventListener('click', closeFull);
       renderBlock();
     }
 
     function setMeters(blackout){
-      var p = Math.max(0, 100 - S.blackouts*50);
+      var p = Math.max(0, 100 - S.blackouts*34);
       var c = Math.max(0, 100 - S.dirty);
       wrap.querySelector('.pc-power').style.width = p + '%';
       wrap.querySelector('.pc-clean').style.width = c + '%';
       wrap.querySelector('.pc-power').style.background = p>=66?'#3FD08A':p>=33?'#FFB320':'#FF5A38';
       wrap.querySelector('.pc-clean').style.background = c>=66?'#3FD08A':c>=33?'#FFB320':'#FF5A38';
-      wrap.querySelector('.pc-smog').style.opacity = Math.min(.7, S.dirty/90);
-      var f = wrap.querySelector('.pc-bat-fill'); f.style.height = Math.round(S.battery/BAT_CAP*100)+'%';
-      wrap.querySelector('.pc-bat-lbl').textContent = '🔋 ' + Math.round(S.battery);
+      wrap.querySelector('.pc-smog').style.opacity = Math.min(.75, S.dirty/90);
+      var f = wrap.querySelector('.pc-bat-fill'); f.style.height = Math.round(Math.min(1,S.battery/BAT_CAP)*100)+'%';
+      wrap.querySelector('.pc-bat-lbl').textContent = '🔋 ' + Math.round(S.battery) + '/' + BAT_CAP;
       wrap.querySelector('.pc-city').classList.toggle('dark', !!blackout);
     }
-
     function tip(msg){ wrap.querySelector('.pc-bubble').innerHTML = msg; }
 
     function renderBlock(){
-      var B = BLOCKS[S.bi], clean = B.solar + B.wind, surplus = clean - B.demand;
+      // copy the base block, then apply this block's surprise event (if any)
+      var base = BLOCKS[S.bi], ev = S.events[S.bi];
+      var B = { t:base.t, ico:base.ico, sky:base.sky, solar:base.solar, wind:base.wind, demand:base.demand };
+      if (ev) ev.apply(B);
+      var clean = B.solar + B.wind, surplus = clean - B.demand;
       S.answered = false;
-      // scene: sky, sun arc position, turbine speed, time label
+
       var sky = wrap.querySelector('.pc-sky'); sky.style.setProperty('--sky', B.sky);
       wrap.querySelector('.pc-arc').style.setProperty('--p', (S.bi/(BLOCKS.length-1)));
-      wrap.querySelector('.pc-sun').textContent = S.bi>=5 ? '🌙' : (S.bi>=4?'🌇':'☀️');
-      wrap.querySelector('.pc-blades').style.animationDuration = (1.4 - B.wind/40) + 's';
+      wrap.querySelector('.pc-sun').textContent = S.bi>=6 ? '🌙' : (S.bi>=5?'🌇':'☀️');
+      wrap.querySelector('.pc-blades').style.animationDuration = (1.5 - B.wind/40) + 's';
       wrap.querySelector('.pc-time').innerHTML = 'Block ' + (S.bi+1) + ' / ' + BLOCKS.length + ' &nbsp;·&nbsp; ' + B.ico + ' <b>' + B.t + '</b>';
       setMeters(false);
-      // AI advisor hint
-      if (surplus > 0) tip(B.solar>=45 ? '☀️ Big sun right now! <b>Store</b> this extra power — the evening rush is coming.' : 'A little extra clean power. <b>Bank it</b> for later!');
-      else tip(S.battery >= -surplus ? '🌆 Demand\'s climbing — good thing you charged the <b>battery</b>!' : '⚠️ Low battery and high demand… this is the tricky part.');
-      // decision panel
+
+      // surprise-event banner for THIS block
+      var ban = wrap.querySelector('[data-eventban]');
+      if (ev){ ban.innerHTML = '<span>' + ev.ban + '</span>'; ban.classList.remove('show'); void ban.offsetWidth; ban.classList.add('show'); }
+      else { ban.classList.remove('show'); ban.innerHTML=''; }
+
+      // AI advisor — forecasts the NEXT block's surprise so the kid can plan
+      var nextEv = S.events[S.bi+1];
+      if (nextEv) tip('🔮 <b>Forecast:</b> ' + nextEv.fore + ' next block. <b>Bank power now</b> if you can!');
+      else if (surplus > 0) tip(B.solar>=45 ? '☀️ Big sun! <b>Store</b> this extra power for the evening rush.' : 'A little extra clean power — <b>bank it</b> for later.');
+      else tip(S.battery >= -surplus ? '🔋 Demand\'s high — good thing you charged the battery!' : '⚠️ Low battery and high demand… this is the tricky part.');
+
       var panel = wrap.querySelector('.pc-panel');
       var sums = '<div class="pc-sums"><span class="pc-pill s">☀️ ' + B.solar + '</span><span class="pc-pill w">🌬️ ' + B.wind + '</span><span class="pc-eq">=</span><span class="pc-pill c">⚡ ' + clean + ' clean</span><span class="pc-vs">vs</span><span class="pc-pill d">🏠 needs ' + B.demand + '</span></div>';
       if (surplus >= 0){
         panel.innerHTML = sums +
-          '<div class="pc-ask">You have <b>+' + surplus + '</b> extra clean power. What now?</div>' +
-          '<div class="pc-choices"><button class="pc-ch good" data-a="store">🔋 Store it for later</button><button class="pc-ch" data-a="waste">💨 Just use it now</button></div>' +
+          '<div class="pc-ask">You have <b>+' + surplus + '</b> spare clean power. What now?</div>' +
+          '<div class="pc-choices"><button class="pc-ch good" data-a="store">🔋 Store it in the battery</button><button class="pc-ch" data-a="waste">💨 Just use it now</button></div>' +
           '<div class="pc-out"></div>';
       } else {
         var need = -surplus;
         panel.innerHTML = sums +
-          '<div class="pc-ask">You\'re <b>' + need + ' short!</b> How do you keep the lights on?</div>' +
-          '<div class="pc-choices"><button class="pc-ch good" data-a="bat">🔋 Use battery <small>(have ' + Math.round(S.battery) + ')</small></button><button class="pc-ch" data-a="dirty">🏭 Smoky backup <small>(+smog)</small></button></div>' +
+          '<div class="pc-ask">You\'re <b>' + need + ' short!</b> Keep the city running how?</div>' +
+          '<div class="pc-choices">' +
+            '<button class="pc-ch good" data-a="bat">🔋 Use battery <small>(have ' + Math.round(S.battery) + ')</small></button>' +
+            '<button class="pc-ch" data-a="dim">🔅 Dim the city <small>(save power, risky)</small></button>' +
+            '<button class="pc-ch" data-a="dirty">🏭 Smoky backup <small>(+smog)</small></button>' +
+          '</div>' +
           '<div class="pc-out"></div>';
       }
       panel.querySelectorAll('.pc-ch').forEach(function(btn){ btn.addEventListener('click', function(){ choose(btn.getAttribute('data-a'), B, surplus); }); });
@@ -998,12 +1063,15 @@
       panel.querySelectorAll('.pc-ch').forEach(function(b){ b.disabled = true; });
       var out = panel.querySelector('.pc-out'), msg = '', blackout = false;
       if (a === 'store'){ var room = BAT_CAP - S.battery, kept = Math.min(room, surplus);
-        S.battery += kept; msg = '✅ Stored ' + Math.round(kept) + ' in the battery' + (kept<surplus?' (it\'s full!)':'') + '. Smart — you\'ll need it tonight.'; pulse('.pc-bat'); }
-      else if (a === 'waste'){ msg = '😬 That clean power just… vanished. Nothing saved for the evening rush.'; }
+        S.battery += kept; msg = '✅ Banked ' + Math.round(kept) + ' in the battery' + (kept<surplus?' (it\'s full!)':'') + '. Smart — you\'ll need it.'; pulse('.pc-bat'); }
+      else if (a === 'waste'){ msg = '😬 That clean power just… vanished. Nothing saved for when a surprise hits.'; }
       else if (a === 'bat'){ var need = -surplus;
         if (S.battery >= need){ S.battery -= need; msg = '✅ Battery covered it — clean and bright, no smog!'; pulse('.pc-bat'); }
         else { var used = S.battery, gap = need - used; S.battery = 0; S.blackouts++; blackout = true;
-          msg = '🌑 Battery ran dry — the city <b>blacked out</b> for ' + Math.round(gap) + '! Store more clean power earlier next time.'; flicker(); } }
+          msg = '🌑 Battery ran dry — the city <b>blacked out</b> (short by ' + Math.round(gap) + ')! Bank more clean power before the surges.'; flicker(); } }
+      else if (a === 'dim'){ var need2 = -surplus;
+        if (need2 <= 14){ msg = '🔅 You dimmed the streetlights and squeaked by — clean, no smog. Bold move!'; }
+        else { S.blackouts++; blackout = true; msg = '🌑 Too big a gap to dim away — parts of the city <b>blacked out</b>. Save the dimming for small shortfalls!'; flicker(); } }
       else if (a === 'dirty'){ var n = -surplus; S.dirty += n; S.smog += n;
         msg = '🏭 The smoky backup kept the lights on, but the air got dirtier (+' + n + ' smog).'; smogPuff(); }
       setMeters(blackout);
@@ -1011,44 +1079,37 @@
       out.querySelector('[data-next]').addEventListener('click', next);
     }
 
-    function next(){
-      if (S.bi >= BLOCKS.length-1){ result(); return; }
-      S.bi++; renderBlock();
-    }
+    function next(){ if (S.bi >= BLOCKS.length-1){ result(); return; } S.bi++; renderBlock(); }
 
     function result(){
-      played = true;
       var perfect = S.blackouts === 0 && S.dirty === 0;
       var litClean = S.blackouts === 0;
       var title, icon, sub, cls;
-      if (perfect){ icon='🌟'; title='Perfect balance!'; cls='win'; sub='Zero blackouts, zero smog. You stored the midday sun and spent it on the evening rush — exactly how AI helps run a real power grid.'; }
-      else if (litClean){ icon='💡'; title='Lights stayed on!'; cls='ok'; sub='The city never went dark — but the smoky backup ran a few times. Try storing more clean power early to cut the smog to zero.'; }
-      else { icon='🌑'; title='The city went dark.'; cls='bad'; sub='A blackout means demand beat supply. The trick: bank extra solar at midday so the battery is full for the evening peak. Give it another go!'; }
+      if (perfect){ icon='🌟'; title='Perfect day!'; cls='win'; sub='Zero blackouts, zero smog — through every surprise the grid threw at you. You banked power early and spent it exactly when it mattered. That\'s how real AI runs a power grid!'; }
+      else if (litClean){ icon='💡'; title='Lights stayed on!'; cls='ok'; sub='The city never went dark — but the smoky backup ran ' + (S.dirty>0?'a few times':'') + '. Watch the AI\'s forecasts and bank more clean power before each surge to cut the smog to zero.'; }
+      else { icon='🌑'; title='The city went dark.'; cls='bad'; sub='Blackouts happen when a surprise hits and the battery\'s empty. The fix: store extra sun &amp; wind whenever the advisor warns a storm or rush is coming. Give it another go!'; }
       wrap.setAttribute('data-screen', 'result');
       wrap.innerHTML =
         '<div class="pc-sky" style="--sky:' + (litClean?'#16352b':'#3a1620') + '"></div><div class="pc-stars"></div>' +
         '<div class="pc-resultbox ' + cls + '">' +
           '<div class="pc-rico">' + icon + '</div>' +
           '<h2>' + title + '</h2>' +
-          '<div class="pc-rstats"><span>💡 Blackouts: <b>' + S.blackouts + '</b></span><span>🌱 Clean: <b>' + Math.max(0,100-S.dirty) + '%</b></span></div>' +
+          '<div class="pc-rstats"><span>💡 Blackouts: <b>' + S.blackouts + '</b></span><span>🌱 Clean air: <b>' + Math.max(0,100-S.dirty) + '%</b></span></div>' +
           '<p>' + sub + '</p>' +
-          '<div class="pc-ractions"><button class="pc-btn" data-replay>🔁 Play again</button></div>' +
+          '<div class="pc-ractions"><button class="pc-btn" data-replay>🔁 Play again</button><button class="pc-btn ghost" data-back>✓ Back to the lesson</button></div>' +
         '</div>';
       wrap.querySelector('[data-replay]').addEventListener('click', start);
-      // finishing one full day opens the gate (kids can keep replaying to ace it)
-      fb.classList.add('show');
-      reveal(done, (cfg.complete && cfg.complete.progress) || 100);
-      markDone(id);
+      wrap.querySelector('[data-back]').addEventListener('click', function(){ closeFull(); launchCard(true); });
+      markGate();   // one full day opens the Continue gate; kids can replay to ace it
     }
 
-    // ---- little fx ---------------------------------------------------------
     function pulse(sel){ var n=wrap.querySelector(sel); if(n){ n.classList.remove('pc-pulse'); void n.offsetWidth; n.classList.add('pc-pulse'); } }
     function flicker(){ var c=wrap.querySelector('.pc-city'); if(c){ c.classList.add('pc-flicker'); setTimeout(function(){ c.classList.remove('pc-flicker'); }, 900); } }
     function smogPuff(){ var s=wrap.querySelector('.pc-smog'); if(s){ s.classList.remove('pc-puff'); void s.offsetWidth; s.classList.add('pc-puff'); } }
 
     var prior = id ? load(id + ':done') : null;
     if (prior){ fb.classList.add('show'); reveal(done, (cfg.complete && cfg.complete.progress) || 100); }
-    intro();
+    launchCard(!!prior);
   }
 
   // =========================================================================
