@@ -10,6 +10,7 @@
   // Forward testers (unlock flag) and anyone on/after launch day straight to the platform.
   (function(){
     try {
+      if (new URLSearchParams(location.search).get("unlock") === "all") localStorage.setItem("ctf:unlockall", "1");  // staff/tester unlock
       var launched = new Date() >= new Date(2026, 6, 6, 0, 0, 0);   // missions unlock midnight, July 6
       var bypass = localStorage.getItem("ctf:unlockall") === "1";
       if (launched || bypass) location.replace("index.html");

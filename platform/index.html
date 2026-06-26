@@ -12,6 +12,9 @@
   // anyone on/after launch day fall through to the normal home.
   (function(){
     try {
+      // staff/tester unlock: visiting /platform/?unlock=all turns on a persistent
+      // full-access flag (skips the launch wall + every drip lock on this device).
+      if (new URLSearchParams(location.search).get("unlock") === "all") localStorage.setItem("ctf:unlockall", "1");
       var p = JSON.parse(localStorage.getItem("ctf:profile") || "null");
       var preLaunch = new Date() < new Date(2026, 6, 6, 0, 0, 0);
       var bypass = localStorage.getItem("ctf:unlockall") === "1";
