@@ -1113,18 +1113,53 @@
   }
 
   // =========================================================================
-  // AI AROUND THE WORLD (Mission 2) — a discovery game. AI is woven through
-  // the whole world, quietly doing jobs you never see. Travel a map to 5 real
-  // places; each is a quick hands-on moment that uncovers the hidden AI and
-  // what it does. Find all the invisible helpers to win. Mistakes just retry.
+  // fsGame — reusable FULL-SCREEN game shell shared by every Module-2/3 game.
+  // Renders an inline launch card in `root`; tapping it opens a full-viewport
+  // overlay and runs opts.play(host, api):
+  //   api.done()   → mark the activity complete + open the Continue gate
+  //   api.exit()   → close the overlay, back to the lesson
+  //   api.replay() → re-run play() on a fresh host
+  // play() builds the game inside `host` (a .ctf-fs scene) and calls api.done()
+  // when finished; give your win screen a button that calls api.exit().
+  // =========================================================================
+  function fsGame(root, cfg, id, opts){
+    root.innerHTML = header(cfg);
+    var hostInline = el('div','imm-launchwrap'); root.appendChild(hostInline);
+    var fb = el('div','ctf-feedback good'); fb.textContent = cfg.thanks || opts.thanks || 'Great work!'; root.appendChild(fb);
+    var doneCard = completionCard(cfg); if(doneCard) root.appendChild(doneCard);
+    var overlay=null, gated=false;
+    function gate(){ if(gated) return; gated=true; fb.classList.add('show'); reveal(doneCard,(cfg.complete&&cfg.complete.progress)||100); markDone(id); }
+    function launch(replayed){
+      hostInline.innerHTML =
+        '<div class="imm-launch">'+
+          '<div class="imm-lico">'+(opts.ico||'🎮')+'</div>'+
+          '<h3>'+esc(opts.title||cfg.title||'Play')+'</h3>'+
+          (opts.blurb?'<p>'+opts.blurb+'</p>':'')+
+          '<button class="imm-btn" data-go>'+(replayed?'🔁 Play again':(opts.playLabel||'▶  Play'))+'&nbsp; (full screen)</button>'+
+        '</div>';
+      hostInline.querySelector('[data-go]').addEventListener('click', open);
+    }
+    function open(){
+      overlay = el('div','ctf-fs');
+      var host = el('div','imm-stage '+(opts.wrapClass||'')); overlay.appendChild(host);
+      var exit = el('button','imm-exit','✕'); exit.title='Leave'; exit.addEventListener('click', close); overlay.appendChild(exit);
+      document.body.appendChild(overlay);
+      try{ document.documentElement.classList.add('ctf-fs-lock'); }catch(e){}
+      var api = { host:host, done:gate, exit:close, replay:function(){ host.innerHTML=''; opts.play(host, api); } };
+      opts.play(host, api);
+    }
+    function close(){ if(overlay&&overlay.parentNode) overlay.remove(); overlay=null; try{document.documentElement.classList.remove('ctf-fs-lock');}catch(e){} launch(true); }
+    var prior = id ? load(id+':done') : null;
+    if(prior){ gated=true; fb.classList.add('show'); reveal(doneCard,(cfg.complete&&cfg.complete.progress)||100); }
+    launch(!!prior);
+  }
+
+  // =========================================================================
+  // AI AROUND THE WORLD (Mission 2) — full-screen discovery game. AI is woven
+  // through the whole world, quietly doing jobs you never see. Travel a map to
+  // real places; each is a quick hands-on moment that uncovers the hidden AI.
   // =========================================================================
   function renderAIWorld(root, cfg, id) {
-    root.innerHTML = header(cfg);
-    var wrap = el('div', 'ctf-aw'); root.appendChild(wrap);
-    var fb = el('div', 'ctf-feedback good'); fb.textContent = cfg.thanks || "AI is everywhere — quietly helping, and you never noticed. 🌍";
-    root.appendChild(fb);
-    var done = completionCard(cfg); if (done) root.appendChild(done);
-
     var SPOTS = cfg.spots || [
       { id:'hospital', icon:'🏥', name:'Hospital',      x:22, y:30, kind:'scan',    job:'AI helps doctors <b>spot problems in scans</b> that tired eyes might miss.' },
       { id:'farm',     icon:'🌾', name:'Farm',          x:70, y:24, kind:'farm',    job:'AI <b>drones scan fields</b> and tell farmers exactly which plants are thirsty.' },
@@ -1132,64 +1167,69 @@
       { id:'traffic',  icon:'🚦', name:'Traffic Hub',    x:78, y:64, kind:'traffic', job:'AI <b>reroutes thousands of cars</b> at once around traffic jams.' },
       { id:'lab',      icon:'🔬', name:'Science Lab',    x:26, y:70, kind:'lab',     job:'AI <b>tests millions of mixes</b> to help invent brand-new medicines.' }
     ];
-    var found = {};
+    fsGame(root, cfg, id, {
+      ico:'🌍', title: cfg.title || 'AI Around the World',
+      blurb: 'AI is hiding all over the real world, quietly doing jobs you never see. Travel the map, lend a hand at each place, and uncover every invisible helper.',
+      playLabel:'▶  Explore the world', wrapClass:'ctf-aw',
+      thanks: cfg.thanks || "AI is everywhere — quietly helping, and you never noticed. 🌍",
+      play: function(host, api){
+        var found = {};
+        function countFound(){ return SPOTS.filter(function(s){ return found[s.id]; }).length; }
+        function map(){
+          host.setAttribute('data-screen','map');
+          var pins = SPOTS.map(function(s){
+            return '<button class="aw-pin'+(found[s.id]?' done':'')+'" style="left:'+s.x+'%;top:'+s.y+'%" data-id="'+s.id+'">'+
+              '<span class="aw-pico">'+(found[s.id]?'✅':s.icon)+'</span><span class="aw-plbl">'+esc(s.name)+'</span></button>';
+          }).join('');
+          host.innerHTML =
+            '<div class="aw-mapbg"></div>'+
+            '<div class="aw-top"><span class="aw-count">🔎 Found <b>'+countFound()+'</b> / '+SPOTS.length+'</span>'+
+              '<span class="aw-hint">Tap a place to uncover the hidden AI</span></div>'+
+            '<div class="aw-map">'+pins+'</div>';
+          host.querySelectorAll('.aw-pin').forEach(function(p){
+            p.addEventListener('click', function(){ var s=SPOTS.filter(function(x){return x.id===p.getAttribute('data-id');})[0]; openSpot(s); });
+          });
+        }
+        function openSpot(spot){
+          host.setAttribute('data-screen','spot');
+          host.innerHTML =
+            '<div class="aw-spotbg"></div>'+
+            '<div class="aw-shead"><button class="aw-back" data-back>‹ Map</button><span class="aw-stitle">'+spot.icon+' '+esc(spot.name)+'</span></div>'+
+            '<div class="aw-instr" data-instr></div>'+
+            '<div class="aw-stage" data-stage></div>'+
+            '<div class="aw-reveal" data-reveal></div>';
+          host.querySelector('[data-back]').addEventListener('click', map);
+          var stage = host.querySelector('[data-stage]'), instr = host.querySelector('[data-instr]');
+          buildScene(spot, stage, instr, function(){ solved(spot); });
+        }
+        function solved(spot){
+          found[spot.id] = true;
+          var rev = host.querySelector('[data-reveal]');
+          rev.innerHTML = '<div class="aw-card"><div class="aw-ctick">✨ AI found!</div><p>'+spot.job+'</p>'+
+            '<button class="aw-btn" data-next>'+(countFound()>=SPOTS.length ? 'See what you discovered →' : '← Keep exploring')+'</button></div>';
+          rev.classList.add('show');
+          host.querySelector('.aw-stage').classList.add('aw-dim');
+          rev.querySelector('[data-next]').addEventListener('click', function(){ countFound()>=SPOTS.length ? win() : map(); });
+        }
+        function win(){
+          host.setAttribute('data-screen','win');
+          host.innerHTML =
+            '<div class="aw-mapbg"></div>'+
+            '<div class="aw-winbox"><div class="aw-wico">🌍✨</div>'+
+              '<h2>You found AI hiding <b>all over the world!</b></h2>'+
+              '<p>Doctors, farms, weather, traffic, science labs — AI is woven through the whole world, quietly doing jobs you never see. It was there all along!</p>'+
+              '<div class="aw-found">'+SPOTS.map(function(s){return '<span>'+s.icon+'</span>';}).join('')+'</div>'+
+              '<div class="imm-ractions"><button class="aw-btn" data-replay>🔁 Explore again</button><button class="aw-btn ghost" data-back>✓ Back to the lesson</button></div>'+
+            '</div>';
+          host.querySelector('[data-replay]').addEventListener('click', function(){ found={}; map(); });
+          host.querySelector('[data-back]').addEventListener('click', api.exit);
+          api.done();
+        }
+        map();
+      }
+    });
 
-    function countFound(){ return SPOTS.filter(function(s){ return found[s.id]; }).length; }
-
-    function map(){
-      wrap.setAttribute('data-screen','map');
-      var pins = SPOTS.map(function(s){
-        return '<button class="aw-pin'+(found[s.id]?' done':'')+'" style="left:'+s.x+'%;top:'+s.y+'%" data-id="'+s.id+'">'+
-          '<span class="aw-pico">'+(found[s.id]?'✅':s.icon)+'</span><span class="aw-plbl">'+esc(s.name)+'</span></button>';
-      }).join('');
-      wrap.innerHTML =
-        '<div class="aw-mapbg"></div>'+
-        '<div class="aw-top"><span class="aw-count">🔎 Found <b>'+countFound()+'</b> / '+SPOTS.length+'</span>'+
-          '<span class="aw-hint">Tap a place to uncover the hidden AI</span></div>'+
-        '<div class="aw-map">'+pins+'</div>';
-      wrap.querySelectorAll('.aw-pin').forEach(function(p){
-        p.addEventListener('click', function(){ var s=SPOTS.filter(function(x){return x.id===p.getAttribute('data-id');})[0]; openSpot(s); });
-      });
-    }
-
-    function openSpot(spot){
-      wrap.setAttribute('data-screen','spot');
-      wrap.innerHTML =
-        '<div class="aw-spotbg"></div>'+
-        '<div class="aw-shead"><button class="aw-back" data-back>‹ Map</button><span class="aw-stitle">'+spot.icon+' '+esc(spot.name)+'</span></div>'+
-        '<div class="aw-instr" data-instr></div>'+
-        '<div class="aw-stage" data-stage></div>'+
-        '<div class="aw-reveal" data-reveal></div>';
-      wrap.querySelector('[data-back]').addEventListener('click', map);
-      var stage = wrap.querySelector('[data-stage]'), instr = wrap.querySelector('[data-instr]');
-      buildScene(spot, stage, instr, function(){ solved(spot); });
-    }
-
-    function solved(spot){
-      found[spot.id] = true;
-      var rev = wrap.querySelector('[data-reveal]');
-      rev.innerHTML = '<div class="aw-card"><div class="aw-ctick">✨ AI found!</div><p>'+spot.job+'</p>'+
-        '<button class="aw-btn" data-next>'+(countFound()>=SPOTS.length ? 'See what you discovered →' : '← Keep exploring')+'</button></div>';
-      rev.classList.add('show');
-      wrap.querySelector('.aw-stage').classList.add('aw-dim');
-      rev.querySelector('[data-next]').addEventListener('click', function(){ countFound()>=SPOTS.length ? win() : map(); });
-    }
-
-    function win(){
-      wrap.setAttribute('data-screen','win');
-      wrap.innerHTML =
-        '<div class="aw-mapbg"></div>'+
-        '<div class="aw-winbox"><div class="aw-wico">🌍✨</div>'+
-          '<h2>You found AI hiding <b>all over the world!</b></h2>'+
-          '<p>Doctors, farms, weather, traffic, science labs — AI is woven through the whole world, quietly doing jobs you never see. It was there all along!</p>'+
-          '<div class="aw-found">'+SPOTS.map(function(s){return '<span>'+s.icon+'</span>';}).join('')+'</div>'+
-          '<button class="aw-btn" data-replay>🔁 Explore again</button>'+
-        '</div>';
-      wrap.querySelector('[data-replay]').addEventListener('click', function(){ found={}; map(); });
-      fb.classList.add('show'); reveal(done, (cfg.complete && cfg.complete.progress) || 100); markDone(id);
-    }
-
-    // ---- the 5 hands-on scenes (tap to solve, mistakes just nudge + retry) --
+    // ---- the hands-on scenes (tap to solve, mistakes just nudge + retry) ----
     function buildScene(spot, stage, instr, onSolve){
       function ok(){ onSolve(); }
       function nudge(msg){ instr.setAttribute('data-bad','1'); instr.querySelector('.aw-nudge') ? (instr.querySelector('.aw-nudge').textContent=msg) : instr.insertAdjacentHTML('beforeend',' <span class="aw-nudge">'+esc(msg)+'</span>'); }
@@ -1246,10 +1286,6 @@
         }); });
       }
     }
-
-    var prior = id ? load(id + ':done') : null;
-    if (prior){ fb.classList.add('show'); reveal(done, (cfg.complete && cfg.complete.progress) || 100); }
-    map();
   }
 
   // ---- registry + boot ----------------------------------------------------
