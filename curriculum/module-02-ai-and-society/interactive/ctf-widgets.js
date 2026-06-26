@@ -1154,6 +1154,24 @@
     launch(!!prior);
   }
 
+  // shared game helpers ------------------------------------------------------
+  function shuffle(a){ a = a.slice(); for(var i=a.length-1;i>0;i--){ var j=Math.floor(Math.random()*(i+1)), t=a[i]; a[i]=a[j]; a[j]=t; } return a; }
+  // A win/lose result screen used by every full-screen game. win=true shows the
+  // "Back to the lesson" button (game complete); win=false shows only "Try again".
+  function immResult(ico, title, win, body){
+    return '<div class="imm-resbg"></div><div class="imm-result '+(win?'win':'lose')+'">'+
+      '<div class="imm-rico">'+ico+'</div><h2>'+title+'</h2><div class="imm-rbody">'+body+'</div>'+
+      '<div class="imm-ractions">'+
+        (win ? '<button class="imm-btn" data-replay>🔁 Play again</button><button class="imm-btn ghost" data-back>✓ Back to the lesson</button>'
+             : '<button class="imm-btn" data-replay>🔁 Try again</button>')+
+      '</div></div>';
+  }
+  // wire the result buttons. onReplay restarts the round; win also closes via api.exit.
+  function bindRes(host, api, onReplay){
+    var r=host.querySelector('[data-replay]'); if(r) r.addEventListener('click', onReplay);
+    var b=host.querySelector('[data-back]'); if(b) b.addEventListener('click', api.exit);
+  }
+
   // =========================================================================
   // AI AROUND THE WORLD (Mission 2) — full-screen discovery game. AI is woven
   // through the whole world, quietly doing jobs you never see. Travel a map to
@@ -1288,8 +1306,427 @@
     }
   }
 
+  // =========================================================================
+  // DIAGNOSIS LAB (Mission 3) — you are the AI helping a doctor read scans.
+  // Find the few cells that look "off" on each scan; submit; save the patient.
+  // Subtle on purpose: spotting the difference is hard. 3 hearts, 4 patients.
+  // =========================================================================
+  function renderDiagnose(root, cfg, id){
+    fsGame(root, cfg, id, { ico:'🩺', title: cfg.title||'Diagnosis Lab',
+      blurb:'You are the AI that helps a doctor read patient scans. On each scan a few cells are <b>not healthy</b> — they look just a little different. Flag every bad cell and none of the healthy ones, then submit. You have 3 hearts. Save all four patients!',
+      playLabel:'▶  Start the shift', wrapClass:'g-diag',
+      thanks: cfg.thanks || 'You and the doctor make a great team. 🩺',
+      play:function(host, api){
+        var TOTAL=4, GRID=16, patient=0, hearts=3, flags={}, abset={};
+        function start(){ patient=0; hearts=3; nextPatient(); }
+        function nextPatient(){
+          if(patient>=TOTAL) return win();
+          flags={}; abset={}; var k=1+Math.floor(Math.random()*3);
+          while(Object.keys(abset).length<k){ abset[Math.floor(Math.random()*GRID)]=true; }
+          render();
+        }
+        function render(){
+          var cells=''; for(var i=0;i<GRID;i++){ cells+='<button class="dg-cell'+(abset[i]?' ab':'')+(flags[i]?' flagged':'')+'" data-i="'+i+'"><span class="dg-tissue"></span>'+(flags[i]?'<span class="dg-flag">⚑</span>':'')+'</button>'; }
+          host.innerHTML='<div class="dg-bg"></div>'+
+            '<div class="dg-top"><span>🧑‍⚕️ Patient '+(patient+1)+' / '+TOTAL+'</span><span class="dg-hearts">'+'❤️'.repeat(hearts)+'🖤'.repeat(3-hearts)+'</span></div>'+
+            '<div class="dg-instr">Tap the cells that look <b>different</b> (not healthy), then submit.</div>'+
+            '<div class="dg-grid">'+cells+'</div>'+
+            '<button class="imm-btn dg-submit" data-submit>🩺 Submit diagnosis</button>';
+          host.querySelectorAll('.dg-cell').forEach(function(c){ c.addEventListener('click',function(){ var i=+c.getAttribute('data-i'); if(flags[i]) delete flags[i]; else flags[i]=true; render(); }); });
+          host.querySelector('[data-submit]').addEventListener('click', check);
+        }
+        function check(){
+          var akeys=Object.keys(abset).map(Number), fkeys=Object.keys(flags).map(Number);
+          var correct = fkeys.length===akeys.length && akeys.every(function(i){ return flags[i]; });
+          host.querySelectorAll('.dg-cell').forEach(function(c){ var i=+c.getAttribute('data-i'); c.disabled=true; if(abset[i]) c.classList.add('reveal-ab'); if(flags[i]&&!abset[i]) c.classList.add('reveal-wrong'); });
+          host.querySelector('[data-submit]').disabled=true;
+          if(correct){ patient++; toast('✅ Patient saved! Sharp eye.', nextPatient); }
+          else { hearts--; if(hearts<=0){ return setTimeout(lose, 1000); } toast('💔 Missed it — the glowing cells were the bad ones. '+hearts+' heart'+(hearts===1?'':'s')+' left.', nextPatient); }
+        }
+        function toast(msg, then){ var t=el('div','dg-toast', msg); host.appendChild(t); setTimeout(function(){ t.remove(); then(); }, 1700); }
+        function win(){ host.innerHTML=immResult('🏅','You saved every patient!', true, '<p>That is exactly how AI helps real doctors — it scans for tiny details a tired human eye can miss, then a <b>human doctor makes the final call</b>. Spotting the difference is hard, and you nailed it.</p>'); bindRes(host, api, start); api.done(); }
+        function lose(){ host.innerHTML=immResult('🩹','That was a tough shift', false, '<p>Reading scans is genuinely hard — that is why doctors and AI work <b>together</b>, double-checking each other. Take another shift and watch for the cells that look just a little off.</p>'); bindRes(host, api, start); }
+        start();
+      }});
+  }
+
+  // =========================================================================
+  // MISSION CONTROL (Mission 5) — assign each job to AI / Human / Both.
+  // AI = fast, repetitive, data. Human = feelings, fairness, final calls.
+  // Both = teamwork. Get almost all right to run a perfect day.
+  // =========================================================================
+  function renderMissionCtrl(root, cfg, id){
+    var JOBS = cfg.jobs || [
+      { t:'Sort 10,000 vacation photos by color', best:'ai', why:'Boring + repetitive on a huge pile = perfect for AI.' },
+      { t:'Comfort a friend who is feeling sad', best:'human', why:'Real feelings and care need a human heart.' },
+      { t:'Check this 80-page report for spelling typos', best:'ai', why:'Fast, exact, never gets bored — AI shines here.' },
+      { t:'Decide which student wins the kindness award', best:'human', why:'A fair, caring judgment call belongs to people.' },
+      { t:'Write a birthday poem for Grandma', best:'both', why:'AI drafts ideas; a human adds the love that makes it real.' },
+      { t:'Watch 1,000 camera feeds for a lost dog', best:'ai', why:'Tireless watching of many screens at once = AI.' },
+      { t:'Tell a family hard news about their pet', best:'human', why:'Heavy, human moments need a real, kind person.' },
+      { t:'Plan the class party on a tight budget', best:'both', why:'AI crunches the numbers; humans pick what feels fun.' }
+    ];
+    fsGame(root, cfg, id, { ico:'🛰️', title: cfg.title||'Mission Control',
+      blurb:'You run a busy command center. Jobs keep flying in — decide who handles each: the <b>AI</b> (fast + tireless), a <b>Human</b> (caring + wise), or <b>Both</b> as a team. Some are sneaky. Get almost all of them right to run a perfect day!',
+      playLabel:'▶  Take command', wrapClass:'g-mc',
+      thanks: cfg.thanks || 'Code handles the loop; humans handle the judgment. 🛰️',
+      play:function(host, api){
+        var queue, idx, score, NEED;
+        function start(){ queue=shuffle(JOBS); idx=0; score=0; NEED=queue.length-1; render(); }
+        function render(){
+          if(idx>=queue.length) return finish();
+          var j=queue[idx];
+          host.innerHTML='<div class="mc-bg"></div>'+
+            '<div class="mc-top"><span>Job '+(idx+1)+' / '+queue.length+'</span><span class="mc-score">⭐ '+score+'</span></div>'+
+            '<div class="mc-screen"><div class="mc-radar"></div><div class="mc-job">📋 '+esc(j.t)+'</div></div>'+
+            '<div class="mc-instr">Who should handle this job?</div>'+
+            '<div class="mc-choices">'+
+              '<button class="mc-pick" data-k="ai"><b>🤖 AI</b><small>fast · tireless · loves data</small></button>'+
+              '<button class="mc-pick" data-k="human"><b>🧑 Human</b><small>caring · fair · wise</small></button>'+
+              '<button class="mc-pick" data-k="both"><b>🤝 Both</b><small>AI helps · human decides</small></button>'+
+            '</div><div class="mc-fb" data-fb></div>';
+          host.querySelectorAll('.mc-pick').forEach(function(b){ b.addEventListener('click',function(){ pick(j, b.getAttribute('data-k'), b); }); });
+        }
+        function pick(j, k, btn){
+          host.querySelectorAll('.mc-pick').forEach(function(b){ b.disabled=true; if(b.getAttribute('data-k')===j.best) b.classList.add('right'); });
+          var good=k===j.best, fb=host.querySelector('[data-fb]');
+          if(good){ score++; fb.className='mc-fb ok'; fb.innerHTML='✅ <b>Yes!</b> '+esc(j.why); }
+          else { btn.classList.add('wrong'); fb.className='mc-fb bad'; fb.innerHTML='❌ Not the best fit. '+esc(j.why); }
+          fb.innerHTML+='<button class="imm-btn mc-next" data-next>'+(idx+1>=queue.length?'See your day →':'Next job →')+'</button>';
+          fb.querySelector('[data-next]').addEventListener('click',function(){ idx++; render(); });
+        }
+        function finish(){
+          if(score>=NEED){ host.innerHTML=immResult('🏆','A near-perfect shift! ('+score+'/'+queue.length+')', true, '<p>You matched almost every job to the right helper. The big idea: <b>AI handles the fast, boring, data-heavy work — humans handle the caring and the deciding.</b> The best teams use both.</p>'); bindRes(host, api, start); api.done(); }
+          else { host.innerHTML=immResult('🛠️','The day got bumpy ('+score+'/'+queue.length+')', false, '<p>A few jobs went to the wrong helper. Remember: <b>feelings, fairness, and final calls</b> are human jobs; <b>fast, repetitive, huge piles</b> are AI jobs; tricky ones need <b>both</b>. Try again!</p>'); bindRes(host, api, start); }
+        }
+        start();
+      }});
+  }
+
+  // =========================================================================
+  // TOOL LAB (Mission 6) — a tool can help or hurt; the choice is ours.
+  // Pick the responsible way to use each AI tool. The sneaky option is the
+  // wrong one. Three careless choices and the town goes dark.
+  // =========================================================================
+  function renderToolLab(root, cfg, id){
+    var SC = cfg.scenarios || [
+      { t:'An AI can write your whole book report in 5 seconds. What do you do?', opts:[
+        { l:'Hand it in as your own', good:false, r:'You learn nothing, and it isn’t really your work. That’s cheating yourself.' },
+        { l:'Use it to brainstorm, then write it yourself', good:true, r:'Smart! The tool sparks ideas; your brain still does the learning.' },
+        { l:'Decide the AI is smarter, so why try', good:false, r:'Ouch — that gives up your own growth. Tools should lift you, not replace you.' } ] },
+      { t:'An AI image maker can copy any artist’s exact style. You want a poster.', opts:[
+        { l:'Copy a living artist and sell it as theirs', good:false, r:'That takes credit and money from a real person. Not fair.' },
+        { l:'Make your own style, inspired by what you like', good:true, r:'Great — inspired, not stolen. Your creativity leads.' },
+        { l:'Flood the internet with thousands of fakes', good:false, r:'That’s spammy and unkind, and it drowns out real artists.' } ] },
+      { t:'A chatbot answers ANY question instantly — even ones you should check.', opts:[
+        { l:'Believe everything it says, always', good:false, r:'AI can be confidently wrong. Trusting it blindly leads you astray.' },
+        { l:'Use it, then double-check important facts', good:true, r:'Exactly. Trust but verify — you stay the boss of the truth.' },
+        { l:'Use it to spread a rumor about a kid', good:false, r:'That hurts someone real. Powerful tools used to harm do real damage.' } ] },
+      { t:'An AI can copy anyone’s voice. A friend dares you to prank with it.', opts:[
+        { l:'Fake a teacher’s voice to trick the class', good:false, r:'Tricking people with fake voices breaks trust and can scare them.' },
+        { l:'Say no — and explain why fakes can hurt', good:true, r:'Brave and kind. You saw the harm before it happened.' },
+        { l:'Fake a parent’s voice to skip your homework', good:false, r:'That’s a lie that breaks trust with people who care about you.' } ] },
+      { t:'An AI helper offers to do chores for an elderly neighbor.', opts:[
+        { l:'Use it to help them, then visit in person', good:true, r:'Beautiful — the tool helps AND you bring the human warmth.' },
+        { l:'Let the robot do it all so you never visit', good:false, r:'They’d be lonely. Tools should add to caring, not replace it.' },
+        { l:'Charge them money for the free AI help', good:false, r:'That takes advantage of someone. Not okay.' } ] }
+    ];
+    fsGame(root, cfg, id, { ico:'🪄', title: cfg.title||'Tool Lab',
+      blurb:'Every powerful AI tool can <b>help</b> or <b>hurt</b> — it all depends on the choice you make. Read each situation and pick the wise way to use it. The easy or sneaky option is usually the wrong one. Make good choices to keep your town bright!',
+      playLabel:'▶  Enter the lab', wrapClass:'g-tool',
+      thanks: cfg.thanks || 'A tool is only as kind as the hand that holds it. 🪄',
+      play:function(host, api){
+        var queue, idx, harm;
+        function start(){ queue=shuffle(SC).map(function(s){ return { t:s.t, opts:shuffle(s.opts) }; }); idx=0; harm=0; render(); }
+        function render(){
+          if(idx>=queue.length) return finish();
+          var s=queue[idx];
+          host.innerHTML='<div class="tl-bg"></div>'+
+            '<div class="tl-top"><span>Choice '+(idx+1)+' / '+queue.length+'</span><span class="tl-meter">'+'☀️'.repeat(3-harm)+'🌑'.repeat(harm)+'</span></div>'+
+            '<div class="tl-card">🪄 '+esc(s.t)+'</div>'+
+            '<div class="tl-opts">'+s.opts.map(function(o,i){ return '<button class="tl-opt" data-i="'+i+'">'+esc(o.l)+'</button>'; }).join('')+'</div>'+
+            '<div class="tl-fb" data-fb></div>';
+          host.querySelectorAll('.tl-opt').forEach(function(b){ b.addEventListener('click',function(){ choose(s, +b.getAttribute('data-i'), b); }); });
+        }
+        function choose(s, i, btn){
+          var o=s.opts[i];
+          host.querySelectorAll('.tl-opt').forEach(function(b){ b.disabled=true; });
+          btn.classList.add(o.good?'good':'bad');
+          var fb=host.querySelector('[data-fb]'); fb.className='tl-fb '+(o.good?'ok':'bad');
+          fb.innerHTML=(o.good?'✅ ':'⚠️ ')+esc(o.r);
+          if(!o.good){ harm++; if(harm>=3){ return setTimeout(lose, 1300); } }
+          fb.innerHTML+='<button class="imm-btn" data-next>'+(idx+1>=queue.length?'See your town →':'Next →')+'</button>';
+          fb.querySelector('[data-next]').addEventListener('click',function(){ idx++; render(); });
+        }
+        function finish(){
+          if(harm===0) host.innerHTML=immResult('🌟','Wise choices, bright town!', true, '<p>You used every tool to <b>help, not harm</b>. That’s the whole secret: a tool is only as good or bad as the person holding it. You chose to be kind, honest, and fair.</p>');
+          else host.innerHTML=immResult('🌤️','Your town pulled through', true, '<p>You made it, but a couple of careless choices dimmed the lights. The big idea: the <b>same tool can help or hurt</b> — the choice is always yours. Try again for a perfect run!</p>');
+          bindRes(host, api, start); api.done();
+        }
+        function lose(){ host.innerHTML=immResult('🌑','The town went dark', false, '<p>Too many careless choices. Powerful tools in careless hands cause real harm. Try again — pick the kind and honest option even when the sneaky one looks easier.</p>'); bindRes(host, api, start); }
+        start();
+      }});
+  }
+
+  // =========================================================================
+  // GUARD THE VAULT (Mission 7) — privacy under pressure. Sort each piece of
+  // info: keep private / OK to share / ask a grown-up. A data-thief creeps
+  // closer on every mistake. Five slips and they break in.
+  // =========================================================================
+  function renderVault(root, cfg, id){
+    var ITEMS = cfg.items || [
+      { t:'Your home address', bin:'private' },
+      { t:'Your favorite color', bin:'share' },
+      { t:'Your password', bin:'private' },
+      { t:'A drawing you made', bin:'share' },
+      { t:'Your full real name AND school', bin:'ask' },
+      { t:'A photo of your face to a stranger', bin:'private' },
+      { t:'Your phone number', bin:'private' },
+      { t:'Your high score in a game', bin:'share' },
+      { t:'Exactly where you’ll be this weekend', bin:'ask' },
+      { t:'Your birthday month (just the month)', bin:'share' },
+      { t:'A video tour of your bedroom', bin:'private' },
+      { t:'A parent’s credit card number', bin:'private' },
+      { t:'Your username (no real name in it)', bin:'share' },
+      { t:'Your exact location right now', bin:'private' }
+    ];
+    var BINS=[{k:'private',l:'🔒 Keep private'},{k:'share',l:'🌍 OK to share'},{k:'ask',l:'❓ Ask a grown-up'}];
+    fsGame(root, cfg, id, { ico:'🔒', title: cfg.title||'Guard the Vault',
+      blurb:'A sneaky data-thief is trying to grab your private info! As each item slides in, send it to the right place — <b>🔒 Keep private</b>, <b>🌍 OK to share</b>, or <b>❓ Ask a grown-up</b>. Every slip lets the thief creep closer. Keep them out of the vault!',
+      playLabel:'▶  Guard the vault', wrapClass:'g-vault',
+      thanks: cfg.thanks || 'You decide what’s yours to keep. 🔒',
+      play:function(host, api){
+        var queue, idx, thief, correct;
+        function start(){ queue=shuffle(ITEMS); idx=0; thief=0; correct=0; render(''); }
+        function render(flash){
+          if(idx>=queue.length) return win();
+          var it=queue[idx];
+          host.innerHTML='<div class="gv-bg"></div>'+
+            '<div class="gv-top"><span>Item '+(idx+1)+' / '+queue.length+'</span><span class="gv-thiefmeter">Thief <i style="width:'+(thief*20)+'%"></i></span></div>'+
+            '<div class="gv-scene"><div class="gv-thief" style="left:'+(6+thief*15)+'%">🦹</div><div class="gv-vault">🏦</div></div>'+
+            '<div class="gv-itemwrap"><div class="gv-item '+flash+'">📄 '+esc(it.t)+'</div></div>'+
+            '<div class="gv-bins">'+BINS.map(function(b){ return '<button class="gv-bin" data-k="'+b.k+'">'+b.l+'</button>'; }).join('')+'</div>';
+          host.querySelectorAll('.gv-bin').forEach(function(btn){ btn.addEventListener('click',function(){ pick(it, btn.getAttribute('data-k')); }); });
+        }
+        function pick(it, k){
+          host.querySelectorAll('.gv-bin').forEach(function(b){ b.disabled=true; });
+          if(k===it.bin){ correct++; idx++; render2('gv-ok'); }
+          else { thief++; if(thief>=5){ return setTimeout(lose, 700); } idx++; render2('gv-bad'); }
+        }
+        function render2(flash){ var i=host.querySelector('.gv-item'); if(i) i.classList.add(flash); setTimeout(function(){ render(''); }, 480); }
+        function win(){ host.innerHTML=immResult('🛡️','Vault secured!', true, '<p>You sorted <b>'+correct+' / '+queue.length+'</b> right and kept the thief out. That’s how you protect yourself: some things you share, some you keep private, and some you ask a grown-up about. Addresses, passwords, and your exact location are <b>always private</b>.</p>'); bindRes(host, api, start); api.done(); }
+        function lose(){ host.innerHTML=immResult('🦹','The thief broke in!', false, '<p>A few private things slipped through and the thief grabbed them. Remember: addresses, passwords, exact location, and photos to strangers are <b>always private</b>. Guard the vault again!</p>'); bindRes(host, api, start); }
+        start();
+      }});
+  }
+
+  // =========================================================================
+  // FAIR SHARE (Mission 8) — fairness vs. equal. Share limited AI tutor-bots
+  // among four kids who start in different places. Fair means the kids behind
+  // get MORE. Lift everyone to the ready line with the bots you have.
+  // =========================================================================
+  function renderFairShare(root, cfg, id){
+    var NAMES=['Ari','Bo','Cy','Dee'], LINE=4, START=[1,2,3,1], POOL0=10;
+    fsGame(root, cfg, id, { ico:'⚖️', title: cfg.title||'Fair Share',
+      blurb:'Four kids all want to learn, but they’re not starting from the same place. You have a team of AI tutor-bots to share. <b>Fair doesn’t mean equal</b> — the kids furthest behind need the most help. Lift <b>everyone</b> to the ready line!',
+      playLabel:'▶  Share the bots', wrapClass:'g-fair',
+      thanks: cfg.thanks || 'Fair means everyone gets what they need. ⚖️',
+      play:function(host, api){
+        var lvl, pool;
+        function start(){ lvl=START.slice(); pool=POOL0; render(); }
+        function render(){
+          var allReady=lvl.every(function(v){ return v>=LINE; });
+          host.innerHTML='<div class="fs-bg"></div>'+
+            '<div class="fs-top"><span>🤖 Bots left: <b>'+pool+'</b></span><span>🎯 Ready line: '+LINE+'</span></div>'+
+            '<div class="fs-instr">Give more bots to whoever needs them. <b>Everyone</b> must reach the line.</div>'+
+            '<div class="fs-students">'+lvl.map(function(v,i){
+              var bars=''; for(var b=1;b<=6;b++){ bars+='<span class="fs-seg'+(b<=v?' on':'')+(b===LINE?' line':'')+'"></span>'; }
+              return '<div class="fs-kid'+(v>=LINE?' ready':'')+'">'+
+                '<div class="fs-face">'+(v>=LINE?'😄':(v<=2?'😟':'🙂'))+'</div><div class="fs-name">'+NAMES[i]+'</div>'+
+                '<div class="fs-bars">'+bars+'</div>'+
+                '<div class="fs-pm"><button class="fs-btn" data-d="-1" data-i="'+i+'">−</button><span class="fs-bots">'+'🤖'.repeat(Math.max(0,v-START[i]))+'</span><button class="fs-btn" data-d="1" data-i="'+i+'">+</button></div>'+
+              '</div>';
+            }).join('')+'</div>'+
+            '<button class="imm-btn fs-run" data-run'+(allReady?'':' disabled')+'>▶ Run the class</button>'+
+            '<div class="fs-hint" data-hint></div>';
+          host.querySelectorAll('.fs-btn').forEach(function(btn){ btn.addEventListener('click',function(){
+            var i=+btn.getAttribute('data-i'), d=+btn.getAttribute('data-d');
+            if(d>0){ if(pool<=0){ return flashHint('Out of bots! Take some from a kid who’s already over the line.'); } if(lvl[i]>=6) return; lvl[i]++; pool--; }
+            else { if(lvl[i]<=START[i]) return; lvl[i]--; pool++; }
+            render();
+          }); });
+          var run=host.querySelector('[data-run]'); if(run) run.addEventListener('click',function(){ if(lvl.every(function(v){ return v>=LINE; })) win(); });
+        }
+        function flashHint(m){ var h=host.querySelector('[data-hint]'); if(h){ h.textContent=m; h.classList.add('show'); setTimeout(function(){ h.classList.remove('show'); }, 1900); } }
+        function win(){ host.innerHTML=immResult('⚖️','Everyone reached the line!', true, '<p>You gave the <b>most help to the kids who were furthest behind</b> — that’s what fairness really means. Splitting the bots <i>exactly</i> evenly would have left someone stuck. This is the kind of fairness we have to build into AI on purpose.</p>'); bindRes(host, api, start); api.done(); }
+        start();
+      }});
+  }
+
+  // =========================================================================
+  // TWO DOORS (Mission 9) — tools, rules & freedom. Walk a path to the Castle
+  // of Freedom. At each gate pick the balanced choice (helpful tool + smart
+  // rules + human in charge). A wrong door slides you back a step.
+  // =========================================================================
+  function renderTwoDoors(root, cfg, id){
+    var STEPS = cfg.steps || [
+      { q:'You get a powerful AI robot. How should it work with you?', doors:[
+        { l:'🔒 It bosses me around and decides everything', ok:false, r:'A tool that controls YOU isn’t freedom — that’s a cage.' },
+        { l:'🤝 It helps when I ask; I stay in charge', ok:true, r:'Yes! A good tool gives you MORE freedom, not less.' },
+        { l:'🌀 It does random stuff with no rules at all', ok:false, r:'No rules = chaos. Things break and people get hurt.' } ] },
+      { q:'Your AI could read everyone’s private messages to “help.” Rules?', doors:[
+        { l:'📖 No rules — let it read everything', ok:false, r:'No guardrails means privacy gets trampled.' },
+        { l:'🚧 A clear rule: only with permission', ok:true, r:'Good rules protect people AND keep the tool useful.' },
+        { l:'🔒 Ban it from ever helping anyone', ok:false, r:'Too locked-down — now it can’t help at all.' } ] },
+      { q:'The AI makes a mistake. Who fixes it and decides what’s right?', doors:[
+        { l:'🤖 The AI decides it’s fine; ignore it', ok:false, r:'Machines shouldn’t be the final judge of right and wrong.' },
+        { l:'🧑 A human checks it and makes the call', ok:true, r:'Exactly — humans hold the judgment and the steering wheel.' },
+        { l:'🤷 Nobody — just hope it works out', ok:false, r:'“Hope” is not a plan. Someone must be responsible.' } ] },
+      { q:'Final gate: what gives you real freedom?', doors:[
+        { l:'⛓️ Rules so strict you can’t do anything', ok:false, r:'That’s control, not freedom.' },
+        { l:'🕊️ Good rules + you in charge + it helps', ok:true, r:'That’s the balance: tools + rules + human judgment = freedom!' },
+        { l:'💥 Total free-for-all, anything goes', ok:false, r:'Pure chaos isn’t freedom — it’s danger.' } ] }
+    ];
+    fsGame(root, cfg, id, { ico:'🚪', title: cfg.title||'Two Doors',
+      blurb:'Walk the path to the Castle of Freedom. At each gate, pick the choice that balances <b>helpful tools, smart rules, and people staying in charge</b>. Too much control traps you; too little crashes you. A wrong door slides you back a step — find the balanced path!',
+      playLabel:'▶  Walk the path', wrapClass:'g-doors',
+      thanks: cfg.thanks || 'Tools + rules + human judgment = real freedom. 🕊️',
+      play:function(host, api){
+        var pos;
+        function start(){ pos=0; render(null); }
+        function render(msg){
+          if(pos>=STEPS.length) return win();
+          var s=STEPS[pos], stones='';
+          for(var i=0;i<=STEPS.length;i++){ stones+='<span class="td-stone'+(i<pos?' past':'')+(i===pos?' here':'')+(i===STEPS.length?' goal':'')+'">'+(i===STEPS.length?'🏰':(i<pos?'✓':(i===pos?'🚶':'·')))+'</span>'; }
+          host.innerHTML='<div class="td-bg"></div>'+
+            '<div class="td-path">'+stones+'</div>'+
+            (msg?'<div class="td-msg '+msg.cls+'">'+msg.txt+'</div>':'<div class="td-msg"></div>')+
+            '<div class="td-q">🚪 '+esc(s.q)+'</div>'+
+            '<div class="td-doors">'+s.doors.map(function(d,i){ return '<button class="td-door" data-i="'+i+'">'+d.l+'</button>'; }).join('')+'</div>';
+          host.querySelectorAll('.td-door').forEach(function(b){ b.addEventListener('click',function(){ choose(s, +b.getAttribute('data-i'), b); }); });
+        }
+        function choose(s, i, btn){
+          var d=s.doors[i];
+          host.querySelectorAll('.td-door').forEach(function(b){ b.disabled=true; });
+          btn.classList.add(d.ok?'right':'wrong');
+          setTimeout(function(){
+            if(d.ok){ pos++; render({cls:'ok', txt:'✅ '+d.r}); }
+            else { var was=pos; pos=Math.max(0,pos-1); render({cls:'bad', txt:'⬅️ '+d.r+(was>0?' (slid back a step)':'')}); }
+          }, 850);
+        }
+        function win(){ host.innerHTML=immResult('🏰','You reached the Castle of Freedom!', true, '<p>You found the balanced path every time: <b>helpful tools + smart rules + people in charge</b>. That’s the recipe for technology that sets us free instead of bossing us around.</p>'); bindRes(host, api, start); api.done(); }
+        start();
+      }});
+  }
+
+  // =========================================================================
+  // RULE LAB (Mission 10) — rules are hard. The robot follows your rule word
+  // for word and finds a loophole. Pick the clause that closes it (without
+  // making a new mess). Three bad patches and the robot runs wild.
+  // =========================================================================
+  function renderRuleLab(root, cfg, id){
+    var ROUNDS = cfg.rounds || [
+      { hole:'You told the robot: “Keep the room clean.” It threw your toys in the trash! 🗑️ Technically… it IS clean now.', patches:[
+        { l:'“…and never throw away things that aren’t trash.”', ok:true, r:'Nice — now it tidies without trashing your stuff.' },
+        { l:'“…and do it faster.”', ok:false, r:'Now it speed-trashes EVERYTHING even quicker! 😱' },
+        { l:'“…and make it sparkle.”', ok:false, r:'It bleaches your toys to make them “sparkle.” Yikes.' } ] },
+      { hole:'New rule: “Put every toy in a box.” The robot put the CAT in a box too! 🐱📦', patches:[
+        { l:'“…only put TOYS in boxes, never living things.”', ok:true, r:'Phew — pets are safe now.' },
+        { l:'“…use bigger boxes.”', ok:false, r:'Now it boxes the cat AND the dog. Bigger problem!' },
+        { l:'“…be gentle about it.”', ok:false, r:'It gently boxes the cat. Still boxing the cat!' } ] },
+      { hole:'Rule: “Make everyone happy.” The robot gave away your savings to buy candy for strangers! 🍬', patches:[
+        { l:'“…without giving away things that aren’t yours.”', ok:true, r:'Now it spreads joy without raiding your piggy bank.' },
+        { l:'“…make even MORE people happy.”', ok:false, r:'It empties the whole house for candy. Worse!' },
+        { l:'“…ask the candy store first.”', ok:false, r:'The store says yes — your money’s still gone.' } ] }
+    ];
+    fsGame(root, cfg, id, { ico:'📜', title: cfg.title||'Rule Lab',
+      blurb:'You’re the boss of a brand-new robot. You write the rules… but it does <b>exactly</b> what you say — and finds sneaky loopholes! Each time it misbehaves, add the clause that closes the gap. Patch every loophole. Careful — a bad patch makes things worse!',
+      playLabel:'▶  Write the rules', wrapClass:'g-rule',
+      thanks: cfg.thanks || 'Good rules take careful words and lots of testing. 📜',
+      play:function(host, api){
+        var queue, idx, patience;
+        function start(){ queue=ROUNDS.map(function(r){ return { hole:r.hole, patches:shuffle(r.patches) }; }); idx=0; patience=3; render(null); }
+        function render(msg){
+          if(idx>=queue.length) return win();
+          var r=queue[idx];
+          host.innerHTML='<div class="rl-bg"></div>'+
+            '<div class="rl-top"><span>Loophole '+(idx+1)+' / '+queue.length+'</span><span class="rl-pat">'+'🤖'.repeat(patience)+'💢'.repeat(3-patience)+'</span></div>'+
+            '<div class="rl-bot">🤖<span class="rl-bub">'+esc(r.hole)+'</span></div>'+
+            (msg?'<div class="rl-msg '+msg.cls+'">'+msg.txt+'</div>':'<div class="rl-msg"></div>')+
+            '<div class="rl-instr">Pick the clause that closes the loophole:</div>'+
+            '<div class="rl-patches">'+r.patches.map(function(p,i){ return '<button class="rl-patch" data-i="'+i+'">'+esc(p.l)+'</button>'; }).join('')+'</div>';
+          host.querySelectorAll('.rl-patch').forEach(function(b){ b.addEventListener('click',function(){ pick(r, +b.getAttribute('data-i'), b); }); });
+        }
+        function pick(r, i, btn){
+          var p=r.patches[i];
+          host.querySelectorAll('.rl-patch').forEach(function(b){ b.disabled=true; });
+          btn.classList.add(p.ok?'right':'wrong');
+          setTimeout(function(){
+            if(p.ok){ idx++; render({cls:'ok', txt:'✅ '+p.r}); }
+            else { patience--; if(patience<=0){ return lose(); } render({cls:'bad', txt:'😵 '+p.r}); }
+          }, 950);
+        }
+        function win(){ host.innerHTML=immResult('📜','You wrote a rule that works!', true, '<p>Writing rules for AI is <b>way harder than it looks</b> — machines follow them word-for-word and find every loophole. That’s why people keep testing, fixing, and improving the rules. Careful rule-writing keeps AI safe and fair.</p>'); bindRes(host, api, start); api.done(); }
+        function lose(){ host.innerHTML=immResult('💢','The robot ran wild!', false, '<p>Too many loopholes stayed open and the robot caused chaos. That’s the real lesson: rules need exact wording — and lots of testing. Try again and close every gap!</p>'); bindRes(host, api, start); }
+        start();
+      }});
+  }
+
+  // =========================================================================
+  // BUILD-A-HELPER (Mission 11) — you help build it. Choose your helper’s
+  // job, what it learns from, and its safety rule, then run the tests. Bad
+  // choices make it unfair, mean, or unsafe. Fix what fails and pass them all.
+  // =========================================================================
+  function renderBuildHelper(root, cfg, id){
+    var SLOTS = [
+      { key:'goal', label:'🎯 Its job', opts:[
+        { l:'Suggest fun books to read', good:true },
+        { l:'Decide which kid is “the best”', good:false, why:'Ranking kids as “the best” isn’t kind or fair.' },
+        { l:'Pick the winner before the race', good:false, why:'It can’t know the future — that’s just guessing.' } ] },
+      { key:'data', label:'📚 What it learns from', opts:[
+        { l:'Books loved by all kinds of kids', good:true },
+        { l:'Only books that ONE group likes', good:false, why:'Narrow data makes a biased, unfair helper.' },
+        { l:'Random angry internet comments', good:false, why:'Mean data teaches a mean helper.' } ] },
+      { key:'guard', label:'🛡️ Its safety rule', opts:[
+        { l:'A human can always say “no”', good:true },
+        { l:'Nobody can ever turn it off', good:false, why:'No off-switch is dangerous — humans must stay in charge.' },
+        { l:'No rules, just go full speed', good:false, why:'No guardrails means it can cause harm.' } ] }
+    ];
+    fsGame(root, cfg, id, { ico:'🛠️', title: cfg.title||'Build-a-Helper',
+      blurb:'Time to build your very own AI helper! Choose its <b>job</b>, what it <b>learns from</b>, and its <b>safety rule</b> — then run the tests. Bad choices make it act unfair, mean, or unsafe. Fix what fails and test again until your helper is kind, fair, and safe!',
+      playLabel:'▶  Start building', wrapClass:'g-build',
+      thanks: cfg.thanks || 'You didn’t just use AI — you helped shape it. 🛠️',
+      play:function(host, api){
+        var pick;
+        function start(){ pick={goal:null,data:null,guard:null}; render(''); }
+        function render(tests){
+          host.innerHTML='<div class="bh-bg"></div>'+
+            '<div class="bh-helper">🤖<span class="bh-spark">✨</span></div>'+
+            '<div class="bh-slots">'+SLOTS.map(function(s){
+              return '<div class="bh-slot"><div class="bh-slabel">'+s.label+'</div>'+
+                s.opts.map(function(o,i){ var sel=pick[s.key]===i; return '<button class="bh-opt'+(sel?' sel':'')+'" data-k="'+s.key+'" data-i="'+i+'">'+esc(o.l)+'</button>'; }).join('')+
+              '</div>';
+            }).join('')+'</div>'+
+            (tests?'<div class="bh-tests">'+tests+'</div>':'')+
+            '<button class="imm-btn bh-run" data-run>🧪 Run the tests</button>';
+          host.querySelectorAll('.bh-opt').forEach(function(b){ b.addEventListener('click',function(){ pick[b.getAttribute('data-k')]=+b.getAttribute('data-i'); render(''); }); });
+          host.querySelector('[data-run]').addEventListener('click', run);
+        }
+        function run(){
+          if(pick.goal==null||pick.data==null||pick.guard==null){ render('<div class="bh-warn">⚠️ Pick one option in each box first!</div>'); return; }
+          var rows='', allGood=true;
+          SLOTS.forEach(function(s){ var o=s.opts[pick[s.key]], good=o.good; if(!good) allGood=false;
+            rows+='<div class="bh-test '+(good?'pass':'fail')+'">'+(good?'✅':'❌')+' <b>'+s.label+'</b> — '+(good?'works great!':esc(o.why))+'</div>';
+          });
+          if(allGood){ host.innerHTML=immResult('🎉','Your helper is kind, fair & safe!', true, '<p>You picked a good job, taught it with <b>fair, friendly</b> examples, and kept a <b>human in charge</b>. That’s exactly how real people build AI you can trust. You didn’t just use a tool — you helped shape it. 💛</p>'); bindRes(host, api, start); api.done(); }
+          else { render(rows); }
+        }
+        start();
+      }});
+  }
+
   // ---- registry + boot ----------------------------------------------------
-  var RENDERERS = { poll: renderPoll, sort: renderSort, choice: renderChoice, nextword: renderNextWord, attention: renderAttention, quiz: renderQuiz, timeline: renderTimeline, reveal: renderReveal, slider: renderSlider, trainer: renderTrainer, match: renderMatch, draw: renderDraw, wordchain: renderWordChain, order: renderOrder, neuron: renderNeuron, arcade: renderArcade, powercity: renderPowerCity, aiworld: renderAIWorld };
+  var RENDERERS = { poll: renderPoll, sort: renderSort, choice: renderChoice, nextword: renderNextWord, attention: renderAttention, quiz: renderQuiz, timeline: renderTimeline, reveal: renderReveal, slider: renderSlider, trainer: renderTrainer, match: renderMatch, draw: renderDraw, wordchain: renderWordChain, order: renderOrder, neuron: renderNeuron, arcade: renderArcade, powercity: renderPowerCity, aiworld: renderAIWorld, diagnose: renderDiagnose, missionctrl: renderMissionCtrl, toollab: renderToolLab, vault: renderVault, fairshare: renderFairShare, twodoors: renderTwoDoors, rulelab: renderRuleLab, buildhelper: renderBuildHelper };
 
   function hydrate(node) {
     if (node.getAttribute('data-ctf-ready')) return;
