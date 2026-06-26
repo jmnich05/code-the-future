@@ -1,0 +1,529 @@
+{
+ "track": "kids",
+ "cls": "track-kids",
+ "title": "How Coding Got Done",
+ "eyebrow": "Module 3 · Ages 8–11",
+ "unitWord": "Mission",
+ "total": 12,
+ "missions": [
+  {
+   "n": 0,
+   "kind": "intro",
+   "title": "How this module works (read this first)",
+   "meta": "",
+   "beats": [
+    {
+     "type": "text",
+     "html": "<p>Welcome back, builder! In Module 1 you learned <em>what</em> AI is. In Module 2 you saw AI <em>out in the world</em>. This module is about something closer to home: <strong>how the apps, games, and websites you love actually get built</strong> — and how that changed faster in two years than it had in fifty.</p>"
+    },
+    {
+     "type": "text",
+     "html": "<p>Here's the deal. Every screen you've ever tapped was made of <strong>code</strong> — instructions a human wrote, one careful line at a time. For a long, long time, that was slow, tricky work. Then, almost overnight, AI learned to write code <em>with</em> people. The job of a builder is changing right in front of us — and you're going to learn the new way from the start.</p>"
+    },
+    {
+     "type": "text",
+     "html": "<p>Each mission is about 10 minutes: a quick read, a video or picture, and a hands-on game where you'll get to <strong>make mistakes, fix them, and get better</strong> — exactly how real coding works. Twelve missions, twelve badges, and one Big Mission at the end. Let's build.</p>"
+    }
+   ]
+  },
+  {
+   "n": 1,
+   "kind": "unit",
+   "title": "What Even Is Code?",
+   "meta": "~10 minutes",
+   "beats": [
+    {
+     "type": "image",
+     "html": "<div class=\"lesson-art\"><img src=\"../assets/art/mission-1.svg\" alt=\"\" loading=\"lazy\"><p class=\"art-cap\">Code is a list of clear, exact steps — like a recipe a computer follows perfectly.</p></div>"
+    },
+    {
+     "type": "text",
+     "html": "<p>Look around at the screens in your life — the game you play, the video app, the smart watch. Every single one is run by <strong>code</strong>: a list of exact instructions telling the computer what to do, step by step.</p>"
+    },
+    {
+     "type": "text",
+     "html": "<p>Here's the most important secret about computers: they are incredibly fast, but they are <em>not</em> clever on their own. A computer will do <em>exactly</em> what you tell it — no more, no less. If you tell it the wrong thing, it does the wrong thing, instantly and perfectly. So writing code is really about thinking <em>very</em> clearly and putting steps in <em>exactly</em> the right order.</p>"
+    },
+    {
+     "type": "text",
+     "html": "<p>You already think in code more than you'd guess. A recipe is code: \"crack the egg, <em>then</em> whisk it, <em>then</em> pour it in.\" Directions to a friend's house are code: \"go straight, turn left at the park, it's the third door.\" A computer just needs those steps spelled out with zero guessing, because it won't fill in the blanks the way a person would.</p>"
+    },
+    {
+     "type": "text",
+     "html": "<p>A list of clear steps that gets a job done has a special name: an <strong>algorithm</strong>. That's a fancy word for something you already do every day. Brushing your teeth? Algorithm. Tying your shoes? Algorithm. Coding is the art of writing algorithms a computer can follow.</p>"
+    },
+    {
+     "type": "video",
+     "html": "<div class=\"lesson-video\"><div class=\"vframe\"><iframe src=\"https://www.youtube-nocookie.com/embed/rRSD128KWIM?rel=0&modestbranding=1\" title=\"What is a Computer?\" loading=\"lazy\" allow=\"accelerometer; encrypted-media; picture-in-picture; web-share\" allowfullscreen></iframe></div><p class=\"vcap\">🍿 Video break! A quick, friendly look at what a computer actually is — the thing all code runs on.<br><span class=\"vcredit\">“What is a Computer?” · Code.org · YouTube</span></p></div>"
+    },
+    {
+     "type": "widget",
+     "html": "<div class=\"ctf\"><div data-ctf-widget=\"order\" data-ctf-id=\"kids-m1-recipe\">\n    <script type=\"application/json\">{\n      \"eyebrow\":\"Code Cadet\",\"title\":\"Robot Recipe\",\"prompt\":\"Code is just clear steps in the right order. Tap the steps for making a jam sandwich — in the order a robot would need them.\",\n      \"items\":[\"Get two slices of bread\",\"Spread jam on one slice\",\"Put the slices together\",\"Cut the sandwich in half\",\"Take a bite!\"],\n      \"explain\":\"That's an algorithm — clear steps, in the right order. A robot would follow it exactly!\",\n      \"complete\":{\"icon\":\"🎖️\",\"badge\":\"Badge earned: Code Cadet\",\"sub\":\"Mission 1 of 12\",\"progress\":8}\n    }</script>\n  </div></div>"
+    },
+    {
+     "type": "complete",
+     "affirmation": "You learned what code really is. Everything else builds on this. 🧩",
+     "nextUp": "Mission 2: Talking to Computers"
+    }
+   ]
+  },
+  {
+   "n": 2,
+   "kind": "unit",
+   "title": "Talking to Computers",
+   "meta": "~10 minutes",
+   "beats": [
+    {
+     "type": "image",
+     "html": "<div class=\"lesson-art\"><img src=\"../assets/art/mission-2.svg\" alt=\"\" loading=\"lazy\"><p class=\"art-cap\">A coding language lets humans write instructions a computer can run.</p></div>"
+    },
+    {
+     "type": "text",
+     "html": "<p>Computers don't actually understand English (or any human language). Deep down, they only understand electricity — billions of tiny on-and-off switches. So how do people tell them what to do? With a <strong>coding language</strong>: a special, simple language that's halfway between how we talk and how a computer thinks.</p>"
+    },
+    {
+     "type": "text",
+     "html": "<p>There isn't just <em>one</em> coding language — there are hundreds! Just like people speak Spanish, Arabic, or Japanese, computers can be programmed in <strong>Python</strong>, <strong>HTML</strong>, <strong>C++</strong>, and many more. Each one has its own words and rules, and each is good at different jobs. Don't worry about memorizing them — just know that a coding language is how a human writes down an algorithm so a computer can run it.</p>"
+    },
+    {
+     "type": "text",
+     "html": "<p>Here's a friendly one. In <strong>Python</strong>, to make the computer say hello, you write:</p>"
+    },
+    {
+     "type": "text",
+     "html": "<p><code>print(\"Hello!\")</code></p>"
+    },
+    {
+     "type": "text",
+     "html": "<p>That's it. <code>print</code> means \"show this on the screen,\" and the words in the quotes are what to show. Simple, right? Coding languages are built to be <em>learnable</em> — they use real-ish words on purpose so humans can read them.</p>"
+    },
+    {
+     "type": "text",
+     "html": "<p>The big idea: a coding language is a <strong>translator</strong>. You write something a human can almost read, and the language turns it into the on-off switches the computer actually needs. For a long time, humans had to write every one of those lines by hand — and that's the story of the next mission.</p>"
+    },
+    {
+     "type": "video",
+     "html": "<div class=\"lesson-video\"><div class=\"vframe\"><iframe src=\"https://www.youtube-nocookie.com/embed/Wchru8alhaE?rel=0&modestbranding=1\" title=\"Invention of Computer Programming Language\" loading=\"lazy\" allow=\"accelerometer; encrypted-media; picture-in-picture; web-share\" allowfullscreen></iframe></div><p class=\"vcap\">🍿 Video break! Where coding languages came from, and why we need them.<br><span class=\"vcredit\">“Invention of Computer Programming Language” · Peekaboo Kidz · YouTube</span></p></div>"
+    },
+    {
+     "type": "widget",
+     "html": "<div class=\"ctf\"><div data-ctf-widget=\"order\" data-ctf-id=\"kids-m2-code\">\n    <script type=\"application/json\">{\n      \"eyebrow\":\"Language Linker\",\"title\":\"Say It in Code\",\"prompt\":\"In Python, this line makes the computer say something. Put the pieces in the right order to print a message.\",\n      \"items\":[\"print  — the word that means 'show this'\",\"(  — an open bracket\",\"\\\"Hello!\\\"  — your message in quotes\",\")  — a close bracket\"],\n      \"explain\":\"You wrote print(\\\"Hello!\\\") — real Python that shows Hello! on the screen. 💬\",\n      \"complete\":{\"icon\":\"🎖️\",\"badge\":\"Badge earned: Language Linker\",\"sub\":\"Mission 2 of 12\",\"progress\":16}\n    }</script>\n  </div></div>"
+    },
+    {
+     "type": "complete",
+     "affirmation": "You learned how people <em>talk</em> to computers. Next: how hard that used to be. 💬",
+     "nextUp": "Mission 3: The Old Way — By Hand"
+    }
+   ]
+  },
+  {
+   "n": 3,
+   "kind": "unit",
+   "title": "The Old Way: By Hand",
+   "meta": "~10 minutes",
+   "beats": [
+    {
+     "type": "image",
+     "html": "<div class=\"lesson-art\"><img src=\"../assets/art/mission-3.svg\" alt=\"\" loading=\"lazy\"><p class=\"art-cap\">For decades, every app and game was typed out by hand, one careful line at a time.</p></div>"
+    },
+    {
+     "type": "text",
+     "html": "<p>Let's travel back in time — to, oh, about three years ago. If you wanted to build an app or a game, there was only one way: a human typed <strong>every single line of code by hand</strong>. Thousands of lines. Tens of thousands. One. At. A. Time.</p>"
+    },
+    {
+     "type": "text",
+     "html": "<p>It was slow and careful work. A programmer would picture what they wanted, break it into tiny steps, and write each step in just the right order with just the right words. Miss a comma, spell something wrong, or put two lines out of order, and the whole thing wouldn't run. So they'd write a bit, test it, fix it, write a bit more, test it again — for hours, sometimes for months.</p>"
+    },
+    {
+     "type": "text",
+     "html": "<p>Think about that. The apps on your tablet, the games on your console — real people sat and typed them out, line by line, fixing tiny mistakes along the way. It took years of practice to get good, and even the experts spent a <em>lot</em> of their day just hunting for what they typed wrong.</p>"
+    },
+    {
+     "type": "text",
+     "html": "<p>This wasn't bad — it was amazing! Everything digital you've ever used was built this way. But it was <em>hard</em>, and it was <em>slow</em>, and only people who had spent years learning a coding language could do it at all. Hold onto that feeling — because in just a couple of missions, you'll see how wildly that changed.</p>"
+    },
+    {
+     "type": "video",
+     "html": "<div class=\"lesson-video\"><div class=\"vframe\"><iframe src=\"https://www.youtube-nocookie.com/embed/5LeZflr8Zfs?rel=0&modestbranding=1\" title=\"What is computer science?\" loading=\"lazy\" allow=\"accelerometer; encrypted-media; picture-in-picture; web-share\" allowfullscreen></iframe></div><p class=\"vcap\">🍿 Video break! A friendly peek at what a programmer actually does all day.<br><span class=\"vcredit\">“What is computer science?” · Khan Academy · YouTube</span></p></div>"
+    },
+    {
+     "type": "widget",
+     "html": "<div class=\"ctf\"><div data-ctf-widget=\"codehand\" data-ctf-id=\"kids-m3-codehand\">\n    <script type=\"application/json\">{\n      \"eyebrow\":\"Line Writer\",\"title\":\"Code by Hand\",\n      \"complete\":{\"icon\":\"🎖️\",\"badge\":\"Badge earned: Line Writer\",\"sub\":\"Mission 3 of 12\",\"progress\":25}\n    }</script>\n  </div></div>"
+    },
+    {
+     "type": "complete",
+     "affirmation": "You felt how coding used to work. Now let's talk about what goes <em>wrong</em>. ✍️",
+     "nextUp": "Mission 4: Bugs!"
+    }
+   ]
+  },
+  {
+   "n": 4,
+   "kind": "unit",
+   "title": "Bugs!",
+   "meta": "~10 minutes",
+   "beats": [
+    {
+     "type": "image",
+     "html": "<div class=\"lesson-art\"><img src=\"../assets/art/mission-4.svg\" alt=\"\" loading=\"lazy\"><p class=\"art-cap\">A 'bug' is a mistake in code — even one missing comma can stop everything.</p></div>"
+    },
+    {
+     "type": "text",
+     "html": "<p>Here's a funny-but-true word every coder knows: a mistake in code is called a <strong>bug</strong>. When your program does the wrong thing — or won't run at all — you've got a bug, and finding it is called <strong>debugging</strong>.</p>"
+    },
+    {
+     "type": "text",
+     "html": "<p>Why \"bug\"? Long ago, a real moth got stuck inside a giant computer and stopped it from working. A scientist taped the moth into her notebook and wrote \"first actual bug found.\" The name stuck! Ever since, every glitch, freeze, and weird mistake is a \"bug\" — and squashing them is a huge part of a coder's life.</p>"
+    },
+    {
+     "type": "text",
+     "html": "<p>Most bugs are tiny. A missing comma. A misspelled word. Saying \"9\" when you meant \"g.\" The computer can't guess what you <em>meant</em> — remember, it does <em>exactly</em> what you wrote — so one little slip can stop everything. Coders can spend <em>hours</em> hunting for a single wrong character, like finding one wrong word in a giant book.</p>"
+    },
+    {
+     "type": "text",
+     "html": "<p>But here's the secret that makes you a real builder: <strong>bugs are normal, and they are not failure.</strong> Every single coder, even the best in the world, writes bugs constantly. The skill isn't <em>never</em> making mistakes — it's staying calm, hunting them down, and fixing them. Mistakes are how you learn what the computer needs. So when something breaks today, smile: you just found a clue.</p>"
+    },
+    {
+     "type": "widget",
+     "html": "<div class=\"ctf\"><div data-ctf-widget=\"bughunt\" data-ctf-id=\"kids-m4-bughunt\">\n    <script type=\"application/json\">{\n      \"eyebrow\":\"Bug Hunter\",\"title\":\"Bug Hunt\",\n      \"complete\":{\"icon\":\"🎖️\",\"badge\":\"Badge earned: Bug Hunter\",\"sub\":\"Mission 4 of 12\",\"progress\":33}\n    }</script>\n  </div></div>"
+    },
+    {
+     "type": "complete",
+     "affirmation": "You learned that mistakes are part of the job. Real builders embrace them. 🐛",
+     "nextUp": "Mission 5: The Right Tool for the Job"
+    }
+   ]
+  },
+  {
+   "n": 5,
+   "kind": "unit",
+   "title": "The Right Tool for the Job",
+   "meta": "~10 minutes",
+   "beats": [
+    {
+     "type": "image",
+     "html": "<div class=\"lesson-art\"><img src=\"../assets/art/mission-5.svg\" alt=\"\" loading=\"lazy\"><p class=\"art-cap\">Different jobs need different languages — the right tool for the job.</p></div>"
+    },
+    {
+     "type": "text",
+     "html": "<p>Remember how there are <em>hundreds</em> of coding languages? Here's why: different jobs need different tools. You wouldn't use a hammer to paint a wall, and coders don't use one language for everything. Let's meet a few of the most famous ones — you don't have to memorize them, just get a feel for who does what.</p>"
+    },
+    {
+     "type": "text",
+     "html": "<p><strong>Python</strong> 🐍 is friendly and easy to read, and it's the favorite for <strong>AI and working with data</strong>. When people build smart programs that learn — like the AI you met in Module 1 — they very often reach for Python.</p>"
+    },
+    {
+     "type": "text",
+     "html": "<p><strong>HTML</strong> 🌐 is the language of <strong>web pages</strong>. Every website you visit — its words, pictures, and buttons — is built with HTML. It's less like giving commands and more like building with labeled blocks: \"here's a heading, here's a picture, here's a link.\"</p>"
+    },
+    {
+     "type": "text",
+     "html": "<p><strong>C++</strong> ⚡ is fast and powerful, used when speed <em>really</em> matters — like <strong>video games</strong> and the software inside robots and machines. It's trickier to learn, but it's a racecar when you need one.</p>"
+    },
+    {
+     "type": "text",
+     "html": "<p>There are tons more (and you'll meet <strong>SQL</strong> for asking questions of giant piles of data). The point isn't the names — it's the idea: a great builder picks the <strong>right tool for the job</strong>. And soon, you'll see, you can even ask an AI which tool fits and have it write in that language for you.</p>"
+    },
+    {
+     "type": "widget",
+     "html": "<div class=\"ctf\"><div data-ctf-widget=\"toolmatch\" data-ctf-id=\"kids-m5-toolmatch\">\n    <script type=\"application/json\">{\n      \"eyebrow\":\"Toolsmith\",\"title\":\"Right Tool, Right Job\",\n      \"complete\":{\"icon\":\"🎖️\",\"badge\":\"Badge earned: Toolsmith\",\"sub\":\"Mission 5 of 12\",\"progress\":42}\n    }</script>\n  </div></div>"
+    },
+    {
+     "type": "complete",
+     "affirmation": "You met the famous coding languages. Now, the big twist. 🧰",
+     "nextUp": "Mission 6: The Big Change"
+    }
+   ]
+  },
+  {
+   "n": 6,
+   "kind": "unit",
+   "title": "The Big Change",
+   "meta": "~10 minutes",
+   "beats": [
+    {
+     "type": "image",
+     "html": "<div class=\"lesson-art\"><img src=\"../assets/art/mission-6.svg\" alt=\"\" loading=\"lazy\"><p class=\"art-cap\">In just two years, AI learned to write code — one of tech's fastest changes ever.</p></div>"
+    },
+    {
+     "type": "text",
+     "html": "<p>Okay — here's the part that changed everything. For <em>decades</em>, coding meant a human typing every line by hand. Then, in just the <strong>last couple of years</strong>, something wild happened: <strong>AI learned to write code.</strong></p>"
+    },
+    {
+     "type": "text",
+     "html": "<p>Remember from Module 1 how AI learns from tons of examples? Well, people fed AI an enormous amount of code — millions and millions of programs that humans had already written. By spotting the patterns, the AI learned how code works. Now you can describe what you want in plain words, and the AI writes the actual code for you — in seconds.</p>"
+    },
+    {
+     "type": "text",
+     "html": "<p>Think about how big that is. Something that used to take a trained expert <em>hours</em> can now happen in the time it takes to read this sentence. A job that once <em>only</em> people who studied for years could do is suddenly something a curious kid can start doing today — by working <em>with</em> an AI.</p>"
+    },
+    {
+     "type": "text",
+     "html": "<p>This is one of the fastest changes in the whole history of technology. It didn't creep in slowly over fifty years; it arrived in about two. The grown-ups who build software for a living are learning a brand-new way to work <em>right now</em>. And the cool part? You get to learn the new way from the very beginning — no \"old habits\" to unlearn.</p>"
+    },
+    {
+     "type": "video",
+     "html": "<div class=\"lesson-video\"><div class=\"vframe\"><iframe src=\"https://www.youtube-nocookie.com/embed/Ok-xpKjKp2g?rel=0&modestbranding=1\" title=\"How AI Works\" loading=\"lazy\" allow=\"accelerometer; encrypted-media; picture-in-picture; web-share\" allowfullscreen></iframe></div><p class=\"vcap\">🍿 Video break! A 90-second refresher on how AI learns — the same AI that now helps write code.<br><span class=\"vcredit\">“How AI Works” · Code.org · YouTube</span></p></div>"
+    },
+    {
+     "type": "widget",
+     "html": "<div class=\"ctf\"><div data-ctf-widget=\"quiz\" data-ctf-id=\"kids-m6-thennow\">\n    <script type=\"application/json\">{\n      \"eyebrow\":\"Time Traveler\",\"title\":\"Then vs. Now\",\"revisitText\":\"\",\n      \"questions\":[\n        {\"q\":\"How did people write code for most of history?\",\"options\":[\"By hand, one line at a time\",\"By asking an AI\",\"By drawing pictures\",\"They didn't\"],\"answer\":0},\n        {\"q\":\"What just changed coding in only about two years?\",\"options\":[\"Faster keyboards\",\"AI learned to write code\",\"New colors\",\"Bigger screens\"],\"answer\":1},\n        {\"q\":\"How did AI learn to write code?\",\"options\":[\"It was born knowing\",\"From millions of code examples\",\"A teacher told it once\",\"It guessed\"],\"answer\":1}\n      ],\n      \"perfect\":\"You've got the whole story — from typing every line by hand to AI writing code with you!\",\n      \"passText\":\"Nice — the big change is real, and it happened fast.\",\n      \"complete\":{\"icon\":\"🎖️\",\"badge\":\"Badge earned: Time Traveler\",\"sub\":\"Mission 6 of 12\",\"progress\":50}\n    }</script>\n  </div></div>"
+    },
+    {
+     "type": "complete",
+     "affirmation": "You witnessed the big change. Next: how it actually works. ⚡",
+     "nextUp": "Mission 7: Telling the AI What You Want"
+    }
+   ]
+  },
+  {
+   "n": 7,
+   "kind": "unit",
+   "title": "Telling the AI What You Want",
+   "meta": "~10 minutes",
+   "beats": [
+    {
+     "type": "image",
+     "html": "<div class=\"lesson-art\"><img src=\"../assets/art/mission-7.svg\" alt=\"\" loading=\"lazy\"><p class=\"art-cap\">You tell an AI what to build with a clear prompt — clear thinking is the new superpower.</p></div>"
+    },
+    {
+     "type": "text",
+     "html": "<p>So AI can write code now — but it doesn't read your mind. The way you get great code out of an AI is by giving it a clear, exact <strong>prompt</strong>: a description of what you want it to build. And here's the twist that should sound <em>very</em> familiar: just like a computer, an AI does best when you tell it <em>exactly</em> what you mean.</p>"
+    },
+    {
+     "type": "text",
+     "html": "<p>Watch what happens with a fuzzy prompt. Say you ask an AI: \"make a button.\" It might make a button… but what color? How big? What does it do when you click it? The AI has to guess, and it might guess something you didn't want. Fuzzy prompt, fuzzy result.</p>"
+    },
+    {
+     "type": "text",
+     "html": "<p>Now give it a <em>clear</em> prompt: \"Make a big green button that says PLAY, and when you click it, the game starts.\" Now the AI knows exactly what to build — and it nails it. The clearer your words, the better the code. Describing what you want, clearly, is a real skill — maybe <em>the</em> skill of the new way of building.</p>"
+    },
+    {
+     "type": "text",
+     "html": "<p>Notice the pattern from this whole journey: a computer does exactly what you type, and an AI does its best with exactly what you describe. So the most important thing you bring isn't fast typing — it's <strong>clear thinking</strong> about what you actually want. The AI handles the \"how.\" You handle the \"what.\"</p>"
+    },
+    {
+     "type": "widget",
+     "html": "<div class=\"ctf\"><div data-ctf-widget=\"promptcoder\" data-ctf-id=\"kids-m7-promptcoder\">\n    <script type=\"application/json\">{\n      \"eyebrow\":\"Prompt Pilot\",\"title\":\"Prompt the Coder\",\n      \"complete\":{\"icon\":\"🎖️\",\"badge\":\"Badge earned: Prompt Pilot\",\"sub\":\"Mission 7 of 12\",\"progress\":58}\n    }</script>\n  </div></div>"
+    },
+    {
+     "type": "complete",
+     "affirmation": "You learned how to direct an AI coder. Now meet a smarter kind. 🎯",
+     "nextUp": "Mission 8: Agents That Do Things"
+    }
+   ]
+  },
+  {
+   "n": 8,
+   "kind": "unit",
+   "title": "Agents That Do Things",
+   "meta": "~10 minutes",
+   "beats": [
+    {
+     "type": "image",
+     "html": "<div class=\"lesson-art\"><img src=\"../assets/art/mission-8.svg\" alt=\"\" loading=\"lazy\"><p class=\"art-cap\">An agent doesn't just answer — it runs a loop: plan, do, check, fix, repeat.</p></div>"
+    },
+    {
+     "type": "text",
+     "html": "<p>A chatbot <em>answers</em>. But the newest AIs can <em>act</em> — they don't just tell you the answer, they go and <strong>do the steps</strong>. We call one of these an <strong>agent</strong>, and it's the heart of how building works now.</p>"
+    },
+    {
+     "type": "text",
+     "html": "<p>Here's the difference. Ask a chatbot \"how do I make a website?\" and it explains it to you. Ask an <strong>agent</strong> to \"make me a website,\" and it actually gets to work: it writes the code, tries running it, notices a bug, fixes the bug, tries again, and keeps going until it's done. It runs a little loop — <strong>plan, do, check, fix, repeat</strong> — all by itself.</p>"
+    },
+    {
+     "type": "text",
+     "html": "<p>That loop should ring a bell. Back in Module 2 you learned the big rule: <em>code handles the loop, AI handles the judgment, humans handle the exceptions.</em> An agent is AI running a loop of small jobs, using tools (like writing a file or testing the code), and making little judgment calls along the way — checking its own work and fixing what's broken.</p>"
+    },
+    {
+     "type": "text",
+     "html": "<p>But here's what matters most: an agent is powerful, but it's <strong>not the boss — you are.</strong> It can run a hundred steps in a minute, but <em>you</em> decide what it should build, and <em>you</em> check whether the result is actually good. The agent is an amazing helper with super-speed hands. The brain, the goal, and the final \"yes, that's right\" — those stay with you.</p>"
+    },
+    {
+     "type": "video",
+     "html": "<div class=\"lesson-video\"><div class=\"vframe\"><iframe src=\"https://www.youtube-nocookie.com/embed/OeU5m6vRyCk?rel=0&modestbranding=1\" title=\"AI: What is Machine Learning?\" loading=\"lazy\" allow=\"accelerometer; encrypted-media; picture-in-picture; web-share\" allowfullscreen></iframe></div><p class=\"vcap\">🍿 Video break! How AI learns from examples instead of being told every step.<br><span class=\"vcredit\">“AI: What is Machine Learning?” · Code.org · YouTube</span></p></div>"
+    },
+    {
+     "type": "widget",
+     "html": "<div class=\"ctf\"><div data-ctf-widget=\"agentloop\" data-ctf-id=\"kids-m8-agentloop\">\n    <script type=\"application/json\">{\n      \"eyebrow\":\"Agent Ace\",\"title\":\"Run the Agent\",\n      \"complete\":{\"icon\":\"🎖️\",\"badge\":\"Badge earned: Agent Ace\",\"sub\":\"Mission 8 of 12\",\"progress\":66}\n    }</script>\n  </div></div>"
+    },
+    {
+     "type": "complete",
+     "affirmation": "You met AI agents — the engines of modern building. Next: a whole team of them. 🤖",
+     "nextUp": "Mission 9: A Day in the Life"
+    }
+   ]
+  },
+  {
+   "n": 9,
+   "kind": "unit",
+   "title": "A Day in the Life",
+   "meta": "~10 minutes",
+   "beats": [
+    {
+     "type": "image",
+     "html": "<div class=\"lesson-art\"><img src=\"../assets/art/mission-9.svg\" alt=\"\" loading=\"lazy\"><p class=\"art-cap\">A modern builder directs a whole team of AI agents at once, like a head chef.</p></div>"
+    },
+    {
+     "type": "text",
+     "html": "<p>So what does building software actually look like <em>today</em>? Picture a modern developer at their desk. They're not typing code line-by-line for hours anymore. Instead, they're more like the <strong>director of a team</strong> — a team made of several AI agents, all working at once.</p>"
+    },
+    {
+     "type": "text",
+     "html": "<p>Here's a real-feeling day. The developer gives one agent the job of building a login screen. While that's running, they hand a second agent a list of bugs to hunt down. A third agent is busy writing tests to make sure nothing breaks. The developer moves between them — checking work, answering questions, saying \"yes, ship that\" or \"no, try it this way.\" Several things happen at once, and <em>they</em> keep it all pointed in the right direction.</p>"
+    },
+    {
+     "type": "text",
+     "html": "<p>It's a bit like being the head chef in a busy kitchen. The chef isn't personally chopping every vegetable; they're tasting, deciding, directing, and making sure every plate that goes out is <em>good</em>. The cooks (the agents) are fast and skilled, but the chef holds the vision and the standards.</p>"
+    },
+    {
+     "type": "text",
+     "html": "<p>This is genuinely new. The most valuable builders today aren't the ones who can type the fastest — the AI types plenty fast. They're the ones who know <em>what's worth building</em>, can <em>tell good work from sloppy work</em>, and can <em>steer a team of agents</em> to a great result. That's a job you can start practicing right now.</p>"
+    },
+    {
+     "type": "video",
+     "html": "<div class=\"lesson-video\"><div class=\"vframe\"><iframe src=\"https://www.youtube-nocookie.com/embed/LVV_93mBfSU?rel=0&modestbranding=1\" title=\"The Internet: How Search Works\" loading=\"lazy\" allow=\"accelerometer; encrypted-media; picture-in-picture; web-share\" allowfullscreen></iframe></div><p class=\"vcap\">🍿 Video break! Real engineers show how they build the tools you use every day.<br><span class=\"vcredit\">“The Internet: How Search Works” · Code.org · YouTube</span></p></div>"
+    },
+    {
+     "type": "widget",
+     "html": "<div class=\"ctf\"><div data-ctf-widget=\"manageteam\" data-ctf-id=\"kids-m9-manageteam\">\n    <script type=\"application/json\">{\n      \"eyebrow\":\"Team Director\",\"title\":\"Manage the Team\",\n      \"complete\":{\"icon\":\"🎖️\",\"badge\":\"Badge earned: Team Director\",\"sub\":\"Mission 9 of 12\",\"progress\":75}\n    }</script>\n  </div></div>"
+    },
+    {
+     "type": "complete",
+     "affirmation": "You saw how building works today. Now, the most important part: <em>you</em>. 👩‍🍳",
+     "nextUp": "Mission 10: Taste, Decisions, and Output"
+    }
+   ]
+  },
+  {
+   "n": 10,
+   "kind": "unit",
+   "title": "Taste, Decisions, and Output",
+   "meta": "~10 minutes",
+   "beats": [
+    {
+     "type": "image",
+     "html": "<div class=\"lesson-art\"><img src=\"../assets/art/mission-10.svg\" alt=\"\" loading=\"lazy\"><p class=\"art-cap\">AI brings the speed; humans bring taste, decisions, and what we stand behind.</p></div>"
+    },
+    {
+     "type": "text",
+     "html": "<p>If AI can write the code, hunt the bugs, and run the tests… what's left for the human? Actually, the <em>most</em> important things. They have names worth remembering: <strong>taste, decisions, and output.</strong></p>"
+    },
+    {
+     "type": "text",
+     "html": "<p><strong>Taste</strong> is knowing what's <em>good</em>. An agent can make ten different versions of a game screen — but which one is fun? Which one feels right? Which one would <em>you</em> actually want to play? AI can make lots of stuff; a human with taste knows which stuff is worth keeping. That's you.</p>"
+    },
+    {
+     "type": "text",
+     "html": "<p><strong>Decisions</strong> are the calls only a person should make. <em>What</em> should we build, and <em>why</em>? Is this fair? Is it safe? Is it honest? Remember from Module 2 — humans handle the judgment and the exceptions. An agent can suggest, but a person decides, especially when it matters.</p>"
+    },
+    {
+     "type": "text",
+     "html": "<p><strong>Output</strong> means <em>you</em> are responsible for what finally goes out the door. If an agent writes something, you don't just trust it — you check it, test it, and put your name on it. The AI helped, but the work is <em>yours</em>, and so is making sure it's actually good and right.</p>"
+    },
+    {
+     "type": "text",
+     "html": "<p>Here's the heart of this whole module: AI changed <em>how</em> code gets written, but it didn't change who it's <em>for</em> or who's <em>in charge</em>. Machines bring the speed. <strong>You</strong> bring the taste, the decisions, and the responsibility. That's not a smaller job than coding used to be — it's a bigger, more human one.</p>"
+    },
+    {
+     "type": "widget",
+     "html": "<div class=\"ctf\"><div data-ctf-widget=\"sort\" data-ctf-id=\"kids-m10-builderseye\">\n    <script type=\"application/json\">{\n      \"eyebrow\":\"Chief of Taste\",\"title\":\"Builder's Eye\",\n      \"prompt\":\"Your agents handed you their work. Use your <span class=\\\"ctf-q\\\">taste and judgment</span>: ship the good stuff, send the rest back to fix.\",\n      \"buckets\":[\"Ship it ✅\",\"Send it back 🔁\"],\n      \"items\":[\n        {\"emoji\":\"✨\",\"label\":\"A clean login screen that works great\",\"bucket\":0},\n        {\"emoji\":\"🐛\",\"label\":\"A button that crashes when you tap it\",\"bucket\":1},\n        {\"emoji\":\"🎨\",\"label\":\"A fun, clear game menu kids will love\",\"bucket\":0},\n        {\"emoji\":\"⚖️\",\"label\":\"A quiz that's unfair to some players\",\"bucket\":1},\n        {\"emoji\":\"✅\",\"label\":\"Code that passed every test\",\"bucket\":0},\n        {\"emoji\":\"🌀\",\"label\":\"A page with messy, confusing buttons\",\"bucket\":1}\n      ],\n      \"thanks\":\"That's taste — knowing what's good enough to ship and what needs another loop. The human always makes that call. ⭐\",\n      \"complete\":{\"icon\":\"🎖️\",\"badge\":\"Badge earned: Chief of Taste\",\"sub\":\"Mission 10 of 12\",\"progress\":83}\n    }</script>\n  </div></div>"
+    },
+    {
+     "type": "complete",
+     "affirmation": "You learned what makes <em>you</em> irreplaceable. Time to build for real. ⭐",
+     "nextUp": "Mission 11: Build Something Real"
+    }
+   ]
+  },
+  {
+   "n": 11,
+   "kind": "unit",
+   "title": "Build Something Real",
+   "meta": "~10 minutes",
+   "beats": [
+    {
+     "type": "image",
+     "html": "<div class=\"lesson-art\"><img src=\"../assets/art/mission-11.svg\" alt=\"\" loading=\"lazy\"><p class=\"art-cap\">You bring the idea; the AI brings the speed. Describe, look, decide, improve.</p></div>"
+    },
+    {
+     "type": "text",
+     "html": "<p>Enough watching — time to <em>do it</em>. In this mission, you'll be the builder and direct a real AI to make something for you. You bring the idea and the taste; the AI brings the speed. This is the new way of building, and you're about to try it with your own two hands.</p>"
+    },
+    {
+     "type": "text",
+     "html": "<p>The recipe is everything you've learned: <strong>think clearly</strong> about what you want, write a <strong>clear prompt</strong>, look at what the AI makes, and then <strong>decide</strong> — is it good? Is it what you pictured? If not, you don't start over and you don't give up. You say what to change, and you go around the loop again. Builders call this <em>iterating</em> — making something a little better each time around.</p>"
+    },
+    {
+     "type": "text",
+     "html": "<p>Don't aim for perfect on the first try — nobody does, not even the pros. Aim for <em>better than last time</em>. Your first prompt gets you a start; your second makes it sharper; your third makes it shine. Every loop, <em>you're</em> the one steering it toward great. That feeling — describe, look, decide, improve — is exactly what building feels like now.</p>"
+    },
+    {
+     "type": "text",
+     "html": "<p>Whatever you make today, remember: the AI was your helper, but the idea was yours, the choices were yours, and the finished thing is <em>yours</em>. You didn't just use a tool. You <strong>directed</strong> one. That's the whole skill — and you've got it.</p>"
+    },
+    {
+     "type": "widget",
+     "html": "<div class=\"ctf\"><div data-ctf-widget=\"poll\" data-ctf-id=\"kids-m11-build\">\n    <script type=\"application/json\">{\n      \"eyebrow\":\"Real Builder\",\"title\":\"What will you build with AI?\",\"prompt\":\"You're the director now! Pick something you'd love to build by directing an AI — or write your own idea. It goes on the cohort wall.\",\"columns\":2,\n      \"options\":[{\"emoji\":\"🎮\",\"label\":\"A little game\"},{\"emoji\":\"🌐\",\"label\":\"My own web page\"},{\"emoji\":\"🤖\",\"label\":\"A helpful chatbot\"},{\"emoji\":\"🎨\",\"label\":\"An art-maker\"}],\n      \"freeText\":true,\"placeholder\":\"Or describe your own idea to build…\",\n      \"thanks\":\"That's your idea — and now you know how to direct an AI to build it. The future needs builders like you! 🚀\",\n      \"complete\":{\"icon\":\"🎖️\",\"badge\":\"Badge earned: Real Builder\",\"sub\":\"Mission 11 of 12\",\"progress\":91}\n    }</script>\n  </div></div>"
+    },
+    {
+     "type": "complete",
+     "affirmation": "You built something real by directing AI. That's a 21st-century superpower. 🚀",
+     "nextUp": "Mission 12: You Did It!"
+    }
+   ]
+  },
+  {
+   "n": 12,
+   "kind": "unit",
+   "title": "You Did It!",
+   "meta": "~10 minutes",
+   "beats": [
+    {
+     "type": "image",
+     "html": "<div class=\"lesson-art\"><img src=\"../assets/art/mission-12.svg\" alt=\"\" loading=\"lazy\"><p class=\"art-cap\">You did it — you understand how building really works now, and you can do it yourself.</p></div>"
+    },
+    {
+     "type": "text",
+     "html": "<p>Look how far you've come. You started this module knowing that screens run on code. Now you understand the <em>whole story</em> of how code gets made — the old way, the big change, and the brand-new way that's being invented right now. And you didn't just read about it; you tried it.</p>"
+    },
+    {
+     "type": "text",
+     "html": "<p>Let's bring it all home. Code is <strong>clear steps</strong> a computer follows exactly. People used to write every line <strong>by hand</strong>, hunting <strong>bugs</strong> for hours, choosing the right <strong>language</strong> for each job. Then AI learned to <strong>write code</strong>, and building changed forever: now you <strong>prompt</strong> an AI, direct <strong>agents</strong> that run the plan-do-check-fix loop, and steer a whole <strong>team</strong> of them like a director. And through all of it, the human brings the <strong>taste, the decisions, and the output</strong>.</p>"
+    },
+    {
+     "type": "text",
+     "html": "<p>Here's the truth most grown-ups are only just figuring out: the future doesn't belong to whoever types the fastest. It belongs to clear thinkers, careful checkers, and curious builders who know how to work <em>with</em> AI instead of being replaced by it. That's the kind of builder this whole module was quietly making you into.</p>"
+    },
+    {
+     "type": "text",
+     "html": "<p>You're ready for the Big Mission now — a real chance to direct AI agents and build something start to finish, just like a modern developer. Bring your clear thinking, your taste, and your curiosity. The future is yours to build. Let's go. 🎉</p>"
+    },
+    {
+     "type": "video",
+     "html": "<div class=\"lesson-video\"><div class=\"vframe\"><iframe src=\"https://www.youtube-nocookie.com/embed/nKIu9yen5nc?rel=0&modestbranding=1\" title=\"What Most Schools Don't Teach\" loading=\"lazy\" allow=\"accelerometer; encrypted-media; picture-in-picture; web-share\" allowfullscreen></iframe></div><p class=\"vcap\">🍿 Video break! You can be a builder of technology — not just a user of it.<br><span class=\"vcredit\">“What Most Schools Don't Teach” · Code.org · YouTube</span></p></div>"
+    },
+    {
+     "type": "widget",
+     "html": "<div class=\"ctf\"><div data-ctf-widget=\"quiz\" data-ctf-id=\"kids-m12-quiz\">\n    <script type=\"application/json\">{\n      \"eyebrow\":\"🏆 Final check\",\"title\":\"Show what you know\",\"revisit\":\"kids-m1-recipe\",\"revisitText\":\"Back in Mission 1, you put a recipe in order. That was your first algorithm!\",\n      \"questions\":[\n        {\"q\":\"A mistake in code is called a…\",\"options\":[\"Glitch-monster\",\"Bug\",\"Boo-boo\",\"Crash-cat\"],\"answer\":1},\n        {\"q\":\"The newest AIs that DO the steps (not just answer) are called…\",\"options\":[\"Robots\",\"Agents\",\"Helpers\",\"Apps\"],\"answer\":1},\n        {\"q\":\"What loop does an agent run?\",\"options\":[\"Eat, sleep, repeat\",\"Plan, do, check, fix, repeat\",\"Copy, paste, done\",\"Guess and hope\"],\"answer\":1},\n        {\"q\":\"When AI builds the code, what does the HUMAN bring?\",\"options\":[\"Nothing anymore\",\"Taste, decisions, and the final call\",\"Just the typing\",\"The electricity\"],\"answer\":1},\n        {\"q\":\"The most valuable builder today is the one who…\",\"options\":[\"Types the fastest\",\"Knows what's worth building and steers the AI\",\"Never uses AI\",\"Memorizes every language\"],\"answer\":1}\n      ],\n      \"perfect\":\"You understand how building REALLY works now — old way, big change, and the new way. You're a Future Coder! 🏆\",\n      \"passText\":\"Great work — you've got the big picture of how code gets made today.\",\n      \"complete\":{\"icon\":\"🎖️\",\"badge\":\"Badge earned: Future Coder\",\"sub\":\"Mission 12 of 12\",\"progress\":100}\n    }</script>\n  </div></div>"
+    },
+    {
+     "type": "complete",
+     "affirmation": "You did it — you understand how building <em>really</em> works now, and you can do it yourself. 🏆",
+     "nextUp": "The Big Mission: Ship It!"
+    }
+   ]
+  },
+  {
+   "kind": "capstone",
+   "title": "Ship It! — Build with AI Agents",
+   "meta": "",
+   "beats": [
+    {
+     "type": "capstone",
+     "html": "<p class=\"cap-eyebrow\">🚀 The Big Mission</p><h2>Ship It! — Build with AI Agents</h2><p>You earned all 12 badges. Now do what a modern builder does: direct a team of AI agents to build something start to finish — you bring the idea, the taste, and the final call.</p><a class=\"cap-btn\" href=\"../capstone/kids-big-mission.html\">Start the Big Mission →</a>"
+    }
+   ]
+  }
+ ]
+}

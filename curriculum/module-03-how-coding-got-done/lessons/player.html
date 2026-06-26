@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<link rel="icon" type="image/svg+xml" href="/platform/assets/logo-icon-tile.svg">
+<link rel="apple-touch-icon" href="/platform/assets/touch-icon.png">
+<title>Code the Future — Lesson</title>
+<link rel="stylesheet" href="player.css?v=2">
+<link rel="stylesheet" href="../interactive/ctf-widgets.css?v=5">
+</head>
+<body>
+<div class="player" id="player"></div>
+<!-- optional Supabase config (gitignored); if absent, the player runs local-only -->
+<script src="../../../platform/lib/config.js"></script>
+<script src="../../../platform/lib/badge.js?v=3"></script>
+<script src="../../../platform/lib/avatar.js?v=2"></script>
+<script src="../interactive/ctf-widgets.js?v=5"></script>
+<script type="module">
+  import { CTFDB } from "../../../platform/lib/ctf-db.js";
+  CTFDB.init().then(function () { window.dispatchEvent(new Event("ctfdb:ready")); });
+</script>
+<script src="music.js"></script>
+<script src="player.js?v=4"></script>
+</body>
+</html>
