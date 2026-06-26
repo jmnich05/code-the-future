@@ -8,5 +8,7 @@ Disallow: /platform/
 Disallow: /curriculum/
 Disallow: /admin/
 Disallow: /docs/
+Disallow: /.netlify/
+Disallow: /api/
 
 Sitemap: https://codethefuture.net/sitemap.xml

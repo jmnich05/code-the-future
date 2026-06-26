@@ -8,6 +8,48 @@
   functions = "netlify/functions"
   edge_functions = "netlify/edge-functions"
 
+# Canonical host: keep all public equity on the apex domain Google sees in
+# canonical tags, Open Graph URLs, robots.txt, and sitemap.xml.
+[[redirects]]
+  from = "https://www.codethefuture.net/*"
+  to = "https://codethefuture.net/:splat"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "http://codethefuture.net/*"
+  to = "https://codethefuture.net/:splat"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "http://www.codethefuture.net/*"
+  to = "https://codethefuture.net/:splat"
+  status = 301
+  force = true
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Permissions-Policy = "camera=(), microphone=(), geolocation=()"
+
+[[headers]]
+  for = "/platform/assets/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/sitemap.xml"
+  [headers.values]
+    Content-Type = "application/xml; charset=utf-8"
+
+[[headers]]
+  for = "/robots.txt"
+  [headers.values]
+    Content-Type = "text/plain; charset=utf-8"
+
 # Password gate for the learner platform (sales site at / stays public).
 # Active only when GATE_PASSWORD is set in Netlify env vars. The excluded
 # folders are reused by the public sales page (hero/badges/avatar engine).

@@ -7,6 +7,7 @@
 <link rel="apple-touch-icon" href="/platform/assets/touch-icon.png">
 <title>Code the Future — AI Summer Camp for Kids in Louisville (Ages 8–11)</title>
 <meta name="description" content="Code the Future is Louisville's hands-on AI summer camp for kids ages 8–11. Real AI tools, game-like missions, small groups at the public library, and a curriculum designed with a child psychologist.">
+<meta name="robots" content="index, follow">
 <link rel="canonical" href="https://codethefuture.net/">
 <meta property="og:type" content="website">
 <meta property="og:title" content="Code the Future — AI Summer Camp for Kids in Louisville">
@@ -22,22 +23,63 @@
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
-  "@type": "EducationalOrganization",
-  "name": "Code the Future",
-  "alternateName": "Code the Future AI Camp",
-  "url": "https://codethefuture.net/",
-  "logo": "https://codethefuture.net/platform/assets/logo-icon-tile.svg",
-  "image": "https://codethefuture.net/platform/assets/fb-share-landscape.png",
-  "description": "Hands-on AI literacy camp and learning platform for kids ages 8-11 in Louisville, Kentucky. Kids learn what AI is by using it through game-like missions and a weekly in-person session.",
-  "slogan": "The kids who understand AI will build the future.",
-  "foundingDate": "2026",
-  "founder": [
-    { "@type": "Person", "name": "Jon Nichols", "jobTitle": "Co-founder & CEO" },
-    { "@type": "Person", "name": "Kenya Guarnieri", "jobTitle": "Co-founder & Child Psychologist" }
-  ],
-  "address": { "@type": "PostalAddress", "addressLocality": "Louisville", "addressRegion": "KY", "addressCountry": "US" },
-  "areaServed": { "@type": "City", "name": "Louisville, Kentucky" },
-  "audience": { "@type": "EducationalAudience", "educationalRole": "student", "audienceType": "Children ages 8-11" }
+  "@graph": [
+    {
+      "@type": "WebSite",
+      "@id": "https://codethefuture.net/#website",
+      "name": "Code the Future",
+      "url": "https://codethefuture.net/",
+      "publisher": { "@id": "https://codethefuture.net/#organization" },
+      "inLanguage": "en-US"
+    },
+    {
+      "@type": "EducationalOrganization",
+      "@id": "https://codethefuture.net/#organization",
+      "name": "Code the Future",
+      "alternateName": "Code the Future AI Camp",
+      "url": "https://codethefuture.net/",
+      "logo": "https://codethefuture.net/platform/assets/logo-icon-tile.svg",
+      "image": "https://codethefuture.net/platform/assets/fb-share-landscape.png",
+      "description": "Hands-on AI literacy camp and learning platform for kids ages 8-11 in Louisville, Kentucky. Kids learn what AI is by using it through game-like missions and a weekly in-person session.",
+      "slogan": "The kids who understand AI will build the future.",
+      "foundingDate": "2026",
+      "founder": [
+        { "@type": "Person", "name": "Jon Nichols", "jobTitle": "Co-founder & CEO" },
+        { "@type": "Person", "name": "Kenya Guarnieri", "jobTitle": "Co-founder & Child Psychologist" }
+      ],
+      "address": { "@type": "PostalAddress", "addressLocality": "Louisville", "addressRegion": "KY", "addressCountry": "US" },
+      "areaServed": { "@type": "City", "name": "Louisville, Kentucky" },
+      "audience": { "@type": "EducationalAudience", "educationalRole": "student", "audienceType": "Children ages 8-11" }
+    },
+    {
+      "@type": "Course",
+      "@id": "https://codethefuture.net/#ai-literacy-camp",
+      "name": "Code the Future AI Literacy Camp",
+      "description": "A hands-on AI literacy camp for kids ages 8-11 in Louisville, combining weekly in-person labs with game-like online missions.",
+      "provider": { "@id": "https://codethefuture.net/#organization" },
+      "audience": { "@type": "EducationalAudience", "educationalRole": "student", "audienceType": "Children ages 8-11" },
+      "educationalLevel": "Elementary school",
+      "teaches": ["AI literacy", "critical thinking", "digital citizenship", "prompt writing", "creative building with AI"],
+      "courseMode": ["In person", "Online"]
+    },
+    {
+      "@type": "Event",
+      "@id": "https://codethefuture.net/#summer-2026",
+      "name": "Code the Future Founding Cohort · Summer 2026",
+      "description": "A small-group AI literacy summer camp for kids ages 8-11 in Louisville, Kentucky.",
+      "startDate": "2026-07-06",
+      "eventAttendanceMode": "https://schema.org/MixedEventAttendanceMode",
+      "eventStatus": "https://schema.org/EventScheduled",
+      "location": {
+        "@type": "Place",
+        "name": "Louisville Free Public Library",
+        "address": { "@type": "PostalAddress", "addressLocality": "Louisville", "addressRegion": "KY", "addressCountry": "US" }
+      },
+      "organizer": { "@id": "https://codethefuture.net/#organization" },
+      "isAccessibleForFree": false,
+      "url": "https://codethefuture.net/#cohorts"
+    }
+  ]
 }
 </script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -324,6 +366,8 @@
       <a href="#learns">What They Learn</a>
       <a href="#inperson">In Person</a>
       <a href="#cohorts">Summer Cohorts</a>
+      <a href="/about.html">About</a>
+      <a href="/faq.html">FAQ</a>
     </div>
     <div class="nav-cta">
       <a class="btn btn-ghost" href="/platform/">Log In</a>
