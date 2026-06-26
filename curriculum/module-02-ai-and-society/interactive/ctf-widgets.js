@@ -878,8 +878,181 @@
     setHud();
   }
 
+  // =========================================================================
+  // POWER-UP THE CITY (Mission 4) — a full-screen clean-energy management SIM.
+  // Across a day, balance solar + wind + battery against the city's demand.
+  // Store surplus clean power for the evening rush; mismanage and the lights
+  // go out (blackout) or the smog rises (dirty backup). An AI advisor predicts
+  // the day. Trial-and-error: replay to find the smart balance — exactly what
+  // real grid AI does.
+  // =========================================================================
+  function renderPowerCity(root, cfg, id) {
+    root.innerHTML = header(cfg);
+    var wrap = el('div', 'ctf-pc'); root.appendChild(wrap);
+    var fb = el('div', 'ctf-feedback good'); fb.textContent = cfg.thanks || "You balanced the city's power like a real grid AI! 🌱";
+    root.appendChild(fb);
+    var done = completionCard(cfg); if (done) root.appendChild(done);
+
+    var BLOCKS = cfg.blocks || [
+      { t:'Dawn',      ico:'🌅', solar:15, wind:20, demand:30, sky:'#37487e' },
+      { t:'Morning',   ico:'🌄', solar:40, wind:15, demand:35, sky:'#5a78c0' },
+      { t:'Midday',    ico:'🌞', solar:70, wind:10, demand:40, sky:'#7db4ff' },
+      { t:'Afternoon', ico:'🌤️', solar:45, wind:20, demand:45, sky:'#6a93d8' },
+      { t:'Evening',   ico:'🌆', solar:10, wind:25, demand:70, sky:'#bd6a48' },
+      { t:'Night',     ico:'🌙', solar:0,  wind:30, demand:40, sky:'#161e40' }
+    ];
+    var BAT_CAP = cfg.battery || 70;
+    var S, played = false;
+
+    // ---- screens -----------------------------------------------------------
+    function intro() {
+      wrap.setAttribute('data-screen', 'intro');
+      wrap.innerHTML =
+        '<div class="pc-sky" style="--sky:#16224d"></div><div class="pc-stars"></div>' +
+        '<div class="pc-introbox">' +
+          '<div class="pc-introbot">🤖⚡</div>' +
+          '<h2>Keep the city <b>bright</b> — and the air <b>clean</b>.</h2>' +
+          '<p>You\'re the city\'s power chief! Run it on sun and wind, and <b>store extra power</b> for the evening when everyone comes home. I\'m your AI advisor — I\'ll predict what\'s coming.</p>' +
+          '<button class="pc-btn" data-go>▶  Start the day</button>' +
+          '<p class="pc-mini">6 time blocks · keep the lights on with zero smog to ace it</p>' +
+        '</div>';
+      wrap.querySelector('[data-go]').addEventListener('click', start);
+    }
+
+    function start() {
+      S = { bi:0, battery:0, smog:0, blackouts:0, dirty:0, answered:false };
+      wrap.setAttribute('data-screen', 'play');
+      wrap.innerHTML =
+        '<div class="pc-sky"></div><div class="pc-stars"></div>' +
+        '<div class="pc-arc"><span class="pc-sun">☀️</span></div>' +
+        '<div class="pc-smog"></div>' +
+        '<div class="pc-hud">' +
+          '<div class="pc-time"></div>' +
+          '<div class="pc-meters">' +
+            '<span class="pc-meter"><b>💡</b><span class="pc-bar"><i class="pc-power"></i></span></span>' +
+            '<span class="pc-meter"><b>🌱</b><span class="pc-bar"><i class="pc-clean"></i></span></span>' +
+          '</div>' +
+        '</div>' +
+        '<div class="pc-scene">' +
+          '<div class="pc-turbine">🗼<span class="pc-blades">✚</span></div>' +
+          '<div class="pc-city"></div>' +
+          '<div class="pc-batwrap"><div class="pc-bat"><div class="pc-bat-fill"></div></div><span class="pc-bat-lbl"></span></div>' +
+        '</div>' +
+        '<div class="pc-advisor"><span class="pc-abot">🤖</span><div class="pc-bubble"></div></div>' +
+        '<div class="pc-panel"></div>';
+      var city = wrap.querySelector('.pc-city');
+      for (var i=0;i<8;i++){ var b=el('div','pc-bldg'); b.style.height=(46 + (i*37%70))+'px';
+        var win=''; for(var w=0;w<8;w++) win+='<i></i>'; b.innerHTML='<div class="pc-wins">'+win+'</div>'; city.appendChild(b); }
+      renderBlock();
+    }
+
+    function setMeters(blackout){
+      var p = Math.max(0, 100 - S.blackouts*50);
+      var c = Math.max(0, 100 - S.dirty);
+      wrap.querySelector('.pc-power').style.width = p + '%';
+      wrap.querySelector('.pc-clean').style.width = c + '%';
+      wrap.querySelector('.pc-power').style.background = p>=66?'#3FD08A':p>=33?'#FFB320':'#FF5A38';
+      wrap.querySelector('.pc-clean').style.background = c>=66?'#3FD08A':c>=33?'#FFB320':'#FF5A38';
+      wrap.querySelector('.pc-smog').style.opacity = Math.min(.7, S.dirty/90);
+      var f = wrap.querySelector('.pc-bat-fill'); f.style.height = Math.round(S.battery/BAT_CAP*100)+'%';
+      wrap.querySelector('.pc-bat-lbl').textContent = '🔋 ' + Math.round(S.battery);
+      wrap.querySelector('.pc-city').classList.toggle('dark', !!blackout);
+    }
+
+    function tip(msg){ wrap.querySelector('.pc-bubble').innerHTML = msg; }
+
+    function renderBlock(){
+      var B = BLOCKS[S.bi], clean = B.solar + B.wind, surplus = clean - B.demand;
+      S.answered = false;
+      // scene: sky, sun arc position, turbine speed, time label
+      var sky = wrap.querySelector('.pc-sky'); sky.style.setProperty('--sky', B.sky);
+      wrap.querySelector('.pc-arc').style.setProperty('--p', (S.bi/(BLOCKS.length-1)));
+      wrap.querySelector('.pc-sun').textContent = S.bi>=5 ? '🌙' : (S.bi>=4?'🌇':'☀️');
+      wrap.querySelector('.pc-blades').style.animationDuration = (1.4 - B.wind/40) + 's';
+      wrap.querySelector('.pc-time').innerHTML = 'Block ' + (S.bi+1) + ' / ' + BLOCKS.length + ' &nbsp;·&nbsp; ' + B.ico + ' <b>' + B.t + '</b>';
+      setMeters(false);
+      // AI advisor hint
+      if (surplus > 0) tip(B.solar>=45 ? '☀️ Big sun right now! <b>Store</b> this extra power — the evening rush is coming.' : 'A little extra clean power. <b>Bank it</b> for later!');
+      else tip(S.battery >= -surplus ? '🌆 Demand\'s climbing — good thing you charged the <b>battery</b>!' : '⚠️ Low battery and high demand… this is the tricky part.');
+      // decision panel
+      var panel = wrap.querySelector('.pc-panel');
+      var sums = '<div class="pc-sums"><span class="pc-pill s">☀️ ' + B.solar + '</span><span class="pc-pill w">🌬️ ' + B.wind + '</span><span class="pc-eq">=</span><span class="pc-pill c">⚡ ' + clean + ' clean</span><span class="pc-vs">vs</span><span class="pc-pill d">🏠 needs ' + B.demand + '</span></div>';
+      if (surplus >= 0){
+        panel.innerHTML = sums +
+          '<div class="pc-ask">You have <b>+' + surplus + '</b> extra clean power. What now?</div>' +
+          '<div class="pc-choices"><button class="pc-ch good" data-a="store">🔋 Store it for later</button><button class="pc-ch" data-a="waste">💨 Just use it now</button></div>' +
+          '<div class="pc-out"></div>';
+      } else {
+        var need = -surplus;
+        panel.innerHTML = sums +
+          '<div class="pc-ask">You\'re <b>' + need + ' short!</b> How do you keep the lights on?</div>' +
+          '<div class="pc-choices"><button class="pc-ch good" data-a="bat">🔋 Use battery <small>(have ' + Math.round(S.battery) + ')</small></button><button class="pc-ch" data-a="dirty">🏭 Smoky backup <small>(+smog)</small></button></div>' +
+          '<div class="pc-out"></div>';
+      }
+      panel.querySelectorAll('.pc-ch').forEach(function(btn){ btn.addEventListener('click', function(){ choose(btn.getAttribute('data-a'), B, surplus); }); });
+    }
+
+    function choose(a, B, surplus){
+      if (S.answered) return; S.answered = true;
+      var panel = wrap.querySelector('.pc-panel');
+      panel.querySelectorAll('.pc-ch').forEach(function(b){ b.disabled = true; });
+      var out = panel.querySelector('.pc-out'), msg = '', blackout = false;
+      if (a === 'store'){ var room = BAT_CAP - S.battery, kept = Math.min(room, surplus);
+        S.battery += kept; msg = '✅ Stored ' + Math.round(kept) + ' in the battery' + (kept<surplus?' (it\'s full!)':'') + '. Smart — you\'ll need it tonight.'; pulse('.pc-bat'); }
+      else if (a === 'waste'){ msg = '😬 That clean power just… vanished. Nothing saved for the evening rush.'; }
+      else if (a === 'bat'){ var need = -surplus;
+        if (S.battery >= need){ S.battery -= need; msg = '✅ Battery covered it — clean and bright, no smog!'; pulse('.pc-bat'); }
+        else { var used = S.battery, gap = need - used; S.battery = 0; S.blackouts++; blackout = true;
+          msg = '🌑 Battery ran dry — the city <b>blacked out</b> for ' + Math.round(gap) + '! Store more clean power earlier next time.'; flicker(); } }
+      else if (a === 'dirty'){ var n = -surplus; S.dirty += n; S.smog += n;
+        msg = '🏭 The smoky backup kept the lights on, but the air got dirtier (+' + n + ' smog).'; smogPuff(); }
+      setMeters(blackout);
+      out.innerHTML = '<p class="pc-msg">' + msg + '</p><button class="pc-next" data-next>' + (S.bi >= BLOCKS.length-1 ? 'See how the day went →' : 'Next block ▶') + '</button>';
+      out.querySelector('[data-next]').addEventListener('click', next);
+    }
+
+    function next(){
+      if (S.bi >= BLOCKS.length-1){ result(); return; }
+      S.bi++; renderBlock();
+    }
+
+    function result(){
+      played = true;
+      var perfect = S.blackouts === 0 && S.dirty === 0;
+      var litClean = S.blackouts === 0;
+      var title, icon, sub, cls;
+      if (perfect){ icon='🌟'; title='Perfect balance!'; cls='win'; sub='Zero blackouts, zero smog. You stored the midday sun and spent it on the evening rush — exactly how AI helps run a real power grid.'; }
+      else if (litClean){ icon='💡'; title='Lights stayed on!'; cls='ok'; sub='The city never went dark — but the smoky backup ran a few times. Try storing more clean power early to cut the smog to zero.'; }
+      else { icon='🌑'; title='The city went dark.'; cls='bad'; sub='A blackout means demand beat supply. The trick: bank extra solar at midday so the battery is full for the evening peak. Give it another go!'; }
+      wrap.setAttribute('data-screen', 'result');
+      wrap.innerHTML =
+        '<div class="pc-sky" style="--sky:' + (litClean?'#16352b':'#3a1620') + '"></div><div class="pc-stars"></div>' +
+        '<div class="pc-resultbox ' + cls + '">' +
+          '<div class="pc-rico">' + icon + '</div>' +
+          '<h2>' + title + '</h2>' +
+          '<div class="pc-rstats"><span>💡 Blackouts: <b>' + S.blackouts + '</b></span><span>🌱 Clean: <b>' + Math.max(0,100-S.dirty) + '%</b></span></div>' +
+          '<p>' + sub + '</p>' +
+          '<div class="pc-ractions"><button class="pc-btn" data-replay>🔁 Play again</button></div>' +
+        '</div>';
+      wrap.querySelector('[data-replay]').addEventListener('click', start);
+      // finishing one full day opens the gate (kids can keep replaying to ace it)
+      fb.classList.add('show');
+      reveal(done, (cfg.complete && cfg.complete.progress) || 100);
+      markDone(id);
+    }
+
+    // ---- little fx ---------------------------------------------------------
+    function pulse(sel){ var n=wrap.querySelector(sel); if(n){ n.classList.remove('pc-pulse'); void n.offsetWidth; n.classList.add('pc-pulse'); } }
+    function flicker(){ var c=wrap.querySelector('.pc-city'); if(c){ c.classList.add('pc-flicker'); setTimeout(function(){ c.classList.remove('pc-flicker'); }, 900); } }
+    function smogPuff(){ var s=wrap.querySelector('.pc-smog'); if(s){ s.classList.remove('pc-puff'); void s.offsetWidth; s.classList.add('pc-puff'); } }
+
+    var prior = id ? load(id + ':done') : null;
+    if (prior){ fb.classList.add('show'); reveal(done, (cfg.complete && cfg.complete.progress) || 100); }
+    intro();
+  }
+
   // ---- registry + boot ----------------------------------------------------
-  var RENDERERS = { poll: renderPoll, sort: renderSort, choice: renderChoice, nextword: renderNextWord, attention: renderAttention, quiz: renderQuiz, timeline: renderTimeline, reveal: renderReveal, slider: renderSlider, trainer: renderTrainer, match: renderMatch, draw: renderDraw, wordchain: renderWordChain, order: renderOrder, neuron: renderNeuron, arcade: renderArcade };
+  var RENDERERS = { poll: renderPoll, sort: renderSort, choice: renderChoice, nextword: renderNextWord, attention: renderAttention, quiz: renderQuiz, timeline: renderTimeline, reveal: renderReveal, slider: renderSlider, trainer: renderTrainer, match: renderMatch, draw: renderDraw, wordchain: renderWordChain, order: renderOrder, neuron: renderNeuron, arcade: renderArcade, powercity: renderPowerCity };
 
   function hydrate(node) {
     if (node.getAttribute('data-ctf-ready')) return;
