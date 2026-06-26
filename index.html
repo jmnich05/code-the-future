@@ -22,11 +22,22 @@
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
-  "@type": "Organization",
+  "@type": "EducationalOrganization",
   "name": "Code the Future",
+  "alternateName": "Code the Future AI Camp",
   "url": "https://codethefuture.net/",
-  "description": "AI literacy summer camp and learning platform for kids ages 8-11 in Louisville, Kentucky.",
-  "address": { "@type": "PostalAddress", "addressLocality": "Louisville", "addressRegion": "KY", "addressCountry": "US" }
+  "logo": "https://codethefuture.net/platform/assets/logo-icon-tile.svg",
+  "image": "https://codethefuture.net/platform/assets/fb-share-landscape.png",
+  "description": "Hands-on AI literacy camp and learning platform for kids ages 8-11 in Louisville, Kentucky. Kids learn what AI is by using it through game-like missions and a weekly in-person session.",
+  "slogan": "The kids who understand AI will build the future.",
+  "foundingDate": "2026",
+  "founder": [
+    { "@type": "Person", "name": "Jon Nichols", "jobTitle": "Co-founder & CEO" },
+    { "@type": "Person", "name": "Kenya Guarnieri", "jobTitle": "Co-founder & Child Psychologist" }
+  ],
+  "address": { "@type": "PostalAddress", "addressLocality": "Louisville", "addressRegion": "KY", "addressCountry": "US" },
+  "areaServed": { "@type": "City", "name": "Louisville, Kentucky" },
+  "audience": { "@type": "EducationalAudience", "educationalRole": "student", "audienceType": "Children ages 8-11" }
 }
 </script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -621,7 +632,10 @@
 <footer>
   <div class="wrap">
     <span>© 2026 Code the Future · Louisville, KY</span>
-    <span><a href="/platform/">Camper Log In</a> &nbsp;·&nbsp; <a href="#signup">Reserve a Spot</a></span>
+    <span style="display:flex;gap:14px;flex-wrap:wrap">
+      <a href="/about.html">About</a><a href="/faq.html">FAQ</a><a href="/privacy.html">Privacy</a><a href="/terms.html">Terms</a>
+      <a href="/platform/">Camper Log In</a><a href="#signup">Reserve a Spot</a>
+    </span>
   </div>
 </footer>
 

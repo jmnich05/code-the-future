@@ -1,5 +1,9 @@
 User-agent: *
 Allow: /
+# Public assets the marketing pages reuse (logo, social card, avatar engine) —
+# allow these so Google can fetch images for rich results, but keep the app private.
+Allow: /platform/assets/
+Allow: /platform/lib/
 Disallow: /platform/
 Disallow: /curriculum/
 Disallow: /admin/
