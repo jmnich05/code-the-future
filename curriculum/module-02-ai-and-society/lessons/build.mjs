@@ -78,6 +78,15 @@ function videoBeat(track, n) {
     `<p class="vcap">${v.cap}<br><span class="vcredit">“${t}” · ${v.channel} · YouTube</span></p></div>` };
 }
 
+// inline concept art — [IMAGE: name | caption] dropped mid-mission. Shows the
+// mission's core idea as well as telling it. Skipped gracefully if the jpg
+// isn't present yet, so the marker can land before the art is generated.
+function inlineImageBeat(name, cap) {
+  if (!existsSync(join(MOD, "assets", "art", `${name}.jpg`))) return null;
+  const c = cap ? `<p class="art-cap">${inline(cap.trim())}</p>` : "";
+  return { type: "image", html: `<div class="lesson-art inline-art"><img src="../assets/art/${name}.jpg" alt="" loading="lazy">${c}</div>` };
+}
+
 function widgetBlocks(previewFile) {
   const html = readFileSync(join(MOD, "interactive", previewFile), "utf8");
   return html.match(/<div class="ctf"><div data-ctf-widget[\s\S]*?<\/div><\/div>/g) || [];
@@ -151,6 +160,11 @@ function buildUnit(unitText, ctx) {
     if (/\[CAPSTONE/.test(joined)) { ctx.capstoneHtml = capstoneHtml(ctx.track); continue; }
     if (inComplete) { completeBuf.push(blk); continue; }
     if (isComplete(f0)) { inComplete = true; completeBuf.push(blk); continue; }
+    if (/\[IMAGE:/.test(joined)) {
+      const m = joined.match(/\[IMAGE:\s*([\w-]+)\s*(?:\|\s*([\s\S]*?))?\]/);
+      if (m) { const ib = inlineImageBeat(m[1], m[2] || ""); if (ib) beats.push(ib); }
+      continue;
+    }
     if (/\[INTERACTIVE/.test(joined)) {
       if (!ctx.videoDone) { const vb = videoBeat(ctx.track, ctx.n); if (vb) { beats.push(vb); ctx.videoDone = true; } }
       beats.push({ type: "widget", html: ctx.nextWidget() }); continue;

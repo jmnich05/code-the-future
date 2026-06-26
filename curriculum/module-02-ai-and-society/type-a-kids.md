@@ -48,6 +48,8 @@ should we do with it — and who gets to choose?"* Spoiler: part of the answer i
 Let's start with a quick one. No wrong answers — we'll come back to it at the very end and
 see how your thinking grew.
 
+`[IMAGE: mission-1-b | AI doesn't just live on a screen anymore — this week it leaps into the real world.]`
+
 `[INTERACTIVE: warm-up poll — "What's the most AMAZING thing you think AI could do for the world?" Pick one or type your own. We save it and revisit it in Mission 12.]`
 
 And one fast warm-up to wake up your Module 1 brain — sort these into *what AI does* vs.
@@ -94,6 +96,8 @@ carefully — how it's used, and whether it's used well. So this week we're goin
 big places AI is showing up: hospitals, the planet, jobs, and the giant questions that come
 with all of it.
 
+`[IMAGE: mission-2-b | Look closely: tiny AI helpers are already tucked into the everyday things around you.]`
+
 `[INTERACTIVE: "Where's the AI?" sort — drag real-world scenes into "AI is helping here" vs. "just a plain machine" (hospital scan → AI; a paper map → machine; a farm sensor → AI; a wind-up clock → machine).]`
 
 ### ✅ Mission 2 Complete!
@@ -138,6 +142,8 @@ one of them.
 So when people say "AI is going to change the world," *this* is a big part of what they
 mean. A faster, sharper helper for the people whose whole job is helping us.
 
+`[IMAGE: mission-3-b | Like a metal detector for sickness — the AI beeps, and the human doctor decides.]`
+
 `[INTERACTIVE: "spot the odd one" reveal — un-blur a grid of look-alike cells and find the one that doesn't match the pattern. Then the reveal: this is the same pattern-finding that helps real doctors — and a human always makes the final call.]`
 
 ### ✅ Mission 3 Complete!
@@ -181,6 +187,8 @@ the smartest pattern — way more than a person could ever hold in their head. S
 that are really about huge numbers — a whole city's power, a whole planet's weather — it's an
 incredible teammate. The humans still decide *what we care about and what to do*. The AI
 helps us do it better.
+
+`[IMAGE: mission-4-b | AI acts like a careful keeper of clean energy, saving every bit of sun and wind.]`
 
 `[INTERACTIVE: "Power-Up the City" slider — drag a dial to shift a tiny city's energy (run the wind farm now / save solar for tonight) and watch the "energy wasted" meter change. No wrong answers — the point is AI helping people make a big choice.]`
 
@@ -228,6 +236,8 @@ should and shouldn't do. (Hmm — who's getting really good at understanding AI 
 So the future of work isn't "robots take over." It's **teams** — humans and AI, each doing
 what they're best at, with the human as the captain making the calls that matter.
 
+`[IMAGE: mission-5-b | Code runs the loop, AI helps with the judgment, and humans handle the tricky exceptions.]`
+
 `[INTERACTIVE: "Who does what?" sort — drop tasks into "AI handles the loop" / "Human handles the judgment" / "Both, together" (sort 10,000 photos → AI; pick the most beautiful one → human; flag the weird one for a person → both).]`
 
 ### ✅ Mission 5 Complete!
@@ -274,6 +284,8 @@ You don't need to be scared of these questions. They're actually the *exciting* 
 because they're where humans stay in charge of the future. For the next few Missions, you
 get to be a "help or hurt" detective — and you'll be surprised how good you already are at
 it.
+
+`[IMAGE: mission-6-b | The very same tool can build something kind — or break something. The choice is ours.]`
 
 `[INTERACTIVE: "Help or Hurt?" scenarios — three short situations, same AI used two ways. Pick whether each choice helps people or could hurt them, and see why. Builds the detective reflex you'll use all module.]`
 
@@ -324,6 +336,8 @@ This isn't about being scared of the internet. It's about being the *boss* of yo
 information — which, after Module 1, you already know is the whole vibe here. You're in
 charge.
 
+`[IMAGE: mission-7-b | Your information is like your belongings: you decide what's shared and what stays private.]`
+
 `[INTERACTIVE: "Share or Keep?" three-bucket sort — items slide by (favorite color, home address, high score, password, the city you live in). Sort into "okay to share" / "keep private" / "ask a grown-up first."]`
 
 ### ✅ Mission 7 Complete!
@@ -366,6 +380,8 @@ learning it right now, are part of spreading it out.)
 
 There's no bad guy in this Mission. There's just a fairness question worth caring about:
 **the biggest tools should help everybody, not just whoever happens to own the field.**
+
+`[IMAGE: mission-8-b | When a few hold giant tools and many hold tiny ones, fairness really matters.]`
 
 `[INTERACTIVE: "Fair Share" slider/scenario — hand out "AI tools" across a tiny town and watch the fairness meter. One group hoards → lopsided; access is shared → balanced. No villains, just fair vs. lopsided.]`
 
@@ -417,6 +433,8 @@ And that's a hopeful ending, not a scary one. Tools don't decide how they're use
 **people do.** Rules, fairness, and many voices are how we keep the flashlight pointed at the
 path home. And your generation gets to be some of those voices.
 
+`[IMAGE: mission-9-b | Same flashlight — it can light your way home or be shined in your face. Good rules keep it helpful.]`
+
 `[INTERACTIVE: "Helps people / Bosses people around" sort — scenarios sorted by whether a powerful tool is helping or controlling (AI that helps a city save energy → helps; a tool that watches everyone all the time → bosses). Lands on: good rules and many voices keep tools helping.]`
 
 ### ✅ Mission 9 Complete!
@@ -462,6 +480,8 @@ being figured out *right now*, while you're a kid — which means your voice is 
 What you think is fair, what you'd build, what rules you'd want — that all counts. Most kids
 never realize they get a say in something this big. You just did.
 
+`[IMAGE: mission-10-b | Nobody decides alone — lots of voices, including yours, steer the future of AI.]`
+
 `[INTERACTIVE: "Make a Rule for AI" — write or pick one rule you think AI should always follow ("always tell you it's an AI," "never share your secrets," "be fair to everyone") and add it to the cohort wall. Your voice, literally on the board.]`
 
 ### ✅ Mission 10 Complete!
@@ -506,6 +526,8 @@ So get curious. Ask the big questions. Dream up wild ideas — *and* ask if they
 kind before you build them. The future isn't something that just happens *to* you. **You
 get to help build it** — and now you know how to build it *well*.
 
+`[IMAGE: mission-11-b | You don't just use AI — you get to help build it: curiosity, judgment, and kindness.]`
+
 `[INTERACTIVE: "Builder's Code" — pick the promises you want to build by ("I'll stay curious," "I'll think about fairness," "I'll protect people's privacy," "I'll ask when I'm not sure"), or write your own. It goes in your profile and your Time Capsule.]`
 
 ### ✅ Mission 11 Complete!
@@ -548,6 +570,8 @@ you really own it — and you might just teach *them* something brand new.
 
 Then take the quiz, look back at what you said about AI in Mission 1, and get ready — because
 now you get to *build* something good with real AI in the Big Mission.
+
+`[IMAGE: mission-12-b | Look how big you can think about AI in the world now.]`
 
 `[INTERACTIVE: end-of-module quiz — 6 friendly questions across the module. Then revisit your Mission 1 answer and see how much your thinking grew!]`
 

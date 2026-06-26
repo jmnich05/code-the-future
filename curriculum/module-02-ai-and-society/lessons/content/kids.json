@@ -53,6 +53,10 @@
      "html": "<p>Let's start with a quick one. No wrong answers — we'll come back to it at the very end and see how your thinking grew.</p>"
     },
     {
+     "type": "image",
+     "html": "<div class=\"lesson-art inline-art\"><img src=\"../assets/art/mission-1-b.jpg\" alt=\"\" loading=\"lazy\"><p class=\"art-cap\">AI doesn't just live on a screen anymore — this week it leaps into the real world.</p></div>"
+    },
+    {
      "type": "widget",
      "html": "<div class=\"ctf\"><div data-ctf-widget=\"poll\" data-ctf-id=\"kids-m1-warmup\">\n    <script type=\"application/json\">{\n      \"eyebrow\":\"🚀 Welcome back\",\"title\":\"What's the most AMAZING thing AI could do for the world?\",\n      \"prompt\":\"No wrong answers — pick one or type your own. We'll come back to it in Mission 12 to see how your thinking grew.\",\"columns\":2,\n      \"options\":[{\"emoji\":\"🩺\",\"label\":\"Help cure diseases\"},{\"emoji\":\"🌎\",\"label\":\"Help the planet\"},{\"emoji\":\"🛠️\",\"label\":\"Help people build cool things\"},{\"emoji\":\"🧠\",\"label\":\"Help everyone learn\"}],\n      \"freeText\":true,\"placeholder\":\"Or describe your own big idea…\",\n      \"thanks\":\"Saved! Remember your answer — you'll see it again in Mission 12.\"\n    }</script>\n  </div></div>"
     },
@@ -96,6 +100,10 @@
     {
      "type": "text",
      "html": "<p>That's actually why this module matters. When something becomes <em>that</em> important and <em>that</em> common, it stops being just a cool toy and starts being something we all have to think about carefully — how it's used, and whether it's used well. So this week we're going to visit the big places AI is showing up: hospitals, the planet, jobs, and the giant questions that come with all of it.</p>"
+    },
+    {
+     "type": "image",
+     "html": "<div class=\"lesson-art inline-art\"><img src=\"../assets/art/mission-2-b.jpg\" alt=\"\" loading=\"lazy\"><p class=\"art-cap\">Look closely: tiny AI helpers are already tucked into the everyday things around you.</p></div>"
     },
     {
      "type": "video",
@@ -143,6 +151,10 @@
      "html": "<p>So when people say \"AI is going to change the world,\" <em>this</em> is a big part of what they mean. A faster, sharper helper for the people whose whole job is helping us.</p>"
     },
     {
+     "type": "image",
+     "html": "<div class=\"lesson-art inline-art\"><img src=\"../assets/art/mission-3-b.jpg\" alt=\"\" loading=\"lazy\"><p class=\"art-cap\">Like a metal detector for sickness — the AI beeps, and the human doctor decides.</p></div>"
+    },
+    {
      "type": "widget",
      "html": "<div class=\"ctf\"><div data-ctf-widget=\"diagnose\" data-ctf-id=\"kids-m3-reveal\">\n    <script type=\"application/json\">{\n      \"eyebrow\":\"Healer's helper\",\"title\":\"Diagnosis Lab\",\n      \"complete\":{\"icon\":\"🎖️\",\"badge\":\"Badge earned: Healer's Helper\",\"sub\":\"Mission 3 of 12\",\"progress\":25}\n    }</script>\n  </div></div>"
     },
@@ -182,6 +194,10 @@
     {
      "type": "text",
      "html": "<p>Here's the big idea: AI is great at looking at <em>enormous</em> amounts of information and finding the smartest pattern — way more than a person could ever hold in their head. So for problems that are really about huge numbers — a whole city's power, a whole planet's weather — it's an incredible teammate. The humans still decide <em>what we care about and what to do</em>. The AI helps us do it better.</p>"
+    },
+    {
+     "type": "image",
+     "html": "<div class=\"lesson-art inline-art\"><img src=\"../assets/art/mission-4-b.jpg\" alt=\"\" loading=\"lazy\"><p class=\"art-cap\">AI acts like a careful keeper of clean energy, saving every bit of sun and wind.</p></div>"
     },
     {
      "type": "widget",
@@ -231,6 +247,10 @@
     {
      "type": "text",
      "html": "<p>So the future of work isn't \"robots take over.\" It's <strong>teams</strong> — humans and AI, each doing what they're best at, with the human as the captain making the calls that matter.</p>"
+    },
+    {
+     "type": "image",
+     "html": "<div class=\"lesson-art inline-art\"><img src=\"../assets/art/mission-5-b.jpg\" alt=\"\" loading=\"lazy\"><p class=\"art-cap\">Code runs the loop, AI helps with the judgment, and humans handle the tricky exceptions.</p></div>"
     },
     {
      "type": "video",
@@ -286,6 +306,10 @@
      "html": "<p>You don't need to be scared of these questions. They're actually the <em>exciting</em> part, because they're where humans stay in charge of the future. For the next few Missions, you get to be a \"help or hurt\" detective — and you'll be surprised how good you already are at it.</p>"
     },
     {
+     "type": "image",
+     "html": "<div class=\"lesson-art inline-art\"><img src=\"../assets/art/mission-6-b.jpg\" alt=\"\" loading=\"lazy\"><p class=\"art-cap\">The very same tool can build something kind — or break something. The choice is ours.</p></div>"
+    },
+    {
      "type": "video",
      "html": "<div class=\"lesson-video\"><div class=\"vframe\"><iframe src=\"https://www.youtube-nocookie.com/embed/dWRnCXbUDgA?rel=0&modestbranding=1\" title=\"Why AI Matters\" loading=\"lazy\" allow=\"accelerometer; encrypted-media; picture-in-picture; web-share\" allowfullscreen></iframe></div><p class=\"vcap\">🍿 Video break! Why being careful and responsible with AI really matters.<br><span class=\"vcredit\">“Why AI Matters” · Code.org · YouTube</span></p></div>"
     },
@@ -339,6 +363,10 @@
      "html": "<p>This isn't about being scared of the internet. It's about being the <em>boss</em> of your own information — which, after Module 1, you already know is the whole vibe here. You're in charge.</p>"
     },
     {
+     "type": "image",
+     "html": "<div class=\"lesson-art inline-art\"><img src=\"../assets/art/mission-7-b.jpg\" alt=\"\" loading=\"lazy\"><p class=\"art-cap\">Your information is like your belongings: you decide what's shared and what stays private.</p></div>"
+    },
+    {
      "type": "video",
      "html": "<div class=\"lesson-video\"><div class=\"vframe\"><iframe src=\"https://www.youtube-nocookie.com/embed/kHYkWtI7004?rel=0&modestbranding=1\" title=\"The Digital Footprint\" loading=\"lazy\" allow=\"accelerometer; encrypted-media; picture-in-picture; web-share\" allowfullscreen></iframe></div><p class=\"vcap\">🍿 Video break! The trail of info you leave online — your digital footprint.<br><span class=\"vcredit\">“The Digital Footprint” · Common Sense Education · YouTube</span></p></div>"
     },
@@ -382,6 +410,10 @@
     {
      "type": "text",
      "html": "<p>There's no bad guy in this Mission. There's just a fairness question worth caring about: <strong>the biggest tools should help everybody, not just whoever happens to own the field.</strong></p>"
+    },
+    {
+     "type": "image",
+     "html": "<div class=\"lesson-art inline-art\"><img src=\"../assets/art/mission-8-b.jpg\" alt=\"\" loading=\"lazy\"><p class=\"art-cap\">When a few hold giant tools and many hold tiny ones, fairness really matters.</p></div>"
     },
     {
      "type": "video",
@@ -437,6 +469,10 @@
      "html": "<p>And that's a hopeful ending, not a scary one. Tools don't decide how they're used — <strong>people do.</strong> Rules, fairness, and many voices are how we keep the flashlight pointed at the path home. And your generation gets to be some of those voices.</p>"
     },
     {
+     "type": "image",
+     "html": "<div class=\"lesson-art inline-art\"><img src=\"../assets/art/mission-9-b.jpg\" alt=\"\" loading=\"lazy\"><p class=\"art-cap\">Same flashlight — it can light your way home or be shined in your face. Good rules keep it helpful.</p></div>"
+    },
+    {
      "type": "widget",
      "html": "<div class=\"ctf\"><div data-ctf-widget=\"twodoors\" data-ctf-id=\"kids-m9-sort\">\n    <script type=\"application/json\">{\n      \"eyebrow\":\"Freedom keeper\",\"title\":\"Two Doors\",\n      \"complete\":{\"icon\":\"🎖️\",\"badge\":\"Badge earned: Freedom Keeper\",\"sub\":\"Mission 9 of 12\",\"progress\":75}\n    }</script>\n  </div></div>"
     },
@@ -480,6 +516,10 @@
     {
      "type": "text",
      "html": "<p>And here's the part that should make you sit up: <strong>the future of AI isn't decided yet.</strong> It's being figured out <em>right now</em>, while you're a kid — which means your voice is part of it. What you think is fair, what you'd build, what rules you'd want — that all counts. Most kids never realize they get a say in something this big. You just did.</p>"
+    },
+    {
+     "type": "image",
+     "html": "<div class=\"lesson-art inline-art\"><img src=\"../assets/art/mission-10-b.jpg\" alt=\"\" loading=\"lazy\"><p class=\"art-cap\">Nobody decides alone — lots of voices, including yours, steer the future of AI.</p></div>"
     },
     {
      "type": "video",
@@ -527,6 +567,10 @@
      "html": "<p>So get curious. Ask the big questions. Dream up wild ideas — <em>and</em> ask if they're fair and kind before you build them. The future isn't something that just happens <em>to</em> you. <strong>You get to help build it</strong> — and now you know how to build it <em>well</em>.</p>"
     },
     {
+     "type": "image",
+     "html": "<div class=\"lesson-art inline-art\"><img src=\"../assets/art/mission-11-b.jpg\" alt=\"\" loading=\"lazy\"><p class=\"art-cap\">You don't just use AI — you get to help build it: curiosity, judgment, and kindness.</p></div>"
+    },
+    {
      "type": "video",
      "html": "<div class=\"lesson-video\"><div class=\"vframe\"><iframe src=\"https://www.youtube-nocookie.com/embed/nKIu9yen5nc?rel=0&modestbranding=1\" title=\"What Most Schools Don't Teach\" loading=\"lazy\" allow=\"accelerometer; encrypted-media; picture-in-picture; web-share\" allowfullscreen></iframe></div><p class=\"vcap\">🍿 Video break! You can be a builder of technology — not just a user of it.<br><span class=\"vcredit\">“What Most Schools Don't Teach” · Code.org · YouTube</span></p></div>"
     },
@@ -566,6 +610,10 @@
     {
      "type": "text",
      "html": "<p>Then take the quiz, look back at what you said about AI in Mission 1, and get ready — because now you get to <em>build</em> something good with real AI in the Big Mission.</p>"
+    },
+    {
+     "type": "image",
+     "html": "<div class=\"lesson-art inline-art\"><img src=\"../assets/art/mission-12-b.jpg\" alt=\"\" loading=\"lazy\"><p class=\"art-cap\">Look how big you can think about AI in the world now.</p></div>"
     },
     {
      "type": "widget",
