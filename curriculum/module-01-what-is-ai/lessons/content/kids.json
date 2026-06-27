@@ -123,7 +123,7 @@
     },
     {
      "type": "video",
-     "html": "<div class=\"lesson-video\"><div class=\"vframe\"><iframe src=\"https://www.youtube-nocookie.com/embed/Ok-xpKjKp2g?rel=0&modestbranding=1\" title=\"How AI Works\" loading=\"lazy\" allow=\"accelerometer; encrypted-media; picture-in-picture; web-share\" allowfullscreen></iframe></div><p class=\"vcap\">🍿 Video break! Code.org's quick intro to how AI works — everything we just talked about, in motion.<br><span class=\"vcredit\">“How AI Works” · Code.org · YouTube</span></p></div>"
+     "html": "<div class=\"lesson-video\"><div class=\"vframe\"><iframe src=\"https://www.youtube-nocookie.com/embed/Ok-xpKjKp2g?rel=0&modestbranding=1&enablejsapi=1\" title=\"How AI Works\" loading=\"lazy\" allow=\"accelerometer; encrypted-media; picture-in-picture; web-share\" allowfullscreen></iframe></div><p class=\"vcap\">🍿 Video break! Code.org's quick intro to how AI works — everything we just talked about, in motion.<br><span class=\"vcredit\">“How AI Works” · Code.org · YouTube</span></p></div>"
     },
     {
      "type": "widget",
@@ -237,7 +237,7 @@
     },
     {
      "type": "video",
-     "html": "<div class=\"lesson-video\"><div class=\"vframe\"><iframe src=\"https://www.youtube-nocookie.com/embed/OeU5m6vRyCk?rel=0&modestbranding=1\" title=\"What is Machine Learning?\" loading=\"lazy\" allow=\"accelerometer; encrypted-media; picture-in-picture; web-share\" allowfullscreen></iframe></div><p class=\"vcap\">🍿 Video break! See machine learning — “learning from examples” — in action.<br><span class=\"vcredit\">“What is Machine Learning?” · Code.org · YouTube</span></p></div>"
+     "html": "<div class=\"lesson-video\"><div class=\"vframe\"><iframe src=\"https://www.youtube-nocookie.com/embed/OeU5m6vRyCk?rel=0&modestbranding=1&enablejsapi=1\" title=\"What is Machine Learning?\" loading=\"lazy\" allow=\"accelerometer; encrypted-media; picture-in-picture; web-share\" allowfullscreen></iframe></div><p class=\"vcap\">🍿 Video break! See machine learning — “learning from examples” — in action.<br><span class=\"vcredit\">“What is Machine Learning?” · Code.org · YouTube</span></p></div>"
     },
     {
      "type": "widget",
@@ -290,7 +290,7 @@
     },
     {
      "type": "video",
-     "html": "<div class=\"lesson-video\"><div class=\"vframe\"><iframe src=\"https://www.youtube-nocookie.com/embed/2hXG8v8p0KM?rel=0&modestbranding=1\" title=\"How Computer Vision Works\" loading=\"lazy\" allow=\"accelerometer; encrypted-media; picture-in-picture; web-share\" allowfullscreen></iframe></div><p class=\"vcap\">🍿 Video break! How a computer really learns to SEE.<br><span class=\"vcredit\">“How Computer Vision Works” · Code.org · YouTube</span></p></div>"
+     "html": "<div class=\"lesson-video\"><div class=\"vframe\"><iframe src=\"https://www.youtube-nocookie.com/embed/2hXG8v8p0KM?rel=0&modestbranding=1&enablejsapi=1\" title=\"How Computer Vision Works\" loading=\"lazy\" allow=\"accelerometer; encrypted-media; picture-in-picture; web-share\" allowfullscreen></iframe></div><p class=\"vcap\">🍿 Video break! How a computer really learns to SEE.<br><span class=\"vcredit\">“How Computer Vision Works” · Code.org · YouTube</span></p></div>"
     },
     {
      "type": "widget",
@@ -359,7 +359,7 @@
     },
     {
      "type": "video",
-     "html": "<div class=\"lesson-video\"><div class=\"vframe\"><iframe src=\"https://www.youtube-nocookie.com/embed/X-AWdfSFCHQ?rel=0&modestbranding=1\" title=\"How Chatbots and Large Language Models Work\" loading=\"lazy\" allow=\"accelerometer; encrypted-media; picture-in-picture; web-share\" allowfullscreen></iframe></div><p class=\"vcap\">🍿 Video break! How chatbots guess the next word — for real.<br><span class=\"vcredit\">“How Chatbots and Large Language Models Work” · Code.org · YouTube</span></p></div>"
+     "html": "<div class=\"lesson-video\"><div class=\"vframe\"><iframe src=\"https://www.youtube-nocookie.com/embed/X-AWdfSFCHQ?rel=0&modestbranding=1&enablejsapi=1\" title=\"How Chatbots and Large Language Models Work\" loading=\"lazy\" allow=\"accelerometer; encrypted-media; picture-in-picture; web-share\" allowfullscreen></iframe></div><p class=\"vcap\">🍿 Video break! How chatbots guess the next word — for real.<br><span class=\"vcredit\">“How Chatbots and Large Language Models Work” · Code.org · YouTube</span></p></div>"
     },
     {
      "type": "widget",
@@ -469,7 +469,7 @@
     },
     {
      "type": "video",
-     "html": "<div class=\"lesson-video\"><div class=\"vframe\"><iframe src=\"https://www.youtube-nocookie.com/embed/JrXazCEACVo?rel=0&modestbranding=1\" title=\"How Neural Networks Work\" loading=\"lazy\" allow=\"accelerometer; encrypted-media; picture-in-picture; web-share\" allowfullscreen></iframe></div><p class=\"vcap\">🍿 Video break! Inside a neural network — the pretend brain you just learned about.<br><span class=\"vcredit\">“How Neural Networks Work” · Code.org · YouTube</span></p></div>"
+     "html": "<div class=\"lesson-video\"><div class=\"vframe\"><iframe src=\"https://www.youtube-nocookie.com/embed/JrXazCEACVo?rel=0&modestbranding=1&enablejsapi=1\" title=\"How Neural Networks Work\" loading=\"lazy\" allow=\"accelerometer; encrypted-media; picture-in-picture; web-share\" allowfullscreen></iframe></div><p class=\"vcap\">🍿 Video break! Inside a neural network — the pretend brain you just learned about.<br><span class=\"vcredit\">“How Neural Networks Work” · Code.org · YouTube</span></p></div>"
     },
     {
      "type": "widget",
@@ -587,7 +587,7 @@
     },
     {
      "type": "video",
-     "html": "<div class=\"lesson-video\"><div class=\"vframe\"><iframe src=\"https://www.youtube-nocookie.com/embed/x2mRoFNm22g?rel=0&modestbranding=1\" title=\"Training Data & Bias\" loading=\"lazy\" allow=\"accelerometer; encrypted-media; picture-in-picture; web-share\" allowfullscreen></iframe></div><p class=\"vcap\">🍿 Video break! Why good examples matter — and what happens when they're unfair.<br><span class=\"vcredit\">“Training Data & Bias” · Code.org · YouTube</span></p></div>"
+     "html": "<div class=\"lesson-video\"><div class=\"vframe\"><iframe src=\"https://www.youtube-nocookie.com/embed/x2mRoFNm22g?rel=0&modestbranding=1&enablejsapi=1\" title=\"Training Data & Bias\" loading=\"lazy\" allow=\"accelerometer; encrypted-media; picture-in-picture; web-share\" allowfullscreen></iframe></div><p class=\"vcap\">🍿 Video break! Why good examples matter — and what happens when they're unfair.<br><span class=\"vcredit\">“Training Data & Bias” · Code.org · YouTube</span></p></div>"
     },
     {
      "type": "widget",

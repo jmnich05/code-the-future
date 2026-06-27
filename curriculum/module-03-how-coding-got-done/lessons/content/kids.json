@@ -58,7 +58,7 @@
     },
     {
      "type": "video",
-     "html": "<div class=\"lesson-video\"><div class=\"vframe\"><iframe src=\"https://www.youtube-nocookie.com/embed/rRSD128KWIM?rel=0&modestbranding=1\" title=\"What is a Computer?\" loading=\"lazy\" allow=\"accelerometer; encrypted-media; picture-in-picture; web-share\" allowfullscreen></iframe></div><p class=\"vcap\">🍿 Video break! A quick, friendly look at what a computer actually is — the thing all code runs on.<br><span class=\"vcredit\">“What is a Computer?” · Code.org · YouTube</span></p></div>"
+     "html": "<div class=\"lesson-video\"><div class=\"vframe\"><iframe src=\"https://www.youtube-nocookie.com/embed/rRSD128KWIM?rel=0&modestbranding=1&enablejsapi=1\" title=\"What is a Computer?\" loading=\"lazy\" allow=\"accelerometer; encrypted-media; picture-in-picture; web-share\" allowfullscreen></iframe></div><p class=\"vcap\">🍿 Video break! A quick, friendly look at what a computer actually is — the thing all code runs on.<br><span class=\"vcredit\">“What is a Computer?” · Code.org · YouTube</span></p></div>"
     },
     {
      "type": "widget",
@@ -111,7 +111,7 @@
     },
     {
      "type": "video",
-     "html": "<div class=\"lesson-video\"><div class=\"vframe\"><iframe src=\"https://www.youtube-nocookie.com/embed/Wchru8alhaE?rel=0&modestbranding=1\" title=\"Invention of Computer Programming Language\" loading=\"lazy\" allow=\"accelerometer; encrypted-media; picture-in-picture; web-share\" allowfullscreen></iframe></div><p class=\"vcap\">🍿 Video break! Where coding languages came from, and why we need them.<br><span class=\"vcredit\">“Invention of Computer Programming Language” · Peekaboo Kidz · YouTube</span></p></div>"
+     "html": "<div class=\"lesson-video\"><div class=\"vframe\"><iframe src=\"https://www.youtube-nocookie.com/embed/Wchru8alhaE?rel=0&modestbranding=1&enablejsapi=1\" title=\"Invention of Computer Programming Language\" loading=\"lazy\" allow=\"accelerometer; encrypted-media; picture-in-picture; web-share\" allowfullscreen></iframe></div><p class=\"vcap\">🍿 Video break! Where coding languages came from, and why we need them.<br><span class=\"vcredit\">“Invention of Computer Programming Language” · Peekaboo Kidz · YouTube</span></p></div>"
     },
     {
      "type": "widget",
@@ -156,7 +156,7 @@
     },
     {
      "type": "video",
-     "html": "<div class=\"lesson-video\"><div class=\"vframe\"><iframe src=\"https://www.youtube-nocookie.com/embed/5LeZflr8Zfs?rel=0&modestbranding=1\" title=\"What is computer science?\" loading=\"lazy\" allow=\"accelerometer; encrypted-media; picture-in-picture; web-share\" allowfullscreen></iframe></div><p class=\"vcap\">🍿 Video break! A friendly peek at what a programmer actually does all day.<br><span class=\"vcredit\">“What is computer science?” · Khan Academy · YouTube</span></p></div>"
+     "html": "<div class=\"lesson-video\"><div class=\"vframe\"><iframe src=\"https://www.youtube-nocookie.com/embed/5LeZflr8Zfs?rel=0&modestbranding=1&enablejsapi=1\" title=\"What is computer science?\" loading=\"lazy\" allow=\"accelerometer; encrypted-media; picture-in-picture; web-share\" allowfullscreen></iframe></div><p class=\"vcap\">🍿 Video break! A friendly peek at what a programmer actually does all day.<br><span class=\"vcredit\">“What is computer science?” · Khan Academy · YouTube</span></p></div>"
     },
     {
      "type": "widget",
@@ -287,7 +287,7 @@
     },
     {
      "type": "video",
-     "html": "<div class=\"lesson-video\"><div class=\"vframe\"><iframe src=\"https://www.youtube-nocookie.com/embed/Ok-xpKjKp2g?rel=0&modestbranding=1\" title=\"How AI Works\" loading=\"lazy\" allow=\"accelerometer; encrypted-media; picture-in-picture; web-share\" allowfullscreen></iframe></div><p class=\"vcap\">🍿 Video break! A 90-second refresher on how AI learns — the same AI that now helps write code.<br><span class=\"vcredit\">“How AI Works” · Code.org · YouTube</span></p></div>"
+     "html": "<div class=\"lesson-video\"><div class=\"vframe\"><iframe src=\"https://www.youtube-nocookie.com/embed/Ok-xpKjKp2g?rel=0&modestbranding=1&enablejsapi=1\" title=\"How AI Works\" loading=\"lazy\" allow=\"accelerometer; encrypted-media; picture-in-picture; web-share\" allowfullscreen></iframe></div><p class=\"vcap\">🍿 Video break! A 90-second refresher on how AI learns — the same AI that now helps write code.<br><span class=\"vcredit\">“How AI Works” · Code.org · YouTube</span></p></div>"
     },
     {
      "type": "widget",
@@ -373,7 +373,7 @@
     },
     {
      "type": "video",
-     "html": "<div class=\"lesson-video\"><div class=\"vframe\"><iframe src=\"https://www.youtube-nocookie.com/embed/OeU5m6vRyCk?rel=0&modestbranding=1\" title=\"AI: What is Machine Learning?\" loading=\"lazy\" allow=\"accelerometer; encrypted-media; picture-in-picture; web-share\" allowfullscreen></iframe></div><p class=\"vcap\">🍿 Video break! How AI learns from examples instead of being told every step.<br><span class=\"vcredit\">“AI: What is Machine Learning?” · Code.org · YouTube</span></p></div>"
+     "html": "<div class=\"lesson-video\"><div class=\"vframe\"><iframe src=\"https://www.youtube-nocookie.com/embed/OeU5m6vRyCk?rel=0&modestbranding=1&enablejsapi=1\" title=\"AI: What is Machine Learning?\" loading=\"lazy\" allow=\"accelerometer; encrypted-media; picture-in-picture; web-share\" allowfullscreen></iframe></div><p class=\"vcap\">🍿 Video break! How AI learns from examples instead of being told every step.<br><span class=\"vcredit\">“AI: What is Machine Learning?” · Code.org · YouTube</span></p></div>"
     },
     {
      "type": "widget",
@@ -418,7 +418,7 @@
     },
     {
      "type": "video",
-     "html": "<div class=\"lesson-video\"><div class=\"vframe\"><iframe src=\"https://www.youtube-nocookie.com/embed/LVV_93mBfSU?rel=0&modestbranding=1\" title=\"The Internet: How Search Works\" loading=\"lazy\" allow=\"accelerometer; encrypted-media; picture-in-picture; web-share\" allowfullscreen></iframe></div><p class=\"vcap\">🍿 Video break! Real engineers show how they build the tools you use every day.<br><span class=\"vcredit\">“The Internet: How Search Works” · Code.org · YouTube</span></p></div>"
+     "html": "<div class=\"lesson-video\"><div class=\"vframe\"><iframe src=\"https://www.youtube-nocookie.com/embed/LVV_93mBfSU?rel=0&modestbranding=1&enablejsapi=1\" title=\"The Internet: How Search Works\" loading=\"lazy\" allow=\"accelerometer; encrypted-media; picture-in-picture; web-share\" allowfullscreen></iframe></div><p class=\"vcap\">🍿 Video break! Real engineers show how they build the tools you use every day.<br><span class=\"vcredit\">“The Internet: How Search Works” · Code.org · YouTube</span></p></div>"
     },
     {
      "type": "widget",
@@ -549,7 +549,7 @@
     },
     {
      "type": "video",
-     "html": "<div class=\"lesson-video\"><div class=\"vframe\"><iframe src=\"https://www.youtube-nocookie.com/embed/nKIu9yen5nc?rel=0&modestbranding=1\" title=\"What Most Schools Don't Teach\" loading=\"lazy\" allow=\"accelerometer; encrypted-media; picture-in-picture; web-share\" allowfullscreen></iframe></div><p class=\"vcap\">🍿 Video break! You can be a builder of technology — not just a user of it.<br><span class=\"vcredit\">“What Most Schools Don't Teach” · Code.org · YouTube</span></p></div>"
+     "html": "<div class=\"lesson-video\"><div class=\"vframe\"><iframe src=\"https://www.youtube-nocookie.com/embed/nKIu9yen5nc?rel=0&modestbranding=1&enablejsapi=1\" title=\"What Most Schools Don't Teach\" loading=\"lazy\" allow=\"accelerometer; encrypted-media; picture-in-picture; web-share\" allowfullscreen></iframe></div><p class=\"vcap\">🍿 Video break! You can be a builder of technology — not just a user of it.<br><span class=\"vcredit\">“What Most Schools Don't Teach” · Code.org · YouTube</span></p></div>"
     },
     {
      "type": "widget",

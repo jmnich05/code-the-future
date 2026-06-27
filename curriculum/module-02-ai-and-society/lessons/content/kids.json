@@ -107,7 +107,7 @@
     },
     {
      "type": "video",
-     "html": "<div class=\"lesson-video\"><div class=\"vframe\"><iframe src=\"https://www.youtube-nocookie.com/embed/oJC8VIDSx_Q?rel=0&modestbranding=1\" title=\"How AI Works in Everyday Life\" loading=\"lazy\" allow=\"accelerometer; encrypted-media; picture-in-picture; web-share\" allowfullscreen></iframe></div><p class=\"vcap\">🍿 Video break! A quick look at AI quietly helping all around us — maps, photos, translation, and more.<br><span class=\"vcredit\">“How AI Works in Everyday Life” · Google · YouTube</span></p></div>"
+     "html": "<div class=\"lesson-video\"><div class=\"vframe\"><iframe src=\"https://www.youtube-nocookie.com/embed/oJC8VIDSx_Q?rel=0&modestbranding=1&enablejsapi=1\" title=\"How AI Works in Everyday Life\" loading=\"lazy\" allow=\"accelerometer; encrypted-media; picture-in-picture; web-share\" allowfullscreen></iframe></div><p class=\"vcap\">🍿 Video break! A quick look at AI quietly helping all around us — maps, photos, translation, and more.<br><span class=\"vcredit\">“How AI Works in Everyday Life” · Google · YouTube</span></p></div>"
     },
     {
      "type": "widget",
@@ -254,7 +254,7 @@
     },
     {
      "type": "video",
-     "html": "<div class=\"lesson-video\"><div class=\"vframe\"><iframe src=\"https://www.youtube-nocookie.com/embed/zNxw5gJtHLc?rel=0&modestbranding=1\" title=\"Ethics &amp; AI: Privacy &amp; the Future of Work\" loading=\"lazy\" allow=\"accelerometer; encrypted-media; picture-in-picture; web-share\" allowfullscreen></iframe></div><p class=\"vcap\">🍿 Video break! How AI is changing the way grown-ups work.<br><span class=\"vcredit\">“Ethics &amp; AI: Privacy &amp; the Future of Work” · Code.org · YouTube</span></p></div>"
+     "html": "<div class=\"lesson-video\"><div class=\"vframe\"><iframe src=\"https://www.youtube-nocookie.com/embed/zNxw5gJtHLc?rel=0&modestbranding=1&enablejsapi=1\" title=\"Ethics &amp; AI: Privacy &amp; the Future of Work\" loading=\"lazy\" allow=\"accelerometer; encrypted-media; picture-in-picture; web-share\" allowfullscreen></iframe></div><p class=\"vcap\">🍿 Video break! How AI is changing the way grown-ups work.<br><span class=\"vcredit\">“Ethics &amp; AI: Privacy &amp; the Future of Work” · Code.org · YouTube</span></p></div>"
     },
     {
      "type": "widget",
@@ -311,7 +311,7 @@
     },
     {
      "type": "video",
-     "html": "<div class=\"lesson-video\"><div class=\"vframe\"><iframe src=\"https://www.youtube-nocookie.com/embed/dWRnCXbUDgA?rel=0&modestbranding=1\" title=\"Why AI Matters\" loading=\"lazy\" allow=\"accelerometer; encrypted-media; picture-in-picture; web-share\" allowfullscreen></iframe></div><p class=\"vcap\">🍿 Video break! Why being careful and responsible with AI really matters.<br><span class=\"vcredit\">“Why AI Matters” · Code.org · YouTube</span></p></div>"
+     "html": "<div class=\"lesson-video\"><div class=\"vframe\"><iframe src=\"https://www.youtube-nocookie.com/embed/dWRnCXbUDgA?rel=0&modestbranding=1&enablejsapi=1\" title=\"Why AI Matters\" loading=\"lazy\" allow=\"accelerometer; encrypted-media; picture-in-picture; web-share\" allowfullscreen></iframe></div><p class=\"vcap\">🍿 Video break! Why being careful and responsible with AI really matters.<br><span class=\"vcredit\">“Why AI Matters” · Code.org · YouTube</span></p></div>"
     },
     {
      "type": "widget",
@@ -368,7 +368,7 @@
     },
     {
      "type": "video",
-     "html": "<div class=\"lesson-video\"><div class=\"vframe\"><iframe src=\"https://www.youtube-nocookie.com/embed/kHYkWtI7004?rel=0&modestbranding=1\" title=\"The Digital Footprint\" loading=\"lazy\" allow=\"accelerometer; encrypted-media; picture-in-picture; web-share\" allowfullscreen></iframe></div><p class=\"vcap\">🍿 Video break! The trail of info you leave online — your digital footprint.<br><span class=\"vcredit\">“The Digital Footprint” · Common Sense Education · YouTube</span></p></div>"
+     "html": "<div class=\"lesson-video\"><div class=\"vframe\"><iframe src=\"https://www.youtube-nocookie.com/embed/kHYkWtI7004?rel=0&modestbranding=1&enablejsapi=1\" title=\"The Digital Footprint\" loading=\"lazy\" allow=\"accelerometer; encrypted-media; picture-in-picture; web-share\" allowfullscreen></iframe></div><p class=\"vcap\">🍿 Video break! The trail of info you leave online — your digital footprint.<br><span class=\"vcredit\">“The Digital Footprint” · Common Sense Education · YouTube</span></p></div>"
     },
     {
      "type": "widget",
@@ -417,7 +417,7 @@
     },
     {
      "type": "video",
-     "html": "<div class=\"lesson-video\"><div class=\"vframe\"><iframe src=\"https://www.youtube-nocookie.com/embed/tJQSyzBUAew?rel=0&modestbranding=1\" title=\"Ethics &amp; AI: Equal Access and Algorithmic Bias\" loading=\"lazy\" allow=\"accelerometer; encrypted-media; picture-in-picture; web-share\" allowfullscreen></iframe></div><p class=\"vcap\">🍿 Video break! Why fair access to powerful AI tools matters for everyone.<br><span class=\"vcredit\">“Ethics &amp; AI: Equal Access and Algorithmic Bias” · Code.org · YouTube</span></p></div>"
+     "html": "<div class=\"lesson-video\"><div class=\"vframe\"><iframe src=\"https://www.youtube-nocookie.com/embed/tJQSyzBUAew?rel=0&modestbranding=1&enablejsapi=1\" title=\"Ethics &amp; AI: Equal Access and Algorithmic Bias\" loading=\"lazy\" allow=\"accelerometer; encrypted-media; picture-in-picture; web-share\" allowfullscreen></iframe></div><p class=\"vcap\">🍿 Video break! Why fair access to powerful AI tools matters for everyone.<br><span class=\"vcredit\">“Ethics &amp; AI: Equal Access and Algorithmic Bias” · Code.org · YouTube</span></p></div>"
     },
     {
      "type": "widget",
@@ -523,7 +523,7 @@
     },
     {
      "type": "video",
-     "html": "<div class=\"lesson-video\"><div class=\"vframe\"><iframe src=\"https://www.youtube-nocookie.com/embed/RzkD_rTEBYs?rel=0&modestbranding=1\" title=\"How Will AI Change the World?\" loading=\"lazy\" allow=\"accelerometer; encrypted-media; picture-in-picture; web-share\" allowfullscreen></iframe></div><p class=\"vcap\">🍿 Video break! Big ideas about how people get to shape what AI does next.<br><span class=\"vcredit\">“How Will AI Change the World?” · TED-Ed · YouTube</span></p></div>"
+     "html": "<div class=\"lesson-video\"><div class=\"vframe\"><iframe src=\"https://www.youtube-nocookie.com/embed/RzkD_rTEBYs?rel=0&modestbranding=1&enablejsapi=1\" title=\"How Will AI Change the World?\" loading=\"lazy\" allow=\"accelerometer; encrypted-media; picture-in-picture; web-share\" allowfullscreen></iframe></div><p class=\"vcap\">🍿 Video break! Big ideas about how people get to shape what AI does next.<br><span class=\"vcredit\">“How Will AI Change the World?” · TED-Ed · YouTube</span></p></div>"
     },
     {
      "type": "widget",
@@ -572,7 +572,7 @@
     },
     {
      "type": "video",
-     "html": "<div class=\"lesson-video\"><div class=\"vframe\"><iframe src=\"https://www.youtube-nocookie.com/embed/nKIu9yen5nc?rel=0&modestbranding=1\" title=\"What Most Schools Don't Teach\" loading=\"lazy\" allow=\"accelerometer; encrypted-media; picture-in-picture; web-share\" allowfullscreen></iframe></div><p class=\"vcap\">🍿 Video break! You can be a builder of technology — not just a user of it.<br><span class=\"vcredit\">“What Most Schools Don't Teach” · Code.org · YouTube</span></p></div>"
+     "html": "<div class=\"lesson-video\"><div class=\"vframe\"><iframe src=\"https://www.youtube-nocookie.com/embed/nKIu9yen5nc?rel=0&modestbranding=1&enablejsapi=1\" title=\"What Most Schools Don't Teach\" loading=\"lazy\" allow=\"accelerometer; encrypted-media; picture-in-picture; web-share\" allowfullscreen></iframe></div><p class=\"vcap\">🍿 Video break! You can be a builder of technology — not just a user of it.<br><span class=\"vcredit\">“What Most Schools Don't Teach” · Code.org · YouTube</span></p></div>"
     },
     {
      "type": "widget",

@@ -18,6 +18,7 @@
   var DWELL_FLOOR = 4400, DWELL_PER_WORD = 400, DWELL_CAP = 18000;
   var dwellTimer = null, dwellReady = true;
   var widgetReady = true;   // gate: a beat's activity must be played through once before Continue
+  var videoTimer = null, videoRemain = -1;   // video beats: Continue waits the video's full length (no skipping)
   // furthest step ever reached — the high-water mark. Replays move `pos` back,
   // but `furthest` never decreases, and it's what we sync to the cloud so a
   // fresh browser can never wipe out real progress.
@@ -288,6 +289,7 @@
     // minimum dwell — only on genuinely-new beats (pos beyond the high-water
     // mark), never on titles, re-reads, or replays.
     setupDwell(beat, type, pos > furthest);
+    setupVideoGate(beat, type, pos > furthest);   // videos can't be skipped — Continue waits their length
 
     if (audioOn) speakBeat();   // audio learning: read each screen aloud
 
@@ -322,9 +324,68 @@
     }, ms);
   }
 
+  function fmtTime(s) { s = Math.max(0, Math.round(s)); var m = Math.floor(s / 60), x = s % 60; return m + ":" + (x < 10 ? "0" : "") + x; }
+
+  // ---- video gate: Continue waits the video's ACTUAL length, so kids can't
+  // skip a video. Duration is read live from the YouTube IFrame API (no hard-
+  // coded lengths); a 120s fallback covers the rare case the API can't load.
+  function loadYT(cb) {
+    if (window.YT && window.YT.Player) { cb(); return; }
+    (window.__ytcbs = window.__ytcbs || []).push(cb);
+    if (!window.__ytloading) {
+      window.__ytloading = true;
+      var prev = window.onYouTubeIframeAPIReady;
+      window.onYouTubeIframeAPIReady = function () { if (prev) prev(); (window.__ytcbs || []).forEach(function (f) { try { f(); } catch (e) {} }); window.__ytcbs = []; };
+      var s = document.createElement("script"); s.src = "https://www.youtube.com/iframe_api"; document.head.appendChild(s);
+    }
+  }
+  function videoDuration(iframe, cb) {
+    var done = false, fail = setTimeout(function () { if (!done) { done = true; cb(0); } }, 6500);
+    function finish(d) { if (done) return; done = true; clearTimeout(fail); cb(d); }
+    if (!iframe) { finish(0); return; }
+    loadYT(function () {
+      try {
+        var p = new YT.Player(iframe, { events: { onReady: function () {
+          var tries = 0;
+          (function poll() {
+            var d = 0; try { d = p.getDuration(); } catch (e) {}
+            if (d && d > 0) finish(d);
+            else if (tries++ < 12) setTimeout(poll, 400);
+            else finish(0);
+          })();
+        } } });
+      } catch (e) { finish(0); }
+    });
+  }
+  function setupVideoGate(beat, type, isNew) {
+    clearInterval(videoTimer); videoTimer = null; videoRemain = -1;
+    if (type !== "video" || !isNew || paceBypass) return;   // re-watches & testers (?unlock=all) aren't gated
+    clearTimeout(dwellTimer); dwellReady = true;   // the video gate is the sole gate here (don't let dwell cut the fill)
+    widgetReady = false;
+    nextBtn.classList.remove("charging", "ready");
+    syncControls();
+    videoDuration(beat.querySelector("iframe"), function (dur) {
+      var secs = Math.max(5, Math.round(dur || 120));
+      videoRemain = secs;
+      nextBtn.style.setProperty("--charge-ms", (secs * 1000) + "ms");
+      nextBtn.classList.add("charging");
+      syncControls();
+      videoTimer = setInterval(function () {
+        videoRemain--;
+        if (videoRemain <= 0) {
+          clearInterval(videoTimer); videoTimer = null; videoRemain = -1;
+          widgetReady = true;
+          nextBtn.classList.remove("charging"); nextBtn.classList.add("ready");
+        }
+        syncControls();
+      }, 1000);
+    });
+  }
+
   function syncControls() {
     var step = STEPS[pos], atEnd = pos >= STEPS.length - 1;
     var m = step.m;
+    var isVid = step.kind === "beat" && step.b && step.b.type === "video";
     label.textContent = m.kind === "capstone" ? "Capstone" : m.kind === "intro" ? "Read this first" : (DATA.unitWord + " " + m.n + " · " + m.title);
     fill.style.width = (STEPS.length > 1 ? (pos / (STEPS.length - 1) * 100) : 100) + "%";
     backBtn.disabled = pos === 0;
@@ -338,13 +399,15 @@
       else if (nextStep && nextStep.kind === "title") nextBtn.textContent = "Next " + DATA.unitWord + " →";
       else if (atEnd) nextBtn.textContent = "Finish";
       else nextBtn.textContent = animating ? "Skip →" : "Continue →";
+      if (!animating && isVid && !widgetReady) nextBtn.textContent = videoRemain >= 0 ? ("⏳ " + fmtTime(videoRemain)) : "⏳ …";
     }
     // dim Continue while the activity is still unfinished
     nextBtn.classList.toggle("gated", !animating && !widgetReady);
     hint.textContent = animating ? "tap to reveal"
+      : (isVid && !widgetReady ? (videoRemain >= 0 ? "🎬 watch the video — " + fmtTime(videoRemain) + " left" : "🎬 starting the video…")
       : (!widgetReady ? "▶ finish the activity to continue"
       : (!dwellReady ? "keep reading…"
-      : (step.kind === "title" ? "tap anywhere to begin" : "")));
+      : (step.kind === "title" ? "tap anywhere to begin" : ""))));
   }
 
   function next() {

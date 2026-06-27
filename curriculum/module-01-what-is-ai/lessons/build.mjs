@@ -92,7 +92,7 @@ function videoBeat(track, n) {
   const v = VIDEO_MAP[track] && VIDEO_MAP[track][n];
   if (!v) return null;
   return { type: "video", html:
-    `<div class="lesson-video"><div class="vframe"><iframe src="https://www.youtube-nocookie.com/embed/${v.id}?rel=0&modestbranding=1" title="${v.title}" loading="lazy" allow="accelerometer; encrypted-media; picture-in-picture; web-share" allowfullscreen></iframe></div>` +
+    `<div class="lesson-video"><div class="vframe"><iframe src="https://www.youtube-nocookie.com/embed/${v.id}?rel=0&modestbranding=1&enablejsapi=1" title="${v.title}" loading="lazy" allow="accelerometer; encrypted-media; picture-in-picture; web-share" allowfullscreen></iframe></div>` +
     `<p class="vcap">${v.cap}<br><span class="vcredit">“${v.title}” · Code.org · YouTube</span></p></div>` };
 }
 

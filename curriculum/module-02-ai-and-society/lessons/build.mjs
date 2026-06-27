@@ -74,7 +74,7 @@ function videoBeat(track, n) {
   if (!v) return null;
   const t = String(v.title).replace(/&/g, "&amp;");
   return { type: "video", html:
-    `<div class="lesson-video"><div class="vframe"><iframe src="https://www.youtube-nocookie.com/embed/${v.id}?rel=0&modestbranding=1" title="${t}" loading="lazy" allow="accelerometer; encrypted-media; picture-in-picture; web-share" allowfullscreen></iframe></div>` +
+    `<div class="lesson-video"><div class="vframe"><iframe src="https://www.youtube-nocookie.com/embed/${v.id}?rel=0&modestbranding=1&enablejsapi=1" title="${t}" loading="lazy" allow="accelerometer; encrypted-media; picture-in-picture; web-share" allowfullscreen></iframe></div>` +
     `<p class="vcap">${v.cap}<br><span class="vcredit">“${t}” · ${v.channel} · YouTube</span></p></div>` };
 }
 
