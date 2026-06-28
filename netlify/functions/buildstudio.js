@@ -54,7 +54,10 @@ export default async (req) => {
       method: "POST",
       headers: { Authorization: "Bearer " + key, "Content-Type": "application/json" },
       body: JSON.stringify({
-        model, temperature: 0.6, max_tokens: 4000,
+        // GPT-5-era models use max_completion_tokens (not max_tokens) and only
+        // accept the default temperature, so we send neither legacy field. The
+        // budget covers reasoning overhead + a full single-file HTML page.
+        model, max_completion_tokens: 12000,
         messages: [{ role: "system", content: SYSTEM }, { role: "user", content: user }]
       })
     });
