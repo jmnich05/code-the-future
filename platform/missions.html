@@ -94,6 +94,7 @@
       <span class="mod on" data-mod="module-01-what-is-ai">Module 1</span>
       <span class="mod" data-mod="module-02-ai-and-society">Module 2</span>
       <span class="mod" data-mod="module-03-how-coding-got-done">Module 3</span>
+      <span class="mod" data-mod="module-04-build-your-own">Module 4</span>
     </div>
     <div class="prog"><span class="lbl" id="progLbl">—</span><span class="bar"><i id="progBar"></i></span></div>
   </div>
@@ -171,6 +172,24 @@ const ROUTES = {
       {t:"Build Something Real",icon:"🌉",place:"Creek Footbridge",x:23,y:54},
       {t:"You Did It!",icon:"🚀",place:"The Future",x:62,y:83},
     ]
+  },
+  "module-04-build-your-own": {
+    label:"Module 4 · Build Your Own", badge:"kids-mod4-", studio:true, player:"../curriculum/module-04-build-your-own/studio.html",
+    map:"assets/bigfour-bridge-map.png", alt:"Illustrated map of the Big Four Bridge from Louisville to Jeffersonville", welcome:"The Big Four Bridge",
+    stops:[
+      {t:"The Plan",icon:"📝",place:"Waterfront Park",x:10,y:80},
+      {t:"The Canvas",icon:"🖼️",place:"The Spiral Ramp",x:17,y:64},
+      {t:"The Star",icon:"⭐",place:"Bridge Gate",x:27,y:52},
+      {t:"Make It Move",icon:"🕹️",place:"First Tower",x:37,y:45},
+      {t:"The Goal",icon:"🎯",place:"The High Arch",x:47,y:42},
+      {t:"Keep Score",icon:"🔢",place:"Mid-Span",x:57,y:42},
+      {t:"Make It React",icon:"🔊",place:"Second Tower",x:67,y:43},
+      {t:"Dress It Up",icon:"🎨",place:"The Far Arch",x:75,y:43},
+      {t:"Level Up",icon:"⬆️",place:"Indiana Landing",x:83,y:41},
+      {t:"The Welcome",icon:"🏁",place:"Jeffersonville",x:91,y:29},
+      {t:"Bug Hunt",icon:"🐛",place:"Colgate Clock",x:88,y:16},
+      {t:"Ship & Show",icon:"🏆",place:"Riverfront Stage",x:80,y:67},
+    ]
   }
 };
 
@@ -185,8 +204,14 @@ function countDone(badges, prefix){
   return max;
 }
 
+function stopHref(R, n){ return R.studio ? (R.player + (R.player.indexOf('?')>-1?'&':'?') + 'mission=' + n) : R.player; }
+
 async function loadProgress(){
   if (qs.has("demo")) { done = Math.max(0, Math.min(12, parseInt(qs.get("demo"),10)||0)); return; }
+  if (ROUTES[MODULE].studio) {                       // Module 4 — the Build Studio tracks its own checkpoint progress
+    try { done = Math.max(0, Math.min(12, parseInt(localStorage.getItem('ctf:m4progress')||'0',10)||0)); } catch(e){ done = 0; }
+    return;
+  }
   try {
     await CTFDB.init();
     if (CTFDB.enabled) { const badges = await CTFDB.listBadges(); done = countDone(badges, ROUTES[MODULE].badge); }
@@ -211,7 +236,7 @@ function render(){
     const n=i+1, state = n<=done ? "done" : (n===current ? "current" : "locked");
     const el=document.createElement('div'); el.className=`node ${state}`; el.style.left=m.x+'%'; el.style.top=m.y+'%';
     el.innerHTML=`<div class="disc">${m.icon}<span class="num">${n}</span></div><div class="lbl">${m.t}</div>`;
-    el.onclick=()=>{ if(state==="done"||state==="current") location.href=R.player; };
+    el.onclick=()=>{ if(state==="done"||state==="current") location.href=stopHref(R,n); };
     mapwrap.appendChild(el);
   });
   const cn=stops[current-1];
@@ -227,8 +252,8 @@ function curCard(R, m, current, allDone){
   let c=document.getElementById('curcard'); if(c) c.remove();
   c=document.createElement('div'); c.className='cur'+(allDone?' done-all':''); c.id='curcard';
   c.innerHTML = allDone
-    ? `<div><div class="k">${R.label}</div><h3>🎉 Module complete!</h3><div class="sub">You traveled the whole map. Replay any stop anytime.</div></div><a class="go" href="${R.player}">Replay →</a>`
-    : `<div><div class="k">Mission ${current} · ${m.place}</div><h3>${m.t}</h3><div class="sub">Pick up where you left off across the map.</div></div><a class="go" href="${R.player}">${current>1?'Continue':'Start'} →</a>`;
+    ? `<div><div class="k">${R.label}</div><h3>🎉 Module complete!</h3><div class="sub">You traveled the whole map. Replay any stop anytime.</div></div><a class="go" href="${stopHref(R, R.stops.length)}">Replay →</a>`
+    : `<div><div class="k">${R.studio?'Checkpoint':'Mission'} ${current} · ${m.place}</div><h3>${m.t}</h3><div class="sub">${R.studio?'Build the next layer of your project.':'Pick up where you left off across the map.'}</div></div><a class="go" href="${stopHref(R, current)}">${current>1?'Continue':'Start'} →</a>`;
   document.querySelector('.scene').appendChild(c);
 }
 
