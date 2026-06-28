@@ -197,6 +197,23 @@ const qs = new URLSearchParams(location.search);
 let MODULE = "module-01-what-is-ai", done = 0;
 const mapwrap = document.getElementById('mapwrap');
 
+// Module keys in journey order, so ?m=2 can pre-select Module 2 on return.
+const MODKEYS = ["module-01-what-is-ai","module-02-ai-and-society","module-03-how-coding-got-done","module-04-build-your-own"];
+function hasDream(){ try{ return !!JSON.parse(localStorage.getItem('ctf:buildDream')||'null'); }catch(e){ return false; } }
+// Before a learner starts Module 2, they pick what they'll build all summer in
+// Module 4. If they haven't chosen a dream yet, send them to the picker first
+// and bring them right back to Module 2's map.
+function dreamGate(modKey){
+  if (modKey === "module-02-ai-and-society" && !hasDream() && !qs.has("demo")){
+    location.href = "build-dream.html?next=" + encodeURIComponent("/platform/missions.html?m=2");
+    return true;
+  }
+  return false;
+}
+function setActiveChip(modKey){
+  document.querySelectorAll('.mod').forEach(x=>x.classList.toggle('on', x.dataset.mod===modKey));
+}
+
 function countDone(badges, prefix){
   const re = new RegExp("^"+prefix.replace(/[-]/g,"\\-")+"(\\d+)$");
   let max = 0;
@@ -272,11 +289,17 @@ function setMap(){
 }
 
 document.querySelectorAll('.mod').forEach(b=>b.onclick=async()=>{
-  document.querySelectorAll('.mod').forEach(x=>x.classList.remove('on')); b.classList.add('on');
+  if (dreamGate(b.dataset.mod)) return;            // pick a build dream before Module 2
+  setActiveChip(b.dataset.mod);
   MODULE=b.dataset.mod; await loadProgress(); setMap();
 });
 document.getElementById('ghost').textContent = qs.has("demo") ? "demo view" : "";
 
+// ?m=N pre-selects a module (used when returning from the build-dream picker).
+// No load-time dreamGate here — the gate lives on the chip click, so returning
+// from the picker (whether they picked or tapped "decide later") never loops.
+const mParam = parseInt(qs.get("m")||"0",10);
+if (mParam>=1 && mParam<=MODKEYS.length){ MODULE = MODKEYS[mParam-1]; setActiveChip(MODULE); }
 await loadProgress();
 setMap();
 addEventListener('resize', ()=>{ clearTimeout(window._rt); window._rt=setTimeout(render,150); });

@@ -1,0 +1,24 @@
+# studentdemos.codethefuture.net — the student showcase, deployed as its OWN
+# Netlify site (separate origin from the main platform) so kid-generated builds
+# live well away from the platform's cookies and auth.
+#
+# In Netlify this site is configured with **Base directory = studentdemos**, so
+# Netlify reads THIS toml (not the repo-root one) and ignores the main site's
+# apex-redirect rules. Set GATE_PASSWORD (the cohort password) in this site's
+# environment variables to turn the password wall on.
+
+[build]
+  publish = "."
+  edge_functions = "netlify/edge-functions"
+
+# Whole site is behind the cohort password (any username, password = GATE_PASSWORD).
+[[edge_functions]]
+  path = "/*"
+  function = "gate"
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "no-referrer"
+    Permissions-Policy = "camera=(), microphone=(), geolocation=()"

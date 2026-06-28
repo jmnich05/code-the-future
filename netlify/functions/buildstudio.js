@@ -35,7 +35,10 @@ export default async (req) => {
 
   const key = process.env.OPENAI_API_KEY;
   if (!key) return json({ error: "Build Studio isn't switched on yet." }, 503);
-  const model = process.env.OPENAI_BUILD_MODEL || process.env.OPENAI_MODEL || "gpt-4o-mini";
+  // Model for kids' builds. Override per-environment with OPENAI_BUILD_MODEL in
+  // Netlify (set it to the exact OpenAI slug — e.g. "gpt-5.4-mini" — confirmed in
+  // the OpenAI dashboard) without touching code. Falls back to a safe default.
+  const model = process.env.OPENAI_BUILD_MODEL || process.env.OPENAI_MODEL || "gpt-5.4-mini";
 
   let user;
   if (current && change) {
