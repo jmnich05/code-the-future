@@ -197,15 +197,17 @@ const qs = new URLSearchParams(location.search);
 let MODULE = "module-01-what-is-ai", done = 0;
 const mapwrap = document.getElementById('mapwrap');
 
-// Module keys in journey order, so ?m=2 can pre-select Module 2 on return.
+// Module keys in journey order, so ?m=N can pre-select a module on return.
 const MODKEYS = ["module-01-what-is-ai","module-02-ai-and-society","module-03-how-coding-got-done","module-04-build-your-own"];
 function hasDream(){ try{ return !!JSON.parse(localStorage.getItem('ctf:buildDream')||'null'); }catch(e){ return false; } }
-// Before a learner starts Module 2, they pick what they'll build all summer in
-// Module 4. If they haven't chosen a dream yet, send them to the picker first
-// and bring them right back to Module 2's map.
-function dreamGate(modKey){
-  if (modKey === "module-02-ai-and-society" && !hasDream() && !qs.has("demo")){
-    location.href = "build-dream.html?next=" + encodeURIComponent("/platform/missions.html?m=2");
+function dreamDeferred(){ try{ return sessionStorage.getItem('ctf:dreamDeferred')==='1'; }catch(e){ return false; } }
+// Before they start anything, learners pick what they'll build all summer in
+// Module 4. The very first time they reach the mission map without a chosen
+// dream, send them to the picker, then right back here. Loop-safe: tapping
+// "I'll decide later" sets a session flag so the gate doesn't re-fire.
+function frontDoorGate(){
+  if (!hasDream() && !dreamDeferred() && !qs.has("demo")){
+    location.href = "build-dream.html?next=" + encodeURIComponent("/platform/missions.html");
     return true;
   }
   return false;
@@ -289,19 +291,19 @@ function setMap(){
 }
 
 document.querySelectorAll('.mod').forEach(b=>b.onclick=async()=>{
-  if (dreamGate(b.dataset.mod)) return;            // pick a build dream before Module 2
   setActiveChip(b.dataset.mod);
   MODULE=b.dataset.mod; await loadProgress(); setMap();
 });
 document.getElementById('ghost').textContent = qs.has("demo") ? "demo view" : "";
 
-// ?m=N pre-selects a module (used when returning from the build-dream picker).
-// No load-time dreamGate here — the gate lives on the chip click, so returning
-// from the picker (whether they picked or tapped "decide later") never loops.
-const mParam = parseInt(qs.get("m")||"0",10);
-if (mParam>=1 && mParam<=MODKEYS.length){ MODULE = MODKEYS[mParam-1]; setActiveChip(MODULE); }
-await loadProgress();
-setMap();
+// Pick a build dream before starting Module 1 — the gate runs once at the front
+// door of the journey. If it redirects to the picker, we don't render here.
+if (!frontDoorGate()){
+  const mParam = parseInt(qs.get("m")||"0",10);   // ?m=N can pre-select a module
+  if (mParam>=1 && mParam<=MODKEYS.length){ MODULE = MODKEYS[mParam-1]; setActiveChip(MODULE); }
+  await loadProgress();
+  setMap();
+}
 addEventListener('resize', ()=>{ clearTimeout(window._rt); window._rt=setTimeout(render,150); });
 </script>
 </body>

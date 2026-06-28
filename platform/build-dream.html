@@ -84,7 +84,10 @@ h1 .grad{ background:linear-gradient(110deg,#9fb6ff,#9B7BFF 50%,#26C7D1); -webki
     save({ kind:picked.k, label:picked.label, icon:picked.icon, twist:t, seed:seed, when:new Date().toISOString() });
     next();
   });
-  document.getElementById('skip').addEventListener('click', next);
+  document.getElementById('skip').addEventListener('click', function(){
+    try{ sessionStorage.setItem('ctf:dreamDeferred','1'); }catch(e){}   // don't re-prompt this session
+    next();
+  });
 })();
 </script>
 </body>
