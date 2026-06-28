@@ -62,6 +62,14 @@
   path = "/curriculum/*"
   function = "gate"
 
+# Student showcase lives at studentdemos.codethefuture.net (a domain alias on
+# this site). This host-aware function serves the /studentdemos folder for that
+# subdomain behind the cohort password, and bounces the raw /studentdemos/* path
+# on the apex to the gated subdomain. No effect on any other host.
+[[edge_functions]]
+  path = "/*"
+  function = "showcase-gate"
+
 # Internal docs live in the repo but must never be served on the live site.
 # Block the whole /docs/* tree (handoff notes, competitive research, etc.).
 [[redirects]]

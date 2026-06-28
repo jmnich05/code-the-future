@@ -18,7 +18,7 @@ onboarding; ship once the Netlify subdomain below is set up).
 | `netlify/functions/buildstudio.js` | The **code-gen endpoint** (`/api/buildstudio`). Turns the idea + each layer request into one self-contained HTML file. Locked system prompt (self-contained, no network, kid-safe). Model = `OPENAI_BUILD_MODEL` (see below). Key stays server-side. |
 | `platform/missions.html` | The **journey map**. Module 4 = the **Big Four Bridge** route (12 checkpoints from Waterfront Park, up the spiral ramp, across the span, to Jeffersonville + the Colgate Clock). Each node links to `studio.html?mission=N`. |
 | `scripts/publish-kid-build.mjs` | The **publish flow Jon runs**. `node scripts/publish-kid-build.mjs <creation.html> <slug> "Title" "By"` writes the creation under `studentdemos/<slug>/` and refreshes the gallery. After `git add studentdemos && git commit && git push` it's live at `studentdemos.codethefuture.net/<slug>/`. |
-| `studentdemos/` | The **student showcase**, deployed as its **own Netlify site** at `studentdemos.codethefuture.net`, behind the cohort password. Separate origin = kid builds live well away from the platform. See `docs/studentdemos-setup.md`. |
+| `studentdemos/` | The **student showcase**, served at `studentdemos.codethefuture.net` (a domain alias on the main site, routed by `netlify/edge-functions/showcase-gate.js`), behind the cohort password. Separate origin = kid builds live well away from the platform. See `docs/studentdemos-setup.md`. |
 
 ## The flow, end to end
 1. **Before Module 2:** kid picks a build dream (`build-dream.html`) → saved.
@@ -32,7 +32,7 @@ onboarding; ship once the Netlify subdomain below is set up).
 
 ## Settled decisions (Jun 28)
 - **Picker placement:** gated **before Module 2** (not before Module 1). ✓ wired.
-- **Hosting origin:** dedicated subdomain **`studentdemos.codethefuture.net`**, its own Netlify site, cohort-password gated. ✓ in repo — Jon does the Netlify site + DNS (see `docs/studentdemos-setup.md`).
+- **Hosting origin:** **`studentdemos.codethefuture.net`** — a domain alias on the main site, routed to the `/studentdemos` folder + cohort-password gated by `showcase-gate.js`. Alias is live (Netlify DNS verified); reuses the existing `GATE_PASSWORD`. See `docs/studentdemos-setup.md`.
 - **Model:** `OPENAI_BUILD_MODEL` → `OPENAI_MODEL` → default `gpt-5.4-mini`. Set `OPENAI_BUILD_MODEL` in Netlify to the exact OpenAI slug (confirm it in the OpenAI dashboard).
 - **Publishing:** **Jon** runs the publish script per creation (no kid self-publish). ✓
 
