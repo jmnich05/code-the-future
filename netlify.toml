@@ -81,6 +81,11 @@
   status = 200
 
 [[redirects]]
+  from = "/api/buildstudio"
+  to = "/.netlify/functions/buildstudio"
+  status = 200
+
+[[redirects]]
   from = "/api/image"
   to = "/.netlify/functions/image"
   status = 200

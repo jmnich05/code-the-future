@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<link rel="icon" type="image/svg+xml" href="/platform/assets/logo-icon-tile.svg">
+<title>Code the Future — What will you build?</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap');
+:root{ --display:'Space Grotesk',sans-serif; --body:'Plus Jakarta Sans',system-ui,sans-serif; --mono:'JetBrains Mono',monospace; --purple:#9B7BFF; --teal:#26C7D1; }
+*{ box-sizing:border-box; margin:0; }
+html,body{ height:100%; }
+body{ font-family:var(--body); color:#EAF1FF; min-height:100%; padding:34px 18px 60px;
+  background:radial-gradient(120% 90% at 82% -10%, rgba(155,123,255,.25), transparent 55%),
+  radial-gradient(120% 90% at 8% 110%, rgba(38,199,209,.22), transparent 55%),
+  linear-gradient(165deg,#101a3c,#0A1024 55%,#070C1A); }
+.wrap{ max-width:720px; margin:0 auto; text-align:center; }
+.kicker{ font-family:var(--mono); font-size:12px; letter-spacing:.22em; text-transform:uppercase; color:var(--purple); margin-bottom:10px; }
+h1{ font-family:var(--display); font-weight:700; font-size:clamp(1.9rem,5.5vw,2.8rem); line-height:1.08; letter-spacing:-.02em; }
+h1 .grad{ background:linear-gradient(110deg,#9fb6ff,#9B7BFF 50%,#26C7D1); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent; }
+.sub{ max-width:46ch; margin:14px auto 22px; opacity:.9; line-height:1.5; font-size:1.05rem; }
+.grid{ display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin-bottom:24px; }
+@media(max-width:680px){ .grid{ grid-template-columns:repeat(2,1fr); } }
+.idea{ background:rgba(255,255,255,.06); border:2px solid rgba(255,255,255,.14); border-radius:18px; padding:18px 10px; cursor:pointer; transition:transform .12s, border-color .15s, background .15s; color:#fff; }
+.idea:hover{ transform:translateY(-3px); border-color:#9fd6ff; }
+.idea.sel{ border-color:#9B7BFF; background:rgba(155,123,255,.2); box-shadow:0 0 0 3px rgba(155,123,255,.3); }
+.idea .ic{ font-size:2.2rem; }
+.idea .lb{ font-family:var(--display); font-weight:700; font-size:.95rem; margin-top:7px; }
+.flair{ max-width:520px; margin:0 auto 22px; background:rgba(255,255,255,.05); border:1px solid rgba(127,227,255,.25); border-radius:18px; padding:18px; text-align:left; opacity:0; max-height:0; overflow:hidden; transition:opacity .3s, max-height .4s, padding .3s; }
+.flair.on{ opacity:1; max-height:260px; }
+.flair label{ font-family:var(--display); font-weight:700; font-size:.95rem; display:block; margin-bottom:8px; }
+.flair input{ width:100%; font-family:var(--body); font-size:1.05rem; color:#fff; background:rgba(255,255,255,.06); border:1.5px solid rgba(127,227,255,.35); border-radius:12px; padding:12px 14px; outline:none; }
+.flair input:focus{ border-color:#9B7BFF; }
+.flair .hint{ font-size:.85rem; color:#9fb6e6; margin-top:8px; }
+.btn{ font-family:var(--display); font-weight:700; font-size:1.1rem; color:#06122b; border:none; cursor:pointer; padding:15px 32px; border-radius:999px;
+  background:linear-gradient(120deg,#9fb6ff,#9B7BFF); box-shadow:0 14px 34px rgba(155,123,255,.5); transition:transform .12s; }
+.btn:hover{ transform:translateY(-2px); } .btn:disabled{ opacity:.45; cursor:not-allowed; transform:none; }
+.skip{ display:block; margin:16px auto 0; background:none; border:none; color:#9fb6e6; font-size:.9rem; cursor:pointer; text-decoration:underline; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="kicker">🛠️ Before we start</div>
+  <h1>What do you dream of <span class="grad">building?</span></h1>
+  <p class="sub">By the end of the summer, you'll build your very own app or game with a real AI — and put it on the internet. Pick what excites you most. (You can change your mind later!)</p>
+  <div class="grid" id="grid"></div>
+  <div class="flair" id="flair">
+    <label>✨ Add your own twist — what makes it <i>yours</i>?</label>
+    <input id="twist" maxlength="80" placeholder="e.g. about cats · in space · with rainbow colors">
+    <div class="hint">Optional — this is your idea, so dream big!</div>
+  </div>
+  <button class="btn" id="go" disabled>Lock in my idea →</button>
+  <button class="skip" id="skip">I'll decide later</button>
+</div>
+<script src="/platform/lib/filter.js"></script>
+<script>
+(function(){
+  var IDEAS = [
+    { k:'clicker', icon:'🎮', label:'A clicker game', seed:'A clicker game where I tap a big button to score points' },
+    { k:'catch',   icon:'🕹️', label:'A catch game', seed:'A game where I move a basket to catch falling treats and score points' },
+    { k:'draw',    icon:'🎨', label:'A drawing pad', seed:'A drawing pad where I can draw with different colors' },
+    { k:'quiz',    icon:'❓', label:'A quiz', seed:'A fun quiz that shows my score at the end' },
+    { k:'pet',     icon:'🐱', label:'A virtual pet', seed:'A virtual pet I can feed and play with' },
+    { k:'space',   icon:'🚀', label:'A space game', seed:'A space game where I dodge asteroids' },
+    { k:'story',   icon:'📖', label:'A choose-your-story', seed:'A choose-your-own-adventure story with choices' },
+    { k:'music',   icon:'🎵', label:'A music toy', seed:'A music toy where tapping makes happy sounds' }
+  ];
+  var grid=document.getElementById('grid'), flair=document.getElementById('flair'), twist=document.getElementById('twist'), go=document.getElementById('go');
+  var picked=null;
+  IDEAS.forEach(function(it){
+    var d=document.createElement('button'); d.className='idea'; d.innerHTML='<div class="ic">'+it.icon+'</div><div class="lb">'+it.label+'</div>';
+    d.addEventListener('click',function(){ picked=it; document.querySelectorAll('.idea').forEach(function(x){x.classList.remove('sel');}); d.classList.add('sel'); flair.classList.add('on'); go.disabled=false; });
+    grid.appendChild(d);
+  });
+  function save(dream){ try{ localStorage.setItem('ctf:buildDream', JSON.stringify(dream)); }catch(e){}
+    try{ if(window.CTFDB && CTFDB.enabled && CTFDB.updateProfile) CTFDB.updateProfile({ build_dream: dream }); }catch(e){} }
+  function next(){ var p=new URLSearchParams(location.search).get('next'); location.href = p && /^\/[a-z]/i.test(p) ? p : '/platform/index.html'; }
+  go.addEventListener('click',function(){
+    if(!picked) return;
+    var t=(twist.value||'').trim();
+    if(t && window.CTFFilter && CTFFilter.isClean && !CTFFilter.isClean(t)){ twist.value=''; t=''; }
+    var seed = picked.seed + (t ? (' — '+t) : '') + '.';
+    save({ kind:picked.k, label:picked.label, icon:picked.icon, twist:t, seed:seed, when:new Date().toISOString() });
+    next();
+  });
+  document.getElementById('skip').addEventListener('click', next);
+})();
+</script>
+</body>
+</html>

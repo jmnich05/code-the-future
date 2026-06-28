@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<link rel="icon" type="image/svg+xml" href="/platform/assets/logo-icon-tile.svg">
+<title>Code the Future — Build Studio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap');
+:root{
+  --display:'Space Grotesk','Trebuchet MS',system-ui,sans-serif;
+  --body:'Plus Jakarta Sans',system-ui,sans-serif;
+  --mono:'JetBrains Mono',ui-monospace,monospace;
+  --teal:#26C7D1; --blue:#3D74FF; --amber:#FFB320; --coral:#FF5A38; --green:#3FD08A; --purple:#9B7BFF;
+}
+*{ box-sizing:border-box; }
+html,body{ margin:0; height:100%; }
+body{ font-family:var(--body); color:#EAF1FF; background:
+  radial-gradient(120% 90% at 82% -10%, rgba(155,123,255,.22), transparent 55%),
+  radial-gradient(120% 90% at 8% 110%, rgba(38,199,209,.22), transparent 55%),
+  linear-gradient(165deg,#101a3c,#0A1024 55%,#070C1A); overflow:hidden; }
+#stage{ position:fixed; inset:0; display:flex; flex-direction:column; }
+.screen{ position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center;
+  padding:max(18px,env(safe-area-inset-top)) 18px 18px; text-align:center; opacity:0; transform:translateY(12px);
+  transition:opacity .45s, transform .45s; pointer-events:none; overflow-y:auto; }
+.screen.on{ opacity:1; transform:none; pointer-events:auto; }
+.kicker{ font-family:var(--mono); font-size:13px; letter-spacing:.22em; text-transform:uppercase; color:var(--purple); margin:0 0 12px; }
+.t-big{ font-family:var(--display); font-weight:700; font-size:clamp(2.2rem,7vw,4rem); line-height:1.04; margin:0; letter-spacing:-.02em; }
+.t-big .grad{ background:linear-gradient(110deg,#9fb6ff,#9B7BFF 50%,#26C7D1); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent; }
+.lede{ max-width:40ch; font-size:1.1rem; opacity:.9; margin:16px auto 4px; line-height:1.5; }
+.btn{ font-family:var(--display); font-weight:700; font-size:1.1rem; color:#06122b; border:none; cursor:pointer; padding:15px 30px; border-radius:999px;
+  background:linear-gradient(120deg,#9fb6ff,#9B7BFF); box-shadow:0 14px 34px rgba(155,123,255,.5); transition:transform .12s, box-shadow .2s; }
+.btn:hover{ transform:translateY(-2px); } .btn:disabled{ opacity:.5; cursor:not-allowed; transform:none; }
+.btn.green{ background:linear-gradient(120deg,#9BF5C7,#26C7D1); box-shadow:0 14px 34px rgba(38,199,209,.5); }
+.btn.amber{ background:linear-gradient(120deg,#FFD479,#FF9F1C); box-shadow:0 14px 34px rgba(255,159,28,.5); }
+.btn.ghost{ background:rgba(255,255,255,.1); color:#fff; box-shadow:none; }
+
+/* brief */
+.dreamcard{ max-width:560px; margin:14px auto; background:rgba(255,255,255,.06); border:1px solid rgba(127,227,255,.25); border-radius:20px; padding:22px; }
+.chips{ display:flex; flex-wrap:wrap; gap:8px; justify-content:center; margin:6px 0 14px; }
+.chip{ font-family:var(--display); font-weight:600; font-size:.92rem; color:#cfe3ff; cursor:pointer; background:rgba(127,227,255,.1); border:1.5px solid rgba(127,227,255,.3); border-radius:999px; padding:9px 14px; }
+.chip:hover{ background:rgba(127,227,255,.2); }
+.ta{ width:100%; min-height:92px; resize:vertical; font-family:var(--body); font-size:1.06rem; color:#fff; background:rgba(255,255,255,.06); border:1.5px solid rgba(127,227,255,.35); border-radius:16px; padding:14px; outline:none; }
+.ta:focus{ border-color:#9B7BFF; box-shadow:0 0 0 4px rgba(155,123,255,.18); }
+.ta::placeholder{ color:rgba(207,227,255,.5); }
+
+/* studio */
+#studio{ justify-content:flex-start; align-items:stretch; padding:0; }
+.studiohead{ flex:0 0 auto; display:flex; align-items:center; gap:12px; padding:12px 16px; border-bottom:1px solid rgba(255,255,255,.1); }
+.studiohead .sh-title{ font-family:var(--display); font-weight:700; font-size:1.05rem; }
+.studiohead .sh-title small{ display:block; font-weight:500; font-size:.78rem; color:#9fb6e6; }
+.studiohead .sh-actions{ margin-left:auto; display:flex; gap:8px; }
+.sh-btn{ font-family:var(--display); font-weight:700; font-size:.9rem; border:none; cursor:pointer; border-radius:999px; padding:9px 16px; }
+.sh-btn.pub{ background:linear-gradient(120deg,#9BF5C7,#26C7D1); color:#06122b; }
+.sh-btn.exit{ background:rgba(255,255,255,.1); color:#fff; }
+.studiobody{ flex:1 1 auto; display:grid; grid-template-rows:1fr auto; min-height:0; }
+.preview-wrap{ position:relative; margin:14px; border-radius:16px; overflow:hidden; background:#fff; box-shadow:0 18px 50px rgba(0,0,0,.5); border:1px solid rgba(127,227,255,.2); min-height:0; }
+.preview-wrap iframe{ width:100%; height:100%; border:0; display:block; background:#fff; }
+.preview-empty{ position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:14px; color:#5F6B82; text-align:center; padding:24px; }
+.preview-empty .pe-ic{ font-size:3rem; }
+.building{ position:absolute; inset:0; background:rgba(8,12,30,.82); display:none; flex-direction:column; align-items:center; justify-content:center; gap:16px; color:#fff; z-index:3; }
+.building.on{ display:flex; }
+.building .spin{ width:46px; height:46px; border:5px solid rgba(155,123,255,.3); border-top-color:#9B7BFF; border-radius:50%; animation:sp 0.9s linear infinite; }
+@keyframes sp{ to{ transform:rotate(360deg); } }
+.building .bmsg{ font-family:var(--display); font-weight:700; font-size:1.1rem; }
+.controls{ flex:0 0 auto; padding:10px 14px max(14px,env(safe-area-inset-bottom)); background:linear-gradient(180deg,transparent,rgba(6,10,22,.6)); }
+.qchips{ display:flex; gap:7px; flex-wrap:wrap; justify-content:center; margin-bottom:9px; }
+.qchip{ font-family:var(--body); font-weight:600; font-size:.82rem; color:#cfe3ff; cursor:pointer; background:rgba(127,227,255,.1); border:1px solid rgba(127,227,255,.3); border-radius:999px; padding:7px 12px; }
+.qchip:hover{ background:rgba(127,227,255,.2); }
+.cbar{ display:flex; gap:8px; max-width:760px; margin:0 auto; }
+.cbar input{ flex:1; font-family:var(--body); font-size:1rem; color:#fff; background:rgba(255,255,255,.08); border:1.5px solid rgba(127,227,255,.35); border-radius:14px; padding:13px 16px; outline:none; }
+.cbar input:focus{ border-color:#9B7BFF; }
+.cbar .btn{ padding:13px 22px; font-size:1rem; flex:0 0 auto; }
+.toast{ position:fixed; left:50%; bottom:90px; transform:translateX(-50%); z-index:50; background:rgba(8,14,30,.95); border:1px solid rgba(255,140,110,.5); color:#ffded2; padding:12px 18px; border-radius:14px; font-weight:600; max-width:80vw; text-align:center; opacity:0; transition:opacity .2s; pointer-events:none; }
+.toast.on{ opacity:1; }
+
+/* publish */
+.pubcard{ max-width:560px; margin:14px auto; background:rgba(255,255,255,.06); border:1px solid rgba(127,227,255,.25); border-radius:20px; padding:24px; }
+.pubcard input{ width:100%; font-family:var(--body); font-size:1.05rem; color:#fff; background:rgba(255,255,255,.06); border:1.5px solid rgba(127,227,255,.35); border-radius:14px; padding:13px 16px; outline:none; margin:8px 0 16px; }
+.confetti{ position:fixed; inset:0; pointer-events:none; overflow:hidden; z-index:40; }
+.confetti i{ position:absolute; top:-12px; width:9px; height:14px; border-radius:2px; animation:fall linear forwards; }
+@keyframes fall{ to{ transform:translateY(110vh) rotate(540deg); opacity:.9; } }
+@media (max-width:560px){ .preview-wrap{ margin:10px; } }
+</style>
+</head>
+<body>
+<div id="stage">
+  <section id="brief" class="screen on"></section>
+  <section id="studio" class="screen"></section>
+  <section id="publish" class="screen"></section>
+</div>
+<div class="toast" id="toast"></div>
+
+<script src="/platform/lib/avatar.js"></script>
+<script src="/platform/lib/filter.js"></script>
+<script>
+(function(){
+  "use strict";
+  var $ = function(id){ return document.getElementById(id); };
+  function el(t,c,h){ var n=document.createElement(t); if(c)n.className=c; if(h!=null)n.innerHTML=h; return n; }
+  function esc(s){ return String(s==null?'':s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];}); }
+
+  function profile(){ try{ return JSON.parse(localStorage.getItem('ctf:profile')||'null')||{}; }catch(e){ return {}; } }
+  var name = (profile().display_name||'Builder').toString().slice(0,24);
+  function dream(){ try{ return JSON.parse(localStorage.getItem('ctf:buildDream')||'null'); }catch(e){ return null; } }
+
+  var IDEAS = [
+    { icon:'🎮', label:'A clicker game', seed:'A clicker game where I tap a big button to score points, with a fun counter.' },
+    { icon:'🕹️', label:'A catch game', seed:'A game where I move a basket left and right to catch falling treats and score points.' },
+    { icon:'🎨', label:'A drawing pad', seed:'A drawing pad where I can draw with different colors and clear the screen.' },
+    { icon:'❓', label:'A quiz', seed:'A fun 5-question quiz about animals that shows my score at the end.' },
+    { icon:'🐱', label:'A virtual pet', seed:'A virtual pet I can feed and play with, and it shows how happy it is.' },
+    { icon:'🎲', label:'A luck game', seed:'A dice game where I roll and try to beat the computer.' },
+    { icon:'🚀', label:'A space game', seed:'A simple space game where I dodge asteroids and survive as long as I can.' },
+    { icon:'🏆', label:'A high-score game', seed:'A reaction game: tap the target as fast as you can for a high score.' }
+  ];
+
+  // ---- state ----
+  var state = { idea:'', current:'', published:false };
+
+  // ======================= BRIEF =======================
+  function renderBrief(){
+    var s=$('brief'); s.innerHTML='';
+    var d = dream();
+    s.appendChild(el('p','kicker','🛠️ The Big Build · Module 4'));
+    s.appendChild(el('h1','t-big','Build your <span class="grad">own thing</span>'));
+    s.appendChild(el('p','lede', d&&d.seed
+      ? 'Welcome back, '+esc(name)+'! Back at the start you said you wanted to build <b>'+esc(d.label||'something cool')+'</b>. This whole week, you and a real AI build it for real — and then we put it on the internet.'
+      : 'This week, '+esc(name)+', you\'re the boss. Pick something to build (or dream up your own), and a real AI will build it with you — you make every call.'));
+    var card=el('div','dreamcard');
+    if(!(d&&d.seed)){
+      card.appendChild(el('div',null,'<div style="font-weight:700;margin-bottom:8px">Pick a starting idea:</div>'));
+      var chips=el('div','chips');
+      IDEAS.forEach(function(it){ var c=el('button','chip', it.icon+' '+esc(it.label)); c.addEventListener('click',function(){ ta.value=it.seed; ta.focus(); }); chips.appendChild(c); });
+      card.appendChild(chips);
+    }
+    card.appendChild(el('div',null,'<div style="font-weight:700;margin:4px 0 8px">Describe what you want to build — add your own flair!</div>'));
+    var ta=el('textarea','ta'); ta.maxLength=500; ta.placeholder='I want to build…'; ta.value=(d&&d.seed)?d.seed:'';
+    card.appendChild(ta);
+    var go=el('button','btn','✨  Build it!'); go.style.marginTop='14px';
+    go.addEventListener('click',function(){
+      var v=ta.value.trim(); if(!v){ ta.focus(); return; }
+      if(window.CTFFilter && CTFFilter.isClean && !CTFFilter.isClean(v)){ toast('Let\'s keep it kind and fun — try describing a friendly app or game.'); return; }
+      state.idea=v; state.current=''; show('studio'); renderStudio(); build(v, '');
+    });
+    card.appendChild(go);
+    s.appendChild(card);
+  }
+
+  // ======================= STUDIO =======================
+  var iframe, building, cinput;
+  var QUICK = ['make it bigger','add a score','use brighter colors','make it harder','add a fun sound','add a start button'];
+  function renderStudio(){
+    var s=$('studio'); s.innerHTML='';
+    s.appendChild((function(){ var h=el('div','studiohead');
+      h.innerHTML='<div class="sh-title">🛠️ Build Studio<small>'+esc(state.idea).slice(0,60)+'</small></div>'+
+        '<div class="sh-actions"><button class="sh-btn exit" id="shExit">‹ Back</button><button class="sh-btn pub" id="shPub">Publish →</button></div>';
+      return h; })());
+    var body=el('div','studiobody');
+    body.innerHTML=
+      '<div class="preview-wrap"><div class="preview-empty" id="pvEmpty"><div class="pe-ic">🪄</div><div>Your creation will appear here…</div></div>'+
+        '<iframe id="pv" sandbox="allow-scripts allow-pointer-lock" referrerpolicy="no-referrer" title="Your creation"></iframe>'+
+        '<div class="building" id="building"><div class="spin"></div><div class="bmsg" id="bmsg">Building your idea…</div></div></div>'+
+      '<div class="controls"><div class="qchips" id="qchips"></div>'+
+        '<div class="cbar"><input id="cinput" placeholder="Tell the AI what to change…" maxlength="200"><button class="btn" id="cgo">Update</button></div></div>';
+    s.appendChild(body);
+    iframe=$('pv'); building=$('building'); cinput=$('cinput');
+    iframe.style.display='none';
+    var qc=$('qchips'); QUICK.forEach(function(q){ var c=el('button','qchip', q); c.addEventListener('click',function(){ cinput.value=q; iterate(); }); qc.appendChild(c); });
+    $('cgo').addEventListener('click', iterate);
+    cinput.addEventListener('keydown',function(e){ if(e.key==='Enter') iterate(); });
+    $('shExit').addEventListener('click', function(){ show('brief'); renderBrief(); });
+    $('shPub').addEventListener('click', function(){ if(!state.current){ toast('Build something first, then publish it!'); return; } show('publish'); renderPublish(); });
+  }
+  function setBuilding(on, msg){ if(!building)return; building.classList.toggle('on',on); if(msg)$('bmsg').textContent=msg; }
+  function showPreview(html){
+    state.current=html;
+    $('pvEmpty').style.display='none'; iframe.style.display='block';
+    iframe.srcdoc=html;
+  }
+  function build(idea, change){
+    setBuilding(true, change?'Updating your creation…':'Building your idea…');
+    var payload = change ? { current: state.current, change: change } : { idea: idea };
+    fetch('/api/buildstudio', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(payload) })
+      .then(function(r){ return r.json().then(function(d){ return {ok:r.ok,d:d}; }); })
+      .then(function(res){ setBuilding(false); if(res.ok && res.d.html){ showPreview(res.d.html); } else { toast((res.d&&res.d.error)||'The AI got stuck — try again.'); } })
+      .catch(function(){ setBuilding(false); toast('Couldn\'t reach the AI — check your connection and try again.'); });
+  }
+  function iterate(){
+    var v=(cinput.value||'').trim(); if(!v) return;
+    if(window.CTFFilter && CTFFilter.isClean && !CTFFilter.isClean(v)){ toast('Let\'s keep changes kind and fun.'); return; }
+    if(window.CTFFilter && CTFFilter.clean) v=CTFFilter.clean(v);
+    cinput.value='';
+    build(state.idea, v);
+  }
+
+  // ======================= PUBLISH =======================
+  function renderPublish(){
+    var s=$('publish'); s.innerHTML='';
+    s.appendChild(el('p','kicker','🚀 Last step'));
+    s.appendChild(el('h1','t-big','Put it on the <span class="grad">internet</span>'));
+    s.appendChild(el('p','lede','Give your creation a name. We\'ll save it and get it live on the web so you can share the link with your family!'));
+    var card=el('div','pubcard');
+    var slug=(name+'-creation').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
+    card.appendChild(el('div',null,'<div style="font-weight:700;margin-bottom:4px">Name your creation</div>'));
+    var inp=el('input'); inp.maxLength=40; inp.value=(state.idea.split(/[.!?]/)[0]||'My Creation').slice(0,40); card.appendChild(inp);
+    var row=el('div'); row.style.cssText='display:flex;gap:10px;flex-wrap:wrap;justify-content:center';
+    var pub=el('button','btn green','🚀  Publish it!');
+    var back=el('button','btn ghost','‹ Keep building');
+    row.appendChild(pub); row.appendChild(back); card.appendChild(row);
+    var done=el('div'); done.id='pubDone'; done.style.marginTop='16px'; card.appendChild(done);
+    s.appendChild(card);
+    back.addEventListener('click',function(){ show('studio'); renderStudio(); showPreview(state.current); });
+    pub.addEventListener('click',function(){
+      var title=(inp.value.trim()||'My Creation').slice(0,40);
+      var sl = title.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'').slice(0,40) || slug;
+      // save the creation locally (the publish flow / staff collect these)
+      var rec = { title:title, slug:sl, by:name, html:state.current, when:new Date().toISOString() };
+      try{ localStorage.setItem('ctf:creation', JSON.stringify(rec)); }catch(e){}
+      // also offer a download so it's never lost
+      try{ var blob=new Blob([state.current],{type:'text/html'}); var a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=sl+'.html'; a.click(); }catch(e){}
+      // tell the platform (best-effort) so staff can collect + deploy
+      try{ if(window.CTFDB && CTFDB.enabled && CTFDB.saveCreation) CTFDB.saveCreation(rec); }catch(e){}
+      state.published=true; burst();
+      pub.textContent='✅ Published!'; pub.disabled=true;
+      done.innerHTML='<div style="background:rgba(63,208,138,.14);border:1px solid rgba(63,208,138,.4);border-radius:14px;padding:16px;line-height:1.5">'+
+        '🎉 <b>'+esc(title)+'</b> is saved and ready to go live! A grown-up will pop it onto the internet at<br>'+
+        '<span style="font-family:var(--mono);color:#9BF5C7">codethefuture.net/showcase/'+esc(sl)+'</span><br>'+
+        'We also saved a copy to your device. You did it — you built and shipped your own creation! 🚀</div>'+
+        '<a class="btn" href="/platform/missions.html" style="margin-top:14px;display:inline-block">Back to Missions →</a>';
+      try{ localStorage.setItem('ctf:bigmission4:done','1'); }catch(e){}
+    });
+  }
+
+  // ---- helpers ----
+  function show(id){ ['brief','studio','publish'].forEach(function(x){ $(x).classList.toggle('on', x===id); }); }
+  var toastT;
+  function toast(m){ var t=$('toast'); t.textContent=m; t.classList.add('on'); clearTimeout(toastT); toastT=setTimeout(function(){ t.classList.remove('on'); }, 3200); }
+  function burst(){ var c=el('div','confetti'); document.body.appendChild(c); var cols=['#9B7BFF','#FFD479','#7FE3FF','#3FD08A','#3D74FF','#fff'];
+    for(var i=0;i<80;i++){ var x=el('i'); x.style.left=Math.random()*100+'%'; x.style.background=cols[i%cols.length]; x.style.animationDuration=(1.6+Math.random()*1.8)+'s'; x.style.animationDelay=(Math.random()*.5)+'s'; x.style.transform='rotate('+(Math.random()*360)+'deg)'; c.appendChild(x); }
+    setTimeout(function(){ c.remove(); }, 4000); }
+
+  renderBrief();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" type="image/svg+xml" href="/platform/assets/logo-icon-tile.svg">
+<title>Showcase — Code the Future</title>
+<meta name="description" content="Real apps and games built by kids at Code the Future, with AI.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap');
+:root{ --display:'Space Grotesk',sans-serif; --body:'Plus Jakarta Sans',system-ui,sans-serif; --teal:#26C7D1; --purple:#9B7BFF; }
+*{ box-sizing:border-box; margin:0; }
+body{ font-family:var(--body); color:#EAF1FF; min-height:100vh; padding:36px 18px 70px;
+  background:radial-gradient(120% 90% at 82% -10%, rgba(155,123,255,.22), transparent 55%),
+  radial-gradient(120% 90% at 8% 110%, rgba(38,199,209,.2), transparent 55%),
+  linear-gradient(165deg,#101a3c,#0A1024 55%,#070C1A); }
+.wrap{ max-width:920px; margin:0 auto; }
+.top{ display:flex; align-items:center; gap:10px; margin-bottom:26px; }
+.logo{ display:flex; align-items:center; gap:9px; color:#fff; text-decoration:none; font-family:var(--display); font-weight:700; font-size:1.1rem; }
+.logo img{ width:32px; height:32px; }
+.top a.back{ margin-left:auto; color:#cfe3ff; text-decoration:none; font-weight:600; font-size:.9rem; }
+.head{ text-align:center; margin-bottom:30px; }
+.kicker{ font-family:var(--mono); font-size:12px; letter-spacing:.2em; text-transform:uppercase; color:var(--purple); }
+h1{ font-family:var(--display); font-weight:700; font-size:clamp(2rem,5.5vw,3rem); letter-spacing:-.02em; margin:8px 0; }
+.head p{ opacity:.85; max-width:46ch; margin:0 auto; line-height:1.5; }
+.grid{ display:grid; grid-template-columns:repeat(auto-fill,minmax(240px,1fr)); gap:16px; }
+.card{ display:block; background:rgba(255,255,255,.06); border:1px solid rgba(127,227,255,.22); border-radius:18px; padding:22px; text-decoration:none; color:#fff; transition:transform .12s, border-color .15s; }
+.card:hover{ transform:translateY(-3px); border-color:#9fd6ff; }
+.card .pic{ font-size:2.4rem; }
+.card h3{ font-family:var(--display); font-weight:700; font-size:1.2rem; margin:10px 0 4px; }
+.card .by{ color:#9fb6e6; font-size:.9rem; }
+.card .go{ margin-top:12px; color:#9BF5C7; font-weight:700; font-size:.92rem; }
+.empty{ text-align:center; opacity:.75; padding:40px 0; line-height:1.6; }
+.empty .big{ font-size:2.4rem; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <a class="logo" href="/"><img src="/platform/assets/logo-icon-tile.svg" alt="">Code the <span style="color:var(--teal)">Future</span></a>
+    <a class="back" href="/">← Home</a>
+  </div>
+  <div class="head">
+    <div class="kicker">🛠️ Built by kids · with AI</div>
+    <h1>The Showcase</h1>
+    <p>Real apps and games dreamed up and built by young builders at Code the Future — then shipped to the open internet.</p>
+  </div>
+  <div class="grid" id="grid"></div>
+</div>
+<script>
+(function(){
+  var PICS=['🎮','🕹️','🎨','❓','🐱','🚀','📖','🎵','🌟','🏆','🤖','🌈'];
+  fetch('creations.json?cb='+Date.now()).then(function(r){ return r.ok?r.json():[]; }).then(function(list){
+    var g=document.getElementById('grid');
+    if(!list || !list.length){ g.outerHTML='<div class="empty"><div class="big">✨</div><p>The first creations are on their way.<br>Module 4 builders, this is where your apps and games will live!</p></div>'; return; }
+    list.forEach(function(c,i){
+      var a=document.createElement('a'); a.className='card'; a.href='/showcase/'+c.slug+'/';
+      a.innerHTML='<div class="pic">'+PICS[i%PICS.length]+'</div><h3>'+esc(c.title)+'</h3><div class="by">by '+esc(c.by)+'</div><div class="go">Open it →</div>';
+      g.appendChild(a);
+    });
+  });
+  function esc(s){ return String(s==null?'':s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];}); }
+})();
+</script>
+</body>
+</html>
