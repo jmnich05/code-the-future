@@ -2006,8 +2006,267 @@
       }});
   }
 
+  // =========================================================================
+  // MODULE 3 — full-screen versions of the remaining six missions, to match
+  // Module 2's immersive density.
+  // =========================================================================
+
+  // COMMAND THE BOT (Mission 1) — sequence arrow commands to walk a robot
+  // through a maze to the flag. Run it; a wrong path crashes — fix and retry.
+  function renderRobotPath(root, cfg, id){
+    var LEVELS = cfg.levels || [
+      { w:4, h:3, start:[0,2], flag:[3,0], walls:[[1,1],[2,1]] },
+      { w:5, h:4, start:[0,3], flag:[4,0], walls:[[1,1],[1,2],[3,1],[3,2],[2,3]] },
+      { w:5, h:5, start:[0,4], flag:[4,0], walls:[[1,3],[2,1],[2,2],[2,3],[3,0],[3,1]] }
+    ];
+    fsGame(root, cfg, id, { ico:'🤖', title: cfg.title||'Command the Bot',
+      blurb:'Code is just clear steps in the right order. Build a path of arrows to walk the robot to the flag 🚩, then hit Run. Bump a wall or wander off the edge and it crashes — fix your steps and try again!',
+      playLabel:'▶  Start the maze', wrapClass:'g-robot',
+      thanks: cfg.thanks || 'You wrote an algorithm — clear steps, perfect order. 🤖',
+      play:function(host, api){
+        var li, prog, running;
+        function start(){ li=0; load(); }
+        function load(){ if(li>=LEVELS.length) return win(); prog=[]; running=false; render(''); }
+        function render(msg){
+          var L=LEVELS[li], grid='';
+          for(var y=0;y<L.h;y++){ for(var x=0;x<L.w;x++){
+            var isWall=L.walls.some(function(w){return w[0]===x&&w[1]===y;}), isFlag=L.flag[0]===x&&L.flag[1]===y;
+            grid+='<div class="rp-cell'+(isWall?' wall':'')+'" data-x="'+x+'" data-y="'+y+'">'+(isFlag?'🚩':'')+'</div>';
+          }}
+          host.innerHTML='<div class="rp-bg"></div>'+
+            '<div class="rp-top"><span>Maze '+(li+1)+' / '+LEVELS.length+'</span><span class="rp-steps">'+prog.length+' steps</span></div>'+
+            '<div class="rp-stage" style="grid-template-columns:repeat('+L.w+',minmax(0,54px))">'+grid+'</div>'+
+            '<div class="rp-prog">'+(prog.length?prog.map(function(a){return '<span>'+a+'</span>';}).join(''):'<span class="rp-empty">tap arrows to build a path…</span>')+'</div>'+
+            (msg?'<div class="rp-msg">'+msg+'</div>':'<div class="rp-msg"></div>')+
+            '<div class="rp-pad"><button data-a="⬆️">⬆️</button><div class="rp-row"><button data-a="⬅️">⬅️</button><button data-a="⬇️">⬇️</button><button data-a="➡️">➡️</button></div></div>'+
+            '<div class="rp-actions"><button class="rp-clear" data-clear>↩ Clear</button><button class="imm-btn rp-run" data-run>▶ Run</button></div>';
+          placeBot(L.start[0], L.start[1]);
+          host.querySelectorAll('.rp-pad button').forEach(function(b){ b.addEventListener('click',function(){ if(running)return; prog.push(b.getAttribute('data-a')); render(''); }); });
+          host.querySelector('[data-clear]').addEventListener('click',function(){ if(running)return; prog=[]; render(''); });
+          host.querySelector('[data-run]').addEventListener('click', run);
+        }
+        function cellEl(x,y){ return host.querySelector('.rp-cell[data-x="'+x+'"][data-y="'+y+'"]'); }
+        function placeBot(x,y){ var old=host.querySelector('.rp-bot'); if(old)old.remove(); var c=cellEl(x,y); if(c){ c.appendChild(el('div','rp-bot','🤖')); } }
+        function run(){
+          if(running)return; running=true;
+          var L=LEVELS[li], x=L.start[0], y=L.start[1], i=0, msgEl=host.querySelector('.rp-msg');
+          var iv=setInterval(function(){
+            if(i>=prog.length){ clearInterval(iv);
+              if(x===L.flag[0]&&y===L.flag[1]){ msgEl.innerHTML='<span class="ok">✅ Made it to the flag!</span>'; li++; setTimeout(load,950); }
+              else { msgEl.innerHTML='<span class="bad">🤖 Stopped short of the flag — adjust your steps!</span>'; running=false; } return;
+            }
+            var a=prog[i++]; if(a==='⬆️')y--; else if(a==='⬇️')y++; else if(a==='⬅️')x--; else if(a==='➡️')x++;
+            var off=x<0||y<0||x>=L.w||y>=L.h, wall=!off && L.walls.some(function(w){return w[0]===x&&w[1]===y;});
+            if(off||wall){ clearInterval(iv); placeBot(Math.max(0,Math.min(L.w-1,x)),Math.max(0,Math.min(L.h-1,y))); var bot=host.querySelector('.rp-bot'); if(bot)bot.classList.add('crash'); msgEl.innerHTML='<span class="bad">💥 Crash! '+(wall?'That\'s a wall.':'Off the edge.')+' Fix the path and run again.</span>'; setTimeout(function(){running=false;},250); return; }
+            placeBot(x,y);
+          }, 340);
+        }
+        function win(){ host.innerHTML=immResult('🏁','Every maze solved!', true, '<p>You guided the robot with clear steps in exactly the right order — that\'s an <b>algorithm</b>, the heart of all code. One step out of place and it crashes; get it right and it works perfectly. That\'s coding!</p>'); bindRes(host, api, start); api.done(); }
+        start();
+      }});
+  }
+
+  // SAY IT IN CODE (Mission 2) — tap code blocks in order to build a line,
+  // then watch the computer run it and reply in the console.
+  function renderCodeConsole(root, cfg, id){
+    var ROUNDS = cfg.rounds || [
+      { tokens:['print','(','"Hello!"',')'], out:'Hello!', tip:'print shows a message on the screen.' },
+      { tokens:['print','(','"I love code"',')'], out:'I love code', tip:'Whatever sits in the quotes gets shown.' },
+      { tokens:['print','(','2','+','2',')'], out:'4', tip:'The computer can do math, too!' }
+    ];
+    fsGame(root, cfg, id, { ico:'💬', title: cfg.title||'Say It in Code',
+      blurb:'Computers only do what you type — in just the right order. Tap the code pieces <b>in order</b> to build each line, then watch the computer run it and reply. Tap the wrong piece and it buzzes — find the right next one!',
+      playLabel:'▶  Open the console', wrapClass:'g-console',
+      thanks: cfg.thanks || 'You wrote real code and the computer answered. 💬',
+      play:function(host, api){
+        var ri, built, order;
+        function start(){ ri=0; load(); }
+        function load(){ if(ri>=ROUNDS.length) return win(); built=0; order=shuffle(ROUNDS[ri].tokens.map(function(t,i){return {t:t,i:i};})); render(null); }
+        function render(typed){
+          var r=ROUNDS[ri];
+          host.innerHTML='<div class="cco-bg"></div>'+
+            '<div class="cco-top"><span>Line '+(ri+1)+' / '+ROUNDS.length+'</span><span class="cco-tip">💡 '+esc(r.tip)+'</span></div>'+
+            '<div class="cco-screen"><div class="cco-line">'+r.tokens.slice(0,built).map(function(t){return '<code>'+esc(t)+'</code>';}).join('')+'<span class="cco-cursor">▋</span></div>'+
+              (typed!=null?'<div class="cco-out">'+esc(typed)+'</div>':'')+'</div>'+
+            '<div class="cco-instr">Tap the next piece:</div>'+
+            '<div class="cco-blocks">'+order.map(function(o){return '<button class="cco-block" data-i="'+o.i+'"'+(o.i<built?' disabled':'')+'>'+esc(o.t)+'</button>';}).join('')+'</div>';
+          host.querySelectorAll('.cco-block').forEach(function(b){ b.addEventListener('click',function(){ tap(+b.getAttribute('data-i'),b); }); });
+        }
+        function tap(i,b){
+          if(i===built){ built++;
+            if(built>=ROUNDS[ri].tokens.length){ render(null); setTimeout(function(){ render(ROUNDS[ri].out); ri++; setTimeout(load,1400); },380); }
+            else render(null);
+          } else { b.classList.add('buzz'); setTimeout(function(){b.classList.remove('buzz');},400); }
+        }
+        function win(){ host.innerHTML=immResult('🖥️','The computer speaks your code!', true, '<p>You built real lines of <b>code</b> — like Python\'s <code>print()</code> — and the computer ran them and replied. That\'s a coding language: a way to tell a computer <b>exactly</b> what to do.</p>'); bindRes(host, api, start); api.done(); }
+        start();
+      }});
+  }
+
+  // THEN VS NOW (Mission 6) — build the same little game by hand (slow, click
+  // every line) vs. with AI (describe it, lines appear instantly). Feel it.
+  function renderThenNow(root, cfg, id){
+    var LINES = cfg.lines || ['set up the game window','draw the player','draw the falling stars','move the stars down','check if the player catches one','add one to the score','show the score','play a happy sound'];
+    fsGame(root, cfg, id, { ico:'⚡', title: cfg.title||'Then vs. Now',
+      blurb:'For years, builders wrote <b>every line by hand</b> — slow, careful work. Then AI learned to write code in seconds. Build the same little game <b>both ways</b> and feel the difference for yourself!',
+      playLabel:'▶  Start the race', wrapClass:'g-thennow',
+      thanks: cfg.thanks || 'Two years changed coding more than the fifty before. ⚡',
+      play:function(host, api){
+        var phase, placed, t0, handMs, timerIv;
+        function start(){ phase='hand'; placed=0; t0=null; render(); }
+        function render(){
+          clearInterval(timerIv);
+          if(phase==='hand'){
+            if(!t0) t0=Date.now();
+            host.innerHTML='<div class="tn-bg"></div>'+
+              '<div class="tn-top"><span>😓 The Old Way — by hand</span><span class="tn-timer" data-timer>0.0s</span></div>'+
+              '<div class="tn-instr">Click each line to type it out, one at a time…</div>'+
+              '<div class="tn-code">'+LINES.map(function(l,i){return '<button class="tn-line'+(i<placed?' done':'')+'" data-i="'+i+'"'+(i===placed?'':' disabled')+'>'+(i<placed?'✓ '+esc(l):esc(l))+'</button>';}).join('')+'</div>';
+            host.querySelectorAll('.tn-line').forEach(function(b){ b.addEventListener('click',function(){ var i=+b.getAttribute('data-i'); if(i===placed){ placed++; if(placed>=LINES.length){ handMs=Date.now()-t0; phase='ai'; } render(); } }); });
+            timerIv=setInterval(function(){ var tt=host.querySelector('[data-timer]'); if(!tt){clearInterval(timerIv);return;} tt.textContent=((Date.now()-t0)/1000).toFixed(1)+'s'; }, 100);
+          } else {
+            host.innerHTML='<div class="tn-bg"></div>'+
+              '<div class="tn-top"><span>✨ The New Way — with AI</span></div>'+
+              '<div class="tn-instr">Now just <b>describe it</b> and let the AI write all '+LINES.length+' lines.</div>'+
+              '<div class="tn-promptbox">🧑 "Make a game where you catch falling stars and score points."</div>'+
+              '<div class="tn-code" id="tnai"></div>'+
+              '<button class="imm-btn" data-ai>🤖 Ask the AI to build it</button>';
+            host.querySelector('[data-ai]').addEventListener('click', runAI);
+          }
+        }
+        function runAI(){
+          var box=host.querySelector('#tnai'); host.querySelector('[data-ai]').disabled=true;
+          var i=0, iv=setInterval(function(){ if(i>=LINES.length){ clearInterval(iv); setTimeout(finish,600); return; } box.insertAdjacentHTML('beforeend','<button class="tn-line done">✓ '+esc(LINES[i])+'</button>'); i++; }, 85);
+        }
+        function finish(){ var hand=(handMs/1000).toFixed(1); host.innerHTML=immResult('⚡','Feel the difference?', true, '<p>By hand, those '+LINES.length+' lines took you <b>'+hand+' seconds</b> of careful clicking. With AI, the same code appeared in <b>under a second</b>. That\'s the big change — work that took experts <i>hours</i> now happens in moments. And you get to learn the new way from the start!</p>'); bindRes(host, api, start); api.done(); }
+        start();
+      }});
+  }
+
+  // BUILDER'S EYE (Mission 10) — agents bring work to your desk; ship the good,
+  // send back the flawed. Some look fine but hide a problem. Use your taste.
+  function renderBuildersEye(root, cfg, id){
+    var ITEMS = cfg.items || [
+      { t:'A clean login screen that works perfectly', ship:true, why:'Looks great and works — ship it!' },
+      { t:'A button that crashes the app when you tap it', ship:false, why:'A crash is a real bug — send it back to fix.' },
+      { t:'A fun, colorful game menu kids will love', ship:true, why:'On-target and delightful — ship it!' },
+      { t:'A quiz that\'s unfair to some players', ship:false, why:'Unfair isn\'t good enough — send it back.' },
+      { t:'Code that passed every single test', ship:true, why:'Tested and solid — ship it!' },
+      { t:'A page with messy, overlapping buttons', ship:false, why:'Sloppy and confusing — send it back.' },
+      { t:'A helper that gives kind, helpful answers', ship:true, why:'Kind and useful — ship it!' },
+      { t:'A feature that copied someone else\'s work', ship:false, why:'Not honest — send it back.' }
+    ];
+    fsGame(root, cfg, id, { ico:'👁️', title: cfg.title||'Builder\'s Eye',
+      blurb:'Your AI agents did the work — now <b>you</b> bring the taste. Each piece lands on your desk: good enough to <b>ship</b>, or does it go <b>back</b> to fix? Some look fine but hide a problem. Catch them — that\'s the human\'s job!',
+      playLabel:'▶  Open the review desk', wrapClass:'g-eye',
+      thanks: cfg.thanks || 'Knowing what\'s good enough to ship — that\'s taste. 👁️',
+      play:function(host, api){
+        var queue, idx, score, NEED;
+        function start(){ queue=shuffle(ITEMS); idx=0; score=0; NEED=queue.length-1; render(); }
+        function render(){
+          if(idx>=queue.length) return finish();
+          var it=queue[idx];
+          host.innerHTML='<div class="be-bg"></div>'+
+            '<div class="be-top"><span>Review '+(idx+1)+' / '+queue.length+'</span><span class="be-score">⭐ '+score+'</span></div>'+
+            '<div class="be-desk"><div class="be-paper"><span class="be-from">🤖 An agent made:</span><b>'+esc(it.t)+'</b></div></div>'+
+            '<div class="be-choices"><button class="be-btn ship" data-s="1">✅ Ship it</button><button class="be-btn back" data-s="0">🔁 Send back</button></div>'+
+            '<div class="be-fb" data-fb></div>';
+          host.querySelectorAll('.be-btn').forEach(function(b){ b.addEventListener('click',function(){ pick(it, b.getAttribute('data-s')==='1', b); }); });
+        }
+        function pick(it, ship, btn){
+          host.querySelectorAll('.be-btn').forEach(function(b){b.disabled=true;});
+          var good=(ship===it.ship), fb=host.querySelector('[data-fb]');
+          if(good){ score++; btn.classList.add('right'); fb.className='be-fb ok'; fb.innerHTML='✅ '+esc(it.why); }
+          else { btn.classList.add('wrong'); fb.className='be-fb bad'; fb.innerHTML='❌ '+esc(it.why); }
+          fb.innerHTML+='<button class="imm-btn" data-next>'+(idx+1>=queue.length?'See your call →':'Next →')+'</button>';
+          fb.querySelector('[data-next]').addEventListener('click',function(){ idx++; render(); });
+        }
+        function finish(){
+          if(score>=NEED) host.innerHTML=immResult('🏆','A builder\'s eye! ('+score+'/'+queue.length+')', true, '<p>You caught the flawed work and shipped the good — that\'s <b>taste</b>, and it\'s exactly what AI can\'t do for you. The agents are fast; <b>you</b> decide what\'s good enough to put your name on.</p>');
+          else host.innerHTML=immResult('👁️','Keep sharpening that eye ('+score+'/'+queue.length+')', false, '<p>A few slipped through. Crashes, unfairness, sloppiness, and copying all get <b>sent back</b> — only kind, working, honest, polished work ships. Try again!</p>');
+          bindRes(host, api, start); if(score>=NEED) api.done();
+        }
+        start();
+      }});
+  }
+
+  // MINI BUILD STUDIO (Mission 11) — pick what to make, add your flair, watch
+  // it assemble live, ship it. A deterministic taste of the Big Mission.
+  function renderMiniBuild(root, cfg, id){
+    var KINDS=[{k:'card',l:'💌 Greeting card'},{k:'poster',l:'📣 Poster'},{k:'badge',l:'🏅 Team badge'}];
+    var COLORS=[['#3D74FF','#26C7D1','Ocean'],['#FF5A38','#FFB320','Sunset'],['#9B7BFF','#FF6CA6','Berry'],['#2FBF71','#7FE3FF','Mint']];
+    var ICONS=['🚀','🌟','🐱','🎮','🌈','🦄','⚡','🎨','🤖','🍕'];
+    fsGame(root, cfg, id, { ico:'🛠️', title: cfg.title||'Mini Build Studio',
+      blurb:'Your turn to <b>build</b>! Pick what to make, then add your own flair — a color, a picture, your own words. Watch it come together live, then ship it. (A taste of the Big Mission, where you\'ll build for real with AI.)',
+      playLabel:'▶  Open the studio', wrapClass:'g-mini',
+      thanks: cfg.thanks || 'You designed it — your choices, your flair. You\'re a builder. 🛠️',
+      play:function(host, api){
+        var st;
+        function start(){ st={kind:'card', color:0, icon:'🚀', title:'You\'re Awesome!', msg:'Made by me'}; render(); }
+        function render(){
+          var c=COLORS[st.color];
+          host.innerHTML='<div class="mb-bg"></div>'+
+            '<div class="mb-wrap"><div class="mb-controls">'+
+              '<div class="mb-grp"><div class="mb-lab">What are you making?</div>'+KINDS.map(function(K){return '<button class="mb-opt'+(st.kind===K.k?' sel':'')+'" data-kind="'+K.k+'">'+K.l+'</button>';}).join('')+'</div>'+
+              '<div class="mb-grp"><div class="mb-lab">Colors</div><div class="mb-swatches">'+COLORS.map(function(col,i){return '<button class="mb-sw'+(st.color===i?' sel':'')+'" data-color="'+i+'" style="background:linear-gradient(135deg,'+col[0]+','+col[1]+')"></button>';}).join('')+'</div></div>'+
+              '<div class="mb-grp"><div class="mb-lab">Pick a picture</div><div class="mb-icons">'+ICONS.map(function(ic){return '<button class="mb-ic'+(st.icon===ic?' sel':'')+'" data-icon="'+ic+'">'+ic+'</button>';}).join('')+'</div></div>'+
+              '<div class="mb-grp"><div class="mb-lab">Your words</div><input class="mb-input" data-f="title" maxlength="22" value="'+esc(st.title)+'"><input class="mb-input" data-f="msg" maxlength="26" value="'+esc(st.msg)+'"></div>'+
+            '</div>'+
+            '<div class="mb-preview"><div class="mb-card" style="background:linear-gradient(150deg,'+c[0]+','+c[1]+')"><div class="mb-cardic">'+st.icon+'</div><div class="mb-cardtitle">'+esc(st.title||' ')+'</div><div class="mb-cardmsg">'+esc(st.msg||' ')+'</div></div>'+
+              '<button class="imm-btn mb-ship" data-ship>🚀 Ship it!</button></div>'+
+            '</div>';
+          host.querySelectorAll('[data-kind]').forEach(function(b){b.addEventListener('click',function(){st.kind=b.getAttribute('data-kind');render();});});
+          host.querySelectorAll('[data-color]').forEach(function(b){b.addEventListener('click',function(){st.color=+b.getAttribute('data-color');render();});});
+          host.querySelectorAll('[data-icon]').forEach(function(b){b.addEventListener('click',function(){st.icon=b.getAttribute('data-icon');render();});});
+          host.querySelectorAll('[data-f]').forEach(function(inp){ inp.addEventListener('input',function(){ st[inp.getAttribute('data-f')]=inp.value; var t=host.querySelector(inp.getAttribute('data-f')==='title'?'.mb-cardtitle':'.mb-cardmsg'); if(t)t.textContent=inp.value||' '; }); });
+          host.querySelector('[data-ship]').addEventListener('click', ship);
+        }
+        function ship(){ host.innerHTML=immResult('🎉','You shipped your creation!', true, '<p>You picked what to build, made it your own with color, a picture, and your words, and shipped it. That\'s the whole loop: <b>your idea, your taste, your call</b>. In the Big Mission, you\'ll do this for real — directing AI to build whatever you dream up.</p>'); bindRes(host, api, start); api.done(); }
+        start();
+      }});
+  }
+
+  // FINAL BOSS (Mission 12) — beat the Glitch Boss by answering recap questions.
+  function renderFinalBoss(root, cfg, id){
+    var QS = cfg.questions || [
+      { q:'A mistake in code is called a…', o:['Bug','Glitch-monster','Oopsie','Crash-cat'], a:0 },
+      { q:'The newest AIs that DO the steps (not just answer) are called…', o:['Agents','Robots','Helpers','Apps'], a:0 },
+      { q:'What loop does an agent run?', o:['Plan, do, check, fix, repeat','Eat, sleep, repeat','Copy, paste, done','Guess and hope'], a:0 },
+      { q:'When AI writes the code, what does the HUMAN bring?', o:['Taste, decisions & the final call','Nothing anymore','Just the typing','The electricity'], a:0 },
+      { q:'The most valuable builder today…', o:['Knows what\'s worth building & steers the AI','Types the fastest','Never uses AI','Memorizes every language'], a:0 }
+    ];
+    fsGame(root, cfg, id, { ico:'🏆', title: cfg.title||'Final Boss',
+      blurb:'One last challenge! The Glitch Boss 🐛 is guarding your Future Coder badge. Answer each question right to zap it — get one wrong and it shrugs the hit off. Beat it to win!',
+      playLabel:'▶  Face the Glitch Boss', wrapClass:'g-boss',
+      thanks: cfg.thanks || 'You beat the boss and earned it — Future Coder! 🏆',
+      play:function(host, api){
+        var queue, idx, hp, MAX;
+        function start(){ queue=shuffle(QS); idx=0; MAX=queue.length; hp=MAX; render(null); }
+        function render(msg){
+          if(hp<=0) return win();
+          if(idx>=queue.length){ queue=shuffle(QS); idx=0; }
+          var q=queue[idx], order=q.o.map(function(o,i){return i;}).sort(function(){return Math.random()-0.5;});
+          host.innerHTML='<div class="boss-bg"></div>'+
+            '<div class="boss-stage"><div class="boss-mon'+(hp<MAX?' hurt':'')+'">🐛</div><div class="boss-hp"><i style="width:'+(hp/MAX*100)+'%"></i></div><div class="boss-hplbl">Boss energy</div></div>'+
+            (msg?'<div class="boss-msg '+msg.cls+'">'+msg.txt+'</div>':'<div class="boss-msg"></div>')+
+            '<div class="boss-q">'+esc(q.q)+'</div>'+
+            '<div class="boss-opts">'+order.map(function(oi){return '<button class="boss-opt" data-ok="'+(oi===q.a?1:0)+'">'+esc(q.o[oi])+'</button>';}).join('')+'</div>';
+          host.querySelectorAll('.boss-opt').forEach(function(b){ b.addEventListener('click',function(){ ans(b.getAttribute('data-ok')==='1', b); }); });
+        }
+        function ans(ok, b){
+          host.querySelectorAll('.boss-opt').forEach(function(x){x.disabled=true;});
+          b.classList.add(ok?'right':'wrong');
+          var m = ok?{cls:'ok',txt:'⚡ Zap! Direct hit!'}:{cls:'bad',txt:'🛡️ The boss shrugged that off — keep going!'};
+          if(ok) hp--; idx++;
+          setTimeout(function(){ render(m); }, 850);
+        }
+        function win(){ host.innerHTML=immResult('🏆','Glitch Boss defeated!', true, '<p>You did it — you know the <b>whole story</b> of how code gets made: by hand, the big AI change, and the new way of directing agents while you bring the taste and the calls. You\'re a <b>Future Coder</b>. Now go build something. 🚀</p>'); bindRes(host, api, start); api.done(); }
+        start();
+      }});
+  }
+
   // ---- registry + boot ----------------------------------------------------
-  var RENDERERS = { poll: renderPoll, sort: renderSort, choice: renderChoice, nextword: renderNextWord, attention: renderAttention, quiz: renderQuiz, timeline: renderTimeline, reveal: renderReveal, slider: renderSlider, trainer: renderTrainer, match: renderMatch, draw: renderDraw, wordchain: renderWordChain, order: renderOrder, neuron: renderNeuron, arcade: renderArcade, powercity: renderPowerCity, aiworld: renderAIWorld, diagnose: renderDiagnose, missionctrl: renderMissionCtrl, toollab: renderToolLab, vault: renderVault, fairshare: renderFairShare, twodoors: renderTwoDoors, rulelab: renderRuleLab, buildhelper: renderBuildHelper, codehand: renderCodeHand, bughunt: renderBugHunt, toolmatch: renderToolMatch, promptcoder: renderPromptCoder, agentloop: renderAgentLoop, manageteam: renderManageTeam };
+  var RENDERERS = { poll: renderPoll, sort: renderSort, choice: renderChoice, nextword: renderNextWord, attention: renderAttention, quiz: renderQuiz, timeline: renderTimeline, reveal: renderReveal, slider: renderSlider, trainer: renderTrainer, match: renderMatch, draw: renderDraw, wordchain: renderWordChain, order: renderOrder, neuron: renderNeuron, arcade: renderArcade, powercity: renderPowerCity, aiworld: renderAIWorld, diagnose: renderDiagnose, missionctrl: renderMissionCtrl, toollab: renderToolLab, vault: renderVault, fairshare: renderFairShare, twodoors: renderTwoDoors, rulelab: renderRuleLab, buildhelper: renderBuildHelper, codehand: renderCodeHand, bughunt: renderBugHunt, toolmatch: renderToolMatch, promptcoder: renderPromptCoder, agentloop: renderAgentLoop, manageteam: renderManageTeam, robotpath: renderRobotPath, codeconsole: renderCodeConsole, thennow: renderThenNow, builderseye: renderBuildersEye, minibuild: renderMiniBuild, finalboss: renderFinalBoss };
 
   function hydrate(node) {
     if (node.getAttribute('data-ctf-ready')) return;

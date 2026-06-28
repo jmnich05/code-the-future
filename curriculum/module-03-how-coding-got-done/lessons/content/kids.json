@@ -62,7 +62,7 @@
     },
     {
      "type": "widget",
-     "html": "<div class=\"ctf\"><div data-ctf-widget=\"order\" data-ctf-id=\"kids-m1-recipe\">\n    <script type=\"application/json\">{\n      \"eyebrow\":\"Code Cadet\",\"title\":\"Robot Recipe\",\"prompt\":\"Code is just clear steps in the right order. Tap the steps for making a jam sandwich — in the order a robot would need them.\",\n      \"items\":[\"Get two slices of bread\",\"Spread jam on one slice\",\"Put the slices together\",\"Cut the sandwich in half\",\"Take a bite!\"],\n      \"explain\":\"That's an algorithm — clear steps, in the right order. A robot would follow it exactly!\",\n      \"complete\":{\"icon\":\"🎖️\",\"badge\":\"Badge earned: Code Cadet\",\"sub\":\"Mission 1 of 12\",\"progress\":8}\n    }</script>\n  </div></div>"
+     "html": "<div class=\"ctf\"><div data-ctf-widget=\"robotpath\" data-ctf-id=\"kids-m1-recipe\">\n    <script type=\"application/json\">{\n      \"eyebrow\":\"Code Cadet\",\"title\":\"Command the Bot\",\n      \"complete\":{\"icon\":\"🎖️\",\"badge\":\"Badge earned: Code Cadet\",\"sub\":\"Mission 1 of 12\",\"progress\":8}\n    }</script>\n  </div></div>"
     },
     {
      "type": "complete",
@@ -115,7 +115,7 @@
     },
     {
      "type": "widget",
-     "html": "<div class=\"ctf\"><div data-ctf-widget=\"order\" data-ctf-id=\"kids-m2-code\">\n    <script type=\"application/json\">{\n      \"eyebrow\":\"Language Linker\",\"title\":\"Say It in Code\",\"prompt\":\"In Python, this line makes the computer say something. Put the pieces in the right order to print a message.\",\n      \"items\":[\"print  — the word that means 'show this'\",\"(  — an open bracket\",\"\\\"Hello!\\\"  — your message in quotes\",\")  — a close bracket\"],\n      \"explain\":\"You wrote print(\\\"Hello!\\\") — real Python that shows Hello! on the screen. 💬\",\n      \"complete\":{\"icon\":\"🎖️\",\"badge\":\"Badge earned: Language Linker\",\"sub\":\"Mission 2 of 12\",\"progress\":16}\n    }</script>\n  </div></div>"
+     "html": "<div class=\"ctf\"><div data-ctf-widget=\"codeconsole\" data-ctf-id=\"kids-m2-code\">\n    <script type=\"application/json\">{\n      \"eyebrow\":\"Language Linker\",\"title\":\"Say It in Code\",\n      \"complete\":{\"icon\":\"🎖️\",\"badge\":\"Badge earned: Language Linker\",\"sub\":\"Mission 2 of 12\",\"progress\":16}\n    }</script>\n  </div></div>"
     },
     {
      "type": "complete",
@@ -291,7 +291,7 @@
     },
     {
      "type": "widget",
-     "html": "<div class=\"ctf\"><div data-ctf-widget=\"quiz\" data-ctf-id=\"kids-m6-thennow\">\n    <script type=\"application/json\">{\n      \"eyebrow\":\"Time Traveler\",\"title\":\"Then vs. Now\",\"revisitText\":\"\",\n      \"questions\":[\n        {\"q\":\"How did people write code for most of history?\",\"options\":[\"By hand, one line at a time\",\"By asking an AI\",\"By drawing pictures\",\"They didn't\"],\"answer\":0},\n        {\"q\":\"What just changed coding in only about two years?\",\"options\":[\"Faster keyboards\",\"AI learned to write code\",\"New colors\",\"Bigger screens\"],\"answer\":1},\n        {\"q\":\"How did AI learn to write code?\",\"options\":[\"It was born knowing\",\"From millions of code examples\",\"A teacher told it once\",\"It guessed\"],\"answer\":1}\n      ],\n      \"perfect\":\"You've got the whole story — from typing every line by hand to AI writing code with you!\",\n      \"passText\":\"Nice — the big change is real, and it happened fast.\",\n      \"complete\":{\"icon\":\"🎖️\",\"badge\":\"Badge earned: Time Traveler\",\"sub\":\"Mission 6 of 12\",\"progress\":50}\n    }</script>\n  </div></div>"
+     "html": "<div class=\"ctf\"><div data-ctf-widget=\"thennow\" data-ctf-id=\"kids-m6-thennow\">\n    <script type=\"application/json\">{\n      \"eyebrow\":\"Time Traveler\",\"title\":\"Then vs. Now\",\n      \"complete\":{\"icon\":\"🎖️\",\"badge\":\"Badge earned: Time Traveler\",\"sub\":\"Mission 6 of 12\",\"progress\":50}\n    }</script>\n  </div></div>"
     },
     {
      "type": "complete",
@@ -467,7 +467,7 @@
     },
     {
      "type": "widget",
-     "html": "<div class=\"ctf\"><div data-ctf-widget=\"sort\" data-ctf-id=\"kids-m10-builderseye\">\n    <script type=\"application/json\">{\n      \"eyebrow\":\"Chief of Taste\",\"title\":\"Builder's Eye\",\n      \"prompt\":\"Your agents handed you their work. Use your <span class=\\\"ctf-q\\\">taste and judgment</span>: ship the good stuff, send the rest back to fix.\",\n      \"buckets\":[\"Ship it ✅\",\"Send it back 🔁\"],\n      \"items\":[\n        {\"emoji\":\"✨\",\"label\":\"A clean login screen that works great\",\"bucket\":0},\n        {\"emoji\":\"🐛\",\"label\":\"A button that crashes when you tap it\",\"bucket\":1},\n        {\"emoji\":\"🎨\",\"label\":\"A fun, clear game menu kids will love\",\"bucket\":0},\n        {\"emoji\":\"⚖️\",\"label\":\"A quiz that's unfair to some players\",\"bucket\":1},\n        {\"emoji\":\"✅\",\"label\":\"Code that passed every test\",\"bucket\":0},\n        {\"emoji\":\"🌀\",\"label\":\"A page with messy, confusing buttons\",\"bucket\":1}\n      ],\n      \"thanks\":\"That's taste — knowing what's good enough to ship and what needs another loop. The human always makes that call. ⭐\",\n      \"complete\":{\"icon\":\"🎖️\",\"badge\":\"Badge earned: Chief of Taste\",\"sub\":\"Mission 10 of 12\",\"progress\":83}\n    }</script>\n  </div></div>"
+     "html": "<div class=\"ctf\"><div data-ctf-widget=\"builderseye\" data-ctf-id=\"kids-m10-builderseye\">\n    <script type=\"application/json\">{\n      \"eyebrow\":\"Chief of Taste\",\"title\":\"Builder's Eye\",\n      \"complete\":{\"icon\":\"🎖️\",\"badge\":\"Badge earned: Chief of Taste\",\"sub\":\"Mission 10 of 12\",\"progress\":83}\n    }</script>\n  </div></div>"
     },
     {
      "type": "complete",
@@ -508,7 +508,7 @@
     },
     {
      "type": "widget",
-     "html": "<div class=\"ctf\"><div data-ctf-widget=\"poll\" data-ctf-id=\"kids-m11-build\">\n    <script type=\"application/json\">{\n      \"eyebrow\":\"Real Builder\",\"title\":\"What will you build with AI?\",\"prompt\":\"You're the director now! Pick something you'd love to build by directing an AI — or write your own idea. It goes on the cohort wall.\",\"columns\":2,\n      \"options\":[{\"emoji\":\"🎮\",\"label\":\"A little game\"},{\"emoji\":\"🌐\",\"label\":\"My own web page\"},{\"emoji\":\"🤖\",\"label\":\"A helpful chatbot\"},{\"emoji\":\"🎨\",\"label\":\"An art-maker\"}],\n      \"freeText\":true,\"placeholder\":\"Or describe your own idea to build…\",\n      \"thanks\":\"That's your idea — and now you know how to direct an AI to build it. The future needs builders like you! 🚀\",\n      \"complete\":{\"icon\":\"🎖️\",\"badge\":\"Badge earned: Real Builder\",\"sub\":\"Mission 11 of 12\",\"progress\":91}\n    }</script>\n  </div></div>"
+     "html": "<div class=\"ctf\"><div data-ctf-widget=\"minibuild\" data-ctf-id=\"kids-m11-build\">\n    <script type=\"application/json\">{\n      \"eyebrow\":\"Real Builder\",\"title\":\"Mini Build Studio\",\n      \"complete\":{\"icon\":\"🎖️\",\"badge\":\"Badge earned: Real Builder\",\"sub\":\"Mission 11 of 12\",\"progress\":91}\n    }</script>\n  </div></div>"
     },
     {
      "type": "complete",
@@ -553,7 +553,7 @@
     },
     {
      "type": "widget",
-     "html": "<div class=\"ctf\"><div data-ctf-widget=\"quiz\" data-ctf-id=\"kids-m12-quiz\">\n    <script type=\"application/json\">{\n      \"eyebrow\":\"🏆 Final check\",\"title\":\"Show what you know\",\"revisit\":\"kids-m1-recipe\",\"revisitText\":\"Back in Mission 1, you put a recipe in order. That was your first algorithm!\",\n      \"questions\":[\n        {\"q\":\"A mistake in code is called a…\",\"options\":[\"Glitch-monster\",\"Bug\",\"Boo-boo\",\"Crash-cat\"],\"answer\":1},\n        {\"q\":\"The newest AIs that DO the steps (not just answer) are called…\",\"options\":[\"Robots\",\"Agents\",\"Helpers\",\"Apps\"],\"answer\":1},\n        {\"q\":\"What loop does an agent run?\",\"options\":[\"Eat, sleep, repeat\",\"Plan, do, check, fix, repeat\",\"Copy, paste, done\",\"Guess and hope\"],\"answer\":1},\n        {\"q\":\"When AI builds the code, what does the HUMAN bring?\",\"options\":[\"Nothing anymore\",\"Taste, decisions, and the final call\",\"Just the typing\",\"The electricity\"],\"answer\":1},\n        {\"q\":\"The most valuable builder today is the one who…\",\"options\":[\"Types the fastest\",\"Knows what's worth building and steers the AI\",\"Never uses AI\",\"Memorizes every language\"],\"answer\":1}\n      ],\n      \"perfect\":\"You understand how building REALLY works now — old way, big change, and the new way. You're a Future Coder! 🏆\",\n      \"passText\":\"Great work — you've got the big picture of how code gets made today.\",\n      \"complete\":{\"icon\":\"🎖️\",\"badge\":\"Badge earned: Future Coder\",\"sub\":\"Mission 12 of 12\",\"progress\":100}\n    }</script>\n  </div></div>"
+     "html": "<div class=\"ctf\"><div data-ctf-widget=\"finalboss\" data-ctf-id=\"kids-m12-quiz\">\n    <script type=\"application/json\">{\n      \"eyebrow\":\"🏆 Final check\",\"title\":\"Final Boss\",\n      \"complete\":{\"icon\":\"🎖️\",\"badge\":\"Badge earned: Future Coder\",\"sub\":\"Mission 12 of 12\",\"progress\":100}\n    }</script>\n  </div></div>"
     },
     {
      "type": "complete",
