@@ -167,7 +167,8 @@ $("aGo").onclick = async () => {
   busy($("aGo"), true, "Signing in…");
   const { ok, data } = await post("login_admin", { email, password });
   if (!ok || !data.ok) { busy($("aGo"), false); return showErr(data.error || "Sign in failed."); }
-  await CTFDB.signInWithPassword(email, password);
+  const r = await CTFDB.signInWithPassword(email, password);
+  if (r && r.error) { busy($("aGo"), false); return showErr("Signed in to the gate, but data sign-in failed: " + r.error); }
   location.href = nextDest();
 };
 

@@ -98,25 +98,43 @@ async function loginAdmin(body) {
   if (!ADMIN_EMAILS.includes(email) || !password || password !== process.env.ADMIN_PASSWORD) {
     return json({ error: "Email or admin password is wrong." }, 401);
   }
-  const sa = await rest(`staff_accounts?select=user_id&email=eq.${encodeURIComponent(email)}`);
-  let uid = sa.ok && Array.isArray(sa.data) && sa.data[0] ? sa.data[0].user_id : null;
-  if (uid) {
-    await gotrue(`admin/users/${uid}`, { method: "PUT", body: JSON.stringify({ password }) });
+  // Find-or-create the admin's Supabase user, and keep its password in sync with
+  // ADMIN_PASSWORD. Creating fails if the email already exists, so on failure we
+  // look the user up and update it instead (self-healing across attempts).
+  let uid = null;
+  const cu = await gotrue("admin/users", { method: "POST", body: JSON.stringify({
+    email, password, email_confirm: true, user_metadata: { kind: "admin" }
+  }) });
+  if (cu.ok && cu.data && cu.data.id) {
+    uid = cu.data.id;                                   // brand-new admin user
   } else {
-    const cu = await gotrue("admin/users", { method: "POST", body: JSON.stringify({
-      email, password, email_confirm: true, user_metadata: { kind: "admin" }
-    }) });
-    if (!cu.ok || !cu.data || !cu.data.id) return json({ error: "Couldn't sign in — try again." }, 500);
-    uid = cu.data.id;
-    await rest("staff_accounts", { method: "POST", headers: { Prefer: "return=minimal" },
-      body: JSON.stringify({ email, user_id: uid }) });
-    await rest("profiles?on_conflict=id", { method: "POST",
-      headers: { Prefer: "resolution=merge-duplicates,return=minimal" },
-      body: JSON.stringify({ id: uid, role: "admin", is_anonymous: false, display_name: email.split("@")[0] }) });
+    uid = await findUserIdByEmail(email);               // already exists → sync password
+    if (uid) await gotrue(`admin/users/${uid}`, { method: "PUT", body: JSON.stringify({ password, email_confirm: true }) });
   }
-  await rest(`profiles?id=eq.${uid}`, { method: "PATCH", headers: { Prefer: "return=minimal" },
-    body: JSON.stringify({ role: "admin" }) });
+  if (!uid) return json({ error: "Couldn't sign in — try again." }, 500);
+
+  // Mark as admin without clobbering an existing display_name; cache the lookup
+  // if the staff_accounts table exists (tolerant — not required).
+  await rest("profiles?on_conflict=id", { method: "POST",
+    headers: { Prefer: "resolution=merge-duplicates,return=minimal" },
+    body: JSON.stringify({ id: uid, role: "admin", is_anonymous: false }) });
+  await rest("staff_accounts?on_conflict=email", { method: "POST",
+    headers: { Prefer: "resolution=merge-duplicates,return=minimal" },
+    body: JSON.stringify({ email, user_id: uid }) });
   return json({ ok: true, email }, 200, gateCookie("admin"));
+}
+
+// Page through GoTrue admin users to find one by email (the admin set is tiny).
+async function findUserIdByEmail(email) {
+  for (let page = 1; page <= 12; page++) {
+    const r = await gotrue(`admin/users?page=${page}&per_page=200`);
+    const users = (r.data && (r.data.users || r.data)) || [];
+    if (!Array.isArray(users) || users.length === 0) break;
+    const hit = users.find((u) => String(u.email || "").toLowerCase() === email);
+    if (hit) return hit.id;
+    if (users.length < 200) break;
+  }
+  return null;
 }
 
 // ---- supabase REST + admin helpers ---------------------------------------
