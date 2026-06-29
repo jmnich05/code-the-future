@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex">
+<link rel="icon" type="image/svg+xml" href="/platform/assets/logo-icon-tile.svg">
+<title>Sign in — Code the Future</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600;700&display=swap');
+:root{ --display:'Space Grotesk',sans-serif; --body:'Plus Jakarta Sans',system-ui,sans-serif; --mono:'JetBrains Mono',monospace; --purple:#9B7BFF; --teal:#26C7D1; }
+*{ box-sizing:border-box; margin:0; }
+html,body{ min-height:100%; }
+body{ font-family:var(--body); color:#EAF1FF; min-height:100vh; display:flex; align-items:center; justify-content:center; padding:32px 18px;
+  background:radial-gradient(120% 90% at 82% -10%, rgba(155,123,255,.25), transparent 55%),
+  radial-gradient(120% 90% at 8% 110%, rgba(38,199,209,.22), transparent 55%),
+  linear-gradient(165deg,#101a3c,#0A1024 55%,#070C1A); }
+.card{ width:100%; max-width:440px; background:rgba(255,255,255,.05); border:1px solid rgba(255,255,255,.12); border-radius:22px; padding:30px 26px 26px; box-shadow:0 24px 60px rgba(0,0,0,.4); }
+.brand{ display:flex; align-items:center; gap:10px; justify-content:center; margin-bottom:6px; }
+.brand img{ width:34px; height:34px; } .brand b{ font-family:var(--display); font-weight:700; font-size:1.15rem; }
+.brand b span{ color:var(--teal); }
+h1{ font-family:var(--display); font-weight:700; font-size:1.5rem; text-align:center; margin:14px 0 4px; }
+.sub{ text-align:center; opacity:.82; font-size:.95rem; margin-bottom:20px; line-height:1.45; }
+.tabs{ display:flex; gap:6px; background:rgba(255,255,255,.05); border:1px solid rgba(255,255,255,.1); border-radius:14px; padding:5px; margin-bottom:20px; }
+.tab{ flex:1; text-align:center; font-family:var(--display); font-weight:600; font-size:.86rem; padding:9px 6px; border-radius:10px; cursor:pointer; color:#bccbe6; border:none; background:none; transition:background .15s, color .15s; }
+.tab.on{ background:linear-gradient(120deg,#9fb6ff,#9B7BFF); color:#06122b; }
+.pane{ display:none; } .pane.on{ display:block; }
+label{ display:block; font-family:var(--display); font-weight:600; font-size:.82rem; margin:14px 0 6px; color:#cfe0ff; }
+input{ width:100%; font-family:var(--body); font-size:1.02rem; color:#fff; background:rgba(255,255,255,.07); border:1.5px solid rgba(127,227,255,.3); border-radius:12px; padding:13px 14px; outline:none; }
+input:focus{ border-color:var(--purple); }
+input.code{ font-family:var(--mono); font-weight:700; letter-spacing:.14em; text-transform:uppercase; text-align:center; font-size:1.25rem; }
+.btn{ width:100%; margin-top:20px; font-family:var(--display); font-weight:700; font-size:1.05rem; color:#06122b; border:none; cursor:pointer; padding:14px; border-radius:999px;
+  background:linear-gradient(120deg,#9fb6ff,#9B7BFF); box-shadow:0 14px 30px rgba(155,123,255,.45); transition:transform .12s, opacity .15s; }
+.btn:hover{ transform:translateY(-2px); } .btn:disabled{ opacity:.5; cursor:not-allowed; transform:none; }
+.hint{ font-size:.82rem; color:#9fb6e6; margin-top:8px; line-height:1.4; }
+.msg{ margin-top:14px; padding:11px 13px; border-radius:11px; font-size:.9rem; line-height:1.4; display:none; }
+.msg.err{ display:block; background:rgba(255,107,107,.13); border:1px solid rgba(255,107,107,.4); color:#ffd9d9; }
+.codebox{ text-align:center; margin:8px 0 4px; }
+.codebox .lab{ font-family:var(--mono); font-size:11px; letter-spacing:.2em; text-transform:uppercase; color:var(--teal); }
+.codebox .big{ font-family:var(--mono); font-weight:700; font-size:2.1rem; letter-spacing:.12em; margin:8px 0; color:#9BF5C7; }
+.footer-link{ text-align:center; margin-top:16px; font-size:.85rem; }
+.footer-link a{ color:#9fb6e6; }
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="brand"><img src="/platform/assets/logo-icon-tile.svg" alt=""><b>Code the <span>Future</span></b></div>
+
+  <!-- LOGIN (tabs) -->
+  <div id="screen-login">
+    <h1>Welcome back, builder!</h1>
+    <p class="sub">First time? Tap <b>New here</b>. Coming back? Use your code.</p>
+    <div class="tabs">
+      <button class="tab on" data-tab="kid">I have a code</button>
+      <button class="tab" data-tab="new">New here</button>
+      <button class="tab" data-tab="staff">Staff</button>
+    </div>
+
+    <!-- returning kid -->
+    <div class="pane on" data-pane="kid">
+      <label>Your secret code</label>
+      <input id="kidCode" class="code" maxlength="9" placeholder="XXXX-XXXX" autocomplete="off" autocapitalize="characters">
+      <div class="hint">The code you got when you first signed up.</div>
+      <button class="btn" id="kidGo">Let's go →</button>
+    </div>
+
+    <!-- new (parent registers) -->
+    <div class="pane" data-pane="new">
+      <label>Parent email</label>
+      <input id="pEmail" type="email" placeholder="you@email.com" autocomplete="email">
+      <label>Cohort number</label>
+      <input id="pCohort" type="text" placeholder="from your welcome email" autocomplete="off">
+      <div class="hint">A grown-up sets this up once. We'll give your child a secret code for next time.</div>
+      <button class="btn" id="newGo">Create my child's account →</button>
+    </div>
+
+    <!-- staff -->
+    <div class="pane" data-pane="staff">
+      <label>Email</label>
+      <input id="aEmail" type="email" placeholder="you@codethefuture.net" autocomplete="email">
+      <label>Admin password</label>
+      <input id="aPass" type="password" placeholder="••••••••" autocomplete="current-password">
+      <button class="btn" id="aGo">Sign in →</button>
+    </div>
+
+    <div class="msg" id="msg"></div>
+  </div>
+
+  <!-- CODE REVEAL (after register) -->
+  <div id="screen-code" style="display:none">
+    <h1>You're in! 🎉</h1>
+    <p class="sub">Write this secret code somewhere safe — your child uses it to log back in next time.</p>
+    <div class="codebox"><div class="lab">Secret code</div><div class="big" id="revealCode">—</div></div>
+    <button class="btn" id="codeContinue">Set up my character →</button>
+    <div class="footer-link">Keep this code with a grown-up.</div>
+  </div>
+</div>
+
+<script src="/platform/lib/config.js"></script>
+<script type="module">
+import { CTFDB } from "/platform/lib/ctf-db.js";
+
+const $ = (id) => document.getElementById(id);
+const msg = $("msg");
+function showErr(t){ msg.textContent = t; msg.className = "msg err"; }
+function clearErr(){ msg.className = "msg"; }
+
+// safe ?next (only same-site platform/curriculum paths)
+const qs = new URLSearchParams(location.search);
+function nextDest(){
+  const n = qs.get("next") || "";
+  return /^\/(platform|curriculum)\//.test(n) ? n : "/platform/index.html";
+}
+
+// tabs
+document.querySelectorAll(".tab").forEach((t) => t.onclick = () => {
+  document.querySelectorAll(".tab").forEach((x) => x.classList.toggle("on", x === t));
+  document.querySelectorAll(".pane").forEach((p) => p.classList.toggle("on", p.dataset.pane === t.dataset.tab));
+  clearErr();
+});
+
+async function post(action, payload){
+  const r = await fetch("/api/auth", {
+    method: "POST", headers: { "Content-Type": "application/json" },
+    credentials: "same-origin", body: JSON.stringify({ action, ...payload })
+  });
+  let d = {}; try { d = await r.json(); } catch {}
+  return { ok: r.ok, data: d };
+}
+function busy(btn, on, label){ btn.disabled = on; if (on) { btn.dataset.lbl = btn.textContent; btn.textContent = label || "…"; } else if (btn.dataset.lbl) btn.textContent = btn.dataset.lbl; }
+
+// --- returning kid ---
+$("kidGo").onclick = async () => {
+  clearErr();
+  const code = ($("kidCode").value || "").trim().toUpperCase();
+  if (code.length < 6) return showErr("Type your full code, like XXXX-XXXX.");
+  busy($("kidGo"), true, "Checking…");
+  const { ok, data } = await post("login_kid", { code });
+  if (!ok || !data.ok) { busy($("kidGo"), false); return showErr(data.error || "We couldn't find that code."); }
+  await CTFDB.signInWithPassword(data.synthEmail, code);
+  const prof = await CTFDB.getProfile();
+  location.href = (prof && prof.onboarded) ? nextDest() : "/platform/onboarding.html";
+};
+
+// --- new (parent registers a kid) ---
+$("newGo").onclick = async () => {
+  clearErr();
+  const parentEmail = ($("pEmail").value || "").trim();
+  const cohort = ($("pCohort").value || "").trim();
+  if (!parentEmail || !cohort) return showErr("Enter the parent email and the cohort number.");
+  busy($("newGo"), true, "Setting up…");
+  const { ok, data } = await post("register", { parentEmail, cohort });
+  if (!ok || !data.ok) { busy($("newGo"), false); return showErr(data.error || "Couldn't set up the account."); }
+  await CTFDB.signInWithPassword(data.synthEmail, data.code);
+  $("revealCode").textContent = data.code;
+  $("screen-login").style.display = "none";
+  $("screen-code").style.display = "block";
+};
+$("codeContinue").onclick = () => { location.href = "/platform/onboarding.html"; };
+
+// --- staff / admin ---
+$("aGo").onclick = async () => {
+  clearErr();
+  const email = ($("aEmail").value || "").trim();
+  const password = $("aPass").value || "";
+  if (!email || !password) return showErr("Enter your email and admin password.");
+  busy($("aGo"), true, "Signing in…");
+  const { ok, data } = await post("login_admin", { email, password });
+  if (!ok || !data.ok) { busy($("aGo"), false); return showErr(data.error || "Sign in failed."); }
+  await CTFDB.signInWithPassword(email, password);
+  location.href = nextDest();
+};
+
+// Enter-to-submit per pane
+$("kidCode").addEventListener("keydown", (e) => { if (e.key === "Enter") $("kidGo").click(); });
+$("pCohort").addEventListener("keydown", (e) => { if (e.key === "Enter") $("newGo").click(); });
+$("aPass").addEventListener("keydown", (e) => { if (e.key === "Enter") $("aGo").click(); });
+</script>
+</body>
+</html>

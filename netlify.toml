@@ -50,12 +50,12 @@
   [headers.values]
     Content-Type = "text/plain; charset=utf-8"
 
-# Password gate for the learner platform (sales site at / stays public).
-# Active only when GATE_PASSWORD is set in Netlify env vars. The excluded
-# folders are reused by the public sales page (hero/badges/avatar engine).
+# Front-door gate for the learner platform (sales site at / stays public).
+# Active only when AUTH_SIGNING_SECRET is set. Excludes the asset/lib folders the
+# public sales page reuses, and the login page itself (the door to /api/auth).
 [[edge_functions]]
   path = "/platform/*"
-  excludedPath = ["/platform/assets/*", "/platform/lib/*"]
+  excludedPath = ["/platform/assets/*", "/platform/lib/*", "/platform/login.html"]
   function = "gate"
 
 [[edge_functions]]
@@ -81,6 +81,11 @@
 [[redirects]]
   from = "/api/ai"
   to = "/.netlify/functions/ai"
+  status = 200
+
+[[redirects]]
+  from = "/api/auth"
+  to = "/.netlify/functions/auth"
   status = 200
 
 [[redirects]]
