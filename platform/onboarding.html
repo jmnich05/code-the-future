@@ -34,7 +34,13 @@
         <div style="margin-top:12px"><button class="surprise" id="surprise">🎲 Surprise me</button></div>
       </div>
       <div>
-        <div class="field"><label>Display name</label>
+        <div class="field"><label>Your real name <span class="muted" style="font-weight:500">(just for your teacher — kept private)</span></label>
+          <div class="name-row">
+            <input class="input" id="firstName" maxlength="30" placeholder="First name" autocomplete="given-name">
+            <input class="input" id="lastName" maxlength="30" placeholder="Last name" autocomplete="family-name">
+          </div>
+        </div>
+        <div class="field" style="margin-top:16px"><label>Display name <span class="muted" style="font-weight:500">(your nickname — what everyone sees)</span></label>
           <input class="input" id="name" maxlength="20" placeholder="e.g. PixelFox, Nova, Sam…" autocomplete="off"></div>
         <div id="picker" style="margin-top:18px"></div>
       </div>
@@ -68,16 +74,27 @@
 
   document.getElementById("go").onclick = async function(){
     var btn = this;
-    if (name && !window.CTFFilter.isClean(name)){
-      document.getElementById("status").textContent = window.CTFFilter.message();
+    var st = document.getElementById("status");
+    var first = (document.getElementById("firstName").value || "").trim();
+    var last  = (document.getElementById("lastName").value || "").trim();
+    if (!first || !last){
+      st.textContent = "Please enter your first and last name.";
+      document.getElementById(first ? "lastName" : "firstName").focus(); return;
+    }
+    if ((!window.CTFFilter.isClean(first)) || (!window.CTFFilter.isClean(last)) || (name && !window.CTFFilter.isClean(name))){
+      st.textContent = window.CTFFilter.message();
       document.getElementById("name").focus(); return;
     }
     btn.disabled = true;
     cfg = builder.config();
     var profile = { display_name: name || "Explorer", avatar: cfg, onboarded: true };
-    try { localStorage.setItem("ctf:profile", JSON.stringify(profile)); } catch(e){}
-    var st = document.getElementById("status");
-    if (window.CTFDB && window.CTFDB.enabled) { await window.CTFDB.updateProfile(profile); window.CTFDB.logEvent("onboarded", {}); }
+    try { localStorage.setItem("ctf:profile", JSON.stringify(profile)); } catch(e){}  // nickname/avatar only — real name stays in the private table
+    if (window.CTFDB && window.CTFDB.enabled) {
+      await window.CTFDB.updateProfile(profile);
+      try { await window.CTFDB.updatePrivateIdentity({ first_name: first, last_name: last }); } catch(e){}
+      try { await window.CTFDB.joinCohort("FUTURE26"); } catch(e){}
+      window.CTFDB.logEvent("onboarded", {});
+    }
     else { st.textContent = "Saved on this device (cloud sync will catch up)."; }
     // Before launch, stop at the "see you July 6" screen; on/after launch (or for
     // testers) launch-soon.html forwards straight to the home. So always route there.

@@ -23,13 +23,19 @@ let enabled = false;
 const URL = (typeof window !== "undefined" && window.CTF_SUPABASE_URL) || "";
 const KEY = (typeof window !== "undefined" && window.CTF_SUPABASE_ANON_KEY) || "";
 
+function ensureClient() {
+  if (sb) return sb;
+  if (!URL || !KEY || /PASTE|YOUR_/.test(KEY)) return null;
+  sb = createClient(URL, KEY, { auth: { persistSession: true, autoRefreshToken: true } });
+  return sb;
+}
+
 async function init() {
-  if (sb) return user;
-  if (!URL || !KEY || /PASTE|YOUR_/.test(KEY)) {
+  if (sb && user) return user;
+  if (!ensureClient()) {
     console.warn("[CTFDB] Supabase not configured — running local-only. Add platform/lib/config.js.");
     return null;
   }
-  sb = createClient(URL, KEY, { auth: { persistSession: true, autoRefreshToken: true } });
   const { data: { session } } = await sb.auth.getSession();
   if (session) user = session.user;
   else {
@@ -105,6 +111,36 @@ async function getProfile() {
 async function updateProfile(fields) {
   if (!ok()) return null;
   const { data } = await sb.from("profiles").update(fields).eq("id", uid()).select().maybeSingle();
+  return data;
+}
+
+// ---- login (used by login.html after /api/auth sets the gate cookie) -------
+// Kids sign in with the synthetic email derived from their code (password = the
+// code); admins sign in with their email + the admin password.
+async function signInWithPassword(email, password) {
+  if (!ensureClient()) return { error: "not-configured" };
+  const { data, error } = await sb.auth.signInWithPassword({ email, password });
+  if (error) return { error: error.message };
+  user = data.user; enabled = !!user;
+  return { user };
+}
+
+async function signOut() {
+  if (sb) { try { await sb.auth.signOut(); } catch {} }
+  user = null; enabled = false;
+}
+
+// private_identity holds the kid's real name + their login code (self-readable).
+async function getPrivateIdentity() {
+  if (!ok()) return null;
+  const { data } = await sb.from("private_identity")
+    .select("first_name,last_name,parent_email,login_code").eq("user_id", uid()).maybeSingle();
+  return data;
+}
+
+async function updatePrivateIdentity(fields) {
+  if (!ok()) return null;
+  const { data } = await sb.from("private_identity").update(fields).eq("user_id", uid()).select().maybeSingle();
   return data;
 }
 
@@ -260,7 +296,8 @@ function onNewMessage(cohortId, cb) {
 }
 
 export const CTFDB = {
-  init, saveProgress, getProgress, saveWidgetResponse, getWidgetResponse,
+  init, signInWithPassword, signOut, getPrivateIdentity, updatePrivateIdentity,
+  saveProgress, getProgress, saveWidgetResponse, getWidgetResponse,
   awardBadge, listBadges, joinCohort, getProfile, updateProfile, logEvent,
   myCohorts, listMembers, listPosts, createPost, toggleReaction, listComments, addComment,
   joinPresence, listMessages, sendMessage, onNewMessage,
