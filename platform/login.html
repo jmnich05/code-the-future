@@ -138,6 +138,7 @@ $("kidGo").onclick = async () => {
   const { ok, data } = await post("login_kid", { code });
   if (!ok || !data.ok) { busy($("kidGo"), false); return showErr(data.error || "We couldn't find that code."); }
   await CTFDB.signInWithPassword(data.synthEmail, code);
+  try { localStorage.removeItem("ctf:unlockall"); } catch (e) {}   // kids stay on the paced path
   const prof = await CTFDB.getProfile();
   location.href = (prof && prof.onboarded) ? nextDest() : "/platform/onboarding.html";
 };
@@ -152,6 +153,7 @@ $("newGo").onclick = async () => {
   const { ok, data } = await post("register", { parentEmail, cohort });
   if (!ok || !data.ok) { busy($("newGo"), false); return showErr(data.error || "Couldn't set up the account."); }
   await CTFDB.signInWithPassword(data.synthEmail, data.code);
+  try { localStorage.removeItem("ctf:unlockall"); } catch (e) {}   // kids stay on the paced path
   $("revealCode").textContent = data.code;
   $("screen-login").style.display = "none";
   $("screen-code").style.display = "block";
@@ -169,6 +171,7 @@ $("aGo").onclick = async () => {
   if (!ok || !data.ok) { busy($("aGo"), false); return showErr(data.error || "Sign in failed."); }
   const r = await CTFDB.signInWithPassword(email, password);
   if (r && r.error) { busy($("aGo"), false); return showErr("Signed in to the gate, but data sign-in failed: " + r.error); }
+  try { localStorage.setItem("ctf:unlockall", "1"); } catch (e) {}   // staff = full access, skip the learner gates
   location.href = nextDest();
 };
 

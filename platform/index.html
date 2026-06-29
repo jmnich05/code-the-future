@@ -345,7 +345,7 @@
   async function boot(){
     var D = window.CTFDB; if (!D || !D.enabled) return;
     var p = await D.getProfile();
-    if (p && !p.onboarded){ location.href = "onboarding.html"; return; }
+    if (p && !p.onboarded && localStorage.getItem("ctf:unlockall") !== "1"){ location.href = "onboarding.html"; return; }
     if (p){
       setMe(p.avatar && Object.keys(p.avatar).length ? p.avatar : null, p.display_name || "Explorer");
       try { localStorage.setItem("ctf:profile", JSON.stringify({ display_name: p.display_name, avatar: p.avatar })); } catch(e){}
