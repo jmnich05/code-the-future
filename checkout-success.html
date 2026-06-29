@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" type="image/svg+xml" href="/platform/assets/logo-icon-tile.svg">
+<link rel="apple-touch-icon" href="/platform/assets/touch-icon.png">
+<title>Checkout Complete — Code the Future</title>
+<meta name="description" content="Your Code the Future checkout is complete.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Plus+Jakarta+Sans:wght@400;600;700;800&family=JetBrains+Mono:wght@600&display=swap" rel="stylesheet">
+<style>
+  :root{--blue:#2A5FF0;--teal:#12B2BC;--teal-bright:#26C7D1;--coral:#FF5A38;--amber:#FFB320;--navy:#0A1226;--navy-deep:#070C1A;--ink:#0C1322;--paper:#F6F8FE;--display:"Space Grotesk",sans-serif;--body:"Plus Jakarta Sans",sans-serif;--mono:"JetBrains Mono",monospace}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{min-height:100vh;font-family:var(--body);color:#fff;background:radial-gradient(700px 420px at 12% 10%,rgba(42,95,240,.45),transparent 65%),radial-gradient(620px 420px at 88% 90%,rgba(18,178,188,.32),transparent 65%),linear-gradient(160deg,var(--navy-deep),var(--navy));display:grid;place-items:center;padding:24px;line-height:1.6}
+  .card{width:min(720px,100%);background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.18);border-radius:28px;padding:42px;box-shadow:0 30px 90px rgba(0,0,0,.42);backdrop-filter:blur(14px)}
+  .brand{display:flex;align-items:center;gap:12px;font-family:var(--display);font-size:20px;font-weight:700;margin-bottom:30px;color:#fff;text-decoration:none}
+  .brand img{width:42px;height:42px;filter:drop-shadow(0 2px 8px rgba(0,0,0,.45))}
+  .brand span span{color:var(--teal-bright)}
+  .kicker{font-family:var(--mono);font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--teal-bright);margin-bottom:12px}
+  h1{font-family:var(--display);font-size:clamp(34px,7vw,56px);line-height:1.05;margin-bottom:16px}
+  p{color:rgba(255,255,255,.78);font-size:17px;max-width:58ch;margin-bottom:18px}
+  .next{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.16);border-radius:18px;padding:20px;margin:28px 0}
+  .next b{display:block;color:#fff;font-family:var(--display);font-size:18px;margin-bottom:6px}
+  .next ul{margin-left:20px;color:rgba(255,255,255,.76)}
+  .btns{display:flex;gap:12px;flex-wrap:wrap;margin-top:28px}
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;font-family:var(--display);font-weight:700;font-size:15px;padding:13px 22px;border-radius:999px;text-decoration:none;transition:transform .15s}
+  .btn:hover{transform:translateY(-2px)}
+  .btn-primary{background:linear-gradient(135deg,var(--coral),#FF7A38);color:#fff;box-shadow:0 8px 24px rgba(255,90,56,.35)}
+  .btn-ghost{color:#fff;border:1.5px solid rgba(255,255,255,.35)}
+  .tiny{font-family:var(--mono);font-size:11px;color:rgba(255,255,255,.46);margin-top:22px;overflow-wrap:anywhere}
+</style>
+</head>
+<body>
+  <main class="card">
+    <a class="brand" href="/"><img src="/platform/assets/logo-icon-dark.svg" alt="Code the Future logo"><span>Code the <span>Future</span></span></a>
+    <div class="kicker">Checkout complete</div>
+    <h1>You're in. Let's build what's next.</h1>
+    <p>Thanks for enrolling in Code the Future. Stripe has processed the checkout, and we'll follow up with your camper's login details, cohort schedule, and next steps.</p>
+    <div class="next">
+      <b>What happens next</b>
+      <ul>
+        <li>We'll confirm the camper details and preferred cohort time.</li>
+        <li>You'll get the platform login and launch instructions by email.</li>
+        <li>Your camper starts with Module 1: What Is AI?</li>
+      </ul>
+    </div>
+    <div class="btns">
+      <a class="btn btn-primary" href="/platform/">Camper log in →</a>
+      <a class="btn btn-ghost" href="/">Back to the site</a>
+    </div>
+    <div class="tiny" id="sessionNote"></div>
+  </main>
+  <script>
+    var id = new URLSearchParams(location.search).get("session_id");
+    if (id) document.getElementById("sessionNote").textContent = "Stripe session: " + id;
+  </script>
+</body>
+</html>

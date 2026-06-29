@@ -307,6 +307,31 @@
   .co .btn.wait{border:1.5px solid rgba(12,19,34,.3);color:var(--ink);background:transparent}
   @media(max-width:880px){.co-grid{grid-template-columns:1fr}}
 
+  /* checkout */
+  .checkout{background:var(--paper)}
+  .checkout-grid{display:grid;grid-template-columns:1fr 1fr;gap:22px;align-items:stretch}
+  .price-card{background:var(--card);border:1.5px solid var(--line);border-radius:24px;padding:30px;box-shadow:0 14px 40px rgba(12,19,34,.07);display:flex;flex-direction:column;gap:14px;position:relative;overflow:hidden}
+  .price-card.best{border-color:rgba(42,95,240,.55);box-shadow:0 22px 60px rgba(42,95,240,.16)}
+  .price-card.best::before{content:"Best value";position:absolute;top:18px;right:-34px;transform:rotate(35deg);background:linear-gradient(120deg,var(--blue),var(--teal-bright));color:#fff;font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:7px 42px}
+  .price-card h3{font-size:23px;padding-right:48px}
+  .price{font-family:var(--display);font-weight:700;font-size:42px;line-height:1;color:var(--blue)}
+  .price small{font-family:var(--body);font-size:15px;color:rgba(12,19,34,.58);font-weight:700}
+  .price-card p{color:rgba(12,19,34,.72);font-size:14.5px}
+  .price-card ul{list-style:none;display:grid;gap:9px;margin:4px 0 2px;padding:0}
+  .price-card li{display:flex;gap:9px;align-items:flex-start;font-size:14px;color:rgba(12,19,34,.82)}
+  .price-card li::before{content:"✓";font-family:var(--mono);font-weight:800;color:var(--teal)}
+  .checkout-form{margin-top:auto;display:grid;gap:12px}
+  .checkout-form .row2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .checkout-form label{font-size:13px;font-weight:800;display:grid;gap:6px;color:rgba(12,19,34,.78)}
+  .checkout-form input,.checkout-form select{width:100%;font-family:var(--body);font-size:15px;color:var(--ink);background:#fff;border:1.5px solid var(--line);border-radius:12px;padding:12px 14px;outline:none}
+  .checkout-form input:focus,.checkout-form select:focus{border-color:var(--teal)}
+  .checkout-form .btn{justify-content:center;width:100%}
+  .checkout-note{margin-top:18px;text-align:center;font-size:13px;color:rgba(12,19,34,.58)}
+  .checkout-status{min-height:20px;font-size:13px;line-height:1.45;color:rgba(12,19,34,.68)}
+  .checkout-status.error{color:#B73220;font-weight:700}
+  @media(max-width:880px){.checkout-grid{grid-template-columns:1fr}}
+  @media(max-width:560px){.checkout-form .row2{grid-template-columns:1fr}}
+
   /* signup form */
   .signup{background:linear-gradient(160deg,var(--navy-deep),#0e1d44 70%,#0b2d4d);color:#fff;position:relative;overflow:hidden}
   .signup::before{content:"";position:absolute;inset:0;background:radial-gradient(640px 360px at 85% 10%,rgba(61,116,255,.28),transparent 60%)}
@@ -371,7 +396,7 @@
     </div>
     <div class="nav-cta">
       <a class="btn btn-ghost" href="/platform/">Log In</a>
-      <a class="btn btn-primary" href="#cohorts">Sign Up</a>
+      <a class="btn btn-primary" href="#checkout">Check Out</a>
     </div>
   </div>
 </nav>
@@ -384,7 +409,7 @@
       <p class="lede">Code the Future is a hands-on AI camp where kids don't watch videos about technology — they <b>use real AI</b>: drawing for an AI that actually sees, training mini-models, and building things they're proud of.</p>
       <p class="lede">And they get a weekly hands-on session with a <b>coach who works in the industry</b> and is passionate about the future, alongside a <b>psychologist who specializes in child development</b> and helped develop the platform and curriculum.</p>
       <div class="hero-ctas">
-        <a class="btn btn-primary btn-big" href="#cohorts">Reserve a Spot</a>
+        <a class="btn btn-primary btn-big" href="#checkout">Check Out</a>
         <a class="btn btn-ghost btn-big" href="#film">▶ Walkthrough from co-founder Jon Nichols</a>
       </div>
       <div class="hero-meta">
@@ -634,12 +659,94 @@
   </div>
 </section>
 
+<section class="checkout" id="checkout">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <span class="kicker" style="color:var(--blue)">Secure checkout</span>
+      <h2>Choose your summer module plan.</h2>
+      <p>Pay online with Stripe. Start with Module 1 for $75, add more modules for $25 each, or grab the full four-module summer bundle for $125.</p>
+    </div>
+    <div class="checkout-grid">
+      <article class="price-card reveal">
+        <h3>Start with Module 1</h3>
+        <div class="price">$75 <small>for Module 1</small></div>
+        <p>The perfect starting point for a new camper: the first summer module, platform access, and the cohort experience.</p>
+        <ul>
+          <li>Module 1: What Is AI?</li>
+          <li>12 game-like missions plus the Big Mission capstone</li>
+          <li>Add one or two extra modules now for $25 each</li>
+        </ul>
+        <form class="checkout-form" data-plan="module-1">
+          <label>Parent email <input type="email" name="email" required placeholder="you@example.com" autocomplete="email"></label>
+          <div class="row2">
+            <label>Student first name <input type="text" name="studentFirstName" required placeholder="Charlotte" autocomplete="given-name"></label>
+            <label>Student last name <input type="text" name="studentLastName" required placeholder="Nichols" autocomplete="family-name"></label>
+          </div>
+          <label>How did you hear about us?
+            <select name="heardAbout" required>
+              <option value="" selected disabled>Pick one…</option>
+              <option>Facebook</option>
+              <option>Media</option>
+              <option>Google search</option>
+              <option>AI agent</option>
+              <option>Paid ad</option>
+              <option>Poster</option>
+              <option>Other</option>
+            </select>
+          </label>
+          <label>Add more modules
+            <select name="additionalModules">
+              <option value="0">No add-ons — Module 1 only ($75)</option>
+              <option value="1">Add 1 module — $100 total</option>
+              <option value="2">Add 2 modules — $125 total</option>
+            </select>
+          </label>
+          <button class="btn btn-blue btn-big" type="submit">Pay with Stripe →</button>
+          <div class="checkout-status" aria-live="polite"></div>
+        </form>
+      </article>
+      <article class="price-card best reveal">
+        <h3>All four modules</h3>
+        <div class="price">$125 <small>one-time bundle</small></div>
+        <p>Best value for families who know they want the whole summer arc. One checkout covers all four modules.</p>
+        <ul>
+          <li>Module 1 plus all three additional summer modules</li>
+          <li>Saves $25 compared with buying Module 1 + three add-ons</li>
+          <li>Secure card payment handled by Stripe</li>
+        </ul>
+        <form class="checkout-form" data-plan="all-four">
+          <label>Parent email <input type="email" name="email" required placeholder="you@example.com" autocomplete="email"></label>
+          <div class="row2">
+            <label>Student first name <input type="text" name="studentFirstName" required placeholder="Charlotte" autocomplete="given-name"></label>
+            <label>Student last name <input type="text" name="studentLastName" required placeholder="Nichols" autocomplete="family-name"></label>
+          </div>
+          <label>How did you hear about us?
+            <select name="heardAbout" required>
+              <option value="" selected disabled>Pick one…</option>
+              <option>Facebook</option>
+              <option>Media</option>
+              <option>Google search</option>
+              <option>AI agent</option>
+              <option>Paid ad</option>
+              <option>Poster</option>
+              <option>Other</option>
+            </select>
+          </label>
+          <button class="btn btn-primary btn-big" type="submit">Buy all four modules →</button>
+          <div class="checkout-status" aria-live="polite"></div>
+        </form>
+      </article>
+    </div>
+    <p class="checkout-note reveal">After checkout, we'll follow up with your camper's login details and cohort schedule. Your card details never touch this site — Stripe handles the payment page.</p>
+  </div>
+</section>
+
 <section class="signup" id="signup">
   <div class="wrap">
     <div class="reveal">
       <span class="kicker">Get on the list</span>
-      <h2>Spots are limited. Curiosity isn't.</h2>
-      <p>Tell us a little about your camper and which session you're eyeing. No payment now — we'll reach out with everything you need to enroll.</p>
+      <h2>Have a question before you check out?</h2>
+      <p>Tell us a little about your camper and which session you're eyeing. If you're ready to enroll now, use the secure checkout above.</p>
       <p style="margin-top:18px;font-size:14px">Already enrolled? <a href="/platform/" style="color:var(--teal-bright)">Log in to the platform →</a></p>
     </div>
     <form class="lead reveal" name="cohort-interest" method="POST" data-netlify="true" netlify-honeypot="bot-field" id="leadForm">
@@ -666,9 +773,9 @@
       <label class="hideme">Anything we should know? (optional)
         <textarea name="message" rows="3" placeholder="Questions, sibling pairs, scheduling notes…"></textarea>
       </label>
-      <button class="btn btn-primary btn-big hideme" type="submit" style="justify-content:center">Save My Spot →</button>
+      <button class="btn btn-primary btn-big hideme" type="submit" style="justify-content:center">Send My Question →</button>
       <p class="hideme" style="font-size:12px;color:rgba(255,255,255,.55);text-align:center;margin:0">We only use this to contact you about Code the Future. No spam, ever.</p>
-      <div class="ok">🎉 <b>You're on the list!</b><br>We'll email you with enrollment details soon. Tell a friend — small cohorts fill fast.</div>
+      <div class="ok">🎉 <b>Got it!</b><br>We'll email you back soon. If you're ready now, checkout is right above.</div>
     </form>
   </div>
 </section>
@@ -678,7 +785,7 @@
     <span>© 2026 Code the Future · Louisville, KY</span>
     <span style="display:flex;gap:14px;flex-wrap:wrap">
       <a href="/about.html">About</a><a href="/faq.html">FAQ</a><a href="/privacy.html">Privacy</a><a href="/terms.html">Terms</a>
-      <a href="/platform/">Camper Log In</a><a href="#signup">Reserve a Spot</a>
+      <a href="/platform/">Camper Log In</a><a href="#checkout">Check Out</a>
     </span>
   </div>
 </footer>
@@ -719,8 +826,8 @@
       '<div class="dates">' + c.dates + "</div>" +
       '<div class="meta">' + c.meta + "</div>" +
       '<div class="seats">' + c.seats + "</div>" +
-      '<a class="btn ' + (c.open ? "btn-blue" : "wait") + '" href="#signup" data-session="' + c.name + '">' +
-      (c.open ? "Reserve a spot" : "Join the waitlist") + "</a>";
+      '<a class="btn ' + (c.open ? "btn-blue" : "wait") + '" href="' + (c.open ? "#checkout" : "#signup") + '" data-session="' + c.name + '">' +
+      (c.open ? "Choose a plan" : "Join the waitlist") + "</a>";
     grid.appendChild(d);
     var o = document.createElement("option");
     o.textContent = c.name + " — " + c.dates;
@@ -735,6 +842,51 @@
     var want = a.getAttribute("data-session");
     for (var i = 0; i < sel.options.length; i++)
       if (sel.options[i].textContent.indexOf(want) === 0) { sel.selectedIndex = i; break; }
+  });
+
+  // Stripe checkout — secret key stays server-side in /api/checkout.
+  document.querySelectorAll(".checkout-form").forEach(function (checkoutForm) {
+    checkoutForm.addEventListener("submit", function (e) {
+      e.preventDefault();
+      var btn = checkoutForm.querySelector("button[type='submit']");
+      var status = checkoutForm.querySelector(".checkout-status");
+      var email = checkoutForm.querySelector("input[name='email']");
+      var first = checkoutForm.querySelector("input[name='studentFirstName']");
+      var last = checkoutForm.querySelector("input[name='studentLastName']");
+      var heard = checkoutForm.querySelector("select[name='heardAbout']");
+      var addOns = checkoutForm.querySelector("select[name='additionalModules']");
+      var original = btn.textContent;
+      status.classList.remove("error");
+      status.textContent = "Opening secure Stripe checkout…";
+      btn.disabled = true;
+      btn.textContent = "Sending you to Stripe…";
+      fetch("/api/checkout", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          plan: checkoutForm.dataset.plan,
+          customerEmail: email ? email.value : "",
+          studentFirstName: first ? first.value : "",
+          studentLastName: last ? last.value : "",
+          heardAbout: heard ? heard.value : "",
+          additionalModules: addOns ? addOns.value : 0
+        })
+      })
+        .then(function (r) { return r.json().then(function (d) { return { ok: r.ok, d: d }; }); })
+        .then(function (res) {
+          if (res.ok && res.d.url) {
+            window.location.href = res.d.url;
+            return;
+          }
+          throw new Error(res.d && res.d.error ? res.d.error : "Checkout could not start.");
+        })
+        .catch(function (err) {
+          status.classList.add("error");
+          status.textContent = err.message || "Checkout could not start. Please try again.";
+          btn.disabled = false;
+          btn.textContent = original;
+        });
+    });
   });
 
   // badge marquee (12 badges, doubled for a seamless loop)

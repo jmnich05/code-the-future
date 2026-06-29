@@ -1,5 +1,6 @@
 # Code the Future — production site (repo root).
-# Set OPENAI_API_KEY (and optionally OPENAI_MODEL / OPENAI_IMAGE_MODEL) in:
+# Set OPENAI_API_KEY (and optionally OPENAI_MODEL / OPENAI_IMAGE_MODEL) and
+# STRIPE_SECRET_KEY (for checkout) in:
 #   Netlify → Site configuration → Environment variables.
 # Keys live only on the server — never shipped to the browser.
 
@@ -111,4 +112,9 @@
 [[redirects]]
   from = "/api/notify"
   to = "/.netlify/functions/notify"
+  status = 200
+
+[[redirects]]
+  from = "/api/checkout"
+  to = "/.netlify/functions/checkout"
   status = 200
