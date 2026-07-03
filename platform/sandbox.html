@@ -84,7 +84,9 @@ h1.big{ font-family:var(--display); font-weight:700; font-size:clamp(1.8rem,5vw,
 #stage .bgempty{ position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:8px; color:#5F6B82; text-align:center; padding:20px; }
 #stage .bgempty .be{ font-size:3rem; }
 #stage .obj{ position:absolute; transform:translate(-50%,-50%); cursor:grab; user-select:none; -webkit-user-drag:none; }
-#stage .obj img{ display:block; width:100%; height:auto; pointer-events:none; }
+#stage .obj img{ display:block; width:100%; height:auto; pointer-events:none; filter:drop-shadow(0 4px 8px rgba(0,0,0,.4)); }
+#stage .obj{ animation:objland .35s cubic-bezier(.34,1.56,.64,1); }
+@keyframes objland{ from{ transform:translate(-50%,-50%) scale(.4); opacity:0; } to{ transform:translate(-50%,-50%) scale(1); opacity:1; } }
 #stage .obj.flip img{ transform:scaleX(-1); }
 #stage .obj.sel{ outline:3px dashed #FFD980; outline-offset:3px; border-radius:8px; }
 #paintcv{ position:absolute; inset:0; width:100%; height:100%; z-index:30; pointer-events:none; }
@@ -448,7 +450,9 @@ $('objGo').onclick=async ()=>{
     const small=await shrink(d.image, 320, true);
     const id='o'+Date.now();
     scene.objs.push({ id, src:small, x:50, y:60, w:18, flip:false, z:++zTop });
-    $('objIdea').value=''; persistScene(); select(id);
+    $('objIdea').value=''; persistScene();
+    renderScene();      // put the new object ON the stage…
+    select(id);         // …then highlight it, controls ready
   }catch(e){ toast(e.message&&e.message!=='x'?e.message:'The art robot got stuck — try again!'); }
   sceneBusy(false);
 };
