@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Live Room · Module 1 Run Sheet — Code the Future</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600;700&display=swap');
+:root{ --display:'Space Grotesk',sans-serif; --body:'Plus Jakarta Sans',system-ui,sans-serif; --mono:'JetBrains Mono',monospace;
+  --ink:#0C1322; --purple:#9B7BFF; --teal:#26C7D1; --paper:#f4f6fc; --card:#fff; --line:#e3e8f3; --muted:#5F6B82; }
+*{ box-sizing:border-box; margin:0; }
+body{ font-family:var(--body); color:var(--ink); background:var(--paper); line-height:1.5; padding:30px 22px 70px; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+.wrap{ max-width:900px; margin:0 auto; }
+.head{ background:linear-gradient(160deg,#101a3c,#0A1024 60%,#070C1A); color:#EAF1FF; border-radius:22px; padding:28px 30px; }
+.kick{ font-family:var(--mono); font-size:12px; letter-spacing:.22em; text-transform:uppercase; color:#9fb6ff; }
+.head h1{ font-family:var(--display); font-weight:700; font-size:clamp(1.6rem,4vw,2.2rem); margin:8px 0 6px; }
+.head p{ opacity:.86; max-width:64ch; }
+.urls{ display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:18px; }
+@media(max-width:640px){ .urls{ grid-template-columns:1fr; } }
+.urlbox{ background:rgba(255,255,255,.07); border:1.5px solid rgba(127,227,255,.3); border-radius:14px; padding:14px 16px; }
+.urlbox .ul{ font-family:var(--mono); font-size:10px; letter-spacing:.18em; text-transform:uppercase; color:#7ef0e6; margin-bottom:5px; }
+.urlbox code{ font-family:var(--mono); font-size:.92rem; color:#9BF5C7; word-break:break-all; }
+.urlbox small{ display:block; color:#9fb6e6; margin-top:5px; font-size:.8rem; }
+h2{ font-family:var(--display); font-weight:700; font-size:1.3rem; margin:28px 0 12px; }
+.card{ background:var(--card); border:1.5px solid var(--line); border-radius:16px; padding:16px 20px; margin-bottom:12px; }
+.card b.t{ font-family:var(--display); }
+table{ width:100%; border-collapse:collapse; background:var(--card); border:1.5px solid var(--line); border-radius:16px; overflow:hidden; }
+th,td{ text-align:left; padding:11px 14px; border-bottom:1px solid var(--line); vertical-align:top; font-size:.93rem; }
+th{ font-family:var(--mono); font-size:10.5px; letter-spacing:.14em; text-transform:uppercase; color:var(--muted); background:#f0f3fa; }
+td .st{ font-family:var(--display); font-weight:700; }
+td .min{ font-family:var(--mono); font-size:.8rem; color:#2A5FF0; white-space:nowrap; }
+tr.brk td{ background:#fff6e6; }
+.keys{ display:flex; gap:8px; flex-wrap:wrap; margin-top:8px; }
+.key{ font-family:var(--mono); font-size:.8rem; background:#eef1f8; border:1.5px solid var(--line); border-bottom-width:3px; border-radius:8px; padding:4px 10px; }
+ul.check{ list-style:none; padding:0; } ul.check li{ margin:7px 0; padding-left:26px; position:relative; }
+ul.check li::before{ content:"☐"; position:absolute; left:2px; color:var(--purple); font-size:1.05rem; }
+.tip{ background:#f3ecff; border:1.5px solid #d9c9ff; border-radius:14px; padding:13px 16px; margin-top:12px; font-size:.92rem; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="head">
+    <div class="kick">📡 Live Room · In-Person Session 1 (Module 1)</div>
+    <h1>Run Sheet — recap games + the Big Build pick (~25 min)</h1>
+    <p>The interactive device block for the first library session. You project the <b>host screen</b>; kids join on their tablets and vote/play along. Ends with everyone picking their Module 4 Big Build — live on the big screen.</p>
+    <div class="urls">
+      <div class="urlbox"><div class="ul">You project (staff login first)</div><code>codethefuture.net/platform/live/host.html</code><small>Log in on the Staff tab beforehand — the host screen is staff-only.</small></div>
+      <div class="urlbox"><div class="ul">Kids open (shown on the lobby screen)</div><code>codethefuture.net/platform/live/</code><small>They log in with their kid code, then just open this — no room code needed.</small></div>
+    </div>
+  </div>
+
+  <h2>Your controls</h2>
+  <div class="card">
+    <b class="t">Next ›</b> advances the stage on every device at once · <b class="t">Reveal ✓</b> shows the answer + talking point (and locks in points) · <b class="t">‹ Back</b> if you need it.
+    <div class="keys"><span class="key">→ / space</span> next <span class="key">←</span> back <span class="key">R</span> reveal</div>
+    <div class="tip">💡 Rhythm for every round: read the question out loud → let them tap → watch the bars fill ("4 of 5 answered!") → ask one kid to defend their vote → <b>Reveal</b> → read the talking point → Next.</div>
+  </div>
+
+  <h2>The stages (13 screens · ~25 min)</h2>
+  <table>
+    <tr><th style="width:64px">Time</th><th>Stage</th><th>How to run it</th></tr>
+    <tr><td class="min">3 min</td><td class="st">1 · Lobby</td><td>Kids log in and open the live page — names pop onto the projector as they land. Hype each arrival by name.</td></tr>
+    <tr><td class="min">3 min</td><td class="st">2 · Warm-up vote<br><small>"AI is most like…"</small></td><td>Opinion poll, no right answer. Ask a defender of each option to say why. Reveal shows the discussion note (patterns + puppy-training are the camp answers).</td></tr>
+    <tr><td class="min">8 min</td><td class="st">3–8 · AI or NOT?<br><small>6 rounds</small></td><td>The scored game — YouTube recs, calculator, face unlock, flashlight, spam filter, dice. Keep it fast and loud. Points auto-tally for the leaderboard.</td></tr>
+    <tr><td class="min">5 min</td><td class="st">9–11 · Mythbusters<br><small>3 rounds</small></td><td>"AI knows everything" · "AI can make mistakes" · "AI has feelings" — True/False/Sort-of. The reveals carry the AI-literacy punchlines; let each one breathe for 30 seconds of talk.</td></tr>
+    <tr><td class="min">5 min</td><td class="st">12 · Pick your Big Build 🌉</td><td>The finale. Their devices show a button into the <b>Dream Picker</b> (12 builds + personalization). As each kid locks theirs in, it pops onto the projector with their hero — "Ava · Sparky the baby dragon!" Cheer every pick. (Undecided kids can change it later — the picker is always available.)</td></tr>
+    <tr><td class="min">1 min</td><td class="st">13 · Leaderboard + wrap</td><td>Top scores get medals on screen; every kid sees their own score on their device. Point them to the week's missions on the platform.</td></tr>
+  </table>
+
+  <h2>Before the session</h2>
+  <div class="card">
+    <ul class="check">
+      <li>Staff login done on the projector laptop (Staff tab) → open the host URL, confirm "0 in the room" shows.</li>
+      <li>Kid tablets charged + logged in with their codes (a kid who isn't logged in will hit the sign-in page first — that's fine, it forwards back).</li>
+      <li>Library wifi test: open the kid URL on one tablet, confirm the name pops on the host lobby.</li>
+      <li>Projector: use the browser's full-screen mode (F11 / ⌃⌘F).</li>
+      <li>Optional: print the <b>Big Build menu board</b> (big-build-menu.html) or keep it in a second tab to walk the 12 options before the pick.</li>
+    </ul>
+  </div>
+  <div class="tip">🧭 Where this fits in the 90 minutes: this is the heart of the <b>screens-up half</b> (after the break). See <b>class-01-facilitator-guide.html</b> for the full session; slot this block in place of the solo-missions segment or after a shorter version of it.</div>
+</div>
+</body>
+</html>
