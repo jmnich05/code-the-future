@@ -11,8 +11,12 @@
   var DONE_KEY = "ctf:tour:v1:done";
   var AT_KEY = "ctf:tour:v1:at";   // resume marker (step index) — persists across the home→board hop
   function pageOf(st) { return (st && st.page) || "home"; }
-  function currentPage() { return /\/board\.html/.test(location.pathname) ? "board" : "home"; }
-  function pageURL(pg) { return pg === "board" ? "board.html" : "index.html"; }
+  function currentPage() {
+    if (/\/board\.html/.test(location.pathname)) return "board";
+    if (/\/missions\.html/.test(location.pathname)) return "missions";
+    return "home";
+  }
+  function pageURL(pg) { return pg === "board" ? "board.html" : pg === "missions" ? "missions.html" : "index.html"; }
   function atMarker() { try { var v = localStorage.getItem(AT_KEY); return v == null ? null : parseInt(v, 10); } catch (e) { return null; } }
   function setAt(n) { try { localStorage.setItem(AT_KEY, String(n)); } catch (e) {} }
   function clearAt() { try { localStorage.removeItem(AT_KEY); } catch (e) {} }
@@ -44,7 +48,14 @@
       { page: "home", sel: '.me-dock, a.tile[href="profile.html"]', t: "This is YOU 🧑‍🚀",
         body: "Up here is your very own character — that's you on the platform! Tap it any time to change your hair, your colors, and your gear." },
       { page: "home", sel: 'a.tile[href="profile.html"], .me-dock', t: "Earn badges and gear 🏅",
-        body: "Every mission you finish earns a badge and unlocks new gear — capes, hats, jetpacks and more. Come back to your character to try them on. Next, let's go see where you talk with your cohort!" },
+        body: "Every mission you finish earns a badge and unlocks new gear — capes, hats, jetpacks and more. Come back to your character to try them on. Next stop: your mission map!" },
+      // ---- these live on the MISSIONS map page; the tour walks the kid there ----
+      { page: "missions", sel: ".mapwrap", t: "Your journey map 🗺️",
+        body: "Every module is a real adventure across Louisville! Each numbered stop on the map is one mission — 12 stops in all. Finished stops get a check mark, locked ones show a padlock, and the glowing stop is where you are right now. Tap it to play!" },
+      { page: "missions", sel: "#curcard, .cur", t: "Your next stop, always ready 🎯",
+        body: "See your character standing on the map? That's you — “You are here!” And this card at the bottom always points to your very next mission. Whenever you visit the map, just tap Continue and you're back on the trail." },
+      { page: "missions", sel: ".mods", t: "Four maps, one summer 🧭",
+        body: "These tabs up here hold a whole map for every module — four adventures across the summer, ending with a journey across the Big Four Bridge where you build your OWN app or game. Now, let's go see where you talk with your cohort!" },
       // ---- these live on the BOARD page; the tour walks the kid there ----
       { page: "board", sel: '#viewFeed, .composer, #centerPanel', t: "Your message board 💬",
         body: "Here it is — your cohort board, your clubhouse! Type in this box to share the cool things you make with the other kids learning with you." },
@@ -318,8 +329,8 @@
 
   window.CTFTour = { start: start, maybeStart: maybeStart, reset: function () { try { localStorage.removeItem(DONE_KEY); } catch (e) {} clearAt(); } };
 
-  // auto-run on the home page (first run) and resume on the board page (mid-tour)
-  if (/\/platform\/(index|board)\.html/.test(location.pathname) ||
+  // auto-run on the home page (first run); resume on the missions map + board (mid-tour)
+  if (/\/platform\/(index|missions|board)\.html/.test(location.pathname) ||
       /\/platform\/($|\?|#)/.test(location.pathname + location.search) ||
       /platform\/?$/.test(location.pathname)) {
     if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init);
