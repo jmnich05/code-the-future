@@ -105,6 +105,11 @@
   status = 200
 
 [[redirects]]
+  from = "/api/share-art"
+  to = "/.netlify/functions/share-art"
+  status = 200
+
+[[redirects]]
   from = "/api/tts"
   to = "/.netlify/functions/tts"
   status = 200

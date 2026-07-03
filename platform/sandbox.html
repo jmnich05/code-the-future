@@ -278,9 +278,24 @@ $('picSave').onclick=()=>{ if(!picLoaded) return; saveToGal(composite(), ($('pic
 $('picDl').onclick=()=>{ if(!picLoaded) return; const a=document.createElement('a'); a.href=composite(); a.download='my-sandbox-art.jpg'; a.click(); };
 $('picShare').onclick=async ()=>{
   if(!picLoaded) return;
-  const idea=($('picIdea').value||'a surprise').slice(0,120);
+  const idea=($('picIdea').value||'my picture').slice(0,120);
+  if(!clean(idea)) return;
+  const btn=$('picShare'); btn.disabled=true; btn.textContent='Sharing…';
   saveToGal(composite(), idea.slice(0,60));
-  await shareToBoard('🎨 '+name+' made something in the Sandbox!\n\nMy idea: “'+idea+'” — I made it with the art robot and painted on top myself. Ask me to show you!');
+  try{
+    await CTFDB.init();
+    const tok = CTFDB.enabled && CTFDB.getAccessToken ? await CTFDB.getAccessToken() : null;
+    if(!tok) throw new Error('offline');
+    const r=await fetch('/api/share-art',{ method:'POST',
+      headers:{ 'Content-Type':'application/json', Authorization:'Bearer '+tok },
+      body:JSON.stringify({ image:composite(), title:idea }) });
+    const d=await r.json();
+    if(!r.ok||!d.ok) throw new Error(d.error||'hiccup');
+    toast('🏆 Your picture is on Show & Tell! Go see it on the Board.');
+  }catch(e){
+    toast(e.message==='offline' ? 'Connect to the internet to share!' : (e.message&&e.message!=='hiccup'?e.message:'Sharing hiccup — try again!'));
+  }
+  btn.disabled=false; btn.textContent='🏆 Share to Show & Tell';
 };
 
 // ================= STORY LAB =================

@@ -130,6 +130,14 @@ async function signOut() {
   user = null; enabled = false;
 }
 
+// current session's access token — used to authenticate calls to our own
+// Netlify functions (e.g. /api/share-art) as the signed-in learner
+async function getAccessToken() {
+  if (!ensureClient()) return null;
+  const { data: { session } } = await sb.auth.getSession();
+  return session ? session.access_token : null;
+}
+
 // private_identity holds the kid's real name + their login code (self-readable).
 async function getPrivateIdentity() {
   if (!ok()) return null;
@@ -296,7 +304,7 @@ function onNewMessage(cohortId, cb) {
 }
 
 export const CTFDB = {
-  init, signInWithPassword, signOut, getPrivateIdentity, updatePrivateIdentity,
+  init, signInWithPassword, signOut, getAccessToken, getPrivateIdentity, updatePrivateIdentity,
   saveProgress, getProgress, saveWidgetResponse, getWidgetResponse,
   awardBadge, listBadges, joinCohort, getProfile, updateProfile, logEvent,
   myCohorts, listMembers, listPosts, createPost, toggleReaction, listComments, addComment,

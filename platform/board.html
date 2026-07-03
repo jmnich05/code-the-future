@@ -54,6 +54,7 @@
   .ph .who .role{ font-family:var(--font-mono); font-size:10px; letter-spacing:.06em; text-transform:uppercase; background:var(--blue-600); color:#fff; border-radius:999px; padding:2px 8px; margin-left:6px; }
   .ph .when{ margin-left:auto; font-size:.8rem; color:var(--ink-400); }
   .pbody{ margin:12px 0; font-size:1.05rem; color:var(--ink-700); white-space:pre-wrap; }
+  .pbody .pimg{ display:block; max-width:100%; max-height:420px; border-radius:14px; margin-top:8px; border:1px solid var(--ink-200); box-shadow:var(--shadow-sm); }
   .react{ display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
   .react .r{ border:1px solid var(--ink-200); background:var(--white); border-radius:999px; padding:5px 11px; font-size:.85rem; cursor:pointer; }
   .react .r:hover{ border-color:var(--blue-600); }
@@ -299,11 +300,17 @@
     var prof = p.profiles || {};
     var rx = {};
     (p.post_reactions||[]).forEach(function(r){ rx[r.emoji] = rx[r.emoji] || {n:0,mine:false}; rx[r.emoji].n++; if(state.me && r.user_id===state.me) rx[r.emoji].mine=true; });
+    // Sandbox creations: a "📷 <our-storage-url>" line becomes an inline picture.
+    // Escaped first; only exact public showtell-bucket URLs are promoted to <img>.
+    function fmtBody(b){
+      return esc(b).replace(/📷 (https:\/\/[a-z0-9]+\.supabase\.co\/storage\/v1\/object\/public\/showtell\/[A-Za-z0-9._-]+)/g,
+        '<a href="$1" target="_blank" rel="noopener"><img class="pimg" src="$1" alt="Shared Sandbox creation" loading="lazy"></a>');
+    }
     var chips = EMOJIS.map(function(e){ var d = rx[e]; return '<button class="r'+(d&&d.mine?" mine":"")+'" data-react="'+e+'" data-post="'+p.id+'">'+e+(d?" "+d.n:"")+'</button>'; }).join("");
     var n = (p.post_comments||[]).length;
     return '<div class="post-card'+(p.pinned?" pinned":"")+'">'+(p.pinned?'<div class="pinrow">📌 Pinned · from your teacher</div>':"")+
       '<div class="ph"><span class="avatar sm">'+av(prof.avatar)+'</span><span class="who">'+esc(prof.display_name||"Explorer")+(p.isStaff?' <span class="role">Teacher</span>':"")+'</span>'+
-      '<span class="when">'+ago(p.created_at)+'</span></div><div class="pbody">'+esc(p.body)+'</div>'+
+      '<span class="when">'+ago(p.created_at)+'</span></div><div class="pbody">'+fmtBody(p.body)+'</div>'+
       '<div class="react">'+chips+'<button class="replies" data-comments="'+p.id+'">'+(n?n+" replies":"Reply")+'</button></div>'+
       '<div class="comments" id="c-'+p.id+'"><div class="clist"></div><div class="crow"><input maxlength="1000" placeholder="Write a reply…"><button data-send="'+p.id+'">Send</button></div></div></div>';
   }
