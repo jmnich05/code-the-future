@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sticker Pack — Code the Future</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@600;700&family=Plus+Jakarta+Sans:wght@400;600;700&family=JetBrains+Mono:wght@500&display=swap');
+*{ box-sizing:border-box; margin:0; }
+body{ font-family:'Plus Jakarta Sans',system-ui,sans-serif; color:#EAF1FF; padding:34px 20px 60px;
+  background:radial-gradient(120% 90% at 80% -10%, rgba(155,123,255,.25), transparent 55%),
+  linear-gradient(165deg,#101a3c,#0A1024 55%,#070C1A); min-height:100vh; }
+.wrap{ max-width:1060px; margin:0 auto; }
+h1{ font-family:'Space Grotesk',sans-serif; font-size:clamp(1.7rem,4vw,2.4rem); }
+.sub{ color:#9fb6e6; margin:8px 0 26px; max-width:70ch; line-height:1.5; }
+.grid{ display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:18px; }
+.card{ background:rgba(255,255,255,.05); border:1px solid rgba(127,227,255,.25); border-radius:20px; padding:18px; text-align:center; }
+.card .art{ background:
+  conic-gradient(#2a3555 0 25%, #232c48 0 50%, #2a3555 0 75%, #232c48 0) 0 0/24px 24px; /* checker = transparency */
+  border-radius:14px; padding:14px; }
+.card img, .card object{ width:100%; height:auto; display:block; }
+.card h3{ font-family:'Space Grotesk',sans-serif; margin:12px 0 3px; }
+.card p{ font-size:.85rem; color:#9fb6e6; }
+.tag{ display:inline-block; font-family:'JetBrains Mono',monospace; font-size:10px; letter-spacing:.12em; text-transform:uppercase; color:#06223b; background:linear-gradient(120deg,#9BF5C7,#26C7D1); border-radius:999px; padding:3px 10px; margin-top:8px; }
+.note{ margin-top:26px; background:rgba(255,179,32,.1); border:1.5px solid rgba(255,179,32,.4); border-radius:16px; padding:14px 18px; font-size:.92rem; line-height:1.55; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>🎁 The Sticker Pack — v1 concepts</h1>
+  <p class="sub">Seven die-cut designs for the in-person sessions. All PNGs are 1024×1024 with transparent backgrounds and baked-in white kiss-cut borders — ready for any print shop or StickerMule/Sticker Giant upload. The logo sticker is exact-brand vector (SVG), crisp at any size.</p>
+  <div class="grid">
+    <div class="card"><div class="art"><object data="logo-sticker.svg" type="image/svg+xml" width="100%"></object></div><h3>The Classic</h3><p>Exact brand mark + wordmark ring</p><span class="tag">vector · print any size</span></div>
+    <div class="card"><div class="art"><img src="future-builder.png"></div><h3>Future Builder</h3><p>The all-purpose handout — every kid's first sticker</p><span class="tag">session 1</span></div>
+    <div class="card"><div class="art"><img src="ai-apprentice.png"></div><h3>AI Apprentice</h3><p>The guild crest — matches the in-person theme</p><span class="tag">session 1</span></div>
+    <div class="card"><div class="art"><img src="boss-of-ai.png"></div><h3>I'm the Boss of AI</h3><p>The Module 1 mantra, wearable</p><span class="tag">module 1 finisher</span></div>
+    <div class="card"><div class="art"><img src="bug-hunter.png"></div><h3>Bug Hunter</h3><p>For catching the AI's mistakes (fact-checker energy)</p><span class="tag">earned reward</span></div>
+    <div class="card"><div class="art"><img src="shipped-it.png"></div><h3>Shipped It!</h3><p>For publishing a build — Sandbox shares + Module 4</p><span class="tag">earned reward</span></div>
+    <div class="card"><div class="art"><img src="louisville-crew.png"></div><h3>Louisville Crew</h3><p>Hometown pride — bridge, balloon-bot, and stars</p><span class="tag">anytime</span></div>
+  </div>
+  <div class="note">🖨️ <b>Print notes:</b> order as <b>die-cut (kiss-cut) vinyl, 3″</b> (2.5″ for Bug Hunter/Shipped It as reward minis). Upload the PNGs as-is — the white border is part of the art. Matte or glossy both work; holographic vinyl on "The Classic" would look incredible. Files live in <code>docs/stickers/</code> (never served on the live site).</div>
+</div>
+</body>
+</html>
