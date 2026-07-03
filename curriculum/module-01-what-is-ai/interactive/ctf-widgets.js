@@ -702,77 +702,185 @@
   }
 
   // =========================================================================
-  // NEURON — strengthen connections (weights!) to light the output. You only
-  // have a few strength points — spend them on the connections that matter.
+  // NEURON — "Be the Trainer", now a living network. Connections CHARGE UP:
+  // every tap pumps energy into a line and it visibly thickens — but each one
+  // has a hidden threshold before it snaps open and can carry signal. Three
+  // escalating levels (Spark → Surge → Storm); energy is scarce, so kids
+  // spend taps strategically. Breathing neurons, flowing charge, traveling
+  // signal pulses. Always solvable: the energy budget is rolled from the
+  // cheapest path + a little slack.
   // =========================================================================
   function renderNeuron(root, cfg, id) {
     root.innerHTML = header(cfg);
-    var points = cfg.points || 4;
-    // fixed tiny net: 2 inputs → 2 hidden → 1 output; 6 edges
-    var nodes = { a: [70, 70], b: [70, 210], h1: [240, 70], h2: [240, 210], out: [410, 140] };
-    var edges = [["a", "h1"], ["a", "h2"], ["b", "h1"], ["b", "h2"], ["h1", "out"], ["h2", "out"]];
-    var strength = edges.map(function () { return 0; });
+
+    var LEVELS = [
+      { name: 'Spark', h: 280, slack: 3,
+        nodes: { a:[60,70], b:[60,210], h1:[240,70], h2:[240,210], out:[420,140] },
+        ins: ['a','b'], layers: [['a','b'],['h1','h2'],['out']],
+        edges: [['a','h1'],['a','h2'],['b','h1'],['b','h2'],['h1','out'],['h2','out']] },
+      { name: 'Surge', h: 320, slack: 3,
+        nodes: { a:[55,60], b:[55,160], c:[55,260], h1:[240,60], h2:[240,160], h3:[240,260], out:[425,160] },
+        ins: ['a','b','c'], layers: [['a','b','c'],['h1','h2','h3'],['out']],
+        edges: [['a','h1'],['a','h2'],['b','h1'],['b','h2'],['b','h3'],['c','h2'],['c','h3'],['h1','out'],['h2','out'],['h3','out']] },
+      { name: 'Storm', h: 360, slack: 4,
+        nodes: { a:[50,60], b:[50,180], c:[50,300], h1:[195,50], h2:[195,140], h3:[195,230], h4:[195,315], g1:[330,105], g2:[330,255], out:[430,180] },
+        ins: ['a','b','c'], layers: [['a','b','c'],['h1','h2','h3','h4'],['g1','g2'],['out']],
+        edges: [['a','h1'],['a','h2'],['b','h2'],['b','h3'],['c','h3'],['c','h4'],['h1','g1'],['h2','g1'],['h2','g2'],['h3','g1'],['h3','g2'],['h4','g2'],['g1','out'],['g2','out']] }
+    ];
 
     var box = el('div', 'ctf-neuron');
-    box.innerHTML = '<svg viewBox="0 0 480 280" class="ctf-neuron-svg"></svg>' +
-      '<div class="ctf-neuron-hud"><span class="ctf-neuron-pts"></span><button class="ctf-btn ctf-neuron-send">⚡ Send the signal!</button></div>';
     root.appendChild(box);
     var fb = el('div', 'ctf-feedback'); root.appendChild(fb);
     var done = completionCard(cfg); if (done) root.appendChild(done);
-    var svg = box.querySelector('svg'), ptsEl = box.querySelector('.ctf-neuron-pts');
 
-    function used() { return strength.reduce(function (a, b) { return a + b; }, 0); }
-    function draw(lit) {
-      lit = lit || {};
-      svg.innerHTML =
-        edges.map(function (e, i) {
-          var p1 = nodes[e[0]], p2 = nodes[e[1]];
-          return '<line data-e="' + i + '" x1="' + p1[0] + '" y1="' + p1[1] + '" x2="' + p2[0] + '" y2="' + p2[1] + '"' +
-            ' stroke="' + (lit['e' + i] ? '#FFB320' : (strength[i] ? '#2A5FF0' : '#DDE2EC')) + '"' +
-            ' stroke-width="' + (3 + strength[i] * 5) + '" stroke-linecap="round" style="cursor:pointer"/>';
-        }).join('') +
-        Object.keys(nodes).map(function (k) {
-          var p = nodes[k], isOut = k === 'out', isIn = k === 'a' || k === 'b';
-          return '<circle cx="' + p[0] + '" cy="' + p[1] + '" r="' + (isOut ? 30 : 22) + '" fill="' +
-            (lit[k] ? '#FFB320' : isIn ? '#12B2BC' : isOut ? '#0F1B3A' : '#2A5FF0') + '"' +
-            (isOut && lit[k] ? ' style="filter:drop-shadow(0 0 14px #FFB320)"' : '') + '/>' +
-            (isOut ? '<text x="' + p[0] + '" y="' + (p[1] + 5) + '" text-anchor="middle" font-size="14" font-weight="700" fill="#fff">' + (lit[k] ? '💡' : 'OUT') + '</text>' : '');
-        }).join('');
-      ptsEl.textContent = 'Strength points left: ' + (points - used());
-      svg.querySelectorAll('line').forEach(function (ln) {
-        ln.addEventListener('click', function () {
-          var i = +ln.getAttribute('data-e');
-          if (strength[i] < 2 && used() < points) strength[i]++;
-          else strength[i] = 0;
-          draw();
+    var li = 0, L, thr, charge, open, budget, energy, won, sparkT;
+
+    function rollLevel(n) {
+      li = n; L = LEVELS[n]; won = false;
+      thr = L.edges.map(function () { return 2 + Math.floor(Math.random() * (n === 0 ? 2 : 3)); });   // hidden: 2-3 taps (L1) / 2-4
+      charge = L.edges.map(function () { return 0; });
+      open = L.edges.map(function () { return false; });
+      // cheapest input→out path (by threshold sum) so every roll is winnable
+      var best = {}; L.ins.forEach(function (k) { best[k] = 0; });
+      L.layers.slice(1).forEach(function (layer) {
+        layer.forEach(function (nk) {
+          var c = Infinity;
+          L.edges.forEach(function (e, i) { if (e[1] === nk && best[e[0]] != null) c = Math.min(c, best[e[0]] + thr[i]); });
+          if (c < Infinity) best[nk] = c;
         });
       });
+      budget = (best.out || 6) + L.slack;
+      energy = budget;
+      build();
     }
-    box.querySelector('.ctf-neuron-send').addEventListener('click', function () {
-      // a path lights if every edge on it has strength >= 1
-      var s = {}; edges.forEach(function (e, i) { s[e[0] + ">" + e[1]] = strength[i]; });
-      var lit = { a: 1, b: 1 };
-      var litEdges = {};
-      ["h1", "h2"].forEach(function (h) {
-        if (s["a>" + h] || s["b>" + h]) {
-          lit[h] = 1;
-          if (s["a>" + h]) litEdges["e" + edges.findIndex(function (e) { return e[0] === "a" && e[1] === h; })] = 1;
-          if (s["b>" + h]) litEdges["e" + edges.findIndex(function (e) { return e[0] === "b" && e[1] === h; })] = 1;
-        }
+
+    function build() {
+      box.innerHTML =
+        '<div class="ctf-nn-top"><span class="ctf-nn-lvl">🧠 Level ' + (li + 1) + ' of 3 · ' + L.name + '</span><span class="ctf-nn-energy"></span></div>' +
+        '<svg viewBox="0 0 480 ' + L.h + '" class="ctf-neuron-svg"></svg>' +
+        '<div class="ctf-neuron-hud"><button class="ctf-btn ctf-btn-ghost ctf-nn-reset">↺ Reset</button><button class="ctf-btn ctf-neuron-send">⚡ Send the signal!</button></div>';
+      box.querySelector('.ctf-nn-reset').addEventListener('click', function () { rollLevel(li); fb.className = 'ctf-feedback'; });
+      box.querySelector('.ctf-neuron-send').addEventListener('click', send);
+      draw();
+      clearInterval(sparkT);
+      sparkT = setInterval(idleSpark, 1400);   // little synapse sparkles keep it alive
+    }
+
+    function hud() {
+      var pips = '';
+      for (var i = 0; i < budget; i++) pips += '<i class="' + (i < energy ? 'on' : '') + '"></i>';
+      box.querySelector('.ctf-nn-energy').innerHTML = 'Energy <span class="ctf-nn-pips">' + pips + '</span>';
+    }
+
+    function edgeEl(i) { return box.querySelector('[data-e="' + i + '"]'); }
+    function draw(lit) {
+      lit = lit || {};
+      var svg = box.querySelector('svg');
+      svg.innerHTML =
+        L.edges.map(function (e, i) {
+          var p1 = L.nodes[e[0]], p2 = L.nodes[e[1]];
+          var w = open[i] ? 8 : 2.5 + charge[i] * 2.2;                       // taps visibly fatten the line…
+          var col = lit['e' + i] ? '#FFB320' : open[i] ? '#2A5FF0' : charge[i] ? '#8FB0F5' : '#DDE2EC';
+          return '<line data-e="' + i + '" x1="' + p1[0] + '" y1="' + p1[1] + '" x2="' + p2[0] + '" y2="' + p2[1] + '"' +
+            ' stroke="' + col + '" stroke-width="' + w + '" stroke-linecap="round"' +
+            ' class="' + (open[i] ? 'ctf-nn-open' : 'ctf-nn-charging') + (lit['e' + i] ? ' ctf-nn-lit' : '') + '"/>';
+        }).join('') +
+        Object.keys(L.nodes).map(function (k) {
+          var p = L.nodes[k], isOut = k === 'out', isIn = L.ins.indexOf(k) > -1;
+          var r = isOut ? 28 : isIn ? 20 : 17;
+          return '<g class="ctf-nn-node" style="animation-delay:' + ((p[0] + p[1]) % 7) * .3 + 's">' +
+            '<circle cx="' + p[0] + '" cy="' + p[1] + '" r="' + r + '" fill="' +
+            (lit[k] ? '#FFB320' : isIn ? '#12B2BC' : isOut ? '#0F1B3A' : '#2A5FF0') + '"' +
+            (lit[k] ? ' style="filter:drop-shadow(0 0 14px #FFB320)"' : '') + '/>' +
+            (isOut ? '<text x="' + p[0] + '" y="' + (p[1] + 5) + '" text-anchor="middle" font-size="13" font-weight="700" fill="#fff">' + (lit[k] ? '💡' : 'OUT') + '</text>' : '') + '</g>';
+        }).join('');
+      hud();
+      svg.querySelectorAll('line').forEach(function (ln) {
+        ln.addEventListener('click', function () { tap(+ln.getAttribute('data-e')); });
       });
-      var outOk = false;
-      ["h1", "h2"].forEach(function (h) {
-        if (lit[h] && s[h + ">out"]) { outOk = true; litEdges["e" + edges.findIndex(function (e) { return e[0] === h && e[1] === "out"; })] = 1; }
+    }
+
+    function tap(i) {
+      if (won) return;
+      if (open[i]) { pulseLine(i); return; }                                  // already open — no waste
+      if (energy <= 0) { fb.className = 'ctf-feedback show info'; fb.innerHTML = '⚡ Out of energy! Tap <b>Reset</b> to re-plan — spend your taps on ONE full path.'; return; }
+      energy--; charge[i]++;
+      if (charge[i] >= thr[i]) {                                              // …until the hidden threshold SNAPS it open
+        open[i] = true; draw(); snapSpark(i);
+      } else {
+        var ln = edgeEl(i);
+        ln.setAttribute('stroke-width', 2.5 + charge[i] * 2.2);
+        ln.setAttribute('stroke', '#8FB0F5');
+        pulseLine(i); hud();
+      }
+    }
+    function pulseLine(i) { var ln = edgeEl(i); if (!ln) return; ln.classList.remove('ctf-nn-pulse'); void ln.getBoundingClientRect(); ln.classList.add('ctf-nn-pulse'); }
+    function midOf(i) { var e = L.edges[i], p1 = L.nodes[e[0]], p2 = L.nodes[e[1]]; return [(p1[0] + p2[0]) / 2, (p1[1] + p2[1]) / 2]; }
+    function spark(x, y, big) {
+      var svg = box.querySelector('svg'); if (!svg) return;
+      var s = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+      s.setAttribute('cx', x); s.setAttribute('cy', y); s.setAttribute('r', big ? 5 : 2.5);
+      s.setAttribute('class', 'ctf-nn-spark' + (big ? ' big' : ''));
+      svg.appendChild(s); setTimeout(function () { s.remove(); }, 900);
+    }
+    function snapSpark(i) { var m = midOf(i); spark(m[0], m[1], true); spark(m[0] - 10, m[1] + 6); spark(m[0] + 9, m[1] - 7); }
+    function idleSpark() {
+      var openIdx = []; open.forEach(function (o, i) { if (o) openIdx.push(i); });
+      var pool = openIdx.length ? openIdx : [Math.floor(Math.random() * L.edges.length)];
+      var i = pool[Math.floor(Math.random() * pool.length)];
+      var e = L.edges[i], p1 = L.nodes[e[0]], p2 = L.nodes[e[1]], t = Math.random();
+      spark(p1[0] + (p2[0] - p1[0]) * t, p1[1] + (p2[1] - p1[1]) * t);
+    }
+
+    function send() {
+      if (won) return;
+      // propagate layer by layer through OPEN edges
+      var lit = {}; L.ins.forEach(function (k) { lit[k] = 1; });
+      var litEdges = {}, hops = {};
+      L.ins.forEach(function (k) { hops[k] = 0; });
+      L.layers.slice(1).forEach(function (layer) {
+        layer.forEach(function (nk) {
+          L.edges.forEach(function (e, i) {
+            if (e[1] === nk && open[i] && lit[e[0]]) {
+              lit[nk] = 1; litEdges['e' + i] = 1;
+              hops[nk] = Math.min(hops[nk] == null ? 99 : hops[nk], hops[e[0]] + 1);
+            }
+          });
+        });
       });
-      if (outOk) lit.out = 1;
-      draw(Object.assign(lit, litEdges));
-      fb.className = 'ctf-feedback show ' + (outOk ? 'good' : 'info');
-      fb.innerHTML = outOk
-        ? '<b>💡 The output lit up!</b> You just set the <b>weights</b> — the strong connections decide where the signal flows. That\'s what training tunes, billions of times.'
-        : 'No light yet! The signal needs a <b>complete path</b>: strengthen a connection INTO a middle neuron and one FROM it to the output.';
-      if (outOk) { reveal(done, (cfg.complete && cfg.complete.progress) || 100); markDone(id); }
-    });
-    draw();
+      var win = !!lit.out;
+      draw(Object.assign({}, lit, litEdges));
+      // traveling pulses: a dot runs along every lit edge, staggered by depth
+      L.edges.forEach(function (e, i) {
+        if (!litEdges['e' + i]) return;
+        var p1 = L.nodes[e[0]], p2 = L.nodes[e[1]], delay = (hops[e[0]] || 0) * 380;
+        var svg = box.querySelector('svg');
+        var dot = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+        dot.setAttribute('r', 6); dot.setAttribute('fill', '#FFB320'); dot.setAttribute('class', 'ctf-nn-dot');
+        var mo = document.createElementNS('http://www.w3.org/2000/svg', 'animateMotion');
+        mo.setAttribute('dur', '.38s'); mo.setAttribute('begin', (delay / 1000) + 's'); mo.setAttribute('fill', 'freeze');
+        mo.setAttribute('path', 'M ' + p1[0] + ' ' + p1[1] + ' L ' + p2[0] + ' ' + p2[1]);
+        dot.appendChild(mo); svg.appendChild(dot);
+        setTimeout(function () { dot.remove(); }, delay + 700);
+      });
+      if (win) {
+        won = true; clearInterval(sparkT);
+        var isLast = li >= LEVELS.length - 1;
+        fb.className = 'ctf-feedback show good';
+        fb.innerHTML = '<b>💡 The output lit up!</b> You just set the <b>weights</b> — every tap made a connection stronger until the signal could flow. That\'s exactly what training tunes, billions of times.' +
+          (isLast ? ' <b>You beat all three networks — master trainer!</b>' : '') +
+          '<div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap">' +
+          (!isLast ? '<button class="ctf-btn ctf-nn-next">🧠 Level ' + (li + 2) + ': ' + LEVELS[li + 1].name + ' — bigger brain →</button>' : '<button class="ctf-btn ctf-nn-next">↺ Play again from Level 1</button>') + '</div>';
+        fb.querySelector('.ctf-nn-next').addEventListener('click', function () { fb.className = 'ctf-feedback'; rollLevel(isLast ? 0 : li + 1); });
+        reveal(done, (cfg.complete && cfg.complete.progress) || 100); markDone(id);
+      } else {
+        fb.className = 'ctf-feedback show info';
+        fb.innerHTML = 'Not yet! The signal only flows through <b>fully-opened</b> connections (the thick glowing ones) — and it needs an unbroken path all the way to OUT. ' + (energy > 0 ? 'You have ⚡ left — keep charging!' : 'Out of energy — tap <b>Reset</b> and spend your taps on ONE full path.');
+        box.querySelector('svg').classList.remove('ctf-nn-shake'); void box.offsetWidth; box.querySelector('svg').classList.add('ctf-nn-shake');
+      }
+    }
+
+    rollLevel(0);
   }
 
   // =========================================================================

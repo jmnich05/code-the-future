@@ -534,3 +534,27 @@
   .ctf-fm-cab,.ctf-fm-orb,.ctf-fm-orb-glow,.ctf-fm-swirl,.ctf-fm-stars,.ctf-fm-stars i,.ctf-fm-stars b,.ctf-fm-eyes i,.ctf-fm-gear,.ctf-fm-bulb,.ctf-fm-thinkbar span{ animation:none !important; }
   .ctf-fm-ticket{ transition:opacity .3s; }
 }
+
+/* ---- NEURON v2: living network (charge-up levels) ------------------------ */
+.ctf-nn-top{ display:flex; align-items:center; gap:12px; flex-wrap:wrap; margin-bottom:10px; }
+.ctf-nn-lvl{ font-family:var(--font-mono); font-size:.78rem; font-weight:700; letter-spacing:.06em; text-transform:uppercase;
+  color:var(--blue-700); background:var(--blue-50); border:1px solid var(--blue-100); border-radius:999px; padding:5px 12px; }
+.ctf-nn-energy{ margin-left:auto; font-family:var(--font-mono); font-size:.8rem; font-weight:700; color:var(--ink-700); display:flex; align-items:center; gap:8px; }
+.ctf-nn-pips{ display:inline-flex; gap:3px; }
+.ctf-nn-pips i{ width:9px; height:14px; border-radius:3px; background:var(--ink-200); transition:background .2s, transform .2s; }
+.ctf-nn-pips i.on{ background:linear-gradient(180deg,#FFD479,#FFB320); box-shadow:0 0 6px rgba(255,179,32,.5); }
+.ctf-neuron-svg line{ cursor:pointer; transition:stroke-width .25s cubic-bezier(.34,1.56,.64,1), stroke .2s; }
+.ctf-nn-node{ animation:ctf-nn-breathe 3.2s ease-in-out infinite; transform-box:fill-box; transform-origin:center; }
+@keyframes ctf-nn-breathe{ 0%,100%{ transform:scale(1); } 50%{ transform:scale(1.06); } }
+.ctf-nn-open{ stroke-dasharray:10 7; animation:ctf-nn-flow 1.1s linear infinite; filter:drop-shadow(0 0 4px rgba(42,95,240,.55)); }
+.ctf-nn-lit{ stroke-dasharray:10 7; animation:ctf-nn-flow .5s linear infinite; filter:drop-shadow(0 0 7px rgba(255,179,32,.8)); }
+@keyframes ctf-nn-flow{ to{ stroke-dashoffset:-17; } }
+.ctf-nn-pulse{ animation:ctf-nn-pulseline .35s ease-out; }
+@keyframes ctf-nn-pulseline{ 0%{ filter:drop-shadow(0 0 0 rgba(143,176,245,0)); } 50%{ filter:drop-shadow(0 0 10px rgba(143,176,245,.9)); } 100%{ filter:none; } }
+.ctf-nn-spark{ fill:#FFD479; animation:ctf-nn-sparkle .9s ease-out forwards; pointer-events:none; }
+.ctf-nn-spark.big{ fill:#FFB320; animation-duration:.7s; }
+@keyframes ctf-nn-sparkle{ 0%{ opacity:0; transform:scale(.4); } 25%{ opacity:1; transform:scale(1.5); } 100%{ opacity:0; transform:scale(.6); } }
+.ctf-nn-dot{ filter:drop-shadow(0 0 8px rgba(255,179,32,.9)); pointer-events:none; }
+.ctf-nn-shake{ animation:ctf-nn-shakex .4s; }
+@keyframes ctf-nn-shakex{ 0%,100%{ transform:translateX(0); } 25%{ transform:translateX(-6px); } 75%{ transform:translateX(6px); } }
+.ctf-nn-reset{ background:var(--ink-100)!important; color:var(--ink-700)!important; }
