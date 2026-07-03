@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<link rel="icon" type="image/svg+xml" href="/platform/assets/logo-icon-tile.svg">
+<title>The Sandbox — Code the Future</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap');
+:root{ --display:'Space Grotesk',sans-serif; --body:'Plus Jakarta Sans',system-ui,sans-serif; --mono:'JetBrains Mono',monospace;
+  --purple:#9B7BFF; --teal:#26C7D1; --green:#3FD08A; --amber:#FFB320; }
+*{ box-sizing:border-box; margin:0; }
+html,body{ min-height:100%; }
+body{ font-family:var(--body); color:#EAF1FF; min-height:100vh; padding:18px 16px 60px;
+  background:radial-gradient(120% 90% at 82% -10%, rgba(155,123,255,.25), transparent 55%),
+  radial-gradient(120% 90% at 8% 110%, rgba(38,199,209,.22), transparent 55%),
+  linear-gradient(165deg,#101a3c,#0A1024 55%,#070C1A); }
+.wrap{ max-width:900px; margin:0 auto; }
+.top{ display:flex; align-items:center; gap:12px; margin-bottom:14px; }
+.back{ color:#cfe0ff; text-decoration:none; font-weight:600; font-size:.9rem; background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.14); border-radius:999px; padding:8px 15px; }
+.top h1{ font-family:var(--display); font-weight:700; font-size:1.3rem; }
+.top .new{ font-family:var(--mono); font-size:10px; letter-spacing:.14em; color:#06223b; background:linear-gradient(120deg,#9BF5C7,#26C7D1); border-radius:999px; padding:4px 10px; }
+.spark{ background:rgba(255,179,32,.12); border:1.5px solid rgba(255,179,32,.4); border-radius:16px; padding:12px 16px; margin-bottom:14px; font-size:.95rem; }
+.spark b{ color:#FFD980; }
+.tabs{ display:flex; gap:8px; margin-bottom:14px; }
+.tab{ flex:1; font-family:var(--display); font-weight:700; font-size:1rem; color:#cfe3ff; cursor:pointer; background:rgba(255,255,255,.06); border:2px solid rgba(127,227,255,.25); border-radius:14px; padding:12px; text-align:center; }
+.tab.on{ color:#06122b; background:linear-gradient(120deg,#9fb6ff,#9B7BFF); border-color:transparent; }
+.pane{ display:none; } .pane.on{ display:block; }
+.card{ background:rgba(255,255,255,.05); border:1px solid rgba(127,227,255,.25); border-radius:18px; padding:16px; margin-bottom:14px; }
+.row{ display:flex; gap:8px; }
+input.big, textarea.big{ flex:1; min-width:0; font-family:var(--body); font-size:1rem; color:#fff; background:rgba(255,255,255,.07); border:1.5px solid rgba(127,227,255,.35); border-radius:13px; padding:12px 14px; outline:none; }
+input.big:focus, textarea.big:focus{ border-color:var(--purple); }
+textarea.big{ min-height:74px; resize:vertical; }
+.btn{ font-family:var(--display); font-weight:700; font-size:.95rem; color:#06122b; border:none; cursor:pointer; padding:12px 20px; border-radius:999px;
+  background:linear-gradient(120deg,#9fb6ff,#9B7BFF); box-shadow:0 10px 24px rgba(155,123,255,.4); }
+.btn.green{ background:linear-gradient(120deg,#9BF5C7,#26C7D1); box-shadow:0 10px 24px rgba(38,199,209,.4); }
+.btn.ghost{ background:rgba(255,255,255,.1); color:#fff; box-shadow:none; }
+.btn:disabled{ opacity:.45; cursor:not-allowed; }
+.chips{ display:flex; flex-wrap:wrap; gap:7px; margin-top:10px; }
+.chip{ font-size:.82rem; font-weight:600; color:#cfe3ff; cursor:pointer; background:rgba(127,227,255,.1); border:1px solid rgba(127,227,255,.3); border-radius:999px; padding:7px 12px; }
+/* picture lab */
+.canvas-wrap{ position:relative; margin-top:14px; border-radius:16px; overflow:hidden; background:#0b1124; border:1px solid rgba(127,227,255,.25); display:none; }
+.canvas-wrap.on{ display:block; }
+.canvas-wrap img{ display:block; width:100%; height:auto; }
+.canvas-wrap canvas{ position:absolute; inset:0; width:100%; height:100%; touch-action:none; cursor:crosshair; }
+.paintbar{ display:none; flex-wrap:wrap; gap:8px; align-items:center; margin-top:12px; }
+.paintbar.on{ display:flex; }
+.dot{ width:30px; height:30px; border-radius:50%; border:3px solid transparent; cursor:pointer; }
+.dot.on{ border-color:#fff; }
+.szbtn{ font-family:var(--mono); font-size:.8rem; color:#cfe3ff; cursor:pointer; background:rgba(255,255,255,.08); border:1.5px solid rgba(127,227,255,.3); border-radius:999px; padding:7px 12px; }
+.szbtn.on{ color:#06122b; background:#9fb6ff; }
+.actions{ display:none; gap:8px; flex-wrap:wrap; margin-top:12px; }
+.actions.on{ display:flex; }
+.busy{ display:none; align-items:center; gap:10px; margin-top:12px; color:#cfe3ff; font-weight:600; }
+.busy.on{ display:flex; }
+.spin{ width:22px; height:22px; border:4px solid rgba(155,123,255,.3); border-top-color:#9B7BFF; border-radius:50%; animation:sp .9s linear infinite; }
+@keyframes sp{ to{ transform:rotate(360deg); } }
+/* story lab */
+.story{ margin-top:12px; display:grid; gap:8px; }
+.sline{ border-radius:13px; padding:11px 14px; font-size:.98rem; line-height:1.5; }
+.sline.me{ background:rgba(155,123,255,.16); border:1px solid rgba(155,123,255,.35); }
+.sline.ai{ background:rgba(38,199,209,.12); border:1px solid rgba(38,199,209,.3); }
+.sline .who{ font-family:var(--mono); font-size:10px; letter-spacing:.14em; text-transform:uppercase; color:#9fb6e6; display:block; margin-bottom:3px; }
+/* gallery */
+.gal{ display:grid; grid-template-columns:repeat(auto-fill,minmax(130px,1fr)); gap:10px; }
+.gal .g{ border-radius:12px; overflow:hidden; border:1px solid rgba(127,227,255,.25); background:#0b1124; }
+.gal img{ display:block; width:100%; height:100px; object-fit:cover; }
+.gal .gt{ font-size:.78rem; padding:6px 8px; color:#cfe3ff; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.gal .empty{ grid-column:1/-1; text-align:center; color:#7f8db0; padding:16px; font-size:.9rem; }
+h2.sec{ font-family:var(--display); font-weight:700; font-size:1.05rem; margin:6px 0 10px; }
+.toast{ position:fixed; left:50%; bottom:26px; transform:translateX(-50%); z-index:50; background:rgba(8,14,30,.95); border:1px solid rgba(63,208,138,.5); color:#c9ffe3; padding:12px 18px; border-radius:14px; font-weight:600; max-width:84vw; text-align:center; opacity:0; transition:opacity .2s; pointer-events:none; }
+.toast.on{ opacity:1; }
+/* locked view */
+#locked{ display:none; text-align:center; padding:60px 18px; }
+#locked .big{ font-size:4rem; }
+#locked h2{ font-family:var(--display); font-size:1.7rem; margin:10px 0 8px; }
+#locked p{ color:#bccbe6; max-width:44ch; margin:0 auto 8px; line-height:1.5; }
+#locked .prog{ font-family:var(--mono); font-size:.9rem; color:#9BF5C7; margin-top:10px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <a class="back" href="index.html">← Home</a>
+    <h1>🧪 The Sandbox</h1><span class="new">NEW</span>
+  </div>
+
+  <div id="locked">
+    <div class="big">🔒</div>
+    <h2>The Sandbox unlocks soon!</h2>
+    <p>Finish your first <b>4 missions</b> and this becomes your creative playground — make pictures with a real AI and paint on top of them, write stories together, and share your creations in Show &amp; Tell.</p>
+    <div class="prog" id="lockProg"></div>
+    <a class="btn" href="missions.html" style="display:inline-block;margin-top:16px;text-decoration:none">🗺️ To my missions</a>
+  </div>
+
+  <div id="open" style="display:none">
+    <div class="spark">⚡ <b>Today's spark:</b> <span id="sparkTxt"></span></div>
+    <div class="tabs">
+      <button class="tab on" data-pane="pic">🎨 Picture Lab</button>
+      <button class="tab" data-pane="story">📖 Story Lab</button>
+    </div>
+
+    <!-- PICTURE LAB -->
+    <div class="pane on" data-pane="pic">
+      <div class="card">
+        <div class="row">
+          <input class="big" id="picIdea" maxlength="200" placeholder="Describe a picture… (a dragon eating tacos on the moon)">
+          <button class="btn" id="picGo">✨ Make it</button>
+        </div>
+        <div class="chips" id="picChips"></div>
+        <div class="busy" id="picBusy"><span class="spin"></span><span>The art robot is painting…</span></div>
+        <div class="canvas-wrap" id="cw"><img id="picImg" alt="Your AI picture"><canvas id="paint"></canvas></div>
+        <div class="paintbar" id="paintbar">
+          <span style="font-size:.85rem;color:#9fb6e6;font-weight:700">Paint on top:</span>
+          <span id="dots"></span>
+          <button class="szbtn on" data-sz="6">thin</button><button class="szbtn" data-sz="14">med</button><button class="szbtn" data-sz="26">BIG</button>
+          <button class="szbtn" id="clearPaint">clear my paint</button>
+        </div>
+        <div class="actions" id="picActions">
+          <button class="btn green" id="picShare">🏆 Share to Show &amp; Tell</button>
+          <button class="btn ghost" id="picSave">💾 Save to my gallery</button>
+          <button class="btn ghost" id="picDl">⬇️ Download</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- STORY LAB -->
+    <div class="pane" data-pane="story">
+      <div class="card">
+        <div class="row">
+          <textarea class="big" id="storyStart" maxlength="300" placeholder="Start your story… (Once upon a time, a robot found a mysterious egg…)"></textarea>
+        </div>
+        <div class="chips" id="storyChips"></div>
+        <div class="story" id="storyOut"></div>
+        <div class="busy" id="storyBusy"><span class="spin"></span><span>The story robot is thinking…</span></div>
+        <div class="actions on" style="margin-top:12px" id="storyActions">
+          <button class="btn" id="storyAdd">✍️ Add my part</button>
+          <button class="btn" id="storyAI" disabled>🤖 AI, continue!</button>
+          <button class="btn ghost" id="storyEnd" disabled>🏁 The End</button>
+          <button class="btn green" id="storyShare" disabled>🏆 Share to Show &amp; Tell</button>
+        </div>
+      </div>
+    </div>
+
+    <h2 class="sec">🖼️ My gallery <span style="font-weight:500;color:#7f8db0;font-size:.82rem">(saved on this device)</span></h2>
+    <div class="gal" id="gal"></div>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script src="lib/config.js"></script>
+<script src="lib/filter.js"></script>
+<script type="module">
+import { CTFDB } from "./lib/ctf-db.js";
+
+const $=(id)=>document.getElementById(id);
+const esc=(s)=>String(s==null?'':s).replace(/[&<>"]/g,(c)=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+let toastT; const toast=(m)=>{ const t=$('toast'); t.textContent=m; t.classList.add('on'); clearTimeout(toastT); toastT=setTimeout(()=>t.classList.remove('on'),3400); };
+const clean=(v)=>{ if(v && window.CTFFilter && CTFFilter.isClean && !CTFFilter.isClean(v)){ toast("Let's keep it kind and fun!"); return false; } return true; };
+const name=(()=>{ try{ return (JSON.parse(localStorage.getItem('ctf:profile')||'null')||{}).display_name||'A builder'; }catch(e){ return 'A builder'; } })();
+
+// ---- gate: 4 finished Module 1 missions (or staff full-access) --------------
+const UNLOCK_AT=4;
+async function missionCount(){
+  try{ await CTFDB.init(); if(!CTFDB.enabled) return 0;
+    const badges=await CTFDB.listBadges(); let max=0;
+    (badges||[]).forEach(b=>{ const m=String(b.badge_key||'').match(/^kids-m(\d+)$/); if(m) max=Math.max(max,+m[1]); });
+    return max;
+  }catch(e){ return 0; }
+}
+const staff=(()=>{ try{ return localStorage.getItem('ctf:unlockall')==='1'; }catch(e){ return false; } })();
+const n=staff?UNLOCK_AT:await missionCount();
+if(n>=UNLOCK_AT){ $('open').style.display='block'; }
+else{ $('locked').style.display='block'; $('lockProg').textContent=n+' of '+UNLOCK_AT+' missions done'; }
+
+// ---- daily spark -------------------------------------------------------------
+const SPARKS=[
+  'Make a picture of your dream treehouse — then paint yourself into it!',
+  'Write a story where YOUR pet saves the day.',
+  'Make a picture of Louisville in the year 3000.',
+  'Write a story that starts with "The elevator went UP forever…"',
+  'Make a picture of a brand-new animal nobody has ever seen.',
+  'Write a story about a robot who is scared of the dark.',
+  'Make a picture of your favorite food as a superhero.',
+  'Write a story where you shrink to the size of an ant.',
+  'Make a picture of a secret door in your school.',
+  'Write a story about the last dinosaur on Earth (make it happy!).',
+  'Make a picture of a dragon doing your least favorite chore.',
+  'Write a story where the moon starts talking to you.',
+  'Make a picture of a underwater playground.',
+  'Write a story about a sock that goes on an adventure in the dryer.'
+];
+const day=Math.floor(Date.now()/86400000);
+$('sparkTxt').textContent=SPARKS[day%SPARKS.length];
+
+// ---- tabs --------------------------------------------------------------------
+document.querySelectorAll('.tab').forEach(t=>t.onclick=()=>{
+  document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('on',x===t));
+  document.querySelectorAll('.pane').forEach(p=>p.classList.toggle('on',p.dataset.pane===t.dataset.pane));
+});
+
+// ---- share helper --------------------------------------------------------------
+async function shareToBoard(text){
+  try{
+    await CTFDB.init();
+    if(!CTFDB.enabled){ toast('Connect to the internet to share!'); return false; }
+    const cohorts=await CTFDB.myCohorts();
+    if(!cohorts.length){ toast('Join your cohort first (open the Board once)!'); return false; }
+    const r=await CTFDB.createPost(cohorts[0].id,'show_tell',text);
+    if(r && r.error){ toast('Sharing hiccup — try again!'); return false; }
+    toast('🏆 Shared to Show & Tell! Go see it on the Board.');
+    return true;
+  }catch(e){ toast('Sharing hiccup — try again!'); return false; }
+}
+
+// ---- gallery (local, downscaled) ----------------------------------------------
+const GKEY='ctf:sandbox:gallery';
+const gal=()=>{ try{ return JSON.parse(localStorage.getItem(GKEY)||'[]'); }catch(e){ return []; } };
+function renderGal(){
+  const g=gal(), el=$('gal');
+  el.innerHTML=g.length? g.map(x=>'<div class="g"><img src="'+x.img+'" alt=""><div class="gt">'+esc(x.t)+'</div></div>').join('')
+    : '<div class="empty">Nothing here yet — make something above! Your saves live on this device.</div>';
+}
+function saveToGal(dataUrl,t){
+  const g=gal(); g.unshift({ img:dataUrl, t:t, when:Date.now() });
+  while(g.length>6) g.pop();
+  try{ localStorage.setItem(GKEY,JSON.stringify(g)); }catch(e){ g.length=2; try{ localStorage.setItem(GKEY,JSON.stringify(g)); }catch(e2){} }
+  renderGal();
+}
+renderGal();
+
+// ================= PICTURE LAB =================
+const PIC_CHIPS=['a dragon eating tacos on the moon','a robot puppy in a flower field','my school but made of candy','a T-rex playing basketball','an underwater castle city'];
+PIC_CHIPS.forEach(c=>{ const b=document.createElement('button'); b.className='chip'; b.textContent=c; b.onclick=()=>{ $('picIdea').value=c; }; $('picChips').appendChild(b); });
+
+let picLoaded=false, painting=false, brush='#FF5A38', size=6, ctx=null;
+const COLORS=['#FF5A38','#FFB320','#3FD08A','#26C7D1','#3D74FF','#9B7BFF','#FF6FB1','#ffffff','#0C1322'];
+COLORS.forEach((c,i)=>{ const d=document.createElement('button'); d.className='dot'+(i===0?' on':''); d.style.background=c; d.onclick=()=>{ brush=c; document.querySelectorAll('.dot').forEach(x=>x.classList.toggle('on',x===d)); }; $('dots').appendChild(d); });
+document.querySelectorAll('.szbtn[data-sz]').forEach(b=>b.onclick=()=>{ size=+b.dataset.sz; document.querySelectorAll('.szbtn[data-sz]').forEach(x=>x.classList.toggle('on',x===b)); });
+
+$('picGo').onclick=async ()=>{
+  const idea=($('picIdea').value||'').trim();
+  if(!idea){ $('picIdea').focus(); return; }
+  if(!clean(idea)) return;
+  $('picGo').disabled=true; $('picBusy').classList.add('on');
+  try{
+    const r=await fetch('/api/image',{ method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({ prompt: idea }) });
+    const d=await r.json();
+    if(!r.ok||!d.image) throw new Error(d.error||'no image');
+    const img=$('picImg');
+    img.onload=()=>{
+      const cv=$('paint'); cv.width=img.naturalWidth; cv.height=img.naturalHeight;
+      ctx=cv.getContext('2d'); ctx.lineCap='round'; ctx.lineJoin='round';
+      $('cw').classList.add('on'); $('paintbar').classList.add('on'); $('picActions').classList.add('on');
+      picLoaded=true;
+    };
+    img.src=d.image;
+  }catch(e){ toast('The art robot got stuck — try again!'); }
+  $('picGo').disabled=false; $('picBusy').classList.remove('on');
+};
+
+// paint on top (pointer events on the overlay canvas)
+const cv=$('paint');
+function pos(e){ const r=cv.getBoundingClientRect(); return { x:(e.clientX-r.left)*(cv.width/r.width), y:(e.clientY-r.top)*(cv.height/r.height) }; }
+cv.addEventListener('pointerdown',e=>{ if(!ctx) return; painting=true; cv.setPointerCapture(e.pointerId); const p=pos(e); ctx.beginPath(); ctx.moveTo(p.x,p.y); ctx.lineTo(p.x+.1,p.y+.1); ctx.strokeStyle=brush; ctx.lineWidth=size*(cv.width/760); ctx.stroke(); });
+cv.addEventListener('pointermove',e=>{ if(!painting||!ctx) return; const p=pos(e); ctx.lineTo(p.x,p.y); ctx.strokeStyle=brush; ctx.lineWidth=size*(cv.width/760); ctx.stroke(); });
+cv.addEventListener('pointerup',()=>{ painting=false; });
+$('clearPaint').onclick=()=>{ if(ctx) ctx.clearRect(0,0,cv.width,cv.height); };
+
+function composite(){
+  const img=$('picImg'), out=document.createElement('canvas');
+  const W=768, H=Math.round(img.naturalHeight*(W/img.naturalWidth));
+  out.width=W; out.height=H;
+  const c=out.getContext('2d'); c.drawImage(img,0,0,W,H); c.drawImage(cv,0,0,W,H);
+  return out.toDataURL('image/jpeg',.82);
+}
+$('picSave').onclick=()=>{ if(!picLoaded) return; saveToGal(composite(), ($('picIdea').value||'My picture').slice(0,60)); toast('💾 Saved to your gallery!'); };
+$('picDl').onclick=()=>{ if(!picLoaded) return; const a=document.createElement('a'); a.href=composite(); a.download='my-sandbox-art.jpg'; a.click(); };
+$('picShare').onclick=async ()=>{
+  if(!picLoaded) return;
+  const idea=($('picIdea').value||'a surprise').slice(0,120);
+  saveToGal(composite(), idea.slice(0,60));
+  await shareToBoard('🎨 '+name+' made something in the Sandbox!\n\nMy idea: “'+idea+'” — I made it with the art robot and painted on top myself. Ask me to show you!');
+};
+
+// ================= STORY LAB =================
+const STORY_CHIPS=['Once upon a time, a robot found a mysterious egg…','The day my dog learned to talk started like any other day…','Deep under Louisville, there was a secret tunnel…'];
+STORY_CHIPS.forEach(c=>{ const b=document.createElement('button'); b.className='chip'; b.textContent=c; b.onclick=()=>{ $('storyStart').value=c; }; $('storyChips').appendChild(b); });
+
+let story=[];   // {who:'me'|'ai', text}
+function renderStory(){
+  $('storyOut').innerHTML=story.map(s=>'<div class="sline '+s.who+'"><span class="who">'+(s.who==='me'?esc(name):'🤖 Story robot')+'</span>'+esc(s.text)+'</div>').join('');
+  const has=story.length>0;
+  $('storyAI').disabled=!has; $('storyEnd').disabled=!has; $('storyShare').disabled=!has;
+}
+$('storyAdd').onclick=()=>{
+  const v=($('storyStart').value||'').trim();
+  if(!v){ $('storyStart').focus(); return; }
+  if(!clean(v)) return;
+  story.push({ who:'me', text:v }); $('storyStart').value=''; $('storyStart').placeholder='What happens next? Add your part…';
+  renderStory();
+};
+async function aiTurn(ending){
+  $('storyBusy').classList.add('on'); $('storyAI').disabled=true; $('storyEnd').disabled=true;
+  const so=story.map(s=>s.text).join(' ');
+  const ask=ending
+    ? 'We are writing a fun story for a kid age 8-11. Write a happy, satisfying ENDING in exactly 2 short sentences, then say "The End!". Story so far: '+so
+    : 'We are writing a fun story for a kid age 8-11, taking turns. Continue the story with exactly 2 short, exciting, kid-friendly sentences. Do NOT end the story. Story so far: '+so;
+  try{
+    const r=await fetch('/api/ai',{ method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({ prompt: ask, mode:'kids' }) });
+    const d=await r.json();
+    if(!r.ok||!d.text) throw new Error(d.error||'no text');
+    story.push({ who:'ai', text:d.text.trim() });
+  }catch(e){ toast('The story robot got stuck — try again!'); }
+  $('storyBusy').classList.remove('on'); renderStory();
+}
+$('storyAI').onclick=()=>aiTurn(false);
+$('storyEnd').onclick=()=>aiTurn(true);
+$('storyShare').onclick=async ()=>{
+  const txt=story.map(s=>s.text).join('\n\n');
+  await shareToBoard('📖 '+name+' wrote a story in the Sandbox (with a robot co-author)!\n\n'+txt.slice(0,1400)+(txt.length>1400?'…':''));
+};
+</script>
+</body>
+</html>
