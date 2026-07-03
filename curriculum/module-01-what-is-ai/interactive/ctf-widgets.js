@@ -1245,6 +1245,41 @@
   }
 
   // =========================================================================
+  // TIME CAPSULE RECAP — the module's Big Ideas drop in one by one as cards,
+  // a keepsake of everything unlocked instead of a wall of text. Replayable.
+  // =========================================================================
+  function renderRecap(root, cfg, id) {
+    root.innerHTML = header(cfg);
+    var wrap = el('div', 'ctf-recap'); root.appendChild(wrap);
+    var items = cfg.items || [];
+
+    function run() {
+      wrap.innerHTML =
+        '<div class="ctf-recap-cap"><span class="ic">📦</span><div><b>' + esc(cfg.capTitle || 'Your Time Capsule') + '</b>' +
+        '<span class="sub">' + esc(cfg.capSub || 'Everything you unlocked — dropping in!') + '</span></div></div>' +
+        '<div class="ctf-recap-grid"></div><div class="ctf-recap-foot"></div>';
+      var grid = wrap.querySelector('.ctf-recap-grid');
+      items.forEach(function (it, i) {
+        var c = el('div', 'ctf-recap-card c' + (i % 5));
+        c.innerHTML =
+          '<span class="ctf-recap-m">Mission ' + esc(it.m) + '</span>' +
+          '<span class="ctf-recap-e">' + esc(it.e) + '</span>' +
+          '<b>' + esc(it.h) + '</b><p>' + it.t + '</p>';
+        c.style.animationDelay = (0.35 + i * 0.3) + 's';
+        grid.appendChild(c);
+      });
+      setTimeout(function () {
+        var f = wrap.querySelector('.ctf-recap-foot');
+        f.innerHTML = '<button class="ctf-btn ctf-recap-replay">🔁 Drop them in again</button>';
+        f.querySelector('button').addEventListener('click', run);
+        if (id) save(id + ':answer', { seen: 1 });
+        markDone(id);
+      }, 350 + items.length * 300 + 650);
+    }
+    run();
+  }
+
+  // =========================================================================
   // CRACK THE SECRET RULE — a pattern-detective game. Study a few examples,
   // predict new ones, get feedback, and figure out the hidden rule — exactly
   // how you (and AI) learn a concept from examples. Open-ended discovery.
@@ -1487,7 +1522,7 @@
   }
 
   // ---- registry + boot ----------------------------------------------------
-  var RENDERERS = { poll: renderPoll, sort: renderSort, choice: renderChoice, nextword: renderNextWord, attention: renderAttention, quiz: renderQuiz, timeline: renderTimeline, reveal: renderReveal, slider: renderSlider, trainer: renderTrainer, match: renderMatch, draw: renderDraw, wordchain: renderWordChain, order: renderOrder, neuron: renderNeuron, arcade: renderArcade, meetai: renderMeetAI, future: renderFutureMachine, rule: renderRule, factcheck: renderFactCheck, attentionlab: renderAttentionLab, storyline: renderStoryline };
+  var RENDERERS = { poll: renderPoll, sort: renderSort, choice: renderChoice, nextword: renderNextWord, attention: renderAttention, quiz: renderQuiz, timeline: renderTimeline, reveal: renderReveal, slider: renderSlider, trainer: renderTrainer, match: renderMatch, draw: renderDraw, wordchain: renderWordChain, order: renderOrder, neuron: renderNeuron, recap: renderRecap, arcade: renderArcade, meetai: renderMeetAI, future: renderFutureMachine, rule: renderRule, factcheck: renderFactCheck, attentionlab: renderAttentionLab, storyline: renderStoryline };
 
   function hydrate(node) {
     if (node.getAttribute('data-ctf-ready')) return;

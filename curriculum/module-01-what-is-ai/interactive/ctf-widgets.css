@@ -582,3 +582,22 @@
 .ctf-fm-fs .ctf-fm-chip:hover{ background:rgba(155,123,255,.28); }
 .ctf-fm-fs .ctf-fm-input{ background:rgba(255,255,255,.08); color:#fff; border-color:rgba(155,123,255,.5); }
 .ctf-fm-fs .ctf-fm-input::placeholder{ color:#a89ddd; }
+
+/* ---- TIME CAPSULE RECAP: Big Ideas drop in as cards ----------------------- */
+.ctf-recap-cap{ display:flex; align-items:center; gap:12px; background:linear-gradient(120deg,var(--blue-50),var(--teal-50)); border:1.5px solid var(--blue-100); border-radius:var(--radius-md); padding:12px 16px; margin-bottom:14px; }
+.ctf-recap-cap .ic{ font-size:1.9rem; animation:ctf-fm-bob 2.4s ease-in-out infinite; }
+.ctf-recap-cap b{ font-family:var(--font-display); display:block; }
+.ctf-recap-cap .sub{ font-size:.85rem; color:var(--ink-500); }
+.ctf-recap-grid{ display:grid; grid-template-columns:repeat(auto-fill,minmax(240px,1fr)); gap:12px; }
+.ctf-recap-card{ position:relative; border-radius:16px; padding:16px 16px 14px; border:1.5px solid var(--ink-200); background:#fff;
+  opacity:0; animation:ctf-recap-drop .65s cubic-bezier(.34,1.56,.64,1) forwards; box-shadow:var(--shadow-sm); }
+@keyframes ctf-recap-drop{ 0%{ opacity:0; transform:translateY(-52px) rotate(-3deg) scale(.88); }
+  62%{ opacity:1; transform:translateY(7px) rotate(1.4deg) scale(1.01); } 100%{ opacity:1; transform:none; } }
+.ctf-recap-card.c0{ background:#EAF1FF; border-color:#c9dbff; } .ctf-recap-card.c1{ background:#E4FBFC; border-color:#bdeef1; }
+.ctf-recap-card.c2{ background:#FFF7E6; border-color:#ffe3ae; } .ctf-recap-card.c3{ background:#F3ECFF; border-color:#ddccff; }
+.ctf-recap-card.c4{ background:#FFF0EC; border-color:#ffd2c4; }
+.ctf-recap-m{ position:absolute; top:10px; right:12px; font-family:var(--font-mono); font-size:10px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:var(--ink-400); }
+.ctf-recap-e{ font-size:1.7rem; display:block; margin-bottom:4px; }
+.ctf-recap-card b{ font-family:var(--font-display); font-size:1.02rem; display:block; margin-bottom:4px; }
+.ctf-recap-card p{ margin:0; font-size:.9rem; line-height:1.45; color:var(--ink-600); }
+.ctf-recap-foot{ margin-top:14px; text-align:center; min-height:20px; }

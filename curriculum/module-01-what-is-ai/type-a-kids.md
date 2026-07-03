@@ -599,21 +599,7 @@ Look how far you came. Twelve Missions ago, AI was just two mysterious letters t
 said at dinner. Now? You can actually explain it. Let's pull together everything you know —
 and get you ready to *use* real AI yourself in the Big Mission.
 
-**The Big Ideas you unlocked:**
-- **AI = Artificial Intelligence** — a computer that *learns from examples* instead of only
-  following rules (Missions 2).
-- AI finds **patterns** — the same way you learned what a dog is (Mission 3). Teaching it with
-  examples is called **training**, and the examples are called **data** (Mission 4).
-- AI can learn to **see** (patterns in pixels) and to use **words** (guessing the next word) —
-  Missions 5 and 6.
-- The clever trick behind it is **attention**, and that kind of AI is a **transformer**
-  (Mission 7).
-- AI runs on a **neural network** inspired by the brain — but it's **not alive** and has **no
-  feelings** (Mission 8).
-- AI took a **long time** to get good and only got amazing **recently** (Mission 9).
-- AI is powerful but can be **wrong**, so **you stay the boss** (Mission 10).
-- You're the **first generation** to grow up with AI, and the future is yours to build
-  (Mission 11).
+`[INTERACTIVE: time-capsule recap — the module's Big Ideas drop in one by one as animated keepsake cards.]`
 
 Here's your challenge: tonight, explain *one* of these ideas to a grown-up in your life. If
 you can teach it, you really know it — and you might just teach them something new!
