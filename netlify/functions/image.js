@@ -1,22 +1,34 @@
 // ==========================================================================
 // Code the Future — kid-safe image generation proxy (Netlify Function)
 //
-// POST /api/image  { prompt: "a robot parade" }
+// POST /api/image  { prompt, kind?, style? }
+//   kind: "hero" (default — homepage remix, Louisville wrapper)
+//         "scene"  — Sandbox background, landscape, kid's own subject + style
+//         "sprite" — Sandbox object: single subject on a TRANSPARENT bg (png)
+//         "cover"  — Storybook cover art, portrait
+//   style: one of STYLES (scene/sprite/cover only)
 //   → { image: "data:image/png;base64,..." }
 //
-// The OpenAI key stays server-side (Netlify env var OPENAI_API_KEY).
-// Prompts are wrapped in a kid-safe, on-brand template; OpenAI's own safety
-// system provides a second layer. Optional env: OPENAI_IMAGE_MODEL (default
-// dall-e-3).
+// The OpenAI key stays server-side. Prompts are wrapped in kid-safe templates;
+// OpenAI's safety system provides a second layer.
 // ==========================================================================
 
-const STYLE =
+const HERO_STYLE =
   "A joyful, vibrant, kid-friendly digital illustration for a children's coding camp " +
   "homepage hero. Scene: the Louisville, Kentucky skyline full of optimism and wonder — ";
 
-const SUFFIX =
-  ". Bright colors, warm light, friendly and whimsical, safe and appropriate for children " +
-  "ages 8-11. No words, letters, or text in the image.";
+const KID_SAFE =
+  " Bright, friendly and whimsical, safe and appropriate for children ages 8-11. " +
+  "No words, letters, or text in the image.";
+
+const STYLES = {
+  anime:      "in a bright, cheerful anime style",
+  watercolor: "as a soft, dreamy watercolor painting",
+  pixel:      "in colorful retro pixel-art style",
+  comic:      "in a bold comic-book style with clean ink outlines",
+  clay:       "in a cute 3D claymation style",
+  storybook:  "as a classic children's storybook illustration"
+};
 
 export default async (req) => {
   if (req.method !== "POST") return json({ error: "Method not allowed" }, 405);
@@ -29,20 +41,34 @@ export default async (req) => {
 
   const raw = (body.prompt || "").toString().slice(0, 400).trim();
   if (!raw) return json({ error: "Please describe your picture first." }, 400);
+  const kind = ["scene", "sprite", "cover"].includes(body.kind) ? body.kind : "hero";
+  const style = STYLES[body.style] || STYLES.storybook;
 
   const model = process.env.OPENAI_IMAGE_MODEL || "gpt-image-1";
+  let prompt, size = "1536x1024", quality = "medium", extra = {};
+
+  if (kind === "scene") {
+    prompt = "A wide background scene for a kid's art project: " + raw + ", " + style +
+      ". A rich detailed environment with open space, no main character in the foreground." + KID_SAFE;
+  } else if (kind === "sprite") {
+    prompt = "A single object for a kid's art project: " + raw + ", " + style +
+      ". Exactly ONE subject, whole and centered, isolated on a fully transparent background. " +
+      "No ground, no shadow, no scenery, nothing else in the image." + KID_SAFE;
+    size = "1024x1024"; quality = "low";
+    extra = { background: "transparent", output_format: "png" };
+  } else if (kind === "cover") {
+    prompt = "A beautiful children's storybook COVER illustration about: " + raw + ", " + style +
+      ". Rich, magical, inviting — leave gentle space near the top for a title." + KID_SAFE;
+    size = "1024x1536";
+  } else {
+    prompt = HERO_STYLE + raw + "." + KID_SAFE;
+  }
 
   try {
     const r = await fetch("https://api.openai.com/v1/images/generations", {
       method: "POST",
       headers: { "Content-Type": "application/json", Authorization: "Bearer " + key },
-      body: JSON.stringify({
-        model,
-        prompt: STYLE + raw + SUFFIX,
-        n: 1,
-        size: "1536x1024",
-        quality: "medium"
-      })
+      body: JSON.stringify({ model, prompt, n: 1, size, quality, ...extra })
     });
 
     if (!r.ok) {

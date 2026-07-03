@@ -11,6 +11,7 @@
 (function () {
   var NAV = [
     { key: "home",     label: "Home",     emoji: "🏠", href: "index.html" },
+    { key: "sandbox",  label: "Sandbox",  emoji: "🧪", href: "sandbox.html" },
     { key: "missions", label: "Missions", emoji: "🚀", href: "../curriculum/module-01-what-is-ai/lessons/player.html?track=kids" },
     { key: "board",    label: "Board",    emoji: "💬", href: "board.html" },
     { key: "profile",  label: "Profile",  emoji: "⭐", href: "profile.html" }

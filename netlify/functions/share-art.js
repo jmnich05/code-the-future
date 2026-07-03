@@ -35,6 +35,7 @@ export default async (req) => {
   if (!m) return json({ error: "That doesn't look like a picture." }, 400);
   if (m[2].length > MAX_B64) return json({ error: "That picture is too big — try again." }, 413);
   const title = String(body.title || "my picture").replace(/\s+/g, " ").trim().slice(0, 120) || "my picture";
+  const storyText = String(body.text || "").trim().slice(0, 900);   // optional — storybook shares include the tale
 
   // ---- the learner's cohort + display name ---------------------------------
   const [members, profs] = await Promise.all([
@@ -61,7 +62,9 @@ export default async (req) => {
   const post = await fetch(SB + "/rest/v1/posts", { method: "POST",
     headers: { ...hdr("application/json"), Prefer: "return=representation" },
     body: JSON.stringify({ cohort_id: cohortId, author_id: uid, channel: "show_tell",
-      body: `🎨 ${name} made “${title}” in the Sandbox!\n📷 ${url}` }) });
+      body: storyText
+        ? `📖 ${name} wrote a book in the Sandbox: “${title}”!\n\n${storyText}${storyText.length >= 900 ? "…" : ""}\n📷 ${url}`
+        : `🎨 ${name} made “${title}” in the Sandbox!\n📷 ${url}` }) });
   if (!post.ok) return json({ error: "Couldn't post it — try again." }, 502);
   const rows = await post.json();
   return json({ ok: true, url, postId: rows[0]?.id });
