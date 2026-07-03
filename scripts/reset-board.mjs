@@ -21,7 +21,7 @@ Hi everyone — we're Mr. Jon and Mrs. Kenya, and we are SO excited you're here.
 
 This summer we're exploring one of the newest and most amazing pieces of technology in all of human history: AI. Our goal is to show you how it can feed your curiosity, help you create amazing things, and help you understand how the world works. AI is here to make YOU more powerful — an enhancement, never a replacement for your own brilliant brain.
 
-We have SO many fun missions, games, and activities ahead — and at the end of the summer, you'll build your very own app or game and put it on the internet. For real.
+We have SO many fun missions, games, and activities ahead — and at the end of the summer, you'll build your very own app or game. You're going to OWN it, present it to your parents, and keep it on your device. Something YOU made.
 
 ❓ Need help? If you ever get stuck on a question, an activity, or anything at all — tap the "Ask in Help" button right here on the board (or the ❓ Help & Questions room). We see every message and we'll jump in fast.
 
