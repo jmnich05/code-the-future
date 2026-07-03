@@ -10,82 +10,180 @@
 @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap');
 :root{ --display:'Space Grotesk',sans-serif; --body:'Plus Jakarta Sans',system-ui,sans-serif; --mono:'JetBrains Mono',monospace; --purple:#9B7BFF; --teal:#26C7D1; }
 *{ box-sizing:border-box; margin:0; }
-html,body{ height:100%; }
-body{ font-family:var(--body); color:#EAF1FF; min-height:100%; padding:34px 18px 60px;
+html,body{ min-height:100%; }
+body{ font-family:var(--body); color:#EAF1FF; min-height:100vh; padding:34px 18px 60px;
   background:radial-gradient(120% 90% at 82% -10%, rgba(155,123,255,.25), transparent 55%),
   radial-gradient(120% 90% at 8% 110%, rgba(38,199,209,.22), transparent 55%),
   linear-gradient(165deg,#101a3c,#0A1024 55%,#070C1A); }
-.wrap{ max-width:720px; margin:0 auto; text-align:center; }
+.wrap{ max-width:840px; margin:0 auto; text-align:center; }
 .kicker{ font-family:var(--mono); font-size:12px; letter-spacing:.22em; text-transform:uppercase; color:var(--purple); margin-bottom:10px; }
 h1{ font-family:var(--display); font-weight:700; font-size:clamp(1.9rem,5.5vw,2.8rem); line-height:1.08; letter-spacing:-.02em; }
 h1 .grad{ background:linear-gradient(110deg,#9fb6ff,#9B7BFF 50%,#26C7D1); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent; }
-.sub{ max-width:46ch; margin:14px auto 22px; opacity:.9; line-height:1.5; font-size:1.05rem; }
-.grid{ display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin-bottom:24px; }
-@media(max-width:680px){ .grid{ grid-template-columns:repeat(2,1fr); } }
-.idea{ background:rgba(255,255,255,.06); border:2px solid rgba(255,255,255,.14); border-radius:18px; padding:18px 10px; cursor:pointer; transition:transform .12s, border-color .15s, background .15s; color:#fff; }
+.sub{ max-width:52ch; margin:14px auto 24px; opacity:.9; line-height:1.5; font-size:1.05rem; }
+.ghead{ font-family:var(--mono); font-size:11px; letter-spacing:.2em; text-transform:uppercase; color:#7ef0e6; text-align:left; margin:20px 2px 10px; }
+.grid{ display:grid; grid-template-columns:repeat(4,1fr); gap:12px; }
+@media(max-width:720px){ .grid{ grid-template-columns:repeat(2,1fr); } }
+.idea{ background:rgba(255,255,255,.06); border:2px solid rgba(255,255,255,.14); border-radius:18px; padding:16px 10px 14px; cursor:pointer; transition:transform .12s, border-color .15s, background .15s; color:#fff; font-family:var(--body); }
 .idea:hover{ transform:translateY(-3px); border-color:#9fd6ff; }
 .idea.sel{ border-color:#9B7BFF; background:rgba(155,123,255,.2); box-shadow:0 0 0 3px rgba(155,123,255,.3); }
-.idea .ic{ font-size:2.2rem; }
-.idea .lb{ font-family:var(--display); font-weight:700; font-size:.95rem; margin-top:7px; }
-.flair{ max-width:520px; margin:0 auto 22px; background:rgba(255,255,255,.05); border:1px solid rgba(127,227,255,.25); border-radius:18px; padding:18px; text-align:left; opacity:0; max-height:0; overflow:hidden; transition:opacity .3s, max-height .4s, padding .3s; }
-.flair.on{ opacity:1; max-height:260px; }
-.flair label{ font-family:var(--display); font-weight:700; font-size:.95rem; display:block; margin-bottom:8px; }
-.flair input{ width:100%; font-family:var(--body); font-size:1.05rem; color:#fff; background:rgba(255,255,255,.06); border:1.5px solid rgba(127,227,255,.35); border-radius:12px; padding:12px 14px; outline:none; }
-.flair input:focus{ border-color:#9B7BFF; }
-.flair .hint{ font-size:.85rem; color:#9fb6e6; margin-top:8px; }
+.idea .ic{ font-size:2.1rem; }
+.idea .lb{ font-family:var(--display); font-weight:700; font-size:.94rem; margin-top:6px; }
+.idea .hint{ font-size:.74rem; color:#9fb6e6; margin-top:3px; line-height:1.3; }
+
+/* step 2 — make it yours */
+#step2{ display:none; text-align:left; max-width:600px; margin:0 auto; }
+#step2.on{ display:block; }
+.yours{ background:rgba(255,255,255,.05); border:1px solid rgba(127,227,255,.25); border-radius:20px; padding:22px; }
+.yours .picked{ display:flex; align-items:center; gap:12px; margin-bottom:14px; }
+.yours .picked .pic{ font-size:2.2rem; }
+.yours .picked b{ font-family:var(--display); font-size:1.15rem; }
+.yours .picked .chg{ margin-left:auto; background:none; border:none; color:#9fb6e6; font-size:.85rem; cursor:pointer; text-decoration:underline; }
+.f{ margin:14px 0 0; }
+.f label{ font-family:var(--display); font-weight:700; font-size:.95rem; display:block; margin-bottom:7px; }
+.f label small{ font-weight:500; color:#9fb6e6; }
+.f input{ width:100%; font-family:var(--body); font-size:1.02rem; color:#fff; background:rgba(255,255,255,.06); border:1.5px solid rgba(127,227,255,.35); border-radius:12px; padding:12px 14px; outline:none; }
+.f input:focus{ border-color:#9B7BFF; }
+.vibes{ display:flex; flex-wrap:wrap; gap:8px; }
+.vibe{ font-family:var(--display); font-weight:600; font-size:.86rem; color:#cfe3ff; cursor:pointer; background:rgba(127,227,255,.1); border:1.5px solid rgba(127,227,255,.3); border-radius:999px; padding:8px 13px; }
+.vibe.sel{ border-color:#9B7BFF; background:rgba(155,123,255,.25); color:#fff; }
 .btn{ font-family:var(--display); font-weight:700; font-size:1.1rem; color:#06122b; border:none; cursor:pointer; padding:15px 32px; border-radius:999px;
   background:linear-gradient(120deg,#9fb6ff,#9B7BFF); box-shadow:0 14px 34px rgba(155,123,255,.5); transition:transform .12s; }
 .btn:hover{ transform:translateY(-2px); } .btn:disabled{ opacity:.45; cursor:not-allowed; transform:none; }
+.actions{ text-align:center; margin-top:20px; }
 .skip{ display:block; margin:16px auto 0; background:none; border:none; color:#9fb6e6; font-size:.9rem; cursor:pointer; text-decoration:underline; }
+.summary{ margin-top:14px; font-size:.95rem; color:#9BF5C7; background:rgba(63,208,138,.1); border:1px solid rgba(63,208,138,.3); border-radius:12px; padding:12px 14px; line-height:1.45; display:none; }
+.summary.on{ display:block; }
 </style>
 </head>
 <body>
 <div class="wrap">
-  <div class="kicker">🛠️ Before we start</div>
+  <div class="kicker">🛠️ Your Big Build</div>
   <h1>What do you dream of <span class="grad">building?</span></h1>
-  <p class="sub">By the end of the summer, you'll build your very own app or game with a real AI — and put it on the internet. Pick what excites you most. (You can change your mind later!)</p>
-  <div class="grid" id="grid"></div>
-  <div class="flair" id="flair">
-    <label>✨ Add your own twist — what makes it <i>yours</i>?</label>
-    <input id="twist" maxlength="80" placeholder="e.g. about cats · in space · with rainbow colors">
-    <div class="hint">Optional — this is your idea, so dream big!</div>
+  <p class="sub">By the end of the summer you'll build your very own app or game with a real AI — and put it on the internet. Pick one, then make it <b>yours</b>. (You can change your mind later!)</p>
+
+  <!-- STEP 1: the menu -->
+  <div id="step1">
+    <div class="ghead">🎮 Games</div>
+    <div class="grid" id="gGames"></div>
+    <div class="ghead">📱 Apps</div>
+    <div class="grid" id="gApps"></div>
+    <div class="ghead">🏰 Stories &amp; Worlds</div>
+    <div class="grid" id="gWorlds"></div>
+    <button class="skip" id="skip">I'll decide later</button>
   </div>
-  <button class="btn" id="go" disabled>Lock in my idea →</button>
-  <button class="skip" id="skip">I'll decide later</button>
+
+  <!-- STEP 2: make it yours -->
+  <div id="step2">
+    <div class="yours">
+      <div class="picked"><span class="pic" id="pIc"></span><b id="pLb"></b><button class="chg" id="chg">← change</button></div>
+      <div class="f"><label id="qHero"></label><input id="hero" maxlength="60"></div>
+      <div class="f"><label id="qWorld"></label><input id="world" maxlength="60"></div>
+      <div class="f"><label>🎨 Pick a vibe <small>(the look &amp; feel)</small></label><div class="vibes" id="vibes"></div></div>
+      <div class="f"><label>✨ Anything else that makes it YOURS? <small>(optional)</small></label><input id="twist" maxlength="90" placeholder="e.g. it sneezes glitter · my dog Biscuit is in it"></div>
+      <div class="summary" id="summary"></div>
+    </div>
+    <div class="actions">
+      <button class="btn" id="go">Lock in my dream →</button>
+      <button class="skip" id="skip2">I'll decide later</button>
+    </div>
+  </div>
 </div>
+
 <script src="/platform/lib/filter.js"></script>
 <script>
 (function(){
+  // The final Big Build menu — 12 options, each with its own "make it yours" questions.
   var IDEAS = [
-    { k:'clicker', icon:'🎮', label:'A clicker game', seed:'A clicker game where I tap a big button to score points' },
-    { k:'catch',   icon:'🕹️', label:'A catch game', seed:'A game where I move a basket to catch falling treats and score points' },
-    { k:'draw',    icon:'🎨', label:'A drawing pad', seed:'A drawing pad where I can draw with different colors' },
-    { k:'quiz',    icon:'❓', label:'A quiz', seed:'A fun quiz that shows my score at the end' },
-    { k:'pet',     icon:'🐱', label:'A virtual pet', seed:'A virtual pet I can feed and play with' },
-    { k:'space',   icon:'🚀', label:'A space game', seed:'A space game where I dodge asteroids' },
-    { k:'story',   icon:'📖', label:'A choose-your-story', seed:'A choose-your-own-adventure story with choices' },
-    { k:'music',   icon:'🎵', label:'A music toy', seed:'A music toy where tapping makes happy sounds' }
+    // Games
+    { k:'clicker', g:'games', icon:'🎮', label:'Tap-It Clicker',    hint:'Tap to score, buy upgrades',
+      qHero:'⭐ What do you TAP?', phHero:'a cookie? a dragon egg? a soccer ball?', qWorld:'🗺️ What’s the theme?', phWorld:'a bakery? a dino nest? a stadium?',
+      seed:'a clicker game where I tap {hero} to score points and buy fun upgrades, with a {world} theme' },
+    { k:'catch',   g:'games', icon:'🧺', label:'Catch It!',         hint:'Catch the good, dodge the bad',
+      qHero:'⭐ What FALLS from the sky?', phHero:'tacos? stars? puppies?', qWorld:'🗺️ Who catches them?', phWorld:'a basket? a wizard? YOU?',
+      seed:'a catch game where {world} moves left and right to catch falling {hero} and dodge the bad stuff' },
+    { k:'dodge',   g:'games', icon:'🚀', label:'Dodge & Fly',       hint:'Fly through, don’t crash',
+      qHero:'⭐ What are you flying?', phHero:'a rocket? a dragon? a paper plane?', qWorld:'🗺️ Where?', phWorld:'space? a volcano? the ocean?',
+      seed:'a dodging game where I fly {hero} through {world} and avoid the obstacles' },
+    { k:'runner',  g:'games', icon:'🏃', label:'Endless Runner',    hint:'Run &amp; jump the obstacles',
+      qHero:'⭐ Who’s running?', phHero:'a ninja? your cat? a robot?', qWorld:'🗺️ Running through where?', phWorld:'a jungle? your school? Mars?',
+      seed:'an endless runner where {hero} runs through {world} and jumps over obstacles' },
+    { k:'memory',  g:'games', icon:'🧩', label:'Memory Match',      hint:'Flip cards, find the pairs',
+      qHero:'⭐ What are the cards about?', phHero:'animals? planets? your family?', qWorld:'🗺️ Give it a setting', phWorld:'under the sea? a haunted house?',
+      seed:'a memory matching card game about {hero}, set in {world}' },
+    { k:'quiz',    g:'games', icon:'❓', label:'Quiz Show',         hint:'You write the questions',
+      qHero:'⭐ What’s the quiz about?', phHero:'dinosaurs? soccer? YOUR life?', qWorld:'🗺️ What’s the show called?', phWorld:'Brain Blast? The Dino Test?',
+      seed:'a fun quiz-show game called {world} that asks questions about {hero} and shows my score with celebrations' },
+    // Apps
+    { k:'pet',     g:'apps', icon:'🐱', label:'Virtual Pet',        hint:'Feed it, play, keep it happy',
+      qHero:'⭐ What’s your pet — and its name?', phHero:'Sparky the baby dragon? a slime blob?', qWorld:'🗺️ Where does it live?', phWorld:'a candy volcano? your backyard?',
+      seed:'a virtual pet app where I take care of {hero} who lives in {world} — feeding, playing, and keeping it happy' },
+    { k:'draw',    g:'apps', icon:'🎨', label:'Art Studio',         hint:'Your own drawing app',
+      qHero:'⭐ What’s special about it?', phHero:'rainbow brushes? glow pens? stamps?', qWorld:'🗺️ What’s it called?', phWorld:'Neon Studio? The Doodle Lab?',
+      seed:'a drawing app called {world} with colors, brush sizes, and {hero}' },
+    { k:'journal', g:'apps', icon:'📔', label:'Secret Journal',     hint:'Notes, stickers, your stuff',
+      qHero:'⭐ What goes in it?', phHero:'my soccer stats? dreams? jokes?', qWorld:'🗺️ What’s the style?', phWorld:'spy files? a fairy diary?',
+      seed:'a journal app in a {world} style where I can write and save {hero}, with fun stickers' },
+    { k:'music',   g:'apps', icon:'🎵', label:'Beat Maker',         hint:'Tap pads, make music',
+      qHero:'⭐ What sounds does it make?', phHero:'drums? space bloops? animal sounds?', qWorld:'🗺️ What’s your DJ name?', phWorld:'DJ Comet? MC Waffles?',
+      seed:'a music app for {world} where tapping colorful pads plays {hero} so I can make my own beats' },
+    // Stories & Worlds
+    { k:'story',   g:'worlds', icon:'📖', label:'Choose-Your-Adventure', hint:'A story where YOU decide',
+      qHero:'⭐ Who’s the hero?', phHero:'YOU? a lost robot? a brave mouse?', qWorld:'🗺️ Where does it start?', phWorld:'a spooky castle? the mall? the moon?',
+      seed:'a choose-your-own-adventure story where {hero} starts in {world} and my choices change the ending' },
+    { k:'world',   g:'worlds', icon:'🏰', label:'World Builder',    hint:'Build a place to explore',
+      qHero:'⭐ What’s your world?', phHero:'a dragon city? a mini zoo? dream house?', qWorld:'🗺️ What can visitors DO there?', phWorld:'click rooms? meet characters?',
+      seed:'an explorable world called {hero} where visitors can {world} by clicking around' }
   ];
-  var grid=document.getElementById('grid'), flair=document.getElementById('flair'), twist=document.getElementById('twist'), go=document.getElementById('go');
-  var picked=null;
-  IDEAS.forEach(function(it){
-    var d=document.createElement('button'); d.className='idea'; d.innerHTML='<div class="ic">'+it.icon+'</div><div class="lb">'+it.label+'</div>';
-    d.addEventListener('click',function(){ picked=it; document.querySelectorAll('.idea').forEach(function(x){x.classList.remove('sel');}); d.classList.add('sel'); flair.classList.add('on'); go.disabled=false; });
-    grid.appendChild(d);
+  var VIBES = ['🌈 Bright & colorful','🌙 Dark & mysterious','🚀 Space','🏰 Fantasy','🌊 Ocean','🍬 Candy','🤖 Robot / tech','⚽ Sports','🐾 Animals','😂 Silly'];
+
+  var $=function(id){return document.getElementById(id);}, picked=null, vibe='';
+  function card(it){
+    var d=document.createElement('button'); d.className='idea';
+    d.innerHTML='<div class="ic">'+it.icon+'</div><div class="lb">'+it.label+'</div><div class="hint">'+it.hint+'</div>';
+    d.addEventListener('click',function(){ picked=it;
+      document.querySelectorAll('.idea').forEach(function(x){x.classList.remove('sel');}); d.classList.add('sel');
+      $('pIc').textContent=it.icon; $('pLb').textContent=it.label;
+      $('qHero').innerHTML=it.qHero; $('hero').placeholder=it.phHero;
+      $('qWorld').innerHTML=it.qWorld; $('world').placeholder=it.phWorld;
+      $('step1').style.display='none'; $('step2').classList.add('on');
+      $('hero').focus(); refresh();
+    });
+    return d;
+  }
+  IDEAS.forEach(function(it){ $(it.g==='games'?'gGames':it.g==='apps'?'gApps':'gWorlds').appendChild(card(it)); });
+  VIBES.forEach(function(v){
+    var b=document.createElement('button'); b.className='vibe'; b.textContent=v;
+    b.addEventListener('click',function(){ vibe=(vibe===v)?'':v;
+      document.querySelectorAll('.vibe').forEach(function(x){x.classList.toggle('sel',x.textContent===vibe);}); refresh(); });
+    $('vibes').appendChild(b);
   });
-  function save(dream){ try{ localStorage.setItem('ctf:buildDream', JSON.stringify(dream)); }catch(e){}
+  $('chg').addEventListener('click',function(){ $('step2').classList.remove('on'); $('step1').style.display='block'; });
+
+  function val(id){ return ($(id).value||'').trim(); }
+  function composeSeed(){
+    if(!picked) return '';
+    var hero=val('hero')||picked.phHero.split('?')[0], world=val('world')||picked.phWorld.split('?')[0];
+    var s=picked.seed.replace(/\{hero\}/g,hero).replace(/\{world\}/g,world);
+    if(vibe) s+=', with a '+vibe.replace(/^\S+\s/,'')+' look';
+    var t=val('twist'); if(t) s+='. Also: '+t;
+    return s.charAt(0).toUpperCase()+s.slice(1)+'.';
+  }
+  function refresh(){ var s=composeSeed(); var box=$('summary'); if(s){ box.textContent='🌟 Your dream: '+s; box.classList.add('on'); } }
+  ['hero','world','twist'].forEach(function(id){ $(id).addEventListener('input', refresh); });
+
+  function saveDream(dream){ try{ localStorage.setItem('ctf:buildDream', JSON.stringify(dream)); }catch(e){}
     try{ if(window.CTFDB && CTFDB.enabled && CTFDB.updateProfile) CTFDB.updateProfile({ build_dream: dream }); }catch(e){} }
   function next(){ var p=new URLSearchParams(location.search).get('next'); location.href = p && /^\/[a-z]/i.test(p) ? p : '/platform/index.html'; }
-  go.addEventListener('click',function(){
+  function deferred(){ try{ sessionStorage.setItem('ctf:dreamDeferred','1'); }catch(e){} next(); }
+  $('skip').addEventListener('click', deferred);
+  $('skip2').addEventListener('click', deferred);
+
+  $('go').addEventListener('click',function(){
     if(!picked) return;
-    var t=(twist.value||'').trim();
-    if(t && window.CTFFilter && CTFFilter.isClean && !CTFFilter.isClean(t)){ twist.value=''; t=''; }
-    var seed = picked.seed + (t ? (' — '+t) : '') + '.';
-    save({ kind:picked.k, label:picked.label, icon:picked.icon, twist:t, seed:seed, when:new Date().toISOString() });
-    next();
-  });
-  document.getElementById('skip').addEventListener('click', function(){
-    try{ sessionStorage.setItem('ctf:dreamDeferred','1'); }catch(e){}   // don't re-prompt this session
+    var fields=[val('hero'),val('world'),val('twist')];
+    for(var i=0;i<fields.length;i++){ if(fields[i] && window.CTFFilter && CTFFilter.isClean && !CTFFilter.isClean(fields[i])){ $(['hero','world','twist'][i]).value=''; refresh(); return; } }
+    saveDream({ kind:picked.k, label:picked.label, icon:picked.icon, hero:val('hero'), world:val('world'),
+      vibe:vibe.replace(/^\S+\s/,''), twist:val('twist'), seed:composeSeed(), when:new Date().toISOString() });
     next();
   });
 })();

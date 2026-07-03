@@ -98,9 +98,10 @@ body{ font-family:var(--body); color:#EAF1FF; background:
   function setProgress(n){ try{ localStorage.setItem('ctf:m4progress', String(Math.max(getProgress(), n))); }catch(e){} }
 
   // The 12 build layers — each checkpoint adds one layer to the SAME project.
+  // Generic defaults; the BLUEPRINTS below override guide + chips per project kind.
   var LAYERS = [
     { icon:'📝', title:'The Plan', guide:'This is <b>your</b> project. Tell the AI your dream app or game. We\'ll start simple and add a new layer at every checkpoint across the week.', kickoff:true,
-      chips:['a clicker game','a catch game','a drawing pad','a quiz','a virtual pet','a space dodge game'] },
+      chips:['a clicker game','a catch game','a virtual pet','a quiz show','an endless runner','a choose-your-adventure story'] },
     { icon:'🖼️', title:'The Canvas', guide:'Give your project a clear home — a big title, a nice background, and a tidy layout to build on.',
       chips:['add a big fun title','give it a colorful background','tidy up the layout'] },
     { icon:'⭐', title:'The Star', guide:'Add the main thing — your character, the hero, or the main button everything happens around.',
@@ -112,22 +113,160 @@ body{ font-family:var(--body); color:#EAF1FF; background:
     { icon:'🔢', title:'Keep Score', guide:'Add a score or progress so players can see how they\'re doing.',
       chips:['add a score counter','add a timer','show a progress bar'] },
     { icon:'🔊', title:'Make It React', guide:'Make it feel alive — add sounds, wiggles, or fun reactions when things happen.',
-      chips:['add a happy sound','make things bounce','add a celebration effect'] },
+      chips:['add a happy sound effect','make things bounce when clicked','add a celebration effect'] },
     { icon:'🎨', title:'Dress It Up', guide:'Style time! Pick colors and make it look amazing — your taste, your call.',
       chips:['use brighter colors','make it look fancy','add a fun theme'] },
     { icon:'⬆️', title:'Level Up', guide:'Add a challenge — make it harder, add a level, or a surprise twist.',
       chips:['make it harder over time','add a second level','add a surprise twist'] },
     { icon:'🏁', title:'The Welcome', guide:'Add a start screen with your project\'s name and how to play, so anyone can pick it up.',
-      chips:['add a start screen','add how-to-play instructions','add a Play button'] },
+      chips:['add a start screen with my project\'s name','add how-to-play instructions','add a big Play button'] },
     { icon:'🐛', title:'Bug Hunt', guide:'Test it like a real builder — try everything! Tell the AI anything to fix or clean up.',
-      chips:['fix anything that looks broken','make the buttons work better','clean it all up'] },
+      chips:['fix anything that looks broken','make the buttons bigger and easier to tap','clean it all up'] },
     { icon:'🏆', title:'Ship & Show', guide:'You did it! Name your creation and publish it to the internet — ready to show your family at the library.', publish:true, chips:[] }
   ];
+
+  // Per-kind building blocks for checkpoints 2–9 (Canvas → Level Up). {hero}/{world}
+  // are filled from the kid's saved dream, so every chip talks about THEIR project.
+  var BLUEPRINTS = {
+    clicker: [
+      { g:'Set the stage for your clicker — a big title and a {world}-style background.', c:['add a big title and a {world} background','put the tap area front and center','tidy the layout'] },
+      { g:'Add the star: the thing everyone taps — {hero}, nice and big.', c:['add a giant {hero} in the middle to tap','make {hero} look awesome','show a "+1" when I tap {hero}'] },
+      { g:'Make tapping feel great — squish, pop, and count every tap.', c:['make {hero} squish when tapped','make taps feel bouncy and fun','count every single tap'] },
+      { g:'Give it a goal — upgrades to buy with your points!', c:['add an upgrade that gives +2 per tap','add an auto-tapper I can buy','add 3 upgrades that cost more each time'] },
+      { g:'Show the numbers — points, points-per-tap, best score.', c:['add a big score at the top','show my points-per-tap','save and show my best score'] },
+      { g:'Make it celebrate — sounds and effects when milestones hit.', c:['add a pop sound on every tap','confetti when I reach 100 points','make the screen flash at milestones'] },
+      { g:'Style it YOUR way — colors and details that match {world}.', c:['make everything match the {world} theme','add fun details in the background','use brighter colors'] },
+      { g:'Level it up — bigger goals, golden taps, surprises.', c:['add a rare golden {hero} worth 10 points','add a level-up every 250 points','add a surprise bonus event'] }
+    ],
+    catch: [
+      { g:'Set the scene where things fall — sky above, ground below.', c:['add a big title and the {world} scene','draw the sky and the ground','tidy the layout'] },
+      { g:'Add your catcher — {world}, ready at the bottom.', c:['add {world} at the bottom of the screen','make the catcher look great','make the catcher nice and big'] },
+      { g:'Make it move! Slide your catcher left and right.', c:['move the catcher with arrow keys','let me drag the catcher with my finger','make the movement smooth'] },
+      { g:'Rain it down — {hero} falls, and some bad stuff to dodge.', c:['make {hero} fall from the top','add bad things to avoid','make them fall in random spots'] },
+      { g:'Keep score — catches count, misses matter.', c:['+1 for every {hero} I catch','lose a life when I catch a bad thing','add 3 lives with hearts'] },
+      { g:'Make catches feel amazing — sounds and effects.', c:['happy sound when I catch {hero}','sad buzz for bad catches','little sparkle when I catch something'] },
+      { g:'Dress the whole game in your {world} style.', c:['style everything to match {world}','make the falling things colorful','add background details'] },
+      { g:'Speed it up — the longer you last, the wilder it gets.', c:['make things fall faster over time','add a super-rare bonus catch worth 5','show a GAME OVER screen with my score'] }
+    ],
+    dodge: [
+      { g:'Build the world you\'ll fly through — {world}, big title.', c:['add a title and a {world} background','make the background feel like moving','tidy the layout'] },
+      { g:'Add your flyer — {hero}, ready to zoom.', c:['add {hero} on the left side','make {hero} look fast and cool','add a little trail behind {hero}'] },
+      { g:'Take the controls — steer {hero} around the screen.', c:['move {hero} with the arrow keys','make {hero} follow my finger','make the steering smooth'] },
+      { g:'Add the danger — obstacles streaming through {world}.', c:['add obstacles flying at me','make them come in random patterns','crash = game over screen'] },
+      { g:'Score the run — how long can you survive?', c:['score goes up the longer I fly','show my best run ever','add stars to grab for bonus points'] },
+      { g:'Feel the action — near-misses, booms, and zooms.', c:['add a whoosh when I dodge close','shake the screen on a crash','celebrate every 20 points'] },
+      { g:'Style your {world} — make it gorgeous.', c:['make {world} look amazing','give the obstacles a cool style','add moving background layers'] },
+      { g:'Push the limits — speed, waves, shields.', c:['make it faster the longer I survive','add a shield power-up','add a boss obstacle every 50 points'] }
+    ],
+    runner: [
+      { g:'Lay the track — {world} scrolling by, title up top.', c:['add a title and the {world} scenery','draw the ground to run on','make the background scroll'] },
+      { g:'Add the runner — {hero}, ready at the start line.', c:['add {hero} running on the ground','give {hero} a running animation','make {hero} look determined'] },
+      { g:'Jump! Make {hero} leap when you tap or press space.', c:['make {hero} jump when I press space','let me tap to jump','make the jump feel bouncy'] },
+      { g:'Add obstacles — things to leap over as {world} rushes past.', c:['add obstacles to jump over','make them come at random times','trip = game over screen'] },
+      { g:'Count the run — distance, coins, best ever.', c:['score goes up as I run','add coins to collect','show my best distance'] },
+      { g:'Make it feel alive — footsteps, boings, and stumbles.', c:['add a boing sound on jumps','add a coin ding','make the screen shake when I trip'] },
+      { g:'Style the world — your {world}, your colors.', c:['make {world} look amazing','add clouds and background details','give {hero} a cool outfit'] },
+      { g:'Turn up the heat — speed, double jumps, power-ups.', c:['make it faster over time','add a double jump','add a magnet power-up that pulls coins in'] }
+    ],
+    memory: [
+      { g:'Set the table — a {world} board waiting for cards.', c:['add a title and a {world} background','make space for a grid of cards','tidy the layout'] },
+      { g:'Deal the cards — face-down cards all about {hero}.', c:['add 12 face-down cards in a grid','put {hero} pictures or emoji on the card faces','make the card backs look mysterious'] },
+      { g:'Make them flip — tap a card to peek at it.', c:['flip a card when I tap it','only let 2 cards flip at a time','make the flip animation smooth'] },
+      { g:'The rule: match the pairs! Matches stay, misses flip back.', c:['keep matched pairs face up','flip mismatches back after a second','celebrate when I find a match'] },
+      { g:'Track the game — moves, matches, and your best.', c:['count my moves','add a timer','show my best score'] },
+      { g:'Make it feel magic — sounds and sparkles on matches.', c:['happy sound on a match','sparkle effect on matched cards','big celebration when I match them all'] },
+      { g:'Style the deck — your {world} look on every card.', c:['style the cards to match {world}','make the colors pop','add a fun font for the title'] },
+      { g:'Harder rounds — more cards, tricky twists.', c:['add a harder level with 20 cards','add a 60-second challenge mode','shuffle with a cool animation'] }
+    ],
+    quiz: [
+      { g:'Build the stage — {world} needs its glowing set.', c:['add the show title {world} in lights','give it a game-show background','tidy the layout'] },
+      { g:'Add the first questions — all about {hero}!', c:['add 5 multiple-choice questions about {hero}','show one question at a time','add 4 answer buttons per question'] },
+      { g:'Make answering feel real — pick, lock in, next question.', c:['highlight the answer I pick','show right or wrong after I answer','add a Next Question button'] },
+      { g:'The rules of the show — points for right, streaks for glory.', c:['+10 points per right answer','add a streak bonus for right answers in a row','show the final score at the end'] },
+      { g:'Show the scoreboard — running score and question count.', c:['show my score during the game','show which question number I\'m on','add a progress bar'] },
+      { g:'Bring the show to life — dings, buzzers, applause.', c:['ding for right answers','buzzer for wrong ones','confetti on the final score screen'] },
+      { g:'Set-design time — make {world} look like TV.', c:['make it look like a real game show','add spotlights and shine','style the answer buttons'] },
+      { g:'The bonus round — timers, harder questions, prizes.', c:['add a 10-second timer per question','add a double-points bonus round','add 5 harder questions'] }
+    ],
+    pet: [
+      { g:'Build the home — {world}, where {hero} lives.', c:['add a title and draw {world}','make a cozy spot for my pet','tidy the layout'] },
+      { g:'Bring in your pet — {hero} arrives!', c:['add {hero} in the middle','make {hero} blink and look around','give {hero} a name tag'] },
+      { g:'Care buttons — feed, play, and pet {hero}.', c:['add a Feed button that gives {hero} a snack','add a Play button for a little game','make {hero} react when I pet it'] },
+      { g:'The rule of pets: keep {hero} happy — needs go down over time!', c:['add hunger and happiness that slowly drop','make {hero} look sad when needs are low','feeding and playing fill the needs back up'] },
+      { g:'Show the stats — hearts and bars for {hero}\'s mood.', c:['add bars for hunger and happiness','add hearts that fill up','show {hero}\'s mood with faces'] },
+      { g:'Make {hero} feel real — sounds, wiggles, snuggles.', c:['add a happy sound when I feed {hero}','make {hero} bounce when it\'s happy','add little hearts when I pet it'] },
+      { g:'Decorate {world} — toys, colors, coziness.', c:['decorate {world} with fun details','add toys lying around','make it cozier at night'] },
+      { g:'Growing up — {hero} levels up with your care!', c:['make {hero} grow bigger with care','unlock a new toy at happiness 100','add a day counter for how long {hero} has lived'] }
+    ],
+    draw: [
+      { g:'Set up the studio — canvas in the middle, title up top.', c:['add the title {world} and a big white canvas','put the tools on the side','tidy the layout'] },
+      { g:'The star tool: a pen that draws when you move.', c:['let me draw on the canvas with my mouse or finger','make the lines smooth','start with a black pen'] },
+      { g:'Add the toolbox — colors and brush sizes.', c:['add a row of color buttons','add small, medium, and big brush sizes','add an eraser'] },
+      { g:'Artist powers — {hero}!', c:['add {hero}','add a rainbow brush that changes colors','add fun stamps I can place'] },
+      { g:'Studio controls — clear, undo, and save.', c:['add a Clear Canvas button','add an Undo button','add a Save My Art button that downloads it'] },
+      { g:'Make it playful — sounds and sparkles while you draw.', c:['add a soft sound while drawing','make the buttons pop when pressed','add a sparkle trail brush'] },
+      { g:'Style the studio — make {world} feel like YOUR space.', c:['style the whole studio to feel like {world}','make the toolbar look professional','add a fun pattern around the canvas'] },
+      { g:'Gallery mode — save more, show more.', c:['add a gallery that keeps 3 drawings','add a background-color picker for the canvas','add a mirror-drawing mode'] }
+    ],
+    journal: [
+      { g:'Craft the cover — {world} style, your name on it.', c:['add a {world}-style cover with a title','add an Open My Journal button','tidy the layout'] },
+      { g:'The first page — a place to write {hero}.', c:['add a page where I can type','make the page look like real paper','add today\'s date at the top'] },
+      { g:'Save your entries — they stay when you come back.', c:['add a Save Entry button','keep my saved entries in a list','let me tap an old entry to read it'] },
+      { g:'Sticker power — decorate every entry.', c:['add stickers I can add to a page','add 10 fun emoji stickers to choose from','let me put stickers anywhere on the page'] },
+      { g:'Journal stats — streaks and counts.', c:['count my total entries','add a writing streak counter','show my longest entry'] },
+      { g:'Make it delightful — page turns and little sounds.', c:['add a page-turn effect','add a soft click when I save','celebrate a 3-day streak'] },
+      { g:'Make it truly {world} — fonts, colors, secrets.', c:['style everything in the {world} theme','add a secret password screen at the start','let me pick the page color'] },
+      { g:'Power features — moods and prompts.', c:['add a mood picker for each entry','add a "give me an idea" button with writing prompts','add a favorites star for best entries'] }
+    ],
+    music: [
+      { g:'Build the booth — {world}\'s stage, name in lights.', c:['add the DJ name {world} in big letters','make a dark stage background','tidy the layout'] },
+      { g:'Drop in the pads — a colorful grid ready to play.', c:['add a 4x4 grid of colorful pads','make each pad a different color','make the pads big and tappable'] },
+      { g:'Make them sing — every pad plays {hero}.', c:['make each pad play a different sound','make the pads light up when played','let me play with keyboard keys too'] },
+      { g:'The beat goes on — add a looping drum beat.', c:['add a beat that loops when I press Play','add a Stop button','let me change the beat speed'] },
+      { g:'Show the groove — visualize your music.', c:['add bouncing bars that dance to the music','count how many sounds I\'ve played','flash the background on the beat'] },
+      { g:'More feels — echo, boosts, and surprises.', c:['add an echo button','add one secret pad with a silly sound','make a pad that plays a melody'] },
+      { g:'Light show — style the stage like a real concert.', c:['add moving lights to the stage','give it a neon glow style','make it feel like a concert for {world}'] },
+      { g:'Record mode — capture and replay your beats.', c:['let me record a sequence of pads','add a Replay button that plays it back','let me save my favorite beat'] }
+    ],
+    story: [
+      { g:'The book opens — title page for your adventure in {world}.', c:['add a title page for my story','add a Begin button','give it a storybook look'] },
+      { g:'Page one — {hero} arrives in {world}.', c:['write the opening scene where {hero} arrives in {world}','add a picture area with emoji art for the scene','make the text big and easy to read'] },
+      { g:'The magic: choices! Two buttons that change the story.', c:['add 2 choice buttons at the end of the page','each choice leads to a different page','let me go back a page'] },
+      { g:'Grow the tale — every path needs its next chapter.', c:['add the next 4 pages of the story','give one path a happy turn and one a spooky turn','add a third choice somewhere surprising'] },
+      { g:'Track the journey — pages seen, paths found.', c:['count which page I\'m on','track how many endings I\'ve found','add a map of the story paths'] },
+      { g:'Make pages come alive — scene by scene.', c:['different background color per scene','add a gentle page-turn effect','add emoji art to every page'] },
+      { g:'Illustrate {world} — style the whole book.', c:['style the book to match {world}','add a fancy title font','make the choice buttons look magical'] },
+      { g:'The endings — write the finales!', c:['add 3 different endings','add a "The End" screen that shows which ending I got','add a Start Over button'] }
+    ],
+    world: [
+      { g:'Draw the map — {hero} from above, ready to explore.', c:['add a title and draw the map of {hero}','add 4 places to visit on the map','tidy the layout'] },
+      { g:'The landmarks — make each place lookable and clickable.', c:['make each place a big clickable spot','give each place a name label','add emoji art for each place'] },
+      { g:'Step inside — clicking a place opens its page.', c:['clicking a place shows its own page','add a Back to Map button','add a description of each place'] },
+      { g:'Bring it to life — visitors can {world}.', c:['let visitors {world}','add a character who says hi in each place','add one secret to find in each place'] },
+      { g:'Explorer stats — track the visit.', c:['check off each place I\'ve visited','add a visitor counter','show a badge when everything is explored'] },
+      { g:'Add the sounds of {hero} — each place feels different.', c:['different colors per place','a little sound when entering a place','make something move in each place'] },
+      { g:'Beautify the world — your style everywhere.', c:['make the map gorgeous','add day and night mode','add weather like rain or snow'] },
+      { g:'Expand the world — new places, new secrets.', c:['add 2 brand-new places','add a hidden place that unlocks after visiting all others','add a tour-guide character'] }
+    ]
+  };
 
   var qs = new URLSearchParams(location.search);
   var mn = parseInt(qs.get('mission')||'0',10);
   if(!mn || mn<1 || mn>12) mn = Math.min(12, getProgress()+1);
   var layer = LAYERS[mn-1];
+
+  // Personalize checkpoints 2–9 from the kid's saved dream: swap in the
+  // per-kind blueprint and fill {hero}/{world} with THEIR choices.
+  (function(){
+    var d = dream(); if(!d || !d.kind || !BLUEPRINTS[d.kind]) return;
+    var hero = (d.hero||'').trim() || 'your star', world = (d.world||'').trim() || 'your world';
+    function fill(s){ return s.replace(/\{hero\}/g, hero).replace(/\{world\}/g, world); }
+    if(mn>=2 && mn<=9){
+      var bp = BLUEPRINTS[d.kind][mn-2];
+      if(bp){ layer = { icon:layer.icon, title:layer.title, guide:fill(bp.g), chips:bp.c.map(fill) }; }
+    }
+  })();
+
   var state = { current:getProject(), built:false, idea:'' };
   var iframe, building, cinput, contBtn;
 
@@ -141,11 +280,13 @@ body{ font-family:var(--body); color:#EAF1FF; background:
       s.appendChild(el('p','lede','Welcome to the bridge, '+esc(name)+'! Over 12 checkpoints you\'ll build your very own app or game — one layer at a time — and show it to your family at the end. First: what are we making?'));
       var card=el('div','dreamcard');
       var ta;
-      if(!(d&&d.seed)){
+      if(d&&d.seed){
+        card.appendChild(el('div',null,'<div style="font-size:2rem">'+esc(d.icon||'🌟')+'</div><div style="font-weight:700;font-family:var(--display);font-size:1.1rem;margin:4px 0 10px">Your dream: '+esc(d.label||'your build')+'</div>'));
+      } else {
         card.appendChild(el('div',null,'<div style="font-weight:700;margin-bottom:6px">Pick a starting idea:</div>'));
         var chips=el('div','chips'); layer.chips.forEach(function(c){ var b=el('button','chip', c); b.addEventListener('click',function(){ ta.value='Build me '+c+'.'; ta.focus(); }); chips.appendChild(b); }); card.appendChild(chips);
       }
-      card.appendChild(el('div',null,'<div style="font-weight:700;margin:2px 0 8px">Describe your dream — add your own flair!</div>'));
+      card.appendChild(el('div',null,'<div style="font-weight:700;margin:2px 0 8px">'+(d&&d.seed?'Here\'s what you told us — tweak it if you want, then build!':'Describe your dream — add your own flair!')+'</div>'));
       ta=el('textarea','ta'); ta.maxLength=500; ta.placeholder='I want to build…'; ta.value=(d&&d.seed)?d.seed:''; card.appendChild(ta);
       var go=el('button','btn','✨  Start building!'); go.style.marginTop='14px';
       go.addEventListener('click',function(){ var v=ta.value.trim(); if(!v){ ta.focus(); return; } if(!clean(v)) return; state.idea=v; openStudio(); build({ idea:v }); });
