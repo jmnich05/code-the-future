@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<link rel="icon" type="image/svg+xml" href="/platform/assets/logo-icon-tile.svg">
+<title>Live Room — Code the Future</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap');
+:root{ --display:'Space Grotesk',sans-serif; --body:'Plus Jakarta Sans',system-ui,sans-serif; --mono:'JetBrains Mono',monospace; --purple:#9B7BFF; --teal:#26C7D1; --green:#3FD08A; --coral:#FF5A38; }
+*{ box-sizing:border-box; margin:0; }
+html,body{ min-height:100%; }
+body{ font-family:var(--body); color:#EAF1FF; min-height:100vh; padding:20px 16px max(20px,env(safe-area-inset-bottom));
+  background:radial-gradient(120% 90% at 82% -10%, rgba(155,123,255,.25), transparent 55%),
+  radial-gradient(120% 90% at 8% 110%, rgba(38,199,209,.22), transparent 55%),
+  linear-gradient(165deg,#101a3c,#0A1024 55%,#070C1A); }
+.wrap{ max-width:520px; margin:0 auto; text-align:center; }
+.top{ display:flex; align-items:center; gap:8px; justify-content:center; font-family:var(--mono); font-size:11px; letter-spacing:.18em; text-transform:uppercase; color:var(--purple); margin-bottom:14px; }
+.top .dot{ width:8px; height:8px; border-radius:50%; background:#5F6B82; }
+.top .dot.on{ background:var(--green); box-shadow:0 0 8px rgba(63,208,138,.8); }
+h1{ font-family:var(--display); font-weight:700; font-size:clamp(1.5rem,6vw,2.1rem); line-height:1.12; letter-spacing:-.01em; margin:6px 0; }
+.sub{ opacity:.85; line-height:1.5; font-size:1rem; max-width:40ch; margin:8px auto; }
+.qe{ font-size:3rem; margin:8px 0 2px; }
+.opts{ display:grid; gap:10px; margin:18px 0 8px; }
+.opt{ display:flex; align-items:center; gap:12px; text-align:left; font-family:var(--display); font-weight:700; font-size:1.05rem; color:#fff; cursor:pointer;
+  background:rgba(255,255,255,.07); border:2.5px solid rgba(127,227,255,.28); border-radius:16px; padding:16px; transition:transform .1s, border-color .15s, background .15s; }
+.opt .oe{ font-size:1.6rem; }
+.opt:active{ transform:scale(.98); }
+.opt.sel{ border-color:var(--purple); background:rgba(155,123,255,.25); box-shadow:0 0 0 3px rgba(155,123,255,.3); }
+.opt.correct{ border-color:var(--green); background:rgba(63,208,138,.22); }
+.opt.dim{ opacity:.45; }
+.banner{ margin:12px auto 0; padding:13px 16px; border-radius:14px; font-weight:700; line-height:1.4; display:none; }
+.banner.on{ display:block; }
+.banner.win{ background:rgba(63,208,138,.16); border:1.5px solid rgba(63,208,138,.45); color:#c9ffe3; }
+.banner.lose{ background:rgba(255,140,110,.13); border:1.5px solid rgba(255,140,110,.4); color:#ffd9cd; }
+.banner.info{ background:rgba(155,123,255,.14); border:1.5px solid rgba(155,123,255,.4); color:#e4d9ff; font-weight:600; }
+.locked{ font-family:var(--mono); font-size:12px; color:#9BF5C7; margin-top:10px; display:none; }
+.locked.on{ display:block; }
+.btn{ font-family:var(--display); font-weight:700; font-size:1.05rem; color:#06122b; border:none; cursor:pointer; padding:15px 30px; border-radius:999px; text-decoration:none; display:inline-block;
+  background:linear-gradient(120deg,#9fb6ff,#9B7BFF); box-shadow:0 12px 30px rgba(155,123,255,.5); margin-top:14px; }
+.btn.green{ background:linear-gradient(120deg,#9BF5C7,#26C7D1); box-shadow:0 12px 30px rgba(38,199,209,.5); }
+.dreamcard{ background:rgba(63,208,138,.1); border:1.5px solid rgba(63,208,138,.4); border-radius:18px; padding:18px; margin:16px 0 4px; }
+.dreamcard .di{ font-size:2.6rem; }
+.dreamcard b{ font-family:var(--display); font-size:1.15rem; display:block; margin:4px 0; }
+.dreamcard .dd{ font-size:.92rem; color:#c9ffe3; line-height:1.45; }
+.wait{ font-size:2.6rem; margin:26px 0 8px; animation:pulse 1.6s ease-in-out infinite; }
+@keyframes pulse{ 50%{ opacity:.4; transform:scale(.94);} }
+.score{ font-family:var(--mono); font-size:12px; letter-spacing:.1em; color:#9fb6e6; margin-top:18px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top"><span class="dot" id="dot"></span><span id="sess">LIVE ROOM</span></div>
+  <div id="view"><div class="wait">📡</div><h1>Connecting…</h1><p class="sub">Hang tight!</p></div>
+  <div class="score" id="score"></div>
+</div>
+
+<script src="/platform/lib/config.js"></script>
+<script>
+  // pick the session config by ?m= (defaults to module 1)
+  var _m = (new URLSearchParams(location.search).get('m')||'1').replace(/[^0-9]/g,'')||'1';
+  document.write('<script src="config-m'+_m+'.js"><\/script>');
+</script>
+<script src="/platform/lib/filter.js"></script>
+<script type="module">
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+
+const S = window.LIVE_SESSION;
+const view = document.getElementById('view');
+const esc = (s)=>String(s==null?'':s).replace(/[&<>"]/g,(c)=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+// --- who am I -------------------------------------------------------------
+function profile(){ try{ return JSON.parse(localStorage.getItem('ctf:profile')||'null')||{}; }catch(e){ return {}; } }
+let uid; try{ uid = localStorage.getItem('ctf:liveuid') || ('k'+Math.random().toString(36).slice(2,10)); localStorage.setItem('ctf:liveuid', uid); }catch(e){ uid='k'+Date.now(); }
+const name = (profile().display_name||'Builder').toString().slice(0,20);
+document.getElementById('sess').textContent = S.title;
+
+// --- state ------------------------------------------------------------------
+let stageId='connecting', revealed=false, myChoices={}, myScore=0, scoredActs={}, channel=null, dreamSent=false;
+const stageById = (id)=>S.stages.find(s=>s.id===id);
+
+// --- realtime ---------------------------------------------------------------
+const URL=window.CTF_SUPABASE_URL, KEY=window.CTF_SUPABASE_ANON_KEY;
+if(!URL||!KEY||/PASTE|YOUR_/.test(KEY)){ render({offline:true}); }
+else{
+  const sb = createClient(URL, KEY, { auth:{ persistSession:false } });
+  channel = sb.channel(S.channel, { config:{ presence:{ key:uid }, broadcast:{ self:false } } });
+  channel.on('presence', { event:'sync' }, ()=>{
+    const st = channel.presenceState();
+    let host=null;
+    Object.keys(st).forEach(k=>(st[k]||[]).forEach(m=>{ if(m.role==='host') host=m; }));
+    document.getElementById('dot').classList.toggle('on', !!host);
+    const prev=stageId, prevR=revealed;
+    stageId = host ? (host.stage||'lobby') : 'nohost';
+    revealed = !!(host&&host.revealed);
+    if(stageId!==prev || revealed!==prevR) render();
+  });
+  channel.subscribe(async (status)=>{
+    if(status==='SUBSCRIBED'){ await channel.track({ role:'kid', uid, name }); render(); }
+  });
+}
+
+function send(event, payload){ if(channel) channel.send({ type:'broadcast', event, payload }); }
+
+// --- render -----------------------------------------------------------------
+function render(o){
+  const s = stageById(stageId);
+  if(o&&o.offline){ view.innerHTML='<div class="wait">🔌</div><h1>Live Room isn\'t on</h1><p class="sub">Ask your coach for help!</p>'; return; }
+  if(stageId==='connecting'){ view.innerHTML='<div class="wait">📡</div><h1>Connecting…</h1>'; return; }
+  if(stageId==='nohost' || !s){ view.innerHTML='<div class="wait">🕐</div><h1>Waiting for your coach…</h1><p class="sub">The big screen will start the fun. You\'re in the room, '+esc(name)+'!</p>'; return; }
+
+  if(s.type==='lobby'){
+    view.innerHTML='<div class="wait">👋</div><h1>'+esc(s.title)+'</h1><p class="sub">You\'re in, <b>'+esc(name)+'</b>! Watch the big screen — your name just showed up.</p>';
+  }
+  else if(s.type==='vote'){
+    const mine = myChoices[s.id];
+    let html='<div class="qe">'+(s.e||'❓')+'</div><h1>'+esc(s.q)+'</h1><div class="opts">';
+    s.opts.forEach((o,i)=>{
+      let cls='opt';
+      if(mine===i) cls+=' sel';
+      if(revealed && s.answer!=null){ if(i===s.answer) cls+=' correct'; else if(mine!==i) cls+=' dim'; }
+      html+='<button class="'+cls+'" data-i="'+i+'"'+(revealed?' disabled':'')+'><span class="oe">'+o.e+'</span><span>'+esc(o.t)+'</span></button>';
+    });
+    html+='</div><div class="locked'+(mine!=null&&!revealed?' on':'')+'" id="lk">✓ locked in — you can still change your mind</div>';
+    if(revealed){
+      if(s.answer!=null){
+        const win = mine===s.answer;
+        if(mine!=null && !scoredActs[s.id]){ scoredActs[s.id]=true; if(win) myScore++; updateScore(); }
+        html+='<div class="banner on '+(win?'win':'lose')+'">'+(mine==null?'⏰ Time\'s up!':(win?'🎉 You got it!':'😅 Good try!'))+' '+esc(s.why||'')+'</div>';
+      } else {
+        html+='<div class="banner on info">💬 '+esc(s.why||'Look at the big screen — let\'s talk about it!')+'</div>';
+      }
+    }
+    view.innerHTML=html;
+    if(!revealed) view.querySelectorAll('.opt').forEach(b=>b.addEventListener('click',()=>{
+      const i=parseInt(b.dataset.i,10); myChoices[s.id]=i;
+      view.querySelectorAll('.opt').forEach(x=>x.classList.remove('sel')); b.classList.add('sel');
+      document.getElementById('lk').classList.add('on');
+      send('answer',{ act:s.id, uid, name, choice:i });
+    }));
+  }
+  else if(s.type==='dream'){
+    let d=null; try{ d=JSON.parse(localStorage.getItem('ctf:buildDream')||'null'); }catch(e){}
+    let html='<div class="qe">🌉</div><h1>'+esc(s.title)+'</h1><p class="sub">'+esc(s.sub||'')+'</p>';
+    if(d){
+      html+='<div class="dreamcard"><div class="di">'+esc(d.icon||'🌟')+'</div><b>'+esc(d.label||'My build')+'</b><div class="dd">'+esc(d.seed||'')+'</div></div>'+
+        '<a class="btn" href="/platform/build-dream.html?next='+encodeURIComponent('/platform/live/?m='+S.id.replace('m',''))+'">✏️ Change my pick</a>';
+      if(!dreamSent){ dreamSent=true; send('dream',{ uid, name, kind:d.kind, icon:d.icon, label:d.label, hero:d.hero||'', world:d.world||'' }); }
+    } else {
+      html+='<a class="btn green" href="/platform/build-dream.html?next='+encodeURIComponent('/platform/live/?m='+S.id.replace('m',''))+'">🌟 Open the Dream Picker</a>';
+    }
+    view.innerHTML=html;
+  }
+  else if(s.type==='end'){
+    view.innerHTML='<div class="qe">🏆</div><h1>'+esc(s.title)+'</h1><p class="sub">'+esc(s.sub||'')+'</p>'+
+      (myScore?'<div class="banner on win">You scored <b>'+myScore+'</b> — nice work, '+esc(name)+'!</div>':'')+
+      '<a class="btn" href="/platform/missions.html">🗺️ Back to my missions</a>';
+  }
+}
+function updateScore(){ document.getElementById('score').textContent = myScore ? ('YOUR SCORE: '+myScore) : ''; }
+render();
+</script>
+</body>
+</html>
