@@ -558,3 +558,27 @@
 .ctf-nn-shake{ animation:ctf-nn-shakex .4s; }
 @keyframes ctf-nn-shakex{ 0%,100%{ transform:translateX(0); } 25%{ transform:translateX(-6px); } 75%{ transform:translateX(6px); } }
 .ctf-nn-reset{ background:var(--ink-100)!important; color:var(--ink-700)!important; }
+
+/* ---- FUTURE MACHINE v2: full-screen carnival takeover -------------------- */
+.ctf-fm-launch{ text-align:center; background:linear-gradient(160deg,#2a1e57,#171040 70%); border:1px solid #4b3a8f; border-radius:var(--radius-lg); padding:26px 20px; color:#EAF1FF; }
+.ctf-fm-launch-ico{ font-size:3rem; animation:ctf-fm-bob 2.6s ease-in-out infinite; }
+@keyframes ctf-fm-bob{ 0%,100%{ transform:translateY(0);} 50%{ transform:translateY(-7px);} }
+.ctf-fm-launch h3{ font-family:var(--font-display); letter-spacing:.14em; color:#FFD479; margin:8px 0 6px; }
+.ctf-fm-launch p{ color:#cfc6f2; max-width:46ch; margin:0 auto 16px; font-size:.95rem; line-height:1.5; }
+.ctf-fm-fsov{ position:fixed; inset:0; z-index:9500; overflow-y:auto; display:flex; align-items:center; justify-content:center; padding:20px;
+  background:radial-gradient(120% 90% at 80% -10%, rgba(155,123,255,.3), transparent 55%),
+             radial-gradient(120% 90% at 10% 110%, rgba(38,199,209,.22), transparent 55%),
+             linear-gradient(165deg,#1b1345,#0c0930 55%,#070620); }
+.ctf-fs-lock{ overflow:hidden; }
+.ctf-fm-exit{ position:fixed; top:14px; right:14px; z-index:9600; width:44px; height:44px; border-radius:50%; border:1px solid rgba(255,255,255,.3);
+  background:rgba(255,255,255,.1); color:#fff; font-size:1.2rem; cursor:pointer; }
+.ctf-fm-fs{ width:min(760px,96vw); margin:auto; display:flex; flex-direction:column; gap:14px; }
+.ctf-fm-fs .ctf-fm-cab{ max-width:none; width:100%; }
+.ctf-fm-fs .ctf-fm-screen{ min-height:min(44vh,340px); }
+.ctf-fm-fs .ctf-fm-status{ font-size:1.15rem; }
+.ctf-fm-fs .ctf-fm-chips-label{ color:#b9aef0; text-align:center; }
+.ctf-fm-fs .ctf-fm-chips{ justify-content:center; }
+.ctf-fm-fs .ctf-fm-chip{ background:rgba(255,255,255,.09); color:#EAF1FF; border-color:rgba(155,123,255,.45); }
+.ctf-fm-fs .ctf-fm-chip:hover{ background:rgba(155,123,255,.28); }
+.ctf-fm-fs .ctf-fm-input{ background:rgba(255,255,255,.08); color:#fff; border-color:rgba(155,123,255,.5); }
+.ctf-fm-fs .ctf-fm-input::placeholder{ color:#a89ddd; }

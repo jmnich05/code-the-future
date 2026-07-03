@@ -1088,7 +1088,40 @@
   }
   function renderFutureMachine(root, cfg, id) {
     root.innerHTML = header(cfg);
-    var wrap = el('div', 'ctf-fm');
+
+    // ---- inline launch card → the machine itself takes over the whole screen
+    var launch = el('div', 'ctf-fm-launch');
+    root.appendChild(launch);
+    var fb = el('div', 'ctf-feedback good');
+    fb.textContent = cfg.thanks || 'Your future is YOURS to build — and AI is a tool in your hands. 🚀';
+    root.appendChild(fb);
+    var done = completionCard(cfg); if (done) root.appendChild(done);
+
+    var sent = 0, prior = id ? load(id + ':answer') : null;
+    if (prior && prior.sent) { sent = prior.sent; fb.classList.add('show'); reveal(done, (cfg.complete && cfg.complete.progress) || 100); }
+
+    function drawLaunch(again) {
+      launch.innerHTML =
+        '<div class="ctf-fm-launch-ico">🔮</div>' +
+        '<h3>' + esc(cfg.machineName || 'THE FUTURE MACHINE') + '</h3>' +
+        '<p>' + esc(cfg.launchBlurb || 'A carnival machine that predicts amazing futures! Tell it a dream job and it prints your fortune ticket.') + '</p>' +
+        '<button class="ctf-fm-send" data-open>' + (again ? '🔁 Step up again' : '▶ Step up to the machine') + '&nbsp;(full screen)</button>';
+      launch.querySelector('[data-open]').addEventListener('click', open);
+    }
+    drawLaunch(!!(prior && prior.sent));
+
+    function open() { buildMachine(); }
+
+    function buildMachine() {
+    var overlay = el('div', 'ctf-fm-fsov');
+    var wrap = el('div', 'ctf-fm ctf-fm-fs');
+    overlay.appendChild(wrap);
+    var exit = el('button', 'ctf-fm-exit', '✕'); exit.title = 'Back to the lesson';
+    overlay.appendChild(exit);
+    document.body.appendChild(overlay);
+    try { document.documentElement.classList.add('ctf-fs-lock'); } catch (e) {}
+    function closeFS() { overlay.remove(); try { document.documentElement.classList.remove('ctf-fs-lock'); } catch (e) {} drawLaunch(sent > 0); }
+    exit.addEventListener('click', closeFS);
 
     // ---- the machine cabinet ------------------------------------------------
     var cab = el('div', 'ctf-fm-cab');
@@ -1133,7 +1166,7 @@
     wrap.appendChild(row);
 
     if (cfg.ideas && cfg.ideas.length) {
-      wrap.appendChild(el('div', 'ctf-fm-chips-label', esc(cfg.ideasLabel || 'or tap a dream to start')));
+      wrap.appendChild(el('div', 'ctf-fm-chips-label', esc(cfg.ideasLabel || 'or tap a career to try one')));
       var chips = el('div', 'ctf-fm-chips');
       cfg.ideas.forEach(function (idea) {
         var c = el('button', 'ctf-fm-chip', esc(idea));
@@ -1142,19 +1175,12 @@
       });
       wrap.appendChild(chips);
     }
-    root.appendChild(wrap);
-
-    var fb = el('div', 'ctf-feedback good');
-    fb.textContent = cfg.thanks || 'Your future is YOURS to build — and AI is a tool in your hands. 🚀';
-    root.appendChild(fb);
-    var done = completionCard(cfg); if (done) root.appendChild(done);
 
     var status = screen.querySelector('.ctf-fm-status');
-    var IDLE = cfg.greeting || 'Whisper me your dream…';
+    var IDLE = cfg.greeting || 'Step right up! Tell me a dream job…';
     status.textContent = IDLE;
 
-    var sent = 0, busy = false, prior = id ? load(id + ':answer') : null;
-    if (prior && prior.sent) { sent = prior.sent; fb.classList.add('show'); }
+    var busy = false;
     function setState(s) { cab.setAttribute('data-state', s); }
 
     function printTicket(text) {
@@ -1214,6 +1240,8 @@
     }
     send.addEventListener('click', ask);
     input.addEventListener('keydown', function (e) { if (e.key === 'Enter') { e.preventDefault(); ask(); } });
+    setTimeout(function () { try { input.focus(); } catch (e) {} }, 350);
+    }   // end buildMachine (full-screen)
   }
 
   // =========================================================================
