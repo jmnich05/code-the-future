@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Big Build Menu — Code the Future</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap');
+:root{ --display:'Space Grotesk',sans-serif; --body:'Plus Jakarta Sans',system-ui,sans-serif; --mono:'JetBrains Mono',monospace; --purple:#9B7BFF; --teal:#26C7D1; }
+*{ box-sizing:border-box; margin:0; }
+body{ font-family:var(--body); color:#EAF1FF; min-height:100vh; padding:40px 26px 60px; -webkit-print-color-adjust:exact; print-color-adjust:exact;
+  background:radial-gradient(120% 90% at 82% -10%, rgba(155,123,255,.25), transparent 55%),
+  radial-gradient(120% 90% at 8% 110%, rgba(38,199,209,.22), transparent 55%),
+  linear-gradient(165deg,#101a3c,#0A1024 55%,#070C1A); }
+.wrap{ max-width:1180px; margin:0 auto; }
+.head{ text-align:center; margin-bottom:34px; }
+.kicker{ font-family:var(--mono); font-size:13px; letter-spacing:.24em; text-transform:uppercase; color:var(--purple); }
+h1{ font-family:var(--display); font-weight:700; font-size:clamp(2.2rem,5.5vw,3.6rem); line-height:1.06; letter-spacing:-.02em; margin:10px 0 6px; }
+h1 .grad{ background:linear-gradient(110deg,#9fb6ff,#9B7BFF 50%,#26C7D1); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent; }
+.sub{ max-width:62ch; margin:0 auto; opacity:.9; font-size:1.15rem; line-height:1.5; }
+.ghead{ font-family:var(--mono); font-size:13px; letter-spacing:.22em; text-transform:uppercase; color:#7ef0e6; margin:30px 2px 14px; }
+.grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:16px; }
+@media(max-width:900px){ .grid{ grid-template-columns:repeat(2,1fr); } }
+@media(max-width:600px){ .grid{ grid-template-columns:1fr; } }
+.card{ background:rgba(255,255,255,.06); border:1.5px solid rgba(127,227,255,.25); border-radius:20px; padding:20px; break-inside:avoid; }
+.card .top{ display:flex; align-items:center; gap:12px; margin-bottom:8px; }
+.card .ic{ font-size:2.3rem; }
+.card h3{ font-family:var(--display); font-weight:700; font-size:1.25rem; }
+.card .what{ font-size:.95rem; color:#cfe3ff; margin-bottom:12px; line-height:1.4; }
+.card .yours{ background:rgba(155,123,255,.12); border:1px solid rgba(155,123,255,.3); border-radius:12px; padding:10px 12px; }
+.card .yours .yl{ font-family:var(--mono); font-size:10px; letter-spacing:.16em; text-transform:uppercase; color:#c9b8ff; margin-bottom:6px; }
+.card .yours div{ font-size:.88rem; line-height:1.5; }
+.ex{ margin:38px auto 0; max-width:760px; text-align:center; background:rgba(63,208,138,.1); border:1.5px solid rgba(63,208,138,.35); border-radius:20px; padding:22px 26px; }
+.ex .xl{ font-family:var(--mono); font-size:11px; letter-spacing:.2em; text-transform:uppercase; color:#9BF5C7; margin-bottom:8px; }
+.ex p{ font-family:var(--display); font-weight:600; font-size:1.2rem; line-height:1.45; }
+.foot{ text-align:center; margin-top:30px; color:#9fb6e6; font-size:.95rem; line-height:1.6; }
+.foot b{ color:#fff; }
+@media print{ body{ background:#0A1024; } .grid{ grid-template-columns:repeat(3,1fr); } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="head">
+    <div class="kicker">🛠️ Module 4 · Your Big Build</div>
+    <h1>What will <span class="grad">YOU</span> build this summer?</h1>
+    <p class="sub">In the last week of camp you'll build a <b>real app or game</b> with a real AI — layer by layer, checkpoint by checkpoint across the Big Four Bridge — and we'll put it <b>on the internet</b> so you can show your family. Pick your dream, then make it <b>yours</b>.</p>
+  </div>
+
+  <div class="ghead">🎮 Games</div>
+  <div class="grid">
+    <div class="card"><div class="top"><span class="ic">🎮</span><h3>Tap-It Clicker</h3></div>
+      <div class="what">Tap to score points, buy upgrades, chase the high score.</div>
+      <div class="yours"><div class="yl">✨ Make it yours</div><div>What do you <b>tap</b> — a cookie? a dragon egg? a soccer ball? What's the theme?</div></div></div>
+    <div class="card"><div class="top"><span class="ic">🧺</span><h3>Catch It!</h3></div>
+      <div class="what">Slide left and right — catch the good stuff, dodge the bad.</div>
+      <div class="yours"><div class="yl">✨ Make it yours</div><div>What <b>falls from the sky</b> — tacos? stars? puppies? Who catches them?</div></div></div>
+    <div class="card"><div class="top"><span class="ic">🚀</span><h3>Dodge &amp; Fly</h3></div>
+      <div class="what">Fly through obstacles. Don't crash. How long can you last?</div>
+      <div class="yours"><div class="yl">✨ Make it yours</div><div>What are you <b>flying</b> — a rocket? a dragon? Where — space? a volcano?</div></div></div>
+    <div class="card"><div class="top"><span class="ic">🏃</span><h3>Endless Runner</h3></div>
+      <div class="what">Run, jump the obstacles, collect coins, beat your best.</div>
+      <div class="yours"><div class="yl">✨ Make it yours</div><div>Who's <b>running</b> — a ninja? your cat? Through a jungle? your school? Mars?</div></div></div>
+    <div class="card"><div class="top"><span class="ic">🧩</span><h3>Memory Match</h3></div>
+      <div class="what">Flip the cards, find the pairs, race the clock.</div>
+      <div class="yours"><div class="yl">✨ Make it yours</div><div>Cards about <b>anything you love</b> — animals? planets? your own family?</div></div></div>
+    <div class="card"><div class="top"><span class="ic">❓</span><h3>Quiz Show</h3></div>
+      <div class="what">Your own game show — you write the questions!</div>
+      <div class="yours"><div class="yl">✨ Make it yours</div><div>A quiz about what <b>you're</b> the expert in — dinosaurs? soccer? your life?</div></div></div>
+  </div>
+
+  <div class="ghead">📱 Apps</div>
+  <div class="grid">
+    <div class="card"><div class="top"><span class="ic">🐱</span><h3>Virtual Pet</h3></div>
+      <div class="what">Feed it, play with it, keep it happy — it needs YOU.</div>
+      <div class="yours"><div class="yl">✨ Make it yours</div><div>Your <b>dream pet</b> — a baby dragon? a slime blob? Name it! Where does it live?</div></div></div>
+    <div class="card"><div class="top"><span class="ic">🎨</span><h3>Art Studio</h3></div>
+      <div class="what">Your own drawing app — brushes, colors, save your art.</div>
+      <div class="yours"><div class="yl">✨ Make it yours</div><div>What makes it special — <b>rainbow brushes</b>? glow pens? stamps? Name your studio!</div></div></div>
+    <div class="card"><div class="top"><span class="ic">📔</span><h3>Secret Journal</h3></div>
+      <div class="what">Write entries, add stickers, keep your streak going.</div>
+      <div class="yours"><div class="yl">✨ Make it yours</div><div>What goes in it — <b>soccer stats</b>? dreams? jokes? Spy files or fairy diary?</div></div></div>
+    <div class="card"><div class="top"><span class="ic">🎵</span><h3>Beat Maker</h3></div>
+      <div class="what">Tap colorful pads to make music and record your beats.</div>
+      <div class="yours"><div class="yl">✨ Make it yours</div><div>What <b>sounds</b> — drums? space bloops? animal noises? Pick your DJ name!</div></div></div>
+  </div>
+
+  <div class="ghead">🏰 Stories &amp; Worlds</div>
+  <div class="grid">
+    <div class="card"><div class="top"><span class="ic">📖</span><h3>Choose-Your-Adventure</h3></div>
+      <div class="what">A story where the reader decides what happens — multiple endings!</div>
+      <div class="yours"><div class="yl">✨ Make it yours</div><div>Who's the <b>hero</b> — YOU? a lost robot? Where does it start — a spooky castle? the moon?</div></div></div>
+    <div class="card"><div class="top"><span class="ic">🏰</span><h3>World Builder</h3></div>
+      <div class="what">Build a whole place people can explore by clicking around.</div>
+      <div class="yours"><div class="yl">✨ Make it yours</div><div>Your <b>own world</b> — a dragon city? a mini zoo? your dream house? What can visitors do?</div></div></div>
+  </div>
+
+  <div class="ex">
+    <div class="xl">🌟 Example dream</div>
+    <p>"A virtual pet app where I take care of <b>Sparky the baby dragon</b> who lives in <b>a candy volcano</b> — and he <b>sneezes glitter</b>."</p>
+  </div>
+
+  <div class="foot">
+    Pick one today — you can <b>change your mind anytime</b> before build week.<br>
+    Every project gets: your own hero &amp; world · a score or goal · sounds &amp; effects · your style · a start screen · <b>a real web address to share</b>.
+  </div>
+</div>
+</body>
+</html>
