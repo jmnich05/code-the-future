@@ -30,12 +30,23 @@ h1{ font-family:var(--display); font-weight:700; font-size:clamp(2rem,4.5vw,3.4r
 .pp{ font-family:var(--display); font-weight:700; font-size:1.05rem; background:rgba(155,123,255,.18); border:1.5px solid rgba(155,123,255,.45); border-radius:999px; padding:10px 20px; animation:pop .3s; }
 @keyframes pop{ from{ transform:scale(.6); opacity:0; } }
 .bars{ display:grid; gap:14px; width:min(860px,92%); margin-top:26px; }
-.brow{ display:grid; grid-template-columns:56px 1fr 90px; align-items:center; gap:14px; text-align:left; }
-.brow .be{ font-size:2rem; text-align:center; }
+.brow{ display:grid; grid-template-columns:56px 1fr 90px; align-items:center; gap:14px; text-align:left; animation:rowin .45s cubic-bezier(.34,1.56,.64,1) both; }
+.brow:nth-child(2){ animation-delay:.08s; } .brow:nth-child(3){ animation-delay:.16s; } .brow:nth-child(4){ animation-delay:.24s; }
+@keyframes rowin{ from{ opacity:0; transform:translateX(-30px); } }
+.brow .be{ font-size:1.8rem; text-align:center; width:52px; height:52px; border-radius:14px; display:flex; align-items:center; justify-content:center; color:#fff;
+  box-shadow:0 5px 0 rgba(0,0,0,.3); }
+.brow.o0 .be{ background:linear-gradient(160deg,#FF7452,#E23F1C); } .brow.o1 .be{ background:linear-gradient(160deg,#5C8BFF,#2A5FF0); }
+.brow.o2 .be{ background:linear-gradient(160deg,#FFC44D,#E8930C); color:#3a2200; } .brow.o3 .be{ background:linear-gradient(160deg,#54E29B,#1FA864); color:#04331f; }
 .brow .bl{ position:relative; height:56px; background:rgba(255,255,255,.07); border:1.5px solid rgba(127,227,255,.25); border-radius:14px; overflow:hidden; }
-.brow .bf{ position:absolute; inset:0 auto 0 0; width:0%; background:linear-gradient(90deg,rgba(155,123,255,.55),rgba(38,199,209,.55)); transition:width .5s cubic-bezier(.22,1,.36,1); }
-.brow.correct .bf{ background:linear-gradient(90deg,rgba(63,208,138,.6),rgba(38,199,209,.6)); }
-.brow.correct .bl{ border-color:var(--green); box-shadow:0 0 0 3px rgba(63,208,138,.3); }
+.brow .bf{ position:absolute; inset:0 auto 0 0; width:0%; transition:width .5s cubic-bezier(.22,1,.36,1); }
+.brow.o0 .bf{ background:linear-gradient(90deg,rgba(255,116,82,.5),rgba(226,63,28,.45)); } .brow.o1 .bf{ background:linear-gradient(90deg,rgba(92,139,255,.5),rgba(42,95,240,.45)); }
+.brow.o2 .bf{ background:linear-gradient(90deg,rgba(255,196,77,.5),rgba(232,147,12,.4)); } .brow.o3 .bf{ background:linear-gradient(90deg,rgba(84,226,155,.5),rgba(31,168,100,.45)); }
+.brow.correct .bl{ border-color:var(--green); box-shadow:0 0 0 4px rgba(63,208,138,.35), 0 0 24px rgba(63,208,138,.4); }
+.brow.correct .be{ animation:crownpop .55s cubic-bezier(.34,1.56,.64,1); }
+@keyframes crownpop{ 40%{ transform:scale(1.25) rotate(-5deg); } }
+.brow.dimmed{ opacity:.35; filter:grayscale(.6); }
+.vidwrap{ width:min(960px,94%); aspect-ratio:16/9; margin-top:22px; border-radius:18px; overflow:hidden; border:2px solid rgba(127,227,255,.35); box-shadow:0 26px 70px rgba(0,0,0,.6); }
+.vidwrap iframe{ width:100%; height:100%; border:0; display:block; }
 .brow .bt{ position:relative; z-index:1; display:flex; align-items:center; height:100%; padding:0 16px; font-family:var(--display); font-weight:700; font-size:1.15rem; }
 .brow .bc{ font-family:var(--mono); font-weight:700; font-size:1.5rem; text-align:right; color:#cfe3ff; }
 .why{ margin-top:22px; font-size:1.2rem; line-height:1.5; max-width:60ch; background:rgba(63,208,138,.1); border:1.5px solid rgba(63,208,138,.4); border-radius:16px; padding:16px 22px; color:#d7ffe9; display:none; }
@@ -154,11 +165,17 @@ function render(){
       '<div class="url">codethefuture.net/platform/live/</div><div class="people">'+
       Object.keys(kids).map(u=>'<span class="pp">'+esc(kids[u])+'</span>').join('')+'</div>';
   }
+  else if(s.type==='video'){
+    html='<div class="kick">'+esc(s.title)+'</div>'+
+      '<div class="vidwrap"><iframe src="https://www.youtube-nocookie.com/embed/'+esc(s.yt)+'?rel=0&modestbranding=1" title="'+esc(s.title)+'" allow="accelerometer; encrypted-media; picture-in-picture" allowfullscreen></iframe></div>'+
+      '<p class="sub">'+esc(s.sub||'')+'</p>';
+  }
   else if(s.type==='vote'){
+    const SHAPES=['▲','◆','●','■'];
     const a=answers[s.id]||{}, n=Object.keys(a).length, counts=s.opts.map((_,i)=>Object.keys(a).filter(u=>a[u].choice===i).length);
     const max=Math.max(1,...counts);
     html='<div class="kick">'+esc(s.title)+'</div><div class="qe">'+(s.e||'')+'</div><h1>'+esc(s.q)+'</h1><div class="bars">'+
-      s.opts.map((o,i)=>'<div class="brow'+(revealed&&s.answer===i?' correct':'')+'"><div class="be">'+o.e+'</div>'+
+      s.opts.map((o,i)=>'<div class="brow o'+i+(revealed&&s.answer===i?' correct':'')+(revealed&&s.answer!=null&&s.answer!==i?' dimmed':'')+'"><div class="be">'+SHAPES[i%4]+'</div>'+
         '<div class="bl"><div class="bf" style="width:'+Math.round(counts[i]/max*100)+'%"></div><div class="bt">'+esc(o.t)+'</div></div>'+
         '<div class="bc">'+counts[i]+'</div></div>').join('')+'</div>'+
       '<div class="acount">'+n+' of '+Object.keys(kids).length+' answered</div>'+

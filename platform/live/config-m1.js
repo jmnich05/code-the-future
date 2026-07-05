@@ -21,6 +21,10 @@ window.LIVE_SESSION = {
              {e:'🐶', t:'A puppy you train with examples'} ],
       why:'No wrong answers — but by the end of camp, most builders vote 📚 or 🐶. AI learns patterns from examples!' },
 
+    // ---- watch together (projected) — Code.org "How AI Works" (~5 min) ----
+    { id:'vid1', type:'video', title:'Movie time: How AI Works 🍿', yt:'Ok-xpKjKp2g',
+      sub:'Eyes on the big screen! Five minutes with Code.org — everything from your missions, in motion. Then… the game show begins.' },
+
     // ---- AI or NOT? — 6 scored rounds (recaps Mission 1-2) -----------------
     { id:'q1', type:'vote', title:'AI or NOT? · Round 1', e:'📺',
       q:'YouTube picking your next video', answer:0,

@@ -7,57 +7,94 @@
 <title>Live Room — Code the Future</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap');
-:root{ --display:'Space Grotesk',sans-serif; --body:'Plus Jakarta Sans',system-ui,sans-serif; --mono:'JetBrains Mono',monospace; --purple:#9B7BFF; --teal:#26C7D1; --green:#3FD08A; --coral:#FF5A38; }
+:root{ --display:'Space Grotesk',sans-serif; --body:'Plus Jakarta Sans',system-ui,sans-serif; --mono:'JetBrains Mono',monospace; --purple:#9B7BFF; --teal:#26C7D1; --green:#3FD08A; --coral:#FF5A38; --amber:#FFB320; --blue:#3D74FF; }
 *{ box-sizing:border-box; margin:0; }
 html,body{ min-height:100%; }
-body{ font-family:var(--body); color:#EAF1FF; min-height:100vh; padding:20px 16px max(20px,env(safe-area-inset-bottom));
+body{ font-family:var(--body); color:#EAF1FF; min-height:100vh; padding:16px 14px max(18px,env(safe-area-inset-bottom)); display:flex; flex-direction:column;
   background:radial-gradient(120% 90% at 82% -10%, rgba(155,123,255,.25), transparent 55%),
   radial-gradient(120% 90% at 8% 110%, rgba(38,199,209,.22), transparent 55%),
   linear-gradient(165deg,#101a3c,#0A1024 55%,#070C1A); }
-.wrap{ max-width:520px; margin:0 auto; text-align:center; }
-.top{ display:flex; align-items:center; gap:8px; justify-content:center; font-family:var(--mono); font-size:11px; letter-spacing:.18em; text-transform:uppercase; color:var(--purple); margin-bottom:14px; }
+.wrap{ width:100%; max-width:560px; margin:0 auto; text-align:center; flex:1; display:flex; flex-direction:column; }
+.top{ display:flex; align-items:center; gap:8px; justify-content:center; font-family:var(--mono); font-size:11px; letter-spacing:.16em; text-transform:uppercase; color:var(--purple); margin-bottom:8px; flex-wrap:wrap; }
 .top .dot{ width:8px; height:8px; border-radius:50%; background:#5F6B82; }
 .top .dot.on{ background:var(--green); box-shadow:0 0 8px rgba(63,208,138,.8); }
-h1{ font-family:var(--display); font-weight:700; font-size:clamp(1.5rem,6vw,2.1rem); line-height:1.12; letter-spacing:-.01em; margin:6px 0; }
-.sub{ opacity:.85; line-height:1.5; font-size:1rem; max-width:40ch; margin:8px auto; }
-.qe{ font-size:3rem; margin:8px 0 2px; }
-.opts{ display:grid; gap:10px; margin:18px 0 8px; }
-.opt{ display:flex; align-items:center; gap:12px; text-align:left; font-family:var(--display); font-weight:700; font-size:1.05rem; color:#fff; cursor:pointer;
-  background:rgba(255,255,255,.07); border:2.5px solid rgba(127,227,255,.28); border-radius:16px; padding:16px; transition:transform .1s, border-color .15s, background .15s; }
-.opt .oe{ font-size:1.6rem; }
-.opt:active{ transform:scale(.98); }
-.opt.sel{ border-color:var(--purple); background:rgba(155,123,255,.25); box-shadow:0 0 0 3px rgba(155,123,255,.3); }
-.opt.correct{ border-color:var(--green); background:rgba(63,208,138,.22); }
-.opt.dim{ opacity:.45; }
-.banner{ margin:12px auto 0; padding:13px 16px; border-radius:14px; font-weight:700; line-height:1.4; display:none; }
-.banner.on{ display:block; }
-.banner.win{ background:rgba(63,208,138,.16); border:1.5px solid rgba(63,208,138,.45); color:#c9ffe3; }
-.banner.lose{ background:rgba(255,140,110,.13); border:1.5px solid rgba(255,140,110,.4); color:#ffd9cd; }
-.banner.info{ background:rgba(155,123,255,.14); border:1.5px solid rgba(155,123,255,.4); color:#e4d9ff; font-weight:600; }
-.locked{ font-family:var(--mono); font-size:12px; color:#9BF5C7; margin-top:10px; display:none; }
-.locked.on{ display:block; }
-.btn{ font-family:var(--display); font-weight:700; font-size:1.05rem; color:#06122b; border:none; cursor:pointer; padding:15px 30px; border-radius:999px; text-decoration:none; display:inline-block;
-  background:linear-gradient(120deg,#9fb6ff,#9B7BFF); box-shadow:0 12px 30px rgba(155,123,255,.5); margin-top:14px; }
-.btn.green{ background:linear-gradient(120deg,#9BF5C7,#26C7D1); box-shadow:0 12px 30px rgba(38,199,209,.5); }
-.dreamcard{ background:rgba(63,208,138,.1); border:1.5px solid rgba(63,208,138,.4); border-radius:18px; padding:18px; margin:16px 0 4px; }
-.dreamcard .di{ font-size:2.6rem; }
-.dreamcard b{ font-family:var(--display); font-size:1.15rem; display:block; margin:4px 0; }
-.dreamcard .dd{ font-size:.92rem; color:#c9ffe3; line-height:1.45; }
-.wait{ font-size:2.6rem; margin:26px 0 8px; animation:pulse 1.6s ease-in-out infinite; }
+.chiprow{ display:flex; gap:8px; justify-content:center; margin-bottom:8px; }
+.chip{ font-family:var(--mono); font-size:11px; font-weight:700; letter-spacing:.08em; border-radius:999px; padding:5px 12px; background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.15); color:#cfe3ff; }
+.chip.score{ color:#06223b; background:linear-gradient(120deg,#9BF5C7,#26C7D1); border:none; }
+.chip.streak{ color:#3a2200; background:linear-gradient(120deg,#FFD479,#FFB320); border:none; }
+#view{ flex:1; display:flex; flex-direction:column; justify-content:center; }
+h1{ font-family:var(--display); font-weight:700; font-size:clamp(1.35rem,5.6vw,1.9rem); line-height:1.14; letter-spacing:-.01em; margin:6px 0; }
+.sub{ opacity:.85; line-height:1.5; font-size:.98rem; max-width:42ch; margin:8px auto; }
+.qe{ font-size:2.7rem; margin:6px 0 0; }
+.wait{ font-size:2.6rem; margin:10px 0 6px; animation:pulse 1.6s ease-in-out infinite; }
 @keyframes pulse{ 50%{ opacity:.4; transform:scale(.94);} }
-.score{ font-family:var(--mono); font-size:12px; letter-spacing:.1em; color:#9fb6e6; margin-top:18px; }
+
+/* ---- GAME SHOW tiles ---- */
+.tiles{ display:grid; grid-template-columns:1fr 1fr; gap:10px; margin:16px 0 6px; }
+.tiles.n2{ grid-template-columns:1fr; }
+.tiles.n3 .tile:first-child{ grid-column:1/-1; }
+.tile{ position:relative; min-height:104px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:6px; padding:14px 10px;
+  border:none; border-radius:18px; cursor:pointer; color:#fff; font-family:var(--display); font-weight:700; font-size:1.02rem; line-height:1.25;
+  box-shadow:0 8px 0 rgba(0,0,0,.28), 0 14px 26px rgba(0,0,0,.35); transition:transform .1s, filter .2s, box-shadow .1s; }
+.tile:active{ transform:translateY(5px); box-shadow:0 3px 0 rgba(0,0,0,.28); }
+.tile .shape{ font-size:1.7rem; filter:drop-shadow(0 2px 3px rgba(0,0,0,.3)); }
+.tile.t0{ background:linear-gradient(160deg,#FF7452,#E23F1C); }
+.tile.t1{ background:linear-gradient(160deg,#5C8BFF,#2A5FF0); }
+.tile.t2{ background:linear-gradient(160deg,#FFC44D,#E8930C); color:#3a2200; }
+.tile.t3{ background:linear-gradient(160deg,#54E29B,#1FA864); color:#04331f; }
+.tile.sel{ outline:4px solid #fff; outline-offset:3px; animation:tilepick .35s cubic-bezier(.34,1.56,.64,1); }
+@keyframes tilepick{ 40%{ transform:scale(1.06);} }
+.tile.dim{ filter:grayscale(.75) brightness(.5); }
+.tile.correct{ outline:4px solid #9BF5C7; outline-offset:3px; animation:tilewin .5s cubic-bezier(.34,1.56,.64,1); }
+@keyframes tilewin{ 30%{ transform:scale(1.08) rotate(-1.2deg);} 60%{ transform:scale(.98) rotate(1deg);} }
+.lockrow{ min-height:22px; font-family:var(--mono); font-size:11.5px; letter-spacing:.1em; color:#9BF5C7; }
+.banner{ margin:12px auto 0; padding:14px 16px; border-radius:16px; font-weight:700; line-height:1.4; display:none; max-width:46ch; }
+.banner.on{ display:block; animation:bannerin .4s cubic-bezier(.34,1.56,.64,1); }
+@keyframes bannerin{ from{ transform:scale(.7); opacity:0; } }
+.banner.win{ background:rgba(63,208,138,.18); border:2px solid rgba(63,208,138,.55); color:#c9ffe3; font-size:1.08rem; }
+.banner.lose{ background:rgba(255,140,110,.14); border:2px solid rgba(255,140,110,.4); color:#ffd9cd; }
+.banner.info{ background:rgba(155,123,255,.14); border:2px solid rgba(155,123,255,.4); color:#e4d9ff; font-weight:600; }
+
+/* ---- buttons / dream picker ---- */
+.btn{ font-family:var(--display); font-weight:700; font-size:1.02rem; color:#06122b; border:none; cursor:pointer; padding:14px 26px; border-radius:999px; text-decoration:none; display:inline-block;
+  background:linear-gradient(120deg,#9fb6ff,#9B7BFF); box-shadow:0 10px 26px rgba(155,123,255,.5); margin-top:12px; }
+.btn.green{ background:linear-gradient(120deg,#9BF5C7,#26C7D1); box-shadow:0 10px 26px rgba(38,199,209,.5); }
+.btn.ghost{ background:rgba(255,255,255,.1); color:#fff; box-shadow:none; }
+.btn:disabled{ opacity:.5; cursor:not-allowed; }
+.pickgrid{ display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin:12px 0; }
+.pick{ background:rgba(255,255,255,.06); border:2px solid rgba(255,255,255,.16); border-radius:14px; padding:10px 6px; cursor:pointer; color:#fff; }
+.pick:active{ transform:scale(.97); }
+.pick .pi{ font-size:1.6rem; } .pick .pl{ font-family:var(--display); font-weight:700; font-size:.72rem; margin-top:4px; line-height:1.15; }
+.pick.sel{ border-color:#9B7BFF; background:rgba(155,123,255,.22); }
+.pform{ text-align:left; background:rgba(255,255,255,.05); border:1px solid rgba(127,227,255,.25); border-radius:16px; padding:14px; margin-top:10px; }
+.pform label{ font-family:var(--display); font-weight:700; font-size:.85rem; display:block; margin:10px 0 5px; }
+.pform input{ width:100%; font-family:var(--body); font-size:1rem; color:#fff; background:rgba(255,255,255,.07); border:1.5px solid rgba(127,227,255,.35); border-radius:11px; padding:10px 12px; outline:none; }
+.pform input:focus{ border-color:var(--purple); }
+.vibes{ display:flex; flex-wrap:wrap; gap:6px; }
+.vibe{ font-family:var(--display); font-weight:600; font-size:.78rem; color:#cfe3ff; cursor:pointer; background:rgba(127,227,255,.1); border:1.5px solid rgba(127,227,255,.3); border-radius:999px; padding:6px 11px; }
+.vibe.sel{ border-color:#9B7BFF; background:rgba(155,123,255,.25); color:#fff; }
+.psum{ margin-top:10px; font-size:.85rem; color:#9BF5C7; background:rgba(63,208,138,.1); border:1px solid rgba(63,208,138,.3); border-radius:11px; padding:9px 11px; line-height:1.45; display:none; }
+.psum.on{ display:block; }
+.dreamcard{ background:rgba(63,208,138,.1); border:1.5px solid rgba(63,208,138,.4); border-radius:18px; padding:16px; margin:14px 0 4px; }
+.dreamcard .di{ font-size:2.4rem; }
+.dreamcard b{ font-family:var(--display); font-size:1.1rem; display:block; margin:4px 0; }
+.dreamcard .dd{ font-size:.9rem; color:#c9ffe3; line-height:1.45; }
+.confetti{ position:fixed; inset:0; pointer-events:none; overflow:hidden; z-index:80; }
+.confetti i{ position:absolute; top:-12px; width:8px; height:13px; border-radius:2px; animation:fall linear forwards; }
+@keyframes fall{ to{ transform:translateY(110vh) rotate(540deg); opacity:.9; } }
 </style>
 </head>
 <body>
 <div class="wrap">
   <div class="top"><span class="dot" id="dot"></span><span id="sess">LIVE ROOM</span></div>
+  <div class="chiprow" id="chips" style="display:none">
+    <span class="chip score" id="scoreChip">⭐ 0</span><span class="chip streak" id="streakChip" style="display:none">🔥 x1</span>
+  </div>
   <div id="view"><div class="wait">📡</div><h1>Connecting…</h1><p class="sub">Hang tight!</p></div>
-  <div class="score" id="score"></div>
 </div>
 
 <script src="/platform/lib/config.js"></script>
 <script>
-  // pick the session config by ?m= (defaults to module 1)
   var _m = (new URLSearchParams(location.search).get('m')||'1').replace(/[^0-9]/g,'')||'1';
   document.write('<script src="config-m'+_m+'.js"><\/script>');
 </script>
@@ -68,20 +105,44 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 const S = window.LIVE_SESSION;
 const view = document.getElementById('view');
 const esc = (s)=>String(s==null?'':s).replace(/[&<>"]/g,(c)=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const clean=(v)=>{ if(v && window.CTFFilter && CTFFilter.isClean && !CTFFilter.isClean(v)) return false; return true; };
 
-// --- who am I -------------------------------------------------------------
+// --- who am I ---------------------------------------------------------------
 function profile(){ try{ return JSON.parse(localStorage.getItem('ctf:profile')||'null')||{}; }catch(e){ return {}; } }
 let uid; try{ uid = localStorage.getItem('ctf:liveuid') || ('k'+Math.random().toString(36).slice(2,10)); localStorage.setItem('ctf:liveuid', uid); }catch(e){ uid='k'+Date.now(); }
 const name = (profile().display_name||'Builder').toString().slice(0,20);
 document.getElementById('sess').textContent = S.title;
 
+// --- the dream menu (same 12 builds + seeds as the Dream Picker) -------------
+const IDEAS=[
+  {k:'clicker',icon:'🎮',label:'Tap-It Clicker',qh:'⭐ What do you TAP?',ph:'a cookie? a dragon egg?',qw:'🗺️ What’s the theme?',pw:'a bakery? a stadium?',seed:'a clicker game where I tap {h} to score points and buy fun upgrades, with a {w} theme'},
+  {k:'catch',icon:'🧺',label:'Catch It!',qh:'⭐ What FALLS from the sky?',ph:'tacos? stars? puppies?',qw:'🗺️ Who catches them?',pw:'a basket? a wizard? YOU?',seed:'a catch game where {w} moves left and right to catch falling {h} and dodge the bad stuff'},
+  {k:'dodge',icon:'🚀',label:'Dodge & Fly',qh:'⭐ What are you flying?',ph:'a rocket? a dragon?',qw:'🗺️ Where?',pw:'space? a volcano?',seed:'a dodging game where I fly {h} through {w} and avoid the obstacles'},
+  {k:'runner',icon:'🏃',label:'Endless Runner',qh:'⭐ Who’s running?',ph:'a ninja? your cat?',qw:'🗺️ Running through where?',pw:'a jungle? Mars?',seed:'an endless runner where {h} runs through {w} and jumps over obstacles'},
+  {k:'memory',icon:'🧩',label:'Memory Match',qh:'⭐ What are the cards about?',ph:'animals? your family?',qw:'🗺️ Give it a setting',pw:'under the sea?',seed:'a memory matching card game about {h}, set in {w}'},
+  {k:'quiz',icon:'❓',label:'Quiz Show',qh:'⭐ What’s the quiz about?',ph:'dinosaurs? YOUR life?',qw:'🗺️ What’s the show called?',pw:'Brain Blast?',seed:'a fun quiz-show game called {w} that asks questions about {h} and shows my score with celebrations'},
+  {k:'pet',icon:'🐱',label:'Virtual Pet',qh:'⭐ Your pet — and its name?',ph:'Sparky the dragon?',qw:'🗺️ Where does it live?',pw:'a candy volcano?',seed:'a virtual pet app where I take care of {h} who lives in {w} — feeding, playing, and keeping it happy'},
+  {k:'draw',icon:'🎨',label:'Art Studio',qh:'⭐ What’s special about it?',ph:'rainbow brushes?',qw:'🗺️ What’s it called?',pw:'Neon Studio?',seed:'a drawing app called {w} with colors, brush sizes, and {h}'},
+  {k:'journal',icon:'📔',label:'Secret Journal',qh:'⭐ What goes in it?',ph:'soccer stats? jokes?',qw:'🗺️ What’s the style?',pw:'spy files?',seed:'a journal app in a {w} style where I can write and save {h}, with fun stickers'},
+  {k:'music',icon:'🎵',label:'Beat Maker',qh:'⭐ What sounds does it make?',ph:'drums? space bloops?',qw:'🗺️ Your DJ name?',pw:'DJ Comet?',seed:'a music app for {w} where tapping colorful pads plays {h} so I can make my own beats'},
+  {k:'story',icon:'📖',label:'Choose-Your-Adventure',qh:'⭐ Who’s the hero?',ph:'YOU? a lost robot?',qw:'🗺️ Where does it start?',pw:'a spooky castle?',seed:'a choose-your-own-adventure story where {h} starts in {w} and my choices change the ending'},
+  {k:'world',icon:'🏰',label:'World Builder',qh:'⭐ What’s your world?',ph:'a dragon city?',qw:'🗺️ What can visitors DO?',pw:'click rooms?',seed:'an explorable world called {h} where visitors can {w} by clicking around'}
+];
+const VIBES=['🌈 Bright','🌙 Spooky','🚀 Space','🏰 Fantasy','🍬 Candy','😂 Silly'];
+const SHAPES=['▲','◆','●','■'];
+
 // --- state ------------------------------------------------------------------
-let stageId='connecting', revealed=false, myChoices={}, myScore=0, scoredActs={}, channel=null, dreamSent=false;
-const stageById = (id)=>S.stages.find(s=>s.id===id);
+let stageId='connecting', revealed=false, myChoices={}, myScore=0, myStreak=0, scoredActs={}, channel=null, dreamSent=false;
+let pickSel=null, pickVibe='';
+const stageById=(id)=>S.stages.find(s=>s.id===id);
+const chips=document.getElementById('chips');
+function updateChips(){ chips.style.display=myScore||myStreak>1?'flex':'none';
+  document.getElementById('scoreChip').textContent='⭐ '+myScore;
+  const st=document.getElementById('streakChip'); st.style.display=myStreak>1?'inline-block':'none'; st.textContent='🔥 x'+myStreak; }
 
 // --- realtime ---------------------------------------------------------------
 const URL=window.CTF_SUPABASE_URL, KEY=window.CTF_SUPABASE_ANON_KEY;
-if(!URL||!KEY||/PASTE|YOUR_/.test(KEY)){ render({offline:true}); }
+if(!URL||!KEY||/PASTE|YOUR_/.test(KEY)){ view.innerHTML='<div class="wait">🔌</div><h1>Live Room isn\'t on</h1><p class="sub">Ask your coach for help!</p>'; }
 else{
   const sb = createClient(URL, KEY, { auth:{ persistSession:false } });
   channel = sb.channel(S.channel, { config:{ presence:{ key:uid }, broadcast:{ self:false } } });
@@ -99,57 +160,56 @@ else{
     if(status==='SUBSCRIBED'){ await channel.track({ role:'kid', uid, name }); render(); }
   });
 }
-
-function send(event, payload){ if(channel) channel.send({ type:'broadcast', event, payload }); }
+function send(event,payload){ if(channel) channel.send({ type:'broadcast', event, payload }); }
+function burst(){ const c=document.createElement('div'); c.className='confetti'; document.body.appendChild(c);
+  const cols=['#9B7BFF','#FFD479','#7FE3FF','#3FD08A','#3D74FF','#fff'];
+  for(let i=0;i<40;i++){ const x=document.createElement('i'); x.style.left=Math.random()*100+'%'; x.style.background=cols[i%cols.length]; x.style.animationDuration=(1.4+Math.random()*1.4)+'s'; x.style.animationDelay=(Math.random()*.3)+'s'; c.appendChild(x); }
+  setTimeout(()=>c.remove(),3200); }
 
 // --- render -----------------------------------------------------------------
-function render(o){
+function render(){
   const s = stageById(stageId);
-  if(o&&o.offline){ view.innerHTML='<div class="wait">🔌</div><h1>Live Room isn\'t on</h1><p class="sub">Ask your coach for help!</p>'; return; }
+  updateChips();
   if(stageId==='connecting'){ view.innerHTML='<div class="wait">📡</div><h1>Connecting…</h1>'; return; }
   if(stageId==='nohost' || !s){ view.innerHTML='<div class="wait">🕐</div><h1>Waiting for your coach…</h1><p class="sub">The big screen will start the fun. You\'re in the room, '+esc(name)+'!</p>'; return; }
 
   if(s.type==='lobby'){
     view.innerHTML='<div class="wait">👋</div><h1>'+esc(s.title)+'</h1><p class="sub">You\'re in, <b>'+esc(name)+'</b>! Watch the big screen — your name just showed up.</p>';
   }
+  else if(s.type==='video'){
+    view.innerHTML='<div class="wait">🍿</div><h1>Movie time!</h1><p class="sub">Eyes UP on the big screen — devices down for a few minutes. We\'re watching this one together!</p>';
+  }
   else if(s.type==='vote'){
-    const mine = myChoices[s.id];
-    let html='<div class="qe">'+(s.e||'❓')+'</div><h1>'+esc(s.q)+'</h1><div class="opts">';
+    const mine=myChoices[s.id];
+    let html='<div class="qe">'+(s.e||'❓')+'</div><h1>'+esc(s.q)+'</h1><div class="tiles n'+s.opts.length+'">';
     s.opts.forEach((o,i)=>{
-      let cls='opt';
+      let cls='tile t'+i;
       if(mine===i) cls+=' sel';
-      if(revealed && s.answer!=null){ if(i===s.answer) cls+=' correct'; else if(mine!==i) cls+=' dim'; }
-      html+='<button class="'+cls+'" data-i="'+i+'"'+(revealed?' disabled':'')+'><span class="oe">'+o.e+'</span><span>'+esc(o.t)+'</span></button>';
+      if(revealed && s.answer!=null){ if(i===s.answer) cls+=' correct'; else cls+=' dim'; }
+      else if(revealed && s.answer==null && mine!==i) cls+='';
+      html+='<button class="'+cls+'" data-i="'+i+'"'+(revealed?' disabled':'')+'><span class="shape">'+SHAPES[i%4]+'</span><span>'+esc(o.t)+'</span></button>';
     });
-    html+='</div><div class="locked'+(mine!=null&&!revealed?' on':'')+'" id="lk">✓ locked in — you can still change your mind</div>';
+    html+='</div><div class="lockrow">'+(mine!=null&&!revealed?'✓ LOCKED IN — TAP ANOTHER TO CHANGE':'')+'</div>';
     if(revealed){
       if(s.answer!=null){
-        const win = mine===s.answer;
-        if(mine!=null && !scoredActs[s.id]){ scoredActs[s.id]=true; if(win) myScore++; updateScore(); }
-        html+='<div class="banner on '+(win?'win':'lose')+'">'+(mine==null?'⏰ Time\'s up!':(win?'🎉 You got it!':'😅 Good try!'))+' '+esc(s.why||'')+'</div>';
+        const win=mine===s.answer;
+        if(mine!=null && !scoredActs[s.id]){ scoredActs[s.id]=true;
+          if(win){ myScore++; myStreak++; if(myStreak>=2) burst(); } else myStreak=0; updateChips(); }
+        html+='<div class="banner on '+(win?'win':'lose')+'">'+(mine==null?'⏰ Time\'s up!':(win?('🎉 CORRECT!'+(myStreak>1?' 🔥 Streak x'+myStreak+'!':'')):'😅 Good try!'))+'<div style="font-weight:600;font-size:.92rem;margin-top:5px">'+esc(s.why||'')+'</div></div>';
       } else {
         html+='<div class="banner on info">💬 '+esc(s.why||'Look at the big screen — let\'s talk about it!')+'</div>';
       }
     }
     view.innerHTML=html;
-    if(!revealed) view.querySelectorAll('.opt').forEach(b=>b.addEventListener('click',()=>{
+    if(!revealed) view.querySelectorAll('.tile').forEach(b=>b.addEventListener('click',()=>{
       const i=parseInt(b.dataset.i,10); myChoices[s.id]=i;
-      view.querySelectorAll('.opt').forEach(x=>x.classList.remove('sel')); b.classList.add('sel');
-      document.getElementById('lk').classList.add('on');
+      view.querySelectorAll('.tile').forEach(x=>x.classList.remove('sel')); b.classList.add('sel');
+      view.querySelector('.lockrow').textContent='✓ LOCKED IN — TAP ANOTHER TO CHANGE';
       send('answer',{ act:s.id, uid, name, choice:i });
     }));
   }
   else if(s.type==='dream'){
-    let d=null; try{ d=JSON.parse(localStorage.getItem('ctf:buildDream')||'null'); }catch(e){}
-    let html='<div class="qe">🌉</div><h1>'+esc(s.title)+'</h1><p class="sub">'+esc(s.sub||'')+'</p>';
-    if(d){
-      html+='<div class="dreamcard"><div class="di">'+esc(d.icon||'🌟')+'</div><b>'+esc(d.label||'My build')+'</b><div class="dd">'+esc(d.seed||'')+'</div></div>'+
-        '<a class="btn" href="/platform/build-dream.html?next='+encodeURIComponent('/platform/live/?m='+S.id.replace('m',''))+'">✏️ Change my pick</a>';
-      if(!dreamSent){ dreamSent=true; send('dream',{ uid, name, kind:d.kind, icon:d.icon, label:d.label, hero:d.hero||'', world:d.world||'' }); }
-    } else {
-      html+='<a class="btn green" href="/platform/build-dream.html?next='+encodeURIComponent('/platform/live/?m='+S.id.replace('m',''))+'">🌟 Open the Dream Picker</a>';
-    }
-    view.innerHTML=html;
+    renderDream(s);
   }
   else if(s.type==='end'){
     view.innerHTML='<div class="qe">🏆</div><h1>'+esc(s.title)+'</h1><p class="sub">'+esc(s.sub||'')+'</p>'+
@@ -157,7 +217,61 @@ function render(o){
       '<a class="btn" href="/platform/missions.html">🗺️ Back to my missions</a>';
   }
 }
-function updateScore(){ document.getElementById('score').textContent = myScore ? ('YOUR SCORE: '+myScore) : ''; }
+
+// --- the dream picker, built right into the room ------------------------------
+function getDream(){ try{ return JSON.parse(localStorage.getItem('ctf:buildDream')||'null'); }catch(e){ return null; } }
+function renderDream(s){
+  const d=getDream();
+  if(d && d.seed){
+    if(!dreamSent){ dreamSent=true; send('dream',{ uid, name, kind:d.kind, icon:d.icon, label:d.label, hero:d.hero||'', world:d.world||'' }); }
+    view.innerHTML='<div class="qe">🌉</div><h1>'+esc(s.title)+'</h1>'+
+      '<div class="dreamcard"><div class="di">'+esc(d.icon||'🌟')+'</div><b>'+esc(d.label||'My build')+'</b><div class="dd">'+esc(d.seed||'')+'</div></div>'+
+      '<p class="sub">It\'s on the big screen! 🎉 You can change your mind any time before build week.</p>'+
+      '<button class="btn ghost" id="dreamChange">✏️ Change my pick</button>';
+    view.querySelector('#dreamChange').addEventListener('click',()=>{ pickSel=null; pickVibe=''; renderPicker(s); });
+    return;
+  }
+  renderPicker(s);
+}
+function renderPicker(s){
+  if(!pickSel){
+    view.innerHTML='<div class="qe">🌉</div><h1>'+esc(s.title)+'</h1><p class="sub">'+esc(s.sub||'Pick what YOU want to build this summer — then make it yours!')+'</p>'+
+      '<div class="pickgrid">'+IDEAS.map((it,i)=>'<button class="pick" data-i="'+i+'"><div class="pi">'+it.icon+'</div><div class="pl">'+esc(it.label)+'</div></button>').join('')+'</div>';
+    view.querySelectorAll('.pick').forEach(p=>p.addEventListener('click',()=>{ pickSel=IDEAS[+p.dataset.i]; renderPicker(s); }));
+    return;
+  }
+  const it=pickSel;
+  view.innerHTML='<div class="qe">'+it.icon+'</div><h1>'+esc(it.label)+'</h1>'+
+    '<div class="pform">'+
+      '<label>'+esc(it.qh)+'</label><input id="pHero" maxlength="60" placeholder="'+esc(it.ph)+'">'+
+      '<label>'+esc(it.qw)+'</label><input id="pWorld" maxlength="60" placeholder="'+esc(it.pw)+'">'+
+      '<label>🎨 Pick a vibe</label><div class="vibes">'+VIBES.map(v=>'<button class="vibe'+(pickVibe===v?' sel':'')+'">'+v+'</button>').join('')+'</div>'+
+      '<label>✨ Anything else? (optional)</label><input id="pTwist" maxlength="90" placeholder="e.g. it sneezes glitter">'+
+      '<div class="psum" id="pSum"></div>'+
+    '</div>'+
+    '<button class="btn green" id="pLock">🌟 Lock in my dream</button> <button class="btn ghost" id="pBack">‹ back</button>';
+  const seed=()=>{
+    const h=(view.querySelector('#pHero').value||'').trim()||it.ph.split('?')[0];
+    const w=(view.querySelector('#pWorld').value||'').trim()||it.pw.split('?')[0];
+    let t=it.seed.replace(/\{h\}/g,h).replace(/\{w\}/g,w);
+    if(pickVibe) t+=', with a '+pickVibe.replace(/^\S+\s/,'')+' look';
+    const x=(view.querySelector('#pTwist').value||'').trim(); if(x) t+='. Also: '+x;
+    return t.charAt(0).toUpperCase()+t.slice(1)+'.';
+  };
+  const refresh=()=>{ const el=view.querySelector('#pSum'); el.textContent='🌟 '+seed(); el.classList.add('on'); };
+  ['pHero','pWorld','pTwist'].forEach(id=>view.querySelector('#'+id).addEventListener('input',refresh));
+  view.querySelectorAll('.vibe').forEach(b=>b.addEventListener('click',()=>{ pickVibe=(pickVibe===b.textContent)?'':b.textContent;
+    view.querySelectorAll('.vibe').forEach(x=>x.classList.toggle('sel',x.textContent===pickVibe)); refresh(); }));
+  view.querySelector('#pBack').addEventListener('click',()=>{ pickSel=null; renderPicker(s); });
+  view.querySelector('#pLock').addEventListener('click',()=>{
+    const h=(view.querySelector('#pHero').value||'').trim(), w=(view.querySelector('#pWorld').value||'').trim(), x=(view.querySelector('#pTwist').value||'').trim();
+    for(const v of [h,w,x]){ if(v && !clean(v)) return; }
+    const dream={ kind:it.k, label:it.label, icon:it.icon, hero:h, world:w, vibe:pickVibe.replace(/^\S+\s/,''), twist:x, seed:seed(), when:new Date().toISOString() };
+    try{ localStorage.setItem('ctf:buildDream', JSON.stringify(dream)); }catch(e){}
+    dreamSent=false; burst();
+    renderDream(stageById(stageId));
+  });
+}
 render();
 </script>
 </body>
