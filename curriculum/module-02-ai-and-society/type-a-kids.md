@@ -213,8 +213,7 @@ You've probably heard a grown-up wonder, "Is AI going to change jobs?" The hones
 
 Here's the secret rule, and it's the heart of this whole camp:
 
-> **Code handles the loop. AI handles the judgment inside the loop. Humans handle the
-> exceptions.**
+> **Code handles the loop. AI handles the judgment inside the loop. Humans handle the exceptions.**
 
 Let's unpack that with a real example. Imagine a job where someone has to read ten thousand
 customer emails a week. A computer **loop** can zip through all ten thousand. The **AI** can
@@ -552,6 +551,7 @@ can think clearly about fairness, privacy, power, and who gets to decide. That's
 "knowing about AI." That's *wisdom* about AI. Let's pull it all together.
 
 **The Big Ideas you unlocked this module:**
+
 - AI is **already out there**, changing big parts of the world — hospitals, the planet,
   science, and jobs (Missions 2–5).
 - The work rule: **code does the loop, AI does the judgment, humans handle the exceptions**
@@ -576,6 +576,7 @@ now you get to *build* something good with real AI in the Big Mission.
 `[INTERACTIVE: end-of-module quiz — 6 friendly questions across the module. Then revisit your Mission 1 answer and see how much your thinking grew!]`
 
 ### 🏆 Module 2 Complete!
+You see how AI is changing the whole world — and how to be the kind of builder it needs. All 12 badges! 🏆
 **You earned all 12 badges:**
 Returning Builder · World Spotter · Healer's Helper · Planet Protector · Team Captain · Wise
 Builder · Privacy Guard · Fair Player · Freedom Keeper · Rule Maker · World Builder · …and

@@ -83,7 +83,7 @@ drives straight. Humans wrote down exact instructions — "when this happens, do
 machine just follows them, forever, step by step. We call those instructions a **program**.
 Old machines can *only* do what their program says. Not one tiny bit more.
 
-**AI is different. AI can *learn*.**
+**AI is different. AI can LEARN.**
 
 Instead of only following exact instructions, AI looks at *lots and lots of examples* and
 figures things out on its own. It can answer questions nobody typed in ahead of time. It can
@@ -495,19 +495,21 @@ Builder knows *both* what AI is great at *and* where it needs a human. Knowing t
 is what makes you the boss instead of the AI.
 
 **AI is great at:**
+
 - Finding patterns in huge piles of words or pictures — fast.
 - Doing boring, repeated jobs without getting tired or bored.
 - Helping you brainstorm, write, draw, learn, and explore new ideas.
 - Being available any time to explain something a different way.
 
 **AI is NOT good at:**
+
 - **Knowing what's true.** Sometimes AI sounds *totally* sure but is completely wrong. It
   might invent a fact, a book that doesn't exist, or a wrong answer — and say it confidently.
   Grown-ups call this a **"hallucination."** Always double-check important stuff!
 - **Being fair automatically.** Remember "garbage in, garbage out"? If an AI learned from
   examples that were unfair, it can be unfair too, without meaning to. That's called **bias**.
 - **Caring about people** or knowing right from wrong. It doesn't actually care about you.
-- **Deciding what *matters*.** That's a human job — *your* job.
+- **Deciding what matters.** That's a human job — *your* job.
 
 Here's the most important rule in this whole camp, and we really mean it:
 
@@ -607,6 +609,7 @@ you can teach it, you really know it — and you might just teach them something
 `[INTERACTIVE: end-of-module quiz — 5 friendly questions. Then revisit your Mission 1 warm-up answer and see how much you've grown!]`
 
 ### 🏆 Module 1 Complete!
+You officially understand what AI is — most adults can't say that. All 12 badges are yours! 🏆
 **You earned all 12 badges:**
 Future Builder · AI Spotter · Pattern Finder · Brain Trainer · Pixel Detective · Word Wizard
 · Attention Ace · Neuron Navigator · Time Traveler · Smart Boss · Future Maker · …and now:

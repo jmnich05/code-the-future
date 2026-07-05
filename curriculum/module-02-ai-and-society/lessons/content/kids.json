@@ -230,7 +230,7 @@
     },
     {
      "type": "quote",
-     "html": "<blockquote><p>**Code handles the loop. AI handles the judgment inside the loop. Humans handle the</p><p>exceptions.**</p></blockquote>"
+     "html": "<blockquote><p><strong>Code handles the loop. AI handles the judgment inside the loop. Humans handle the exceptions.</strong></p></blockquote>"
     },
     {
      "type": "text",
@@ -601,7 +601,11 @@
     },
     {
      "type": "text",
-     "html": "<p><strong>The Big Ideas you unlocked this module:</strong> - AI is <strong>already out there</strong>, changing big parts of the world — hospitals, the planet,   science, and jobs (Missions 2–5). - The work rule: <strong>code does the loop, AI does the judgment, humans handle the exceptions</strong>   (Mission 5). - A tool isn't good or bad — <strong>the choices are</strong> (the hammer, Mission 6). - Your information is <strong>yours</strong> — be the boss of your privacy (Mission 7). - The biggest tools are held by a <strong>few</strong> today, and fairness means <strong>sharing</strong> the power   (Missions 8–9). - <strong>Nobody decides alone</strong> — the future of AI is steered by lots of people, <strong>including you</strong>   (Mission 10). - A great builder = <strong>curiosity + judgment + kindness</strong> (Mission 11).</p>"
+     "html": "<p><strong>The Big Ideas you unlocked this module:</strong></p>"
+    },
+    {
+     "type": "list",
+     "html": "<ul><li>AI is <strong>already out there</strong>, changing big parts of the world — hospitals, the planet, science, and jobs (Missions 2–5).</li><li>The work rule: <strong>code does the loop, AI does the judgment, humans handle the exceptions</strong> (Mission 5).</li><li>A tool isn't good or bad — <strong>the choices are</strong> (the hammer, Mission 6).</li><li>Your information is <strong>yours</strong> — be the boss of your privacy (Mission 7).</li><li>The biggest tools are held by a <strong>few</strong> today, and fairness means <strong>sharing</strong> the power (Missions 8–9).</li><li><strong>Nobody decides alone</strong> — the future of AI is steered by lots of people, <strong>including you</strong> (Mission 10).</li><li>A great builder = <strong>curiosity + judgment + kindness</strong> (Mission 11).</li></ul>"
     },
     {
      "type": "text",
@@ -621,7 +625,7 @@
     },
     {
      "type": "complete",
-     "affirmation": "<strong>You earned all 12 badges:</strong>",
+     "affirmation": "You see how AI is changing the whole world — and how to be the kind of builder it needs. All 12 badges! 🏆",
      "nextUp": ""
     }
    ]

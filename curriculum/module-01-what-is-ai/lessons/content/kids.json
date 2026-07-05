@@ -95,7 +95,7 @@
     },
     {
      "type": "text",
-     "html": "<p>*<em>AI is different. AI can </em>learn<em>.</em>*</p>"
+     "html": "<p><strong>AI is different. AI can LEARN.</strong></p>"
     },
     {
      "type": "text",
@@ -534,7 +534,7 @@
     },
     {
      "type": "complete",
-     "affirmation": "right as you were growing up.",
+     "affirmation": "You time-traveled through the whole story of AI in 10 minutes. ⏳",
      "nextUp": "Mission 10: What AI Is Great At (and What It's Not)"
     }
    ]
@@ -559,11 +559,19 @@
     },
     {
      "type": "text",
-     "html": "<p><strong>AI is great at:</strong> - Finding patterns in huge piles of words or pictures — fast. - Doing boring, repeated jobs without getting tired or bored. - Helping you brainstorm, write, draw, learn, and explore new ideas. - Being available any time to explain something a different way.</p>"
+     "html": "<p><strong>AI is great at:</strong></p>"
+    },
+    {
+     "type": "list",
+     "html": "<ul><li>Finding patterns in huge piles of words or pictures — fast.</li><li>Doing boring, repeated jobs without getting tired or bored.</li><li>Helping you brainstorm, write, draw, learn, and explore new ideas.</li><li>Being available any time to explain something a different way.</li></ul>"
     },
     {
      "type": "text",
-     "html": "<p><strong>AI is NOT good at:</strong> - <strong>Knowing what's true.</strong> Sometimes AI sounds <em>totally</em> sure but is completely wrong. It   might invent a fact, a book that doesn't exist, or a wrong answer — and say it confidently.   Grown-ups call this a <strong>\"hallucination.\"</strong> Always double-check important stuff! - <strong>Being fair automatically.</strong> Remember \"garbage in, garbage out\"? If an AI learned from   examples that were unfair, it can be unfair too, without meaning to. That's called <strong>bias</strong>. - <strong>Caring about people</strong> or knowing right from wrong. It doesn't actually care about you. - *<em>Deciding what </em>matters<em>.</em><em> That's a human job — </em>your* job.</p>"
+     "html": "<p><strong>AI is NOT good at:</strong></p>"
+    },
+    {
+     "type": "list",
+     "html": "<ul><li><strong>Knowing what's true.</strong> Sometimes AI sounds <em>totally</em> sure but is completely wrong. It might invent a fact, a book that doesn't exist, or a wrong answer — and say it confidently. Grown-ups call this a <strong>\"hallucination.\"</strong> Always double-check important stuff!</li><li><strong>Being fair automatically.</strong> Remember \"garbage in, garbage out\"? If an AI learned from examples that were unfair, it can be unfair too, without meaning to. That's called <strong>bias</strong>.</li><li><strong>Caring about people</strong> or knowing right from wrong. It doesn't actually care about you.</li><li><strong>Deciding what matters.</strong> That's a human job — <em>your</em> job.</li></ul>"
     },
     {
      "type": "text",
@@ -595,7 +603,7 @@
     },
     {
      "type": "complete",
-     "affirmation": "unfair (\"bias\").",
+     "affirmation": "Knowing when <em>not</em> to trust a computer? That's real wisdom. Boss-level unlocked.",
      "nextUp": "Mission 11: The Future Is Yours"
     }
    ]
@@ -677,7 +685,7 @@
     },
     {
      "type": "complete",
-     "affirmation": "<strong>You earned all 12 badges:</strong>",
+     "affirmation": "You officially understand what AI is — most adults can't say that. All 12 badges are yours! 🏆",
      "nextUp": ""
     }
    ]

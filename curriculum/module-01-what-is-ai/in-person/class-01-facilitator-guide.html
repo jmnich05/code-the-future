@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Module 1 · In-Person Class 1 — Facilitator Guide</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600;700&display=swap');
+:root{
+  --display:'Space Grotesk',sans-serif; --body:'Plus Jakarta Sans',system-ui,sans-serif; --mono:'JetBrains Mono',monospace;
+  --navy:#0A1024; --ink:#0C1322; --teal:#26C7D1; --purple:#9B7BFF; --blue:#3D74FF; --amber:#FFB454;
+  --paper:#f4f6fc; --card:#fff; --line:#e3e8f3; --muted:#5F6B82;
+}
+*{ box-sizing:border-box; margin:0; }
+body{ font-family:var(--body); color:var(--ink); background:var(--paper); line-height:1.5; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+.wrap{ max-width:1080px; margin:0 auto; padding:30px 22px 70px; }
+
+/* header */
+.head{ background:radial-gradient(120% 120% at 85% -20%, rgba(155,123,255,.35), transparent 55%), radial-gradient(120% 120% at 5% 120%, rgba(38,199,209,.32), transparent 55%), linear-gradient(160deg,#101a3c,#0A1024 60%,#070C1A); color:#EAF1FF; border-radius:24px; padding:32px 34px; box-shadow:0 24px 60px rgba(10,16,36,.25); }
+.kick{ font-family:var(--mono); font-size:12px; letter-spacing:.22em; text-transform:uppercase; color:#9fb6ff; }
+.head h1{ font-family:var(--display); font-weight:700; font-size:clamp(1.8rem,4vw,2.5rem); margin:8px 0 4px; letter-spacing:-.01em; }
+.head h1 .g{ background:linear-gradient(100deg,#9fd6ff,#9B7BFF 60%,#26C7D1); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent; }
+.head .sub{ opacity:.86; max-width:60ch; }
+/* split bar */
+.split{ display:flex; gap:6px; margin-top:22px; }
+.seg{ border-radius:10px; padding:11px 14px; font-family:var(--display); font-weight:700; font-size:.82rem; color:#06122b; }
+.seg small{ display:block; font-family:var(--mono); font-weight:600; font-size:10px; letter-spacing:.1em; opacity:.7; margin-top:2px; }
+.seg.down{ flex:4; background:linear-gradient(120deg,#9fb6ff,#9B7BFF); }
+.seg.brk{ flex:1; background:linear-gradient(120deg,#ffd27a,#FFB454); }
+.seg.up{ flex:4; background:linear-gradient(120deg,#7ef0e6,#26C7D1); }
+
+/* big idea */
+.idea{ margin:22px 0 6px; background:var(--card); border:1.5px solid var(--line); border-left:6px solid var(--purple); border-radius:16px; padding:18px 22px; box-shadow:0 10px 30px rgba(12,19,34,.05); }
+.idea .lab{ font-family:var(--mono); font-size:11px; letter-spacing:.16em; text-transform:uppercase; color:var(--purple); }
+.idea p{ font-family:var(--display); font-weight:600; font-size:1.12rem; margin-top:4px; }
+
+/* layout */
+.cols{ display:grid; grid-template-columns:1fr 320px; gap:22px; margin-top:24px; align-items:start; }
+@media(max-width:900px){ .cols{ grid-template-columns:1fr; } }
+
+/* part header */
+.part{ display:flex; align-items:center; gap:12px; margin:30px 0 14px; }
+.part .pill{ font-family:var(--mono); font-weight:700; font-size:11px; letter-spacing:.12em; text-transform:uppercase; color:#fff; padding:6px 12px; border-radius:999px; }
+.part.down .pill{ background:var(--purple); } .part.up .pill{ background:var(--teal); color:#06223b; }
+.part h2{ font-family:var(--display); font-weight:700; font-size:1.45rem; }
+.part .min{ margin-left:auto; font-family:var(--mono); font-size:12px; color:var(--muted); }
+
+/* block cards */
+.block{ background:var(--card); border:1.5px solid var(--line); border-radius:16px; padding:18px 20px; margin-bottom:14px; box-shadow:0 8px 22px rgba(12,19,34,.05); position:relative; }
+.block::before{ content:""; position:absolute; left:0; top:18px; bottom:18px; width:4px; border-radius:4px; }
+.block.d::before{ background:var(--purple); } .block.u::before{ background:var(--teal); }
+.block .t{ display:flex; align-items:baseline; gap:10px; }
+.block .time{ font-family:var(--mono); font-weight:700; font-size:.9rem; color:var(--blue); }
+.block.u .time{ color:#0f9 aa; color:#119bb0; }
+.block h3{ font-family:var(--display); font-weight:700; font-size:1.1rem; }
+.block .goal{ font-size:.9rem; color:var(--muted); margin:4px 0 8px; }
+.block ul{ margin:6px 0 0 2px; padding-left:18px; }
+.block li{ margin:5px 0; font-size:.96rem; }
+.block li b{ color:var(--ink); }
+.tag{ display:inline-block; font-family:var(--mono); font-size:10px; font-weight:600; letter-spacing:.06em; text-transform:uppercase; color:#119bb0; background:rgba(38,199,209,.12); border:1px solid rgba(38,199,209,.3); border-radius:6px; padding:2px 7px; margin-left:6px; vertical-align:middle; }
+
+/* break banner */
+.breakb{ background:linear-gradient(120deg,#fff6e6,#ffeccc); border:1.5px solid #ffd79a; border-radius:16px; padding:18px 22px; margin:8px 0 4px; display:flex; align-items:center; gap:16px; }
+.breakb .em{ font-size:2rem; } .breakb .time{ font-family:var(--mono); font-weight:700; color:#b9791b; }
+.breakb h3{ font-family:var(--display); font-weight:700; }
+
+/* question bank */
+.qbank{ background:linear-gradient(165deg,#111b3e,#0b1124); color:#EAF1FF; border-radius:16px; padding:20px 22px; margin:6px 0 14px; }
+.qbank .lab{ font-family:var(--mono); font-size:11px; letter-spacing:.16em; text-transform:uppercase; color:#7ef0e6; }
+.qbank h3{ font-family:var(--display); font-weight:700; font-size:1.12rem; margin:4px 0 10px; }
+.qbank ol{ margin:0; padding-left:20px; columns:2; column-gap:26px; }
+@media(max-width:680px){ .qbank ol{ columns:1; } }
+.qbank li{ margin:7px 0; font-size:.95rem; break-inside:avoid; }
+
+/* sidebar */
+.side{ position:sticky; top:18px; display:grid; gap:14px; }
+@media(max-width:900px){ .side{ position:static; } }
+.card{ background:var(--card); border:1.5px solid var(--line); border-radius:16px; padding:18px; box-shadow:0 8px 22px rgba(12,19,34,.05); }
+.card h4{ font-family:var(--display); font-weight:700; font-size:1rem; margin-bottom:10px; display:flex; align-items:center; gap:8px; }
+.idns{ list-style:none; padding:0; display:grid; gap:7px; }
+.idns li{ font-size:.9rem; display:flex; gap:8px; align-items:flex-start; }
+.idns .n{ font-family:var(--mono); font-weight:700; color:var(--purple); }
+.moves li, .mat li{ font-size:.9rem; margin:6px 0; }
+.moves li b{ color:var(--blue); }
+.card.tip{ border-left:6px solid var(--amber); }
+
+footer{ text-align:center; margin-top:30px; color:var(--muted); font-size:.85rem; }
+@media print{ body{ background:#fff; } .head{ box-shadow:none; } .side{ position:static; } .block,.card,.idea{ box-shadow:none; } .cols{ grid-template-columns:1fr 300px; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="head">
+    <div class="kick">🛠️ AI Apprentices Guild · Founding Cohort</div>
+    <h1>Module 1 · Class 1 — <span class="g">"What Is AI?"</span></h1>
+    <p class="sub">A 90-minute in-person session at the library. First half is <b>talking</b> — open questions, kids in their own words. Second half is <b>building</b> — tablets on the platform. A 10-minute break splits them.</p>
+    <div class="split">
+      <div class="seg down">🟣 Talk it out<small>0:00 – 0:40 · screens down</small></div>
+      <div class="seg brk">🚻 Break<small>0:40 – 0:50</small></div>
+      <div class="seg up">🟢 Build it<small>0:50 – 1:30 · screens up</small></div>
+    </div>
+  </div>
+
+  <div class="idea">
+    <div class="lab">The one big idea (everything points here)</div>
+    <p>AI isn't magic — it's a machine that <b>learns from examples</b>, <b>spots patterns</b>, and <b>predicts</b>. It's powerful, it makes mistakes, and <b>you stay the boss of it.</b></p>
+  </div>
+
+  <div class="cols">
+    <main>
+
+      <!-- PART 1 -->
+      <div class="part down"><span class="pill">Part 1</span><h2>Talk it out — screens down</h2><span class="min">40 min</span></div>
+
+      <div class="block d">
+        <div class="t"><span class="time">0:00–0:08</span><h3>Welcome to the Guild</h3></div>
+        <div class="goal">Get every voice in the room before anything else.</div>
+        <ul>
+          <li>Gather in a circle (chairs or floor). Welcome them as <b>"AI Apprentices."</b></li>
+          <li><b>Name + spark:</b> each kid says their name and <i>one thing they think AI can do.</i></li>
+          <li>Set the rule of the day: <b>"There are no wrong answers — we're explorers."</b></li>
+        </ul>
+      </div>
+
+      <div class="block d">
+        <div class="t"><span class="time">0:08–0:24</span><h3>Open floor: "What even <i>is</i> AI?" <span class="tag">the heart of today</span></h3></div>
+        <div class="goal">Pure discussion. Toss out open questions, follow their energy, get them talking in their own words. Use the question bank below — pick whatever the room runs with.</div>
+        <ul>
+          <li>Catch a great line and write it on the whiteboard — you'll come back to it.</li>
+          <li>Keep it moving with the facilitator moves in the sidebar ("Say more…", "Who sees it differently?").</li>
+        </ul>
+      </div>
+
+      <div class="qbank">
+        <div class="lab">🗣️ Open-question bank — for the first half</div>
+        <h3>Ask these like a curious friend, not a quiz. Let them argue a little.</h3>
+        <ol>
+          <li>Where have you <b>seen or used</b> AI? (phones, games, YouTube, Alexa…)</li>
+          <li>If you had to explain AI to a <b>5-year-old</b>, what would you say?</li>
+          <li>Is a <b>video-game bad guy</b> "AI"? Why or why not?</li>
+          <li>Can AI <b>think</b> like you do? What's the same — what's different?</li>
+          <li>Where does AI get its smarts — is it <b>born knowing</b>, or does it <b>learn</b>?</li>
+          <li>Can AI ever be <b>wrong</b>? Have you ever caught it making a mistake?</li>
+          <li>How do you think AI <b>learns</b> — who teaches it?</li>
+          <li>Should there be things AI is <b>NOT allowed</b> to do?</li>
+          <li>Is AI <b>alive</b>? Does it have feelings?</li>
+          <li>What's something you <b>wish</b> AI could make or do for you?</li>
+        </ol>
+      </div>
+
+      <div class="block d">
+        <div class="t"><span class="time">0:24–0:34</span><h3>Unplugged: "The Secret Rule"</h3></div>
+        <div class="goal">A game that teaches "AI learns from examples" — with zero screens.</div>
+        <ul>
+          <li><b>You are the AI.</b> You have a secret rule (e.g., you "like" round things, or words with the letter S).</li>
+          <li>Kids call out examples; you answer <b>yes / no</b>; they shout the rule when they crack it.</li>
+          <li><b>Flip it:</b> a kid invents a rule and "trains" the room.</li>
+          <li>Land it in their words: <b>"That's how AI learns — from examples, not magic. If I only saw bad examples, I'd learn the wrong thing."</b></li>
+        </ul>
+      </div>
+
+      <div class="block d">
+        <div class="t"><span class="time">0:34–0:40</span><h3>"Bad AI / Good AI"</h3></div>
+        <div class="goal">Quick, funny, all talking — sets up next week's prompting.</div>
+        <ul>
+          <li>"If you told a robot <b>'make me a game,'</b> what might go wrong?"</li>
+          <li>"How could you ask <b>better</b>?" (more detail = better result)</li>
+          <li>Land it: <b>clear words get better results — and you're the boss of the AI.</b></li>
+        </ul>
+      </div>
+
+      <!-- BREAK -->
+      <div class="breakb">
+        <div class="em">🚻</div>
+        <div>
+          <div class="time">0:40–0:50 · 10 minutes</div>
+          <h3>Break — bathroom, water, wiggles</h3>
+          <div class="goal" style="margin:2px 0 0">Hard stop. Come back ready to power up the tablets.</div>
+        </div>
+      </div>
+
+      <!-- PART 2 -->
+      <div class="part up"><span class="pill">Part 2</span><h2>Build it — screens up</h2><span class="min">40 min</span></div>
+
+      <div class="block u">
+        <div class="t"><span class="time">0:50–0:56</span><h3>Power up</h3></div>
+        <ul>
+          <li>Tablets out. Log in with their <b>code</b>; finish their character if they haven't.</li>
+          <li>Quick "everybody in?" check before you launch missions together.</li>
+        </ul>
+      </div>
+
+      <div class="block u">
+        <div class="t"><span class="time">0:56–1:18</span><h3>Play the Module 1 missions <span class="tag">on their own screens</span></h3></div>
+        <div class="goal">The same ideas from the first half — now hands-on. You circulate, celebrate, help.</div>
+        <ul>
+          <li><b>AI or Not? — The Arcade</b> — spot AI in real life</li>
+          <li><b>Say hi to a real AI</b> — their first chat</li>
+          <li><b>Be a Pattern Detective</b> + <b>Train your own AI</b> — the Secret Rule, now on screen</li>
+          <li>🎨 <b>Draw something — a REAL AI will guess it!</b> — the showpiece</li>
+        </ul>
+      </div>
+
+      <div class="block u">
+        <div class="t"><span class="time">1:18–1:25</span><h3>Group reveal — on your projection</h3></div>
+        <ul>
+          <li>2–3 volunteers project their <b>Draw</b> mission; the whole room watches the AI guess <b>live</b>.</li>
+          <li>Cheer the hits, laugh at the misses → <b>"See? It's smart AND it makes mistakes."</b></li>
+        </ul>
+      </div>
+
+      <div class="block u">
+        <div class="t"><span class="time">1:25–1:30</span><h3>Land the plane</h3></div>
+        <ul>
+          <li>Back to a circle, <b>screens down.</b> Each kid: <b>"I used to think ___, now I know ___."</b></li>
+          <li>"Your missions keep going <b>at home</b> this week — finish Module 1 on the platform."</li>
+          <li>Hand out the <b>Apprentice badge</b> / stamp. See you next week!</li>
+        </ul>
+      </div>
+
+    </main>
+
+    <!-- SIDEBAR -->
+    <aside class="side">
+      <div class="card">
+        <h4>🎯 The 6 Module 1 ideas</h4>
+        <div class="goal" style="font-size:.84rem;color:var(--muted);margin-bottom:8px">Name these out loud whenever a kid stumbles into one.</div>
+        <ul class="idns">
+          <li><span class="n">1</span> AI is <b>everywhere</b> around us</li>
+          <li><span class="n">2</span> It <b>learns from examples</b></li>
+          <li><span class="n">3</span> It <b>finds patterns</b></li>
+          <li><span class="n">4</span> It <b>predicts</b> — words &amp; pictures</li>
+          <li><span class="n">5</span> It <b>makes mistakes</b></li>
+          <li><span class="n">6</span> <b>You're the boss</b> of it</li>
+        </ul>
+      </div>
+
+      <div class="card tip">
+        <h4>💬 Discussion moves</h4>
+        <ul class="moves" style="list-style:none;padding:0">
+          <li>• <b>"Say more about that."</b></li>
+          <li>• <b>"Who agrees? Who sees it differently?"</b></li>
+          <li>• <b>"Explain it like I'm 5."</b></li>
+          <li>• <b>Echo their words</b> back to the room.</li>
+          <li>• <b>"Turn to your neighbor"</b> for 30 seconds, then share.</li>
+          <li>• Energy dipping? Stand up, switch to the Secret Rule game.</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <h4>🎒 What to bring</h4>
+        <ul class="mat" style="list-style:none;padding:0">
+          <li>○ Circle of chairs / a rug</li>
+          <li>○ Whiteboard + markers</li>
+          <li>○ Tablets — <b>charged &amp; logged in</b> (codes ready)</li>
+          <li>○ Projector + the platform open in a tab</li>
+          <li>○ Apprentice badges / stamps</li>
+          <li>○ Sticky notes (optional)</li>
+        </ul>
+      </div>
+
+      <div class="card tip">
+        <h4>⏱️ The shape</h4>
+        <ul class="moves" style="list-style:none;padding:0">
+          <li><b>40 min</b> talk (screens down)</li>
+          <li><b>10 min</b> break</li>
+          <li><b>40 min</b> build (screens up)</li>
+          <li style="margin-top:6px;color:var(--muted)">If discussion runs hot, let it — you can trim a mission, not the talking.</li>
+        </ul>
+      </div>
+    </aside>
+  </div>
+
+  <footer>Code the Future · Module 1 in-person facilitator guide · draft for Jon &amp; Kenya</footer>
+</div>
+</body>
+</html>

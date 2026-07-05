@@ -604,9 +604,16 @@
           fb.innerHTML = (res.ok && res.d.text) ? '<b>🤖 AI says:</b> ' + esc(res.d.text) +
             '<br><span class="ctf-muted">The AI never saw YOUR drawing before — it found the patterns in your pixels, just like you learned!</span>'
             : '🙈 ' + esc((res.d && res.d.error) || 'The AI got shy — try again!');
-          if (res.ok) { reveal(done, (cfg.complete && cfg.complete.progress) || 100); markDone(id); }
+          // the attempt counts either way so an API hiccup can't trap the kid behind the gate
+          reveal(done, (cfg.complete && cfg.complete.progress) || 100); markDone(id);
         })
-        .catch(function () { guessBtn.disabled = false; guessBtn.textContent = cfg.button || '🤖 Ask the AI to guess!'; fb.className = 'ctf-feedback show info'; fb.innerHTML = '🙈 Couldn\'t reach the AI — is the internet ok?'; });
+        .catch(function () {
+          guessBtn.disabled = false; guessBtn.textContent = cfg.button || '🤖 Ask the AI to guess!';
+          fb.className = 'ctf-feedback show info'; fb.innerHTML = '🙈 Couldn\'t reach the AI — is the internet ok? You can try again, or keep going.';
+          // count the attempt so a network hiccup can't trap the kid behind the gate
+          guesses++;
+          reveal(done, (cfg.complete && cfg.complete.progress) || 100); markDone(id);
+        });
     });
   }
 
@@ -758,7 +765,7 @@
       box.innerHTML =
         '<div class="ctf-nn-top"><span class="ctf-nn-lvl">🧠 Level ' + (li + 1) + ' of 3 · ' + L.name + '</span><span class="ctf-nn-energy"></span></div>' +
         '<svg viewBox="0 0 480 ' + L.h + '" class="ctf-neuron-svg"></svg>' +
-        '<div class="ctf-neuron-hud"><button class="ctf-btn ctf-btn-ghost ctf-nn-reset">↺ Reset</button><button class="ctf-btn ctf-neuron-send">⚡ Send the signal!</button></div>';
+        '<div class="ctf-neuron-hud"><button class="ctf-btn ctf-nn-reset">↺ Reset</button><button class="ctf-btn ctf-neuron-send">⚡ Send the signal!</button></div>';
       box.querySelector('.ctf-nn-reset').addEventListener('click', function () { rollLevel(li); fb.className = 'ctf-feedback'; });
       box.querySelector('.ctf-neuron-send').addEventListener('click', send);
       draw();

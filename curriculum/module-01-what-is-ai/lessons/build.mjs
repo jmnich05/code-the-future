@@ -192,6 +192,7 @@ function buildUnit(unitText, ctx) {
     const clines = completeBuf.flat();
     let affirmation = "", nextUp = "";
     for (const raw of clines) {
+      if (/^\s{2,}\S/.test(raw)) continue;             // wrapped continuation of a bullet — never the affirmation
       const l = raw.trim();
       if (!l) continue;
       if (/^#{2,4}\s/.test(l)) continue;                 // "### Mission N Complete!" heading
