@@ -61,7 +61,10 @@ h1{ font-family:var(--display); font-weight:700; font-size:clamp(1.35rem,5.6vw,1
 .btn.green{ background:linear-gradient(120deg,#9BF5C7,#26C7D1); box-shadow:0 10px 26px rgba(38,199,209,.5); }
 .btn.ghost{ background:rgba(255,255,255,.1); color:#fff; box-shadow:none; }
 .btn:disabled{ opacity:.5; cursor:not-allowed; }
-.pickgrid{ display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin:12px 0; }
+.pickgrid{ display:grid; grid-template-columns:repeat(2,1fr); gap:8px; margin:12px 0; }
+.pickgrid .pcv{ display:none; }
+.pickgrid.live .pcv{ display:block; width:100%; border-radius:9px; background:rgba(7,12,26,.55); margin-bottom:5px; }
+.pickgrid.live .pi{ display:none; }
 .pick{ background:rgba(255,255,255,.06); border:2px solid rgba(255,255,255,.16); border-radius:14px; padding:10px 6px; cursor:pointer; color:#fff; }
 .pick:active{ transform:scale(.97); }
 .pick .pi{ font-size:1.6rem; } .pick .pl{ font-family:var(--display); font-weight:700; font-size:.72rem; margin-top:4px; line-height:1.15; }
@@ -99,6 +102,7 @@ h1{ font-family:var(--display); font-weight:700; font-size:clamp(1.35rem,5.6vw,1
   document.write('<script src="config-m'+_m+'.js"><\/script>');
 </script>
 <script src="/platform/lib/filter.js"></script>
+<script src="attract.js?v=1"></script>
 <script type="module">
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
@@ -236,8 +240,10 @@ function renderDream(s){
 function renderPicker(s){
   if(!pickSel){
     view.innerHTML='<div class="qe">🌉</div><h1>'+esc(s.title)+'</h1><p class="sub">'+esc(s.sub||'Pick what YOU want to build this summer — then make it yours!')+'</p>'+
-      '<div class="pickgrid">'+IDEAS.map((it,i)=>'<button class="pick" data-i="'+i+'"><div class="pi">'+it.icon+'</div><div class="pl">'+esc(it.label)+'</div></button>').join('')+'</div>';
+      '<div class="pickgrid">'+IDEAS.map((it,i)=>'<button class="pick" data-i="'+i+'"><canvas class="pcv" data-k="'+it.k+'" width="240" height="140"></canvas><div class="pi">'+it.icon+'</div><div class="pl">'+it.icon+' '+esc(it.label)+'</div></button>').join('')+'</div>';
     view.querySelectorAll('.pick').forEach(p=>p.addEventListener('click',()=>{ pickSel=IDEAS[+p.dataset.i]; renderPicker(s); }));
+    if(window.CTFAttract){ view.querySelector('.pickgrid').classList.add('live');
+      view.querySelectorAll('.pcv').forEach(cv=>CTFAttract.mount(cv,cv.dataset.k)); }
     return;
   }
   const it=pickSel;
