@@ -21,7 +21,16 @@ export default async (req) => {
   const text = cleanForSpeech((body.text || "").toString()).slice(0, 900);
   if (!text) return json({ error: "Nothing to read." }, 400);
 
+  // Unhurried delivery: the voice otherwise sprints straight through periods.
+  // <break> is ElevenLabs' pause tag — inject one at every sentence end (and a
+  // shorter one after colons). Must run AFTER cleanForSpeech, which strips <>/ .
+  const paced = text
+    .replace(/([.!?])\s+/g, '$1 <break time="0.4s" /> ')
+    .replace(/:\s+/g, ': <break time="0.25s" /> ');
+
   const voice = process.env.ELEVENLABS_VOICE_ID || "VZL4mFdzQmqG9QkUfhNw"; // Jon's chosen narrator voice
+  // 0.7–1.2; default 1.0 reads rushed for kids. Override with ELEVENLABS_SPEED.
+  const speed = Math.min(1.2, Math.max(0.7, parseFloat(process.env.ELEVENLABS_SPEED) || 0.9));
 
   try {
     const r = await fetch(
@@ -30,9 +39,9 @@ export default async (req) => {
         method: "POST",
         headers: { "xi-api-key": key, "Content-Type": "application/json" },
         body: JSON.stringify({
-          text,
+          text: paced,
           model_id: "eleven_turbo_v2_5",
-          voice_settings: { stability: 0.5, similarity_boost: 0.75 }
+          voice_settings: { stability: 0.5, similarity_boost: 0.75, speed }
         })
       }
     );
