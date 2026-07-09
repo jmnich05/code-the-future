@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" type="image/svg+xml" href="/platform/assets/logo-icon-tile.svg">
+<title>Live Room · Host — Code the Future</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600;700&display=swap');
+:root{ --display:'Space Grotesk',sans-serif; --body:'Plus Jakarta Sans',system-ui,sans-serif; --mono:'JetBrains Mono',monospace; --purple:#9B7BFF; --teal:#26C7D1; --green:#3FD08A; }
+*{ box-sizing:border-box; margin:0; }
+html,body{ height:100%; }
+body{ font-family:var(--body); color:#EAF1FF; height:100vh; display:flex; flex-direction:column; overflow:hidden;
+  background:radial-gradient(120% 90% at 82% -10%, rgba(155,123,255,.25), transparent 55%),
+  radial-gradient(120% 90% at 8% 110%, rgba(38,199,209,.22), transparent 55%),
+  linear-gradient(165deg,#101a3c,#0A1024 55%,#070C1A); }
+.hd{ flex:0 0 auto; display:flex; align-items:center; gap:14px; padding:16px 26px; border-bottom:1px solid rgba(255,255,255,.1); }
+.hd .logo{ display:flex; align-items:center; gap:9px; font-family:var(--display); font-weight:700; font-size:1.1rem; }
+.hd .logo img{ width:30px; height:30px; }
+.hd .logo span{ color:var(--teal); }
+.hd .sess{ font-family:var(--mono); font-size:12px; letter-spacing:.16em; text-transform:uppercase; color:var(--purple); }
+.hd .joined{ margin-left:auto; font-family:var(--mono); font-size:13px; color:#9BF5C7; }
+.stage{ flex:1 1 auto; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:20px 40px; text-align:center; overflow-y:auto; min-height:0; }
+.kick{ font-family:var(--mono); font-size:14px; letter-spacing:.22em; text-transform:uppercase; color:var(--purple); margin-bottom:12px; }
+.qe{ font-size:4.2rem; margin-bottom:6px; }
+h1{ font-family:var(--display); font-weight:700; font-size:clamp(2rem,4.5vw,3.4rem); line-height:1.08; letter-spacing:-.02em; max-width:22ch; }
+.sub{ font-size:1.25rem; opacity:.88; max-width:56ch; margin-top:12px; line-height:1.5; }
+.url{ font-family:var(--mono); font-size:clamp(1.2rem,2.6vw,1.9rem); color:#9BF5C7; background:rgba(63,208,138,.1); border:1.5px solid rgba(63,208,138,.4); border-radius:16px; padding:14px 26px; margin-top:20px; }
+.people{ display:flex; flex-wrap:wrap; gap:10px; justify-content:center; margin-top:24px; max-width:900px; }
+.pp{ font-family:var(--display); font-weight:700; font-size:1.05rem; background:rgba(155,123,255,.18); border:1.5px solid rgba(155,123,255,.45); border-radius:999px; padding:10px 20px; animation:pop .3s; }
+@keyframes pop{ from{ transform:scale(.6); opacity:0; } }
+.bars{ display:grid; gap:14px; width:min(860px,92%); margin-top:26px; }
+.brow{ display:grid; grid-template-columns:56px 1fr 90px; align-items:center; gap:14px; text-align:left; animation:rowin .45s cubic-bezier(.34,1.56,.64,1) both; }
+.brow:nth-child(2){ animation-delay:.08s; } .brow:nth-child(3){ animation-delay:.16s; } .brow:nth-child(4){ animation-delay:.24s; }
+@keyframes rowin{ from{ opacity:0; transform:translateX(-30px); } }
+.brow .be{ font-size:1.8rem; text-align:center; width:52px; height:52px; border-radius:14px; display:flex; align-items:center; justify-content:center; color:#fff;
+  box-shadow:0 5px 0 rgba(0,0,0,.3); }
+.brow.o0 .be{ background:linear-gradient(160deg,#FF7452,#E23F1C); } .brow.o1 .be{ background:linear-gradient(160deg,#5C8BFF,#2A5FF0); }
+.brow.o2 .be{ background:linear-gradient(160deg,#FFC44D,#E8930C); color:#3a2200; } .brow.o3 .be{ background:linear-gradient(160deg,#54E29B,#1FA864); color:#04331f; }
+.brow .bl{ position:relative; height:56px; background:rgba(255,255,255,.07); border:1.5px solid rgba(127,227,255,.25); border-radius:14px; overflow:hidden; }
+.brow .bf{ position:absolute; inset:0 auto 0 0; width:0%; transition:width .5s cubic-bezier(.22,1,.36,1); }
+.brow.o0 .bf{ background:linear-gradient(90deg,rgba(255,116,82,.5),rgba(226,63,28,.45)); } .brow.o1 .bf{ background:linear-gradient(90deg,rgba(92,139,255,.5),rgba(42,95,240,.45)); }
+.brow.o2 .bf{ background:linear-gradient(90deg,rgba(255,196,77,.5),rgba(232,147,12,.4)); } .brow.o3 .bf{ background:linear-gradient(90deg,rgba(84,226,155,.5),rgba(31,168,100,.45)); }
+.brow.correct .bl{ border-color:var(--green); box-shadow:0 0 0 4px rgba(63,208,138,.35), 0 0 24px rgba(63,208,138,.4); }
+.brow.correct .be{ animation:crownpop .55s cubic-bezier(.34,1.56,.64,1); }
+@keyframes crownpop{ 40%{ transform:scale(1.25) rotate(-5deg); } }
+.brow.dimmed{ opacity:.35; filter:grayscale(.6); }
+.vidwrap{ width:min(960px,94%); aspect-ratio:16/9; margin-top:22px; border-radius:18px; overflow:hidden; border:2px solid rgba(127,227,255,.35); box-shadow:0 26px 70px rgba(0,0,0,.6); }
+.vidwrap iframe{ width:100%; height:100%; border:0; display:block; }
+.brow .bt{ position:relative; z-index:1; display:flex; align-items:center; height:100%; padding:0 16px; font-family:var(--display); font-weight:700; font-size:1.15rem; }
+.brow .bc{ font-family:var(--mono); font-weight:700; font-size:1.5rem; text-align:right; color:#cfe3ff; }
+.why{ margin-top:22px; font-size:1.2rem; line-height:1.5; max-width:60ch; background:rgba(63,208,138,.1); border:1.5px solid rgba(63,208,138,.4); border-radius:16px; padding:16px 22px; color:#d7ffe9; display:none; }
+.why.on{ display:block; }
+.acount{ font-family:var(--mono); font-size:13px; color:#9fb6e6; margin-top:16px; }
+.dgrid{ display:grid; grid-template-columns:repeat(4,1fr); gap:12px; width:min(1100px,94%); margin-top:22px; }
+@media(max-width:900px){ .dgrid{ grid-template-columns:repeat(2,1fr); } }
+.dcell{ background:rgba(255,255,255,.05); border:1.5px solid rgba(127,227,255,.2); border-radius:16px; padding:12px; min-height:96px; }
+.dcell.has{ border-color:var(--green); background:rgba(63,208,138,.08); }
+.dcell .de{ font-size:1.5rem; } .dcell .dl{ font-family:var(--display); font-weight:700; font-size:.85rem; }
+.dcell .dn{ margin-top:6px; font-size:.8rem; color:#9BF5C7; line-height:1.45; }
+.lead{ display:grid; gap:10px; width:min(560px,92%); margin-top:24px; }
+.lrow{ display:flex; align-items:center; gap:14px; background:rgba(255,255,255,.06); border:1.5px solid rgba(127,227,255,.25); border-radius:14px; padding:12px 18px; font-family:var(--display); font-weight:700; font-size:1.2rem; text-align:left; }
+.lrow .medal{ font-size:1.6rem; } .lrow .pts{ margin-left:auto; font-family:var(--mono); color:#9BF5C7; }
+.ctrl{ flex:0 0 auto; display:flex; gap:10px; align-items:center; justify-content:center; padding:14px 20px calc(14px + env(safe-area-inset-bottom)); border-top:1px solid rgba(255,255,255,.1); background:rgba(6,10,22,.55); }
+.cb{ font-family:var(--display); font-weight:700; font-size:1rem; border:none; cursor:pointer; border-radius:999px; padding:13px 26px; color:#fff; background:rgba(255,255,255,.1); }
+.cb.primary{ color:#06122b; background:linear-gradient(120deg,#9fb6ff,#9B7BFF); }
+.cb.reveal{ color:#06223b; background:linear-gradient(120deg,#7ef0e6,#26C7D1); }
+.cb:disabled{ opacity:.35; cursor:not-allowed; }
+.ctrl .pos{ font-family:var(--mono); font-size:12px; color:#9fb6e6; margin:0 8px; }
+.gatemsg{ margin:auto; text-align:center; }
+</style>
+</head>
+<body>
+<div class="hd">
+  <div class="logo"><img src="/platform/assets/logo-icon-tile.svg" alt="">Code the <span>Future</span></div>
+  <div class="sess" id="sess"></div>
+  <div class="joined" id="joined">0 in the room</div>
+</div>
+<div class="stage" id="stage"><div class="gatemsg"><h1>Connecting…</h1></div></div>
+<div class="ctrl">
+  <button class="cb" id="prev">‹ Back</button>
+  <span class="pos" id="pos"></span>
+  <button class="cb reveal" id="reveal">Reveal ✓</button>
+  <button class="cb primary" id="next">Next ›</button>
+</div>
+
+<script src="/platform/lib/config.js"></script>
+<script>
+  var _m = (new URLSearchParams(location.search).get('m')||'1').replace(/[^0-9]/g,'')||'1';
+  document.write('<script src="config-m'+_m+'.js"><\/script>');
+</script>
+<script type="module">
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+
+const S = window.LIVE_SESSION;
+const stageEl = document.getElementById('stage');
+const esc = (s)=>String(s==null?'':s).replace(/[&<>"]/g,(c)=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+document.getElementById('sess').textContent = S.title;
+
+// soft staff check — the room is cohort-gated anyway; this keeps kids out of the controls
+if(localStorage.getItem('ctf:unlockall')!=='1'){
+  stageEl.innerHTML='<div class="gatemsg"><div class="qe">🔒</div><h1>Host screen is staff-only</h1><p class="sub">Log in on the Staff tab first, then come back. (Kids join at <b>codethefuture.net/platform/live/</b>)</p></div>';
+  throw new Error('staff-only');
+}
+
+let idx=0, revealed=false, channel=null;
+const answers={};              // act -> { uid: {name, choice} }
+const scores={};               // uid -> { name, score }  (frozen at each reveal)
+const dreams={};               // uid -> { name, icon, label, hero, world }
+const kids={};                 // uid -> name (presence)
+
+const URL=window.CTF_SUPABASE_URL, KEY=window.CTF_SUPABASE_ANON_KEY;
+const sb = createClient(URL, KEY, { auth:{ persistSession:false } });
+channel = sb.channel(S.channel, { config:{ presence:{ key:'host' }, broadcast:{ self:false } } });
+channel.on('presence',{event:'sync'},()=>{
+  const st=channel.presenceState();
+  Object.keys(kids).forEach(k=>delete kids[k]);
+  Object.keys(st).forEach(k=>(st[k]||[]).forEach(m=>{ if(m.role==='kid') kids[m.uid]=m.name; }));
+  document.getElementById('joined').textContent = Object.keys(kids).length+' in the room';
+  render();
+});
+channel.on('broadcast',{event:'answer'},({payload:p})=>{
+  if(!p||!p.act) return;
+  (answers[p.act]=answers[p.act]||{})[p.uid]={ name:p.name, choice:p.choice };
+  render();
+});
+channel.on('broadcast',{event:'dream'},({payload:p})=>{
+  if(!p||!p.uid) return; dreams[p.uid]=p; render();
+});
+channel.subscribe(async (status)=>{ if(status==='SUBSCRIBED'){ await sync(); render(); } });
+// Throttled presence sync — rapid Back/Next clicking would otherwise burst past
+// Supabase Realtime's per-second message limit and get the channel dropped.
+let syncT=null, syncLast=0;
+function sync(){
+  const now=Date.now(), wait=Math.max(0, 350-(now-syncLast));
+  clearTimeout(syncT);
+  syncT=setTimeout(()=>{ syncLast=Date.now(); channel.track({ role:'host', stage:S.stages[idx].id, revealed }); }, wait);
+}
+
+// --- controls ---------------------------------------------------------------
+function go(d){ idx=Math.max(0,Math.min(S.stages.length-1, idx+d)); revealed=false; sync(); render(); }
+function doReveal(){
+  const s=S.stages[idx];
+  if(revealed || s.type!=='vote') return;
+  revealed=true;
+  if(s.answer!=null){                            // freeze the scores for this round
+    const a=answers[s.id]||{};
+    Object.keys(a).forEach(u=>{ if(a[u].choice===s.answer){ (scores[u]=scores[u]||{name:a[u].name,score:0}).score++; scores[u].name=a[u].name; } });
+  }
+  sync(); render();
+}
+// blur after every click: a mouse-clicked button keeps focus, so a later space
+// press would fire BOTH the shortcut and a re-click of that button — advancing
+// two stages, or revealing the next question the instant it loads.
+document.getElementById('prev').onclick=(e)=>{ e.currentTarget.blur(); go(-1); };
+document.getElementById('next').onclick=(e)=>{ e.currentTarget.blur(); go(1); };
+document.getElementById('reveal').onclick=(e)=>{ e.currentTarget.blur(); doReveal(); };
+addEventListener('keydown',(e)=>{
+  if(e.key===' '){ e.preventDefault(); go(1); }
+  else if(e.key==='ArrowRight') go(1);
+  else if(e.key==='ArrowLeft') go(-1);
+  else if(e.key.toLowerCase()==='r') doReveal();
+});
+
+// --- render -------------------------------------------------------------------
+function render(){
+  const s=S.stages[idx];
+  document.getElementById('pos').textContent=(idx+1)+' / '+S.stages.length;
+  document.getElementById('reveal').disabled = !(s.type==='vote' && !revealed);
+  let html='';
+  if(s.type==='lobby'){
+    html='<div class="kick">'+esc(S.title)+'</div><h1>'+esc(s.title)+'</h1><p class="sub">'+esc(s.sub||'')+'</p>'+
+      '<div class="url">codethefuture.net/platform/live/</div><div class="people">'+
+      Object.keys(kids).map(u=>'<span class="pp">'+esc(kids[u])+'</span>').join('')+'</div>';
+  }
+  else if(s.type==='video'){
+    html='<div class="kick">'+esc(s.title)+'</div>'+
+      '<div class="vidwrap"><iframe src="https://www.youtube-nocookie.com/embed/'+esc(s.yt)+'?rel=0&modestbranding=1" title="'+esc(s.title)+'" allow="accelerometer; encrypted-media; picture-in-picture" allowfullscreen></iframe></div>'+
+      '<p class="sub">'+esc(s.sub||'')+'</p>';
+  }
+  else if(s.type==='vote'){
+    const SHAPES=['▲','◆','●','■'];
+    const a=answers[s.id]||{}, n=Object.keys(a).length, counts=s.opts.map((_,i)=>Object.keys(a).filter(u=>a[u].choice===i).length);
+    const max=Math.max(1,...counts);
+    html='<div class="kick">'+esc(s.title)+'</div><div class="qe">'+(s.e||'')+'</div><h1>'+esc(s.q)+'</h1><div class="bars">'+
+      s.opts.map((o,i)=>'<div class="brow o'+i+(revealed&&s.answer===i?' correct':'')+(revealed&&s.answer!=null&&s.answer!==i?' dimmed':'')+'"><div class="be">'+SHAPES[i%4]+'</div>'+
+        '<div class="bl"><div class="bf" style="width:'+Math.round(counts[i]/max*100)+'%"></div><div class="bt">'+esc(o.t)+'</div></div>'+
+        '<div class="bc">'+counts[i]+'</div></div>').join('')+'</div>'+
+      '<div class="acount">'+n+' of '+Object.keys(kids).length+' answered</div>'+
+      '<div class="why'+(revealed?' on':'')+'">'+(s.answer!=null&&revealed?('✓ '+esc(s.opts[s.answer].t)+' — '):'')+esc(s.why||'')+'</div>';
+  }
+  else if(s.type==='dream'){
+    // one cell per menu option that's been picked, plus empty hint cells
+    const byLabel={};
+    Object.keys(dreams).forEach(u=>{ const d=dreams[u]; (byLabel[d.label]=byLabel[d.label]||{icon:d.icon,names:[]}).names.push(d.name+(d.hero?(' · '+d.hero):'')); });
+    html='<div class="kick">The finale</div><div class="qe">🌉</div><h1>'+esc(s.title)+'</h1><p class="sub">'+esc(s.sub||'')+'</p><div class="dgrid">'+
+      Object.keys(byLabel).map(l=>'<div class="dcell has"><span class="de">'+esc(byLabel[l].icon)+'</span> <span class="dl">'+esc(l)+'</span><div class="dn">'+byLabel[l].names.map(esc).join('<br>')+'</div></div>').join('')+
+      '</div><div class="acount">'+Object.keys(dreams).length+' of '+Object.keys(kids).length+' picked their Big Build</div>';
+  }
+  else if(s.type==='end'){
+    const top=Object.keys(scores).map(u=>scores[u]).sort((a,b)=>b.score-a.score).slice(0,5);
+    const medals=['🥇','🥈','🥉','🏅','🏅'];
+    html='<div class="kick">'+esc(S.title)+'</div><div class="qe">🏆</div><h1>'+esc(s.title)+'</h1><p class="sub">'+esc(s.sub||'')+'</p>'+
+      (top.length?('<div class="lead">'+top.map((p,i)=>'<div class="lrow"><span class="medal">'+medals[i]+'</span>'+esc(p.name)+'<span class="pts">'+p.score+' pts</span></div>').join('')+'</div>'):'');
+  }
+  stageEl.innerHTML=html;
+}
+render();
+</script>
+</body>
+</html>
