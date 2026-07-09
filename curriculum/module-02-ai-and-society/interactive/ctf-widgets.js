@@ -1154,6 +1154,126 @@
     launch(!!prior);
   }
 
+
+  // =========================================================================
+  // BIGQ — the Big Question, full screen. Sparks are sentence STARTERS, not
+  // answers: the kid must finish the thought in their own words (soft-gated
+  // on real typing) before sealing it in a time capsule for Mission 12.
+  // Saves {text, spark} to id:answer — quiz `revisit` shows `choice||text`,
+  // so the whole sentence comes back at the end of the module.
+  // =========================================================================
+  function renderBigQ(root, cfg, id) {
+    var MIN_CHARS = cfg.minChars || 30, MIN_WORDS = cfg.minWords || 6;
+    fsGame(root, cfg, id, {
+      ico: '🌟', title: cfg.title || 'The Big Question', blurb: cfg.prompt,
+      playLabel: cfg.playLabel || '🚀 Open the Big Question', wrapClass: 'bq-stage',
+      play: function (host, api) {
+        var sparks = (cfg.sparks || []).concat([{ emoji: '💡', label: 'My own idea', starter: cfg.ownStarter || 'The most amazing thing AI could do is ' }]);
+        var picked = null;
+        var prior = id ? load(id + ':answer') : null;
+
+        function stepThink() {
+          host.innerHTML =
+            '<div class="bq-step">' +
+              '<p class="bq-kicker">🚀 THE BIG QUESTION</p>' +
+              '<h1 class="bq-q">' + esc(cfg.question || cfg.title) + '</h1>' +
+              '<p class="bq-sub">' + esc(cfg.intro || "Not someone else's answer — YOURS. We'll seal what you write in a time capsule and open it together in Mission 12.") + '</p>' +
+              '<button class="imm-btn" data-go>I\'m ready to think →</button>' +
+            '</div>';
+          host.querySelector('[data-go]').addEventListener('click', stepSpark);
+        }
+
+        function stepSpark() {
+          host.innerHTML =
+            '<div class="bq-step">' +
+              '<p class="bq-kicker">⚡ PICK A SPARK</p>' +
+              '<h2 class="bq-h2">Every big idea starts with a spark.</h2>' +
+              '<p class="bq-sub">A spark is a <b>starting line</b>, not an answer — you finish it. Or bring your own idea!</p>' +
+              '<div class="bq-sparks">' + sparks.map(function (s, i) {
+                return '<button class="bq-spark" data-i="' + i + '"><span class="bs-emoji">' + esc(s.emoji) + '</span><span class="bs-label">' + esc(s.label) + '</span><span class="bs-starter">“' + esc(s.starter) + '…”</span></button>';
+              }).join('') + '</div>' +
+            '</div>';
+          host.querySelectorAll('.bq-spark').forEach(function (b) {
+            b.addEventListener('click', function () { picked = sparks[+b.dataset.i]; stepWrite(''); });
+          });
+        }
+
+        function stepWrite(prefill) {
+          var starter = picked.starter;
+          host.innerHTML =
+            '<div class="bq-step bq-wide">' +
+              '<p class="bq-kicker">✍️ FINISH THE THOUGHT</p>' +
+              '<div class="bq-writer">' +
+                '<div class="bq-starter">' + esc(starter) + '<span class="bq-cursor">…</span></div>' +
+                '<textarea class="bq-ta" rows="4" placeholder="' + esc(cfg.placeholder || 'Keep the sentence going — how? who does it help? why does it matter?') + '"></textarea>' +
+              '</div>' +
+              '<div class="bq-nudges"><span class="bq-nlabel">Stuck? Tap a thinking helper:</span>' +
+                '<button class="bq-chip" data-t=" It would work by ">🤔 How would it work?</button>' +
+                '<button class="bq-chip" data-t=" This would help ">🧑‍🤝‍🧑 Who does it help?</button>' +
+                '<button class="bq-chip" data-t=" I care about this because ">💛 Why do YOU care?</button>' +
+              '</div>' +
+              '<div class="bq-meterwrap"><div class="bq-meter"><i></i></div><p class="bq-coach"></p></div>' +
+              '<div class="bq-actions">' +
+                '<button class="imm-btn ghost" data-back>‹ Different spark</button>' +
+                '<button class="imm-btn" data-seal disabled>🔒 Seal it in the time capsule</button>' +
+              '</div>' +
+            '</div>';
+          var ta = host.querySelector('.bq-ta'), seal = host.querySelector('[data-seal]');
+          var bar = host.querySelector('.bq-meter > i'), coach = host.querySelector('.bq-coach');
+          if (prefill) ta.value = prefill;
+          function judge() {
+            var t = ta.value.trim(), words = t ? t.split(/\s+/).length : 0;
+            var ok = t.length >= MIN_CHARS && words >= MIN_WORDS;
+            bar.style.width = Math.min(100, (t.length / MIN_CHARS) * 100) + '%';
+            bar.parentNode.className = 'bq-meter' + (ok ? ' full' : '');
+            coach.textContent =
+              !t.length ? 'Type your idea — there is no wrong answer here.' :
+              t.length < 15 ? 'Keep going… say a little more.' :
+              !ok ? 'Nice start! Now add a HOW, a WHO, or a WHY — the helpers below can start it for you.' :
+              '🌟 THAT is real thinking. Seal it!';
+            seal.disabled = !ok;
+          }
+          ta.addEventListener('input', judge); judge(); ta.focus();
+          host.querySelectorAll('.bq-chip').forEach(function (chip) {
+            chip.addEventListener('click', function () {
+              var add = chip.dataset.t;
+              if (ta.value.indexOf(add.trim()) === -1) {
+                var v = ta.value.replace(/\s+$/, '');
+                ta.value = v + (v && !/[.!?]$/.test(v) ? '.' : '') + add;
+              }
+              ta.focus(); judge();
+            });
+          });
+          host.querySelector('[data-back]').addEventListener('click', stepSpark);
+          seal.addEventListener('click', function () {
+            var full = (starter + ta.value.trim()).replace(/\s+/g, ' ').trim();
+            if (!/[.!?]$/.test(full)) full += '.';
+            if (id) save(id + ':answer', { text: full, spark: picked.label });
+            stepSeal(full);
+          });
+        }
+
+        function stepSeal(full) {
+          host.innerHTML =
+            '<div class="bq-step">' +
+              '<div class="bq-burst">✨🎉✨</div>' +
+              '<p class="bq-kicker">🔒 SEALED UNTIL MISSION 12</p>' +
+              '<div class="bq-capsule"><div class="bq-caplabel">⏳ YOUR TIME CAPSULE</div><p class="bq-captext">“' + esc(full) + '”</p></div>' +
+              '<p class="bq-sub">' + esc(cfg.thanks || 'When you open this in Mission 12, you\'ll see how far your thinking traveled.') + '</p>' +
+              '<button class="imm-btn" data-done>✓ Back to the lesson</button>' +
+            '</div>';
+          host.querySelector('[data-done]').addEventListener('click', function () { api.done(); api.exit(); });
+        }
+
+        // returning kid: jump straight to their words, editable
+        if (prior && (prior.text || prior.choice)) {
+          picked = { emoji: '💡', label: prior.spark || 'My own idea', starter: '' };
+          stepWrite(prior.text || prior.choice);
+        } else stepThink();
+      }
+    });
+  }
+
   // shared game helpers ------------------------------------------------------
   function shuffle(a){ a = a.slice(); for(var i=a.length-1;i>0;i--){ var j=Math.floor(Math.random()*(i+1)), t=a[i]; a[i]=a[j]; a[j]=t; } return a; }
   // A win/lose result screen used by every full-screen game. win=true shows the
@@ -1726,7 +1846,7 @@
   }
 
   // ---- registry + boot ----------------------------------------------------
-  var RENDERERS = { poll: renderPoll, sort: renderSort, choice: renderChoice, nextword: renderNextWord, attention: renderAttention, quiz: renderQuiz, timeline: renderTimeline, reveal: renderReveal, slider: renderSlider, trainer: renderTrainer, match: renderMatch, draw: renderDraw, wordchain: renderWordChain, order: renderOrder, neuron: renderNeuron, arcade: renderArcade, powercity: renderPowerCity, aiworld: renderAIWorld, diagnose: renderDiagnose, missionctrl: renderMissionCtrl, toollab: renderToolLab, vault: renderVault, fairshare: renderFairShare, twodoors: renderTwoDoors, rulelab: renderRuleLab, buildhelper: renderBuildHelper };
+  var RENDERERS = { poll: renderPoll, bigq: renderBigQ, sort: renderSort, choice: renderChoice, nextword: renderNextWord, attention: renderAttention, quiz: renderQuiz, timeline: renderTimeline, reveal: renderReveal, slider: renderSlider, trainer: renderTrainer, match: renderMatch, draw: renderDraw, wordchain: renderWordChain, order: renderOrder, neuron: renderNeuron, arcade: renderArcade, powercity: renderPowerCity, aiworld: renderAIWorld, diagnose: renderDiagnose, missionctrl: renderMissionCtrl, toollab: renderToolLab, vault: renderVault, fairshare: renderFairShare, twodoors: renderTwoDoors, rulelab: renderRuleLab, buildhelper: renderBuildHelper };
 
   function hydrate(node) {
     if (node.getAttribute('data-ctf-ready')) return;

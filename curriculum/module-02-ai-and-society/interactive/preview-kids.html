@@ -28,14 +28,19 @@
 <div class="page">
   <div class="toolbar"><button class="linkbtn" onclick="CTFWidgets.reset();location.reload()">↺ Reset my progress</button></div>
 
-  <p class="step">Mission 1 · welcome-back poll</p>
-  <div class="ctf"><div data-ctf-widget="poll" data-ctf-id="kids-m1-warmup">
+  <p class="step">Mission 1 · the Big Question (full screen)</p>
+  <div class="ctf"><div data-ctf-widget="bigq" data-ctf-id="kids-m1-warmup">
     <script type="application/json">{
-      "eyebrow":"🚀 Welcome back","title":"What's the most AMAZING thing AI could do for the world?",
-      "prompt":"No wrong answers — pick one or type your own. We'll come back to it in Mission 12 to see how your thinking grew.","columns":2,
-      "options":[{"emoji":"🩺","label":"Help cure diseases"},{"emoji":"🌎","label":"Help the planet"},{"emoji":"🛠️","label":"Help people build cool things"},{"emoji":"🧠","label":"Help everyone learn"}],
-      "freeText":true,"placeholder":"Or describe your own big idea…",
-      "thanks":"Saved! Remember your answer — you'll see it again in Mission 12."
+      "eyebrow":"🚀 Welcome back","title":"The Big Question",
+      "prompt":"One question, and it's all yours: what's the most AMAZING thing AI could do for the world? You'll write your answer in your own words and seal it in a time capsule — we open it together in Mission 12.",
+      "question":"What's the most AMAZING thing AI could do for the world?",
+      "sparks":[
+        {"emoji":"🩺","label":"Cure diseases","starter":"AI could help cure diseases by "},
+        {"emoji":"🌎","label":"Protect the planet","starter":"AI could help protect the planet by "},
+        {"emoji":"🛠️","label":"Help people build","starter":"AI could help people build amazing things by "},
+        {"emoji":"🧠","label":"Help everyone learn","starter":"AI could help every kid learn by "}
+      ],
+      "thanks":"When we open this in Mission 12, you'll see how far your thinking traveled."
     }</script>
   </div></div>
 
