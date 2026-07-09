@@ -149,10 +149,18 @@ function doReveal(){
   }
   sync(); render();
 }
-document.getElementById('prev').onclick=()=>go(-1);
-document.getElementById('next').onclick=()=>go(1);
-document.getElementById('reveal').onclick=doReveal;
-addEventListener('keydown',(e)=>{ if(e.key==='ArrowRight'||e.key===' ') go(1); else if(e.key==='ArrowLeft') go(-1); else if(e.key.toLowerCase()==='r') doReveal(); });
+// blur after every click: a mouse-clicked button keeps focus, so a later space
+// press would fire BOTH the shortcut and a re-click of that button — advancing
+// two stages, or revealing the next question the instant it loads.
+document.getElementById('prev').onclick=(e)=>{ e.currentTarget.blur(); go(-1); };
+document.getElementById('next').onclick=(e)=>{ e.currentTarget.blur(); go(1); };
+document.getElementById('reveal').onclick=(e)=>{ e.currentTarget.blur(); doReveal(); };
+addEventListener('keydown',(e)=>{
+  if(e.key===' '){ e.preventDefault(); go(1); }
+  else if(e.key==='ArrowRight') go(1);
+  else if(e.key==='ArrowLeft') go(-1);
+  else if(e.key.toLowerCase()==='r') doReveal();
+});
 
 // --- render -------------------------------------------------------------------
 function render(){
