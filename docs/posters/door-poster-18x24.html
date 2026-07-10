@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&family=JetBrains+Mono:wght@500;600;700&display=swap');
+/* 18in x 24in at 150 css-px/in = 2700 x 3600; screenshot at 2x = 300dpi */
+*{ box-sizing:border-box; margin:0; }
+html,body{ width:2700px; height:3600px; overflow:hidden; }
+body{ font-family:'Plus Jakarta Sans',sans-serif; color:#EAF1FF; position:relative;
+  background:
+    radial-gradient(1900px 1400px at 88% -6%, rgba(61,116,255,.34), transparent 62%),
+    radial-gradient(1700px 1300px at -10% 30%, rgba(38,199,209,.22), transparent 60%),
+    radial-gradient(1500px 1200px at 100% 78%, rgba(255,107,74,.14), transparent 60%),
+    linear-gradient(168deg, #101A3C 0%, #0A1226 52%, #070D1F 100%); }
+.stars i{ position:absolute; border-radius:50%; background:#EAF1FF; }
+.mono{ font-family:'JetBrains Mono',monospace; }
+.disp{ font-family:'Space Grotesk',sans-serif; }
+
+/* ---- the journey path (mission-map iconography, module-free) ---- */
+svg.path{ position:absolute; inset:0; width:100%; height:100%; }
+
+/* ---- content column ---- */
+.top{ position:absolute; top:150px; left:0; right:0; text-align:center; }
+.top .kick{ font-size:44px; letter-spacing:.42em; color:#8DEAEF; text-transform:uppercase; font-weight:600; }
+.lockup{ margin-top:64px; display:flex; align-items:center; justify-content:center; gap:44px; }
+.lockup svg{ width:230px; height:230px; filter:drop-shadow(0 18px 60px rgba(61,116,255,.45)); }
+.lockup .word{ font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:150px; letter-spacing:-.015em; color:#fff; }
+.lockup .word span{ color:#54DBE3; }
+
+.hero{ position:absolute; top:1060px; left:0; right:0; text-align:center; }
+.hero h1{ font-family:'Space Grotesk',sans-serif; font-weight:700; line-height:.96; letter-spacing:-.02em;
+  font-size:348px; color:#fff; text-shadow:0 30px 90px rgba(7,13,31,.8); }
+.hero h1 .g{ background:linear-gradient(112deg,#84ABFF 4%,#3D74FF 38%,#26C7D1 82%);
+  -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent; }
+.hero h1 .enter{ display:inline-block; color:#0A1226; background:linear-gradient(120deg,#FFB320,#FF6B4A);
+  border-radius:64px; padding:6px 96px 34px; margin-top:52px; box-shadow:0 40px 120px rgba(255,107,74,.4);
+  -webkit-text-fill-color:#0A1226; }
+.hero .sub{ margin-top:120px; font-size:74px; font-weight:600; color:#D4E2FF; letter-spacing:.01em; }
+.hero .sub b{ color:#fff; }
+
+.chips{ position:absolute; top:2900px; left:0; right:0; display:flex; justify-content:center; gap:44px; }
+.chip{ font-family:'JetBrains Mono',monospace; font-weight:700; font-size:52px; letter-spacing:.14em;
+  color:#C2F5F8; border:5px solid rgba(84,219,227,.55); background:rgba(38,199,209,.1);
+  border-radius:999px; padding:34px 66px; }
+.chip.b{ color:#D4E2FF; border-color:rgba(92,139,255,.55); background:rgba(61,116,255,.12); }
+.chip.c{ color:#FFDCD2; border-color:rgba(255,117,86,.55); background:rgba(255,107,74,.1); }
+
+.foot{ position:absolute; bottom:150px; left:0; right:0; text-align:center; }
+.foot .tag{ font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:96px; color:#fff; }
+.foot .tag em{ font-style:normal; color:#54DBE3; }
+.foot .url{ margin-top:56px; font-family:'JetBrains Mono',monospace; font-weight:600; font-size:64px; letter-spacing:.18em; color:#8DEAEF; }
+</style>
+</head>
+<body>
+  <div class="stars" id="stars"></div>
+
+  <!-- the journey: a winding dotted trail with mission-style nodes, ending in the Forward Branch arrow -->
+  <svg class="path" viewBox="0 0 2700 3600" fill="none">
+    <defs>
+      <linearGradient id="pg" x1="0" y1="3200" x2="2700" y2="600" gradientUnits="userSpaceOnUse">
+        <stop offset="0" stop-color="#3D74FF"/><stop offset="1" stop-color="#54DBE3"/>
+      </linearGradient>
+    </defs>
+    <!-- trail: rides the right margin, bottom -> top, resolving into the arrow -->
+    <path d="M 2400 3330 C 2570 3020, 2410 2870, 2495 2620" stroke="rgba(234,241,255,.3)" stroke-width="24" stroke-linecap="round" stroke-dasharray="4 92"/>
+    <path d="M 2495 2620 C 2585 2330, 2415 2060, 2495 1780" stroke="rgba(234,241,255,.3)" stroke-width="24" stroke-linecap="round" stroke-dasharray="4 92"/>
+    <path d="M 2495 1780 C 2570 1490, 2330 1210, 2280 1030" stroke="url(#pg)" stroke-width="28" stroke-linecap="round" stroke-dasharray="4 100" opacity=".85"/>
+    <!-- done node -->
+    <g transform="translate(2400,3330)">
+      <circle r="78" fill="#0F1B3A" stroke="rgba(234,241,255,.5)" stroke-width="9"/>
+      <circle r="58" fill="url(#pg)"/>
+      <path d="M -25 2 L -7 21 L 30 -20" stroke="#07122B" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/>
+    </g>
+    <!-- current node: amber star with pulse ring -->
+    <g transform="translate(2495,2620)">
+      <circle r="112" fill="none" stroke="rgba(255,179,32,.35)" stroke-width="10"/>
+      <circle r="82" fill="#0F1B3A" stroke="#FFB320" stroke-width="11"/>
+      <circle r="57" fill="#FFB320"/>
+      <path d="M 0 -27 L 8 -7 L 29 -5 L 13 8 L 19 29 L 0 17 L -19 29 L -13 8 L -29 -5 L -8 -7 Z" fill="#07122B"/>
+    </g>
+    <!-- next node -->
+    <g transform="translate(2495,1780)">
+      <circle r="72" fill="#0F1B3A" stroke="rgba(141,234,239,.7)" stroke-width="9"/>
+      <circle r="47" fill="rgba(84,219,227,.25)" stroke="#54DBE3" stroke-width="8"/>
+    </g>
+    <!-- the Forward Branch resolves the trail -->
+    <g transform="translate(2160,660) scale(3.4)">
+      <path d="M30 98 L60 68" stroke="url(#pg)" stroke-width="11" stroke-linecap="round"/>
+      <path d="M60 68 L46 40" stroke="url(#pg)" stroke-width="11" stroke-linecap="round"/>
+      <path d="M60 68 L92 32" stroke="url(#pg)" stroke-width="11" stroke-linecap="round"/>
+      <path d="M91 52 L92 32 L72 35" stroke="#FF6B4A" stroke-width="11" stroke-linecap="round" stroke-linejoin="round"/>
+      <circle cx="30" cy="98" r="8" fill="#FFFFFF"/>
+      <circle cx="60" cy="68" r="8" fill="#FFFFFF"/>
+      <circle cx="46" cy="40" r="7" fill="#54DBE3"/>
+    </g>
+    <!-- sparkles balancing the left margin -->
+    <g stroke="rgba(141,234,239,.55)" stroke-width="10" stroke-linecap="round">
+      <path d="M 300 1180 v 90 M 255 1225 h 90"/>
+      <path d="M 220 2280 v 70 M 185 2315 h 70"/>
+      <path d="M 340 3140 v 56 M 312 3168 h 56"/>
+    </g>
+    </svg>
+
+  <div class="top">
+    <div class="kick mono">Louisville, Kentucky</div>
+    <div class="lockup">
+      <svg viewBox="0 0 120 120" fill="none">
+        <defs><linearGradient id="lk" x1="28" y1="100" x2="96" y2="28" gradientUnits="userSpaceOnUse">
+          <stop offset="0" stop-color="#5C8BFF"/><stop offset="1" stop-color="#54DBE3"/></linearGradient></defs>
+        <path d="M30 98 L60 68" stroke="url(#lk)" stroke-width="11" stroke-linecap="round"/>
+        <path d="M60 68 L46 40" stroke="url(#lk)" stroke-width="11" stroke-linecap="round"/>
+        <path d="M60 68 L92 32" stroke="url(#lk)" stroke-width="11" stroke-linecap="round"/>
+        <path d="M91 52 L92 32 L72 35" stroke="#FF6B4A" stroke-width="11" stroke-linecap="round" stroke-linejoin="round"/>
+        <circle cx="30" cy="98" r="8" fill="#FFFFFF"/><circle cx="60" cy="68" r="8" fill="#FFFFFF"/><circle cx="46" cy="40" r="7" fill="#54DBE3"/>
+      </svg>
+      <div class="word">Code the <span>Future</span></div>
+    </div>
+  </div>
+
+  <div class="hero">
+    <h1><span class="g">FUTURE</span><br><span class="g">BUILDERS</span><br><span class="enter">ENTER HERE</span></h1>
+    <div class="sub">This is where kids stop <b>using</b> the future<br>and start <b>building</b> it.</div>
+  </div>
+
+  <div class="chips">
+    <span class="chip b">REAL AI</span>
+    <span class="chip">REAL CODE</span>
+    <span class="chip c">REAL BUILDS</span>
+  </div>
+
+  <div class="foot">
+    <div class="tag">Learn to build <em>what's next.</em></div>
+    <div class="url">CODETHEFUTURE.NET</div>
+  </div>
+
+<script>
+  // starfield — deterministic
+  const s=document.getElementById('stars');
+  for(let i=0;i<170;i++){ const d=document.createElement('i');
+    const x=(i*173.7)%2700, y=(i*97.3+((i*i)%211))%3600, r=1.6+(i%4);
+    d.style.cssText=`left:${x}px;top:${y}px;width:${r*2}px;height:${r*2}px;opacity:${0.10+(i%5)*0.07}`;
+    s.appendChild(d); }
+</script>
+</body>
+</html>
