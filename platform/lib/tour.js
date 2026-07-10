@@ -105,6 +105,11 @@
       "@keyframes ctf-fall{to{transform:translateY(105vh) rotate(720deg);opacity:.7;}}",
       ".ctf-pulse{animation:ctf-pulse 1.4s ease-in-out infinite;}",
       "@keyframes ctf-pulse{0%,100%{box-shadow:0 0 0 0 rgba(38,199,209,.5);}50%{box-shadow:0 0 0 12px rgba(38,199,209,0);}}",
+      // phones + short landscape: the bubble becomes a bottom sheet — never
+      // crowds or overlaps the spotlit target, always fully on screen
+      ".ctf-tour-bub.ctf-sheet{left:10px !important;right:10px;top:auto !important;bottom:calc(10px + env(safe-area-inset-bottom));max-width:none;width:auto;transform:none;max-height:48vh;overflow:auto;text-align:left;}",
+      ".ctf-tour-bub.ctf-sheet h3{font-size:1.12rem;}",
+      ".ctf-tour-bub.ctf-sheet p{font-size:.95rem;margin-bottom:10px;}",
       "@media(prefers-reduced-motion:reduce){.ctf-tour-spot,.ctf-tour-bub{transition:none;}.ctf-tour-medal{animation:none;}}"
     ].join("");
     document.head.appendChild(s);
@@ -141,6 +146,16 @@
 
   function place(rect, st) {
     var total = STEPS.length;
+    var sheet = window.matchMedia("(max-width:640px), (max-height:480px)").matches;
+    if (rect) {
+      // clamp to the viewport: a target larger than the screen (e.g. the map on
+      // a phone) would otherwise make the spotlight swallow everything
+      var cw = window.innerWidth, ch = window.innerHeight;
+      var cl = Math.max(rect.left, 4), ct = Math.max(rect.top, 4);
+      var cr = Math.min(rect.right, cw - 4), cb = Math.min(rect.bottom, sheet ? ch * 0.44 : ch - 4);
+      if (cr - cl < 20 || cb - ct < 20) rect = null;
+      else rect = { left: cl, top: ct, right: cr, bottom: cb, width: cr - cl, height: cb - ct };
+    }
     if (rect) {
       var pad = 8;
       spot.style.display = "block";
@@ -152,14 +167,17 @@
     var crossing = nxt && !st.finish && pageOf(nxt) !== pageOf(st);
     var nextLabel = st.cta || (crossing ? "Take me there →" : "Continue →");
 
-    bubble.className = "ctf-tour-bub" + (rect ? "" : " ctf-center");
+    bubble.className = "ctf-tour-bub" + (rect ? "" : " ctf-center") + (sheet ? " ctf-sheet" : "");
     bubble.innerHTML =
       "<h3>" + st.t + "</h3><p>" + st.body + "</p>" +
       '<div class="ctf-tour-row"><span class="ctf-tour-prog">' + (i + 1) + " / " + total + "</span>" +
       '<button class="ctf-tour-mute" title="Sound on/off">' + (audioOn ? "🔊" : "🔇") + "</button>" +
       '<button class="ctf-tour-next" data-act="next">' + nextLabel + "</button></div>";
 
-    if (rect) {
+    if (sheet) {
+      // bottom sheet governs its own position — clear inline coords entirely
+      bubble.style.left = ""; bubble.style.top = ""; bubble.style.bottom = ""; bubble.style.transform = "";
+    } else if (rect) {
       // measure the rendered bubble, then place below / above / clamped so it's
       // ALWAYS fully on-screen (short viewports included)
       bubble.style.transform = "none"; bubble.style.bottom = "auto";

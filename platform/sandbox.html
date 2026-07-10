@@ -101,7 +101,7 @@ body.mode-paint #paintcv{ pointer-events:auto; cursor:crosshair; }
 .mode.on{ color:#06122b; background:linear-gradient(120deg,#9fb6ff,#9B7BFF); border-color:transparent; }
 .dockrow{ display:none; gap:8px; max-width:860px; margin:0 auto; align-items:center; flex-wrap:wrap; justify-content:center; }
 .dockrow.on{ display:flex; }
-.dockrow input{ flex:1; min-width:220px; font-family:var(--body); font-size:.98rem; color:#fff; background:rgba(255,255,255,.08); border:1.5px solid rgba(127,227,255,.35); border-radius:13px; padding:12px 14px; outline:none; }
+.dockrow input{ flex:1; min-width:160px; font-family:var(--body); font-size:1rem; color:#fff; background:rgba(255,255,255,.08); border:1.5px solid rgba(127,227,255,.35); border-radius:13px; padding:12px 14px; outline:none; }
 .dockrow input:focus{ border-color:var(--purple); }
 .stylechips{ display:flex; gap:6px; flex-wrap:wrap; justify-content:center; width:100%; }
 .stych{ font-size:.8rem; font-weight:700; color:#cfe3ff; cursor:pointer; background:rgba(127,227,255,.08); border:1.5px solid rgba(127,227,255,.3); border-radius:999px; padding:6px 12px; }
@@ -154,6 +154,15 @@ body.mode-paint #paintcv{ pointer-events:auto; cursor:crosshair; }
 .confetti{ position:fixed; inset:0; pointer-events:none; overflow:hidden; z-index:80; }
 .confetti i{ position:absolute; top:-12px; width:9px; height:14px; border-radius:2px; animation:fall linear forwards; }
 @keyframes fall{ to{ transform:translateY(110vh) rotate(540deg); opacity:.9; } }
+
+/* phones: the builder topbar packs Share off-screen — let it swipe sideways */
+@media (max-width:640px){
+  .topbar{ overflow-x:auto; -webkit-overflow-scrolling:touch; scrollbar-width:none; }
+  .topbar::-webkit-scrollbar{ display:none; }
+  .topbar > *{ flex:none; white-space:nowrap; }
+  .topbar .grow{ flex:none; width:4px; }
+  .topbar .tt{ font-size:.95rem; }
+}
 </style>
 </head>
 <body>

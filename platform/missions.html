@@ -83,6 +83,26 @@
     border-radius:999px;padding:12px 20px;background:linear-gradient(120deg,var(--coral),var(--amber));box-shadow:0 10px 24px rgba(255,90,56,.4);white-space:nowrap}
   .cur.done-all .go{background:linear-gradient(120deg,var(--blue-bright),var(--teal))}
   .ghost{font-family:var(--mono);font-size:.62rem;letter-spacing:.08em;color:rgba(255,255,255,.35);text-align:center;padding:4px}
+
+  /* ---- phones (portrait or short landscape): don't shrink the map into
+     confetti — keep it readable and let the kid PAN it. JS auto-centers the
+     scroll on the current mission after each render. Desktop/tablet keep the
+     fit-to-screen behavior above. ---- */
+  @media (max-width:700px), (max-height:520px){
+    .top{flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;gap:8px;padding:10px 12px}
+    .top::-webkit-scrollbar{display:none}
+    .back,.mod{white-space:nowrap;flex:none}
+    .title{display:none}
+    .prog{flex:none}
+    .prog .bar{width:70px}
+    .scene{overflow:auto;-webkit-overflow-scrolling:touch;align-items:flex-start;justify-content:flex-start;padding:6px 6px 96px}
+    .mapwrap{margin:auto;flex:none}
+    .mapwrap img.bg{max-width:none;max-height:none;width:680px}
+    .node .lbl{font-size:.68rem;max-width:96px}
+    .cur{position:fixed;left:50%;bottom:calc(8px + env(safe-area-inset-bottom));width:calc(100vw - 16px);max-width:500px;gap:10px;padding:10px 12px}
+    .cur h3{font-size:.95rem}
+    .cur .go{padding:10px 16px;font-size:.9rem}
+  }
 </style>
 </head>
 <body>
@@ -114,7 +134,7 @@
 
 <script src="lib/config.js"></script>
 <script src="lib/avatar.js"></script>
-<script src="lib/tour.js?v=8"></script>
+<script src="lib/tour.js?v=9"></script>
 <script type="module">
 import { CTFDB } from "./lib/ctf-db.js";
 
@@ -255,6 +275,15 @@ function render(){
   document.getElementById('progLbl').textContent=`${done} of ${stops.length}`;
   document.getElementById('progBar').style.width=(done/stops.length*100)+'%';
   curCard(R, cn, current, done>=stops.length);
+  centerOnCurrent(cn);
+}
+// phones: the map pans instead of shrinking — bring the current stop into view
+function centerOnCurrent(stop){
+  const scene=document.querySelector('.scene');
+  if(scene.scrollWidth<=scene.clientWidth+4 && scene.scrollHeight<=scene.clientHeight+4) return;
+  const w=mapwrap.offsetWidth, h=mapwrap.offsetHeight;
+  scene.scrollTo({ left: mapwrap.offsetLeft + stop.x/100*w - scene.clientWidth/2,
+                   top:  mapwrap.offsetTop  + stop.y/100*h - scene.clientHeight/2 });
 }
 function getAv(){ try{ const p=JSON.parse(localStorage.getItem("ctf:profile")||"null"); return (p&&p.avatar&&Object.keys(p.avatar).length)?p.avatar:CTFAvatar.DEFAULT; }catch(e){ return CTFAvatar.DEFAULT; } }
 function curCard(R, m, current, allDone){
