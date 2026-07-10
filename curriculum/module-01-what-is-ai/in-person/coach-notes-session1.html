@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Coach Notes · Saturday Session 1 — Code the Future</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap');
+:root{ --display:'Space Grotesk',sans-serif; --body:'Plus Jakarta Sans',system-ui,sans-serif; --mono:'JetBrains Mono',monospace;
+  --purple:#9B7BFF; --teal:#26C7D1; --green:#3FD08A; --amber:#FFC44D; --coral:#FF7452; --ink:#EAF1FF; --sub:#9fb6e6; }
+*{ box-sizing:border-box; margin:0; }
+body{ font-family:var(--body); color:var(--ink); line-height:1.55; padding:0 0 60px;
+  background:radial-gradient(120% 60% at 85% -5%, rgba(155,123,255,.2), transparent 55%), linear-gradient(170deg,#101a3c,#0A1024 55%,#070C1A); min-height:100vh; }
+.wrap{ max-width:680px; margin:0 auto; padding:18px 14px; }
+.head h1{ font-family:var(--display); font-size:1.45rem; line-height:1.15; margin:4px 0 2px; }
+.kick{ font-family:var(--mono); font-size:11px; letter-spacing:.2em; text-transform:uppercase; color:var(--purple); }
+.head p{ color:var(--sub); font-size:.92rem; }
+nav{ position:sticky; top:0; z-index:50; display:flex; gap:7px; overflow-x:auto; -webkit-overflow-scrolling:touch; scrollbar-width:none;
+  padding:10px 14px; background:rgba(10,16,36,.92); backdrop-filter:blur(10px); border-bottom:1px solid rgba(255,255,255,.1); }
+nav::-webkit-scrollbar{ display:none; }
+nav a{ flex:none; font-family:var(--mono); font-size:11px; letter-spacing:.05em; color:#cfe3ff; text-decoration:none;
+  background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.15); border-radius:999px; padding:7px 12px; }
+h2{ font-family:var(--display); font-size:1.15rem; margin:26px 0 4px; scroll-margin-top:64px; }
+h2 .tm{ font-family:var(--mono); font-size:11px; color:var(--teal); letter-spacing:.06em; display:block; margin-bottom:2px; }
+.card{ background:rgba(255,255,255,.05); border:1.5px solid rgba(127,227,255,.22); border-radius:16px; padding:13px 15px; margin:10px 0; }
+.card.say{ border-color:rgba(63,208,138,.4); background:rgba(63,208,138,.07); }
+.card.why{ border-color:rgba(155,123,255,.4); background:rgba(155,123,255,.08); }
+.lab{ font-family:var(--mono); font-size:10px; letter-spacing:.18em; text-transform:uppercase; margin-bottom:5px; }
+.say .lab{ color:#9BF5C7; } .why .lab{ color:#c9b8ff; } .card .lab{ color:#7ef0e6; }
+ul{ padding-left:20px; margin:6px 0; } li{ margin:5px 0; }
+b{ color:#fff; }
+.q{ color:#FFD98C; font-weight:700; }
+details{ background:rgba(255,255,255,.05); border:1.5px solid rgba(127,227,255,.22); border-radius:16px; margin:10px 0; overflow:hidden; }
+summary{ cursor:pointer; padding:12px 15px; font-family:var(--display); font-weight:700; font-size:1rem; list-style:none; display:flex; gap:9px; align-items:center; }
+summary::-webkit-details-marker{ display:none; }
+summary .pill{ margin-left:auto; flex:none; font-family:var(--mono); font-size:10px; letter-spacing:.08em; border-radius:999px; padding:4px 9px; }
+.pill.ai{ background:rgba(63,208,138,.2); color:#9BF5C7; border:1px solid rgba(63,208,138,.5); }
+.pill.not{ background:rgba(255,116,82,.18); color:#ffc9b8; border:1px solid rgba(255,116,82,.5); }
+.pill.true{ background:rgba(63,208,138,.2); color:#9BF5C7; border:1px solid rgba(63,208,138,.5); }
+.pill.myth{ background:rgba(255,196,77,.16); color:#FFD98C; border:1px solid rgba(255,196,77,.5); }
+details > div{ padding:0 15px 13px; border-top:1px solid rgba(255,255,255,.08); }
+details p{ margin:9px 0; font-size:.94rem; }
+.tip{ background:rgba(255,196,77,.1); border:1.5px solid rgba(255,196,77,.35); border-radius:14px; padding:11px 14px; margin:10px 0; font-size:.92rem; }
+.links{ display:flex; flex-wrap:wrap; gap:8px; margin-top:8px; }
+.links a{ font-family:var(--mono); font-size:11px; color:#9BF5C7; text-decoration:none; background:rgba(63,208,138,.1); border:1px solid rgba(63,208,138,.35); border-radius:999px; padding:7px 12px; }
+</style>
+</head>
+<body>
+<nav>
+  <a href="#intro">Intro</a><a href="#ice">Icebreaker</a><a href="#badai">Bad AI</a><a href="#lecture">Mini-lecture</a>
+  <a href="#break">Break</a><a href="#bigbuild">Big Build</a><a href="#journal">Journals</a><a href="#close">Close</a><a href="#answerkey">📡 Answer key</a>
+</nav>
+<div class="wrap">
+  <div class="head">
+    <div class="kick">🎤 Coach notes · in your pocket</div>
+    <h1>Saturday Session 1 — Mr. Jon's companion</h1>
+    <p>South Central Regional Library · 10:00–11:30 · Follows your lesson plan, beat by beat. Skim the green "say it like this" cards; tap open the answer key when the game show runs.</p>
+    <div class="links">
+      <a href="/platform/live/host.html">📡 Host screen</a>
+      <a href="big-build-menu.html">🌉 Build menu</a>
+      <a href="live-room-m1-runsheet.html">📋 Runsheet</a>
+    </div>
+  </div>
+
+  <h2 id="intro"><span class="tm">10:00–10:10</span>👋 Welcome & your intro</h2>
+  <div class="card say"><div class="lab">Say it like this</div>
+    "I build things for a living — and the way things get built just changed more in the last three years than in the last thirty. You're going to learn the NEW way first. Most adults haven't caught up to what you'll know by August."</div>
+  <div class="card"><div class="lab">Cool beats to hit</div>
+    <ul>
+      <li><b>Your spark story:</b> the first thing you ever made on a computer — make it small and real. Kids connect to "it was bad and I loved it."</li>
+      <li><b>Creator vs consumer:</b> "Everyone you know USES apps. Almost nobody MAKES them. This summer you switch teams."</li>
+      <li><b>The promise:</b> "By the end of this program, there will be a real app or game in the world that exists because YOU imagined it."</li>
+    </ul></div>
+  <div class="tip">💡 Energy rule for the whole morning: ask, don't tell. Every segment below has a <span class="q">question</span> you can throw to the room instead of explaining.</div>
+
+  <h2 id="ice"><span class="tm">10:10–10:15</span>🎲 Icebreaker</h2>
+  <div class="card"><div class="lab">Keep it moving</div>
+    <ul>
+      <li>Name → one thing you love → <b>one thing you'd build with AI someday.</b> Write their build ideas on the whiteboard — you'll call back to them at the Big Build pick at 11:00. That callback ("Ava, this is that dragon game you said you wanted!") is gold.</li>
+      <li>This-or-That: go FAST, hands up, no explaining. "Dragon or robot" splits the room instantly and wakes everyone up.</li>
+    </ul></div>
+
+  <h2 id="badai"><span class="tm">10:15–10:35</span>🎯 The Bad AI Challenge</h2>
+  <div class="card why"><div class="lab">The why (your study notes)</div>
+    AI is a <b>prediction machine</b> — it was trained on millions of examples and predicts the most likely response to your words. A vague prompt like "make me a game" matches <i>everything</i> it has ever seen, so it predicts the <b>average</b> of all games — which is boring by definition. Specific details narrow the pattern space, so the output snaps toward YOUR idea. That's the whole lesson: <b>generic in, generic out; specific in, specific out.</b></div>
+  <div class="card say"><div class="lab">Say it like this</div>
+    "AI doesn't read your mind. It reads your words. If your words could mean a thousand things, you get the most boring one of the thousand."</div>
+  <div class="card"><div class="lab">Round 1 · "Make me a game" — discussion moves</div>
+    <ul>
+      <li><span class="q">"Is this what you imagined? What did YOU picture in your head?"</span> — every kid pictured something different; the AI had to guess. That's the aha.</li>
+      <li><span class="q">"What did we forget to tell it?"</span> — let them build the checklist out loud (characters, setting, goal, rules, mood). Board them.</li>
+      <li>If the AI happens to return something decent: "Okay — but is it YOURS? Could it have given this exact thing to any kid in any city?"</li>
+    </ul></div>
+  <div class="card"><div class="lab">Round 2 · the group rewrite</div>
+    <ul>
+      <li>Take suggestions ONE detail at a time and re-run when the prompt has ~5. Kids watching the output improve in real time is the lesson working.</li>
+      <li><span class="q">"Which single detail changed the result the most?"</span> — usually the character or the setting. Point out: <b>that's debugging</b> — change one thing, watch what happens.</li>
+    </ul></div>
+  <div class="card"><div class="lab">Round 3 · their own prompts</div>
+    <ul>
+      <li>The five-detail rule is the guardrail. Kenya circulates with her reflective questions; you demo the best 2–3 on screen.</li>
+      <li>Praise the <b>revision</b>, not the result: "I love that you added the mood — hear how the whole thing changed?"</li>
+      <li><span class="q">"What's one MORE detail that would make it even more yours?"</span> — plants the idea that prompts are never done, just improving. That's iteration — how real builders work.</li>
+    </ul></div>
+
+  <h2 id="lecture"><span class="tm">10:35–10:50</span>🧠 Your mini-lecture — the 5 points with their "why"</h2>
+  <details><summary>1 · AI is a tool, not a brain</summary><div>
+    <p><b>The why:</b> it has no goals, no feelings, no understanding — it computes "what usually comes next" from patterns in its training examples. It can SOUND thoughtful because it learned from thoughtful writing.</p>
+    <p><span class="q">Ask:</span> "When it wrote that game idea, was it excited about it?" (No — YOU were. The excitement in the room is all human.)</p></div></details>
+  <details><summary>2 · Prompting is communication</summary><div>
+    <p><b>The why:</b> the model can only work with what's in the prompt (plus its training). Missing details get filled in with the most statistically common thing — which is why unnamed characters come out generic.</p>
+    <p><span class="q">Ask:</span> "Have you ever given directions to someone and they did it 'wrong' — but really they did exactly what you SAID?" Same thing.</p></div></details>
+  <details><summary>3 · Coding and AI both require precision</summary><div>
+    <p><b>The why:</b> computers are perfectly literal. In code, one wrong step in a sequence breaks everything — and fixing it (debugging) is a normal, daily part of the job, not a failure. Prompt revision IS debugging: change one thing, run it, observe.</p>
+    <p><span class="q">Ask:</span> "Tell a robot to make a peanut butter sandwich — what's step one?" (Someone says "put on the peanut butter" — "On WHAT? The robot doesn't know bread exists yet!")</p></div></details>
+  <details><summary>4 · AI can be helpful, but not always correct</summary><div>
+    <p><b>The why:</b> it predicts <i>plausible</i> answers, not <i>true</i> ones — when it doesn't know, it still generates something confident-sounding. And it can only reflect the examples it learned from, so gaps and biases in those examples show up in its answers. That's why the human checks.</p>
+    <p><span class="q">Ask:</span> "If AI sounds 100% sure, does that mean it's right?" (Nope — confidence and correctness are different things. YOU are the fact-checker.)</p></div></details>
+  <details><summary>5 · Creators lead the technology</summary><div>
+    <p><b>The why:</b> the idea, the taste, the judgment calls, the "that's not quite it, try again" — all human. AI multiplies your idea; it can't originate your idea. This is the camp's whole thesis: <b>code does the loop, AI does the judgment inside the loop, humans handle the exceptions — and kids handle the imagination.</b></p>
+    <p><span class="q">Ask:</span> "Whose game will it be when you're done — yours or the computer's?"</p></div></details>
+
+  <h2 id="break"><span class="tm">10:50–11:00</span>🍎 Break</h2>
+  <div class="card"><div class="lab">Board question while they snack</div>
+    "What is one thing you would build if AI could help you?" — leave markers out. Whatever they scribble feeds straight into 11:00.</div>
+
+  <h2 id="bigbuild"><span class="tm">11:00–11:15</span>🌉 Introduce the Big Build</h2>
+  <div class="card say"><div class="lab">Say it like this</div>
+    "Everything this morning — clear ideas, specific details, revising until it's right — that's exactly how you're going to build a REAL app or game. You pick it. You design it. You'll own it, show your family, and keep it."</div>
+  <div class="card"><div class="lab">Run of show</div>
+    <ul>
+      <li><b>Play the demo reel</b> (1:55, on the projector — it's in the session folder and on your Desktop). Let it hype the room; no talking over it needed until the finale.</li>
+      <li>Open the <b>Big Build menu board</b> — every card now plays a live mini-demo. Walk 3–4, not all 12: pick one game, one app, one story ("there's twelve — you'll see them all on your own screen").</li>
+      <li>Call back the whiteboard: match kids' morning ideas to menu options by name.</li>
+      <li>If devices are out: kids open the <b>Live Room</b> and lock in their pick — every pick pops on the projector. Cheer each one. Remind them: <b>you can change your mind any time before build week.</b></li>
+      <li><span class="q">"Which one is calling your name — and what's the FIRST detail that makes it yours?"</span> (hero? world? twist?) — that's the personalization muscle from the Bad AI Challenge, immediately reused.</li>
+    </ul></div>
+
+  <h2 id="journal"><span class="tm">11:15–11:28</span>📓 Project journals</h2>
+  <div class="card"><div class="lab">Coaching moves</div>
+    <ul>
+      <li>The page: title · type · what I like about it · who's in it · the problem/mission · what it looks like (sketch!) · one thing AI could help me create.</li>
+      <li>Stuck kid? Steal from the prompt frame: <span class="q">"Who's the main character? Where does it happen? What's the goal?"</span> — three answers = a project.</li>
+      <li>Perfectionist kid? "Your idea doesn't have to be perfect today. Version 1 is supposed to be messy — that's what version 2 is for."</li>
+      <li>Sketching counts as designing. Say that out loud — it frees the artists.</li>
+    </ul></div>
+
+  <h2 id="close"><span class="tm">11:28–11:30</span>🚀 Share-out & close</h2>
+  <div class="card say"><div class="lab">Closing beat</div>
+    One sentence each: "My project is about ___." Then land the plane: "Today you learned that AI works best when YOU lead it with clear ideas. Keep going on your missions this week — and next time, we build."</div>
+
+  <h2 id="answerkey"><span class="tm">Appendix</span>📡 Live Room answer key — the WHY behind every question</h2>
+  <p style="color:var(--sub);font-size:.9rem;margin:4px 0 10px">If you run the game show (host screen → Next/Reveal), these are the current questions, the answers, the deeper reason, and a follow-up to ask before you hit Reveal.</p>
+
+  <details><summary>🤔 Warm-up · "AI is most like…"<span class="pill">opinion</span></summary><div>
+    <p><b>No wrong answer</b> — it's a thermometer of the room. The camp's answers are <b>📚 pattern learner</b> and <b>🐶 puppy you train</b>: both capture "learns from examples." The one to gently retire is <b>🔮 magic</b>: magic can't be inspected, improved, or debugged — but a pattern machine can, and that's why kids can BUILD with it.</p>
+    <p><span class="q">Ask a defender of each option "why?"</span> before the reveal — then: "By August, watch — most of you will vote puppy."</p></div></details>
+
+  <details><summary>🐶 Round 1 · Photo filter that gives you dog ears<span class="pill ai">AI</span></summary><div>
+    <p><b>Why:</b> the filter learned where eyes, noses, and heads are from millions of face photos — that's how the ears stick to YOU while you move. It's live pattern-spotting (face landmarks), not a sticker on a picture.</p>
+    <p><span class="q">Ask:</span> "How does it know where your ears go when you turn your head?" — kids who say "it just knows" are describing the trained pattern without realizing it.</p>
+    <p><b>Misconception to catch:</b> "it's just a camera trick." A plain camera doesn't know a face from a shoe — the KNOWING is the AI.</p></div></details>
+
+  <details><summary>🚪 Round 2 · Automatic doors at the store<span class="pill not">NOT AI</span></summary><div>
+    <p><b>Why:</b> one sensor, one fixed rule — something moves close, door opens. It never learns, never improves, treats everyone identically forever.</p>
+    <p><span class="q">Ask:</span> "Does the door get BETTER at opening the more you visit?" (No → no learning → not AI.) That question — "does it learn?" — is the master key for every round.</p></div></details>
+
+  <details><summary>🤖 Round 3 · Robot that learns to walk by falling down<span class="pill ai">AI</span></summary><div>
+    <p><b>Why:</b> every fall is a training example. It tries, wobbles, adjusts, tries again — trial-and-error learning (the fancy word is reinforcement learning). Its teacher is its own mistakes.</p>
+    <p><span class="q">Ask:</span> "Where did its examples come from if nobody gave it any?" (Its own falls!) Then the connection kids love: "How did YOU learn to ride a bike?" Falling isn't failure — it's data.</p></div></details>
+
+  <details><summary>🥤 Round 4 · Vending machine dropping your snack<span class="pill not">NOT AI</span></summary><div>
+    <p><b>Why:</b> press B4 → get chips. A fixed map from buttons to snacks, zero learning, zero guessing. It would hand a robber the same chips.</p>
+    <p><span class="q">Ask:</span> "Could this machine ever surprise you?" — fixed-rule machines can't surprise; learning machines can. (Nice callback to the Bad AI Challenge: the surprise is exactly what prediction adds.)</p></div></details>
+
+  <details><summary>🚗 Round 5 · A car that drives itself<span class="pill ai">AI</span></summary><div>
+    <p><b>Why:</b> trained on millions of miles of driving to recognize roads, people, stop signs — and it keeps learning from new miles.</p>
+    <p><span class="q">Ask:</span> "If it learned from millions of miles, why do they still keep a human ready to grab the wheel?" — because AI handles the pattern, <b>humans handle the exceptions</b> (the weird stuff it's never seen). That's the camp's core work rule hiding in a car.</p></div></details>
+
+  <details><summary>🎲 Round 6 · Rolling dice in a board game app<span class="pill not">NOT AI</span></summary><div>
+    <p><b>Why:</b> random isn't smart — picking a random number takes no learning at all. Sneaky-good final round: random FEELS unpredictable like AI, but it's the opposite of a pattern.</p>
+    <p><span class="q">Ask:</span> "The dice surprise you every time — so why isn't THAT learning?" (Because it never gets better. Surprise without improvement is just chance.)</p></div></details>
+
+  <details><summary>♟️ Mythbusters 1 · "An AI has beaten the world champion at chess"<span class="pill true">TRUE</span></summary><div>
+    <p><b>Why:</b> true since 1997 — Deep Blue beat world champion Garry Kasparov, before smartphones existed. It studied millions of games; pattern power at scale beats even a champion.</p>
+    <p><span class="q">Ask AFTER the reveal:</span> "So is that computer smarter than the champion at EVERYTHING?" — no! It can't tie a shoe or tell a joke. AI is a superhero at ONE narrow thing at a time. That nuance is the real lesson.</p></div></details>
+
+  <details><summary>😴 Mythbusters 2 · "AI gets smarter all by itself while you sleep"<span class="pill myth">MYTH</span></summary><div>
+    <p><b>Why:</b> AI only improves when PEOPLE train it — feeding it new examples, correcting it, rebuilding it. No builders, no learning. (Kids often imagine AI as a creature that grows on its own — this is the de-spooking question.)</p>
+    <p><span class="q">Ask:</span> "So who decides what an AI gets better at?" — people. Builders. "That's the job you're auditioning for this summer."</p></div></details>
+
+  <details><summary>🧒 Mythbusters 3 · "AI is only for grown-up engineers"<span class="pill myth">MYTH</span></summary><div>
+    <p><b>Why:</b> the biggest myth in the room — and your segue. They already commanded a real AI this morning in the Bad AI Challenge, and in about one minute they pick the real app they'll build with one.</p>
+    <p><span class="q">Ask:</span> "Who in this room has already bossed an AI around today?" (Every hand goes up.) "Then I guess the myth is busted." → hit Next, straight into the Big Build pick on that energy.</p></div></details>
+
+  <div class="tip">🎛️ Host screen quick keys: <b>space/→</b> next · <b>R</b> reveal · <b>←</b> back. Rhythm per round: read it out loud → let them tap → ask one defender <span class="q">"why?"</span> → Reveal → read the why → Next.</div>
+</div>
+</body>
+</html>
