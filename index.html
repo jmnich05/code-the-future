@@ -657,23 +657,59 @@
   </div>
 </section>
 
+<section class="checkout" id="deposit" style="padding-bottom:0">
+  <div class="wrap">
+    <article class="price-card best reveal" style="max-width:660px;margin:0 auto">
+      <h3>🚀 August Session — hold your seat for $10</h3>
+      <div class="price">$10 <small>deposit · fully credited toward tuition</small></div>
+      <p><b>Capped at 15 builders, and seats are going fast.</b> Ten dollars locks one in for your camper. When August enrollment opens you get first pick, and the $10 comes right off your tuition.</p>
+      <ul>
+        <li>Launch week of Aug 3 · Saturday sessions at the public library</li>
+        <li>Full 4-module program: real AI, real code, a real app of their own</li>
+        <li>100% credited at enrollment — and refundable if plans change</li>
+      </ul>
+      <form class="checkout-form" data-plan="deposit-august">
+        <label>Parent email <input type="email" name="email" required placeholder="you@example.com" autocomplete="email"></label>
+        <div class="row2">
+          <label>Camper first name <input type="text" name="studentFirstName" required placeholder="First name" autocomplete="given-name"></label>
+          <label>Camper last name <input type="text" name="studentLastName" required placeholder="Last name" autocomplete="family-name"></label>
+        </div>
+        <label>How did you hear about us?
+          <select name="heardAbout" required>
+            <option value="" selected disabled>Pick one…</option>
+            <option>Facebook / Instagram</option>
+            <option>Google search</option>
+            <option>Google or Meta ad</option>
+            <option>Friend or family</option>
+            <option>Media</option>
+            <option>Poster</option>
+            <option>Other</option>
+          </select>
+        </label>
+        <button class="btn btn-blue btn-big" type="submit">Hold my seat — $10 →</button>
+        <div class="checkout-status" aria-live="polite"></div>
+      </form>
+    </article>
+  </div>
+</section>
+
 <section class="checkout" id="checkout">
   <div class="wrap">
     <div class="sec-head reveal">
       <span class="kicker" style="color:var(--blue)">Secure checkout</span>
-      <h2>Choose your summer module plan.</h2>
-      <p>Pay online with Stripe. Start with Module 1 for $75, add more modules for $25 each, or grab the full four-module summer bundle for $125.</p>
+      <h2>Simple pricing: $75 a module.</h2>
+      <p>Pay online with Stripe. Each module is $75 — or do the whole four-module program for $225 per child and save $75.</p>
     </div>
     <div class="checkout-grid">
       <article class="price-card reveal">
         <h3>Start with Module 1</h3>
-        <div class="price">$75 <small>for Module 1</small></div>
-        <p>The perfect starting point for a new camper: the first summer module, platform access, and the cohort experience.</p>
+        <div class="price">$75 <small>per module</small></div>
+        <p>The perfect starting point for a new camper: the first module, platform access, and the cohort experience.</p>
         <ul>
           <li>Module 1: What Is AI?</li>
           <li><strong>A 90-minute hands-on session at the public library</strong> for every module</li>
           <li>12 game-like missions plus the Big Mission capstone</li>
-          <li>Add one or two extra modules now for $25 each</li>
+          <li>Add more modules any time — $75 each</li>
         </ul>
         <form class="checkout-form" data-plan="module-1">
           <label>Parent email <input type="email" name="email" required placeholder="you@example.com" autocomplete="email"></label>
@@ -696,8 +732,8 @@
           <label>Add more modules
             <select name="additionalModules">
               <option value="0">No add-ons — Module 1 only ($75)</option>
-              <option value="1">Add 1 module — $100 total</option>
-              <option value="2">Add 2 modules — $125 total</option>
+              <option value="1">Add 1 module — $150 total</option>
+              <option value="2">Add 2 modules — $225 total</option>
             </select>
           </label>
           <button class="btn btn-blue btn-big" type="submit">Pay with Stripe →</button>
@@ -706,12 +742,12 @@
       </article>
       <article class="price-card best reveal">
         <h3>All four modules</h3>
-        <div class="price">$125 <small>one-time bundle</small></div>
-        <p>Best value for families who know they want the whole summer arc. One checkout covers all four modules.</p>
+        <div class="price">$225 <small>per child · one-time</small></div>
+        <p>Best value for families who know they want the whole arc. One checkout covers all four modules.</p>
         <ul>
-          <li>Module 1 plus all three additional summer modules</li>
+          <li>All four modules — the complete program</li>
           <li><strong>A 90-minute hands-on library session</strong> for every one of the four modules</li>
-          <li>Saves $25 compared with buying Module 1 + three add-ons</li>
+          <li>Saves $75 vs. buying each module separately</li>
           <li>Secure card payment handled by Stripe</li>
         </ul>
         <form class="checkout-form" data-plan="all-four">
@@ -797,12 +833,14 @@
      ===================================================================== */
   var FILM_URL = "https://www.youtube-nocookie.com/embed/zUs5lakiMRM?start=6"; // walkthrough from co-founder Jon Nichols (starts at 0:06)
   var COHORTS = [
-    { name: "Founding Cohort · Summer", dates: "Takeoff: week of July 6, 2026", meta: "Weekly 90-minute hands-on session at the public library + missions at home · ages 8–11",
-      seats: "Sign-ups underway — limited seats remain", status: "Enrolling now", open: true },
-    { name: "Session 2 · Late Summer", dates: "Starts August 2026", meta: "Weekly 90-minute hands-on session at the public library + missions at home · ages 8–11",
-      seats: "Openings available", status: "Enrolling", open: true },
-    { name: "Fall AI Club", dates: "Dates being finalized", meta: "Weekly after-school · platform + monthly meetup",
-      seats: "Join the waitlist to hear first", status: "Waitlist", open: false }
+    { name: "July Session · Founding Cohort", dates: "In progress — launched July 6, 2026", meta: "Weekly 90-minute hands-on session at the public library + missions at home · ages 8–11",
+      seats: "Enrollment closed — our founding crew is mid-journey", status: "In progress", cta: "none" },
+    { name: "August Session", dates: "Launch week of Aug 3 · Saturday library sessions Aug 8, 15, 22 + Demo Day", meta: "Same full program: 4 modules, weekly 90-minute library session + missions at home · ages 8–11",
+      seats: "Capped at 15 builders — seats are going fast", status: "Reserve now · $10", cta: "deposit" },
+    { name: "September Session", dates: "Dates coming soon", meta: "Full 4-module program · ages 8–11 · Louisville",
+      seats: "Join the waitlist — you'll hear first", status: "Waitlist", cta: "waitlist" },
+    { name: "October Session", dates: "Dates coming soon", meta: "Full 4-module program · ages 8–11 · Louisville",
+      seats: "Join the waitlist — you'll hear first", status: "Waitlist", cta: "waitlist" }
   ];
   /* ===================================================================== */
 
@@ -820,18 +858,24 @@
   COHORTS.forEach(function (c) {
     var d = document.createElement("div");
     d.className = "co reveal";
+    var open = c.cta === "deposit";
+    var btn = c.cta === "none"
+      ? ''
+      : c.cta === "deposit"
+        ? '<a class="btn btn-blue" href="#deposit" data-session="' + c.name + '">Hold my seat — $10 →</a>'
+        : '<a class="btn wait" href="#signup" data-session="' + c.name + '">Join the waitlist</a>';
     d.innerHTML =
-      '<span class="status ' + (c.open ? "st-open" : "st-soon") + '">' + c.status + "</span>" +
+      '<span class="status ' + (open ? "st-open" : "st-soon") + '">' + c.status + "</span>" +
       "<h3>" + c.name + "</h3>" +
       '<div class="dates">' + c.dates + "</div>" +
       '<div class="meta">' + c.meta + "</div>" +
-      '<div class="seats">' + c.seats + "</div>" +
-      '<a class="btn ' + (c.open ? "btn-blue" : "wait") + '" href="' + (c.open ? "#checkout" : "#signup") + '" data-session="' + c.name + '">' +
-      (c.open ? "Choose a plan" : "Join the waitlist") + "</a>";
+      '<div class="seats">' + c.seats + "</div>" + btn;
     grid.appendChild(d);
-    var o = document.createElement("option");
-    o.textContent = c.name + " — " + c.dates;
-    sel.appendChild(o);
+    if (c.cta !== "none") {
+      var o = document.createElement("option");
+      o.textContent = c.name + " — " + c.dates;
+      sel.appendChild(o);
+    }
   });
   var any = document.createElement("option");
   any.textContent = "Not sure yet — tell me about all of them";
