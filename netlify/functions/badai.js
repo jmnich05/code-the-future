@@ -25,7 +25,21 @@ const SAFE =
   "thoughts, one per line, each starting with '• ' (like someone planning out loud: what " +
   "was asked, what's missing or given, what I'll pick and why).\n" +
   "Then a line containing only '---'.\n" +
-  "Then the RESULT.";
+  "Then the RESULT.\n" +
+  "Then, as the VERY LAST line, a preview spec the page uses to play a live animation " +
+  "of the idea:\n" +
+  "PREVIEW {\"kind\":\"<one>\",\"swap\":{}}\n" +
+  "kind is whichever of these 12 animation skeletons is CLOSEST to the idea: clicker " +
+  "(tap a thing for points), catch (catch falling things), dodge (fly through obstacles), " +
+  "runner (run and jump), memory (flip cards), quiz (question tiles), pet (care for a " +
+  "creature), draw (art app), journal (writing app), music (beat pads), story " +
+  "(choose-your-adventure), world (explorable place).\n" +
+  "swap re-skins the animation by replacing its default emoji with ones that match the " +
+  "idea — each key is a default emoji from this table and each value is ONE kid-safe " +
+  "emoji: clicker tap-target 🍪; catch falling 🌮 ⭐ 🧁, catcher 🧺; dodge flyer 🚀, " +
+  "obstacles 🪨 ☄️; runner hero 🏃, obstacle 🌵, pickup 🪙; memory card faces 🦖 🐬; " +
+  "pet creature 🐲, food 🍎; story choices 🐉 🏃; world building 🏰, tree 🌳, visitor 🚶. " +
+  "quiz, draw, journal, and music take swap {}. Only swap what the idea clearly implies.";
 
 const ROUNDS = {
   1:
@@ -35,7 +49,8 @@ const ROUNDS = {
     "and shrug — you'll have to guess the most ordinary thing. The RESULT must be " +
     "deliberately GENERIC and forgettable: the most average, obvious idea possible, " +
     "described in 4-6 plain sentences. No title, no characters with names, no sparkle, " +
-    "no surprises, no lists. Competent but boring — that's the whole lesson.",
+    "no surprises, no lists. Competent but boring — that's the whole lesson. Your " +
+    "PREVIEW swap MUST be {} — the animation stays as plain and default as the idea.",
   2:
     SAFE +
     "\nThis is ROUND 2: THE GROUP REWRITE. The kids improved the prompt together. Your " +

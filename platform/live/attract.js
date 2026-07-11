@@ -17,7 +17,8 @@
   function rr(c,x,y,w,h,r){ r=Math.min(r,w/2,h/2); c.beginPath();
     c.moveTo(x+r,y); c.arcTo(x+w,y,x+w,y+h,r); c.arcTo(x+w,y+h,x,y+h,r);
     c.arcTo(x,y+h,x,y,r); c.arcTo(x,y,x+w,y,r); c.closePath(); }
-  function E(c,e,x,y,s,rot,flip){ c.save(); c.translate(x,y);
+  var curSwap=null;   // per-mount emoji re-skin, set around each renderer call
+  function E(c,e,x,y,s,rot,flip){ if(curSwap&&curSwap[e]) e=curSwap[e]; c.save(); c.translate(x,y);
     if(rot) c.rotate(rot); if(flip) c.scale(-1,1);
     c.font=Math.round(s)+'px "Apple Color Emoji","Segoe UI Emoji",system-ui';
     c.textAlign='center'; c.textBaseline='middle'; c.fillText(e,0,0); c.restore(); }
@@ -253,16 +254,18 @@
       if (!m.cv.isConnected){ mounts.splice(i,1); continue; }
       var c=m.cv.getContext('2d'), w=m.cv.width, h=m.cv.height;
       c.clearRect(0,0,w,h);
+      curSwap=m.swap;
       try{ m.f(c,w,h, REDUCED? 2.2 : performance.now()/1000); }catch(e){}
+      curSwap=null;
     }
     if (!REDUCED && mounts.length) requestAnimationFrame(tick);
     else running=false;
   }
   window.CTFAttract = {
     kinds: Object.keys(R),
-    mount: function (cv, kind) {
+    mount: function (cv, kind, opts) {
       if (!cv || !R[kind] || !cv.getContext) return;
-      mounts.push({ cv:cv, f:R[kind] });
+      mounts.push({ cv:cv, f:R[kind], swap:(opts && opts.swap) || null });
       if (!running){ running=true; requestAnimationFrame(tick); }
     },
     // draw every mounted canvas once at time t (seconds) WITHOUT the rAF loop —
@@ -270,7 +273,7 @@
     step: function (t) {
       for (var i=0;i<mounts.length;i++){ var m=mounts[i];
         var c=m.cv.getContext('2d'); c.clearRect(0,0,m.cv.width,m.cv.height);
-        m.f(c, m.cv.width, m.cv.height, t); }
+        curSwap=m.swap; m.f(c, m.cv.width, m.cv.height, t); curSwap=null; }
     }
   };
 })();
