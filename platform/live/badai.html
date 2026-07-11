@@ -77,7 +77,12 @@ body{ font-family:var(--body); color:#EAF1FF; height:100vh; display:flex; flex-d
 <div class="status" id="status"><span class="dot"></span><span id="stTxt">READY — CONNECTED TO THE REAL AI</span></div>
 <div class="stage" id="stage">
   <div class="pane think" id="thinkPane" style="display:none"><h3>🤔 The AI is thinking…</h3><div class="body" id="thinkBody"></div></div>
-  <div class="pane result" id="resultPane" style="display:none"><div class="asked" id="asked"></div><h3>✨ What it made</h3><div class="body" id="resultBody"></div></div>
+  <div class="pane result" id="resultPane" style="display:none"><div class="asked" id="asked"></div><h3>✨ What it made</h3>
+    <div id="pv" style="display:none;margin:0 0 14px">
+      <div style="font-family:var(--mono);font-size:11px;letter-spacing:.18em;color:#FFD98C;margin-bottom:8px">🎬 LIVE PREVIEW — IMAGINED BY THE AI</div>
+      <canvas id="pvCv" width="640" height="300" style="width:100%;max-width:760px;border-radius:14px;background:rgba(7,12,26,.7);border:1.5px solid rgba(255,196,77,.4)"></canvas>
+    </div>
+    <div class="body" id="resultBody"></div></div>
   <div class="empty" id="empty" style="grid-column:1/-1">
     <div class="big">🎯</div>
     <h2 style="font-family:var(--display);margin:10px 0 6px">Round 1: give it a TERRIBLE prompt.</h2>
@@ -85,6 +90,7 @@ body{ font-family:var(--body); color:#EAF1FF; height:100vh; display:flex; flex-d
   </div>
 </div>
 
+<script src="attract.js?v=2"></script>
 <script>
 (function(){
   // staff-only, same soft gate as the host screen
@@ -115,6 +121,7 @@ body{ font-family:var(--body); color:#EAF1FF; height:100vh; display:flex; flex-d
     $('empty').style.display = 'none';
     $('thinkPane').style.display = ''; $('resultPane').style.display = '';
     $('thinkBody').innerHTML = ''; $('resultBody').innerHTML = '';
+    $('pv').style.display = 'none';   // fresh preview per run (old canvas swaps out below)
     $('asked').innerHTML = '<span>ROUND ' + round + ' · WE ASKED</span>“' + esc(q) + '”';
     setStatus('TALKING TO THE AI…', true);
 
@@ -141,7 +148,8 @@ body{ font-family:var(--body); color:#EAF1FF; height:100vh; display:flex; flex-d
         think.textContent = thinkTxt;
         if (parts.length > 1){
           if (!inResult){ inResult = true; }
-          res.textContent = parts.slice(1).join('\n');
+          // hide the machine-readable PREVIEW line from the room as it streams in
+          res.textContent = parts.slice(1).join('\n').replace(/\n?PREVIEW[\s\S]*$/, '');
           styleTitle(res);
           res.appendChild(caret);
           res.scrollIntoView === undefined || $('resultPane').scrollTo(0, $('resultPane').scrollHeight);
@@ -151,11 +159,33 @@ body{ font-family:var(--body); color:#EAF1FF; height:100vh; display:flex; flex-d
         }
       }
       caret.remove();
+      showPreview(all);
       setStatus('DONE — ASK THE ROOM: IS THIS WHAT YOU IMAGINED?', false);
     } catch (err){
       setStatus('CONNECTION ERROR — TRY AGAIN', false);
     }
     busy = false; $('go').disabled = false;
+  }
+
+  // parse the trailing PREVIEW spec and play the matching attract loop,
+  // re-skinned with the AI's emoji picks (sanitized: whitelisted kind,
+  // emoji-only swaps, max 4)
+  var KINDS = ['clicker','catch','dodge','runner','memory','quiz','pet','draw','journal','music','story','world'];
+  function showPreview(all){
+    if (!window.CTFAttract) return;
+    var m = all.match(/PREVIEW\s*(\{[\s\S]*\})\s*$/);
+    if (!m) return;
+    var spec; try { spec = JSON.parse(m[1]); } catch(e){ return; }
+    if (KINDS.indexOf(spec.kind) === -1) return;
+    var swap = {}, n = 0;
+    var isEmoji = function(x){ try { return typeof x==='string' && x.length<=8 && /\p{Extended_Pictographic}/u.test(x) && !/[a-z0-9<>&"']/i.test(x); } catch(e){ return false; } };
+    Object.keys(spec.swap || {}).forEach(function(k){
+      if (n < 4 && isEmoji(k) && isEmoji(spec.swap[k])){ swap[k] = spec.swap[k]; n++; }
+    });
+    var old = $('pvCv');                       // fresh canvas so the engine drops the old mount
+    var cv = old.cloneNode(false); old.parentNode.replaceChild(cv, old);
+    $('pv').style.display = '';
+    CTFAttract.mount(cv, spec.kind, { swap: swap });
   }
 
   // first line of the result gets title treatment when it's short & loud
