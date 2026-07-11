@@ -268,6 +268,14 @@
       mounts.push({ cv:cv, f:R[kind], swap:(opts && opts.swap) || null });
       if (!running){ running=true; requestAnimationFrame(tick); }
     },
+    // mount a CUSTOM renderer function f(c,w,h,t) (e.g. one the AI just wrote)
+    mountFn: function (cv, f) {
+      if (!cv || typeof f !== 'function' || !cv.getContext) return;
+      mounts.push({ cv:cv, f:f, swap:null });
+      if (!running){ running=true; requestAnimationFrame(tick); }
+    },
+    // drawing helpers, exposed so custom renderers use the exact same visual kit
+    helpers: { E:E, chip:chip, rr:rr, ease:ease, clamp:clamp, P:P },
     // draw every mounted canvas once at time t (seconds) WITHOUT the rAF loop —
     // rAF pauses in hidden tabs, so this is the hook for tests and static frames
     step: function (t) {
