@@ -56,5 +56,17 @@
     var id = new URLSearchParams(location.search).get("session_id");
     if (id) document.getElementById("sessionNote").textContent = "Stripe session: " + id;
   </script>
+<script>
+// deposit checkouts get their own message (no platform-login promises)
+(function(){
+  if (new URLSearchParams(location.search).get('plan') !== 'deposit') return;
+  var h = document.querySelector('h1'); if (h) h.textContent = "Your August seat is held! 🎉";
+  document.querySelectorAll('p, ol, ul').forEach(function(el){ el.style.display = 'none'; });
+  var box = document.createElement('div');
+  box.innerHTML = '<p>Your $10 deposit is in — it holds one of the <b>15 seats</b> for the August session and is <b>fully credited toward tuition</b>.</p>' +
+    '<p>We\'ll email you the moment dates are locked and enrollment opens, and you\'ll get first pick.</p>';
+  (h ? h.parentNode : document.body).appendChild(box);
+})();
+</script>
 </body>
 </html>

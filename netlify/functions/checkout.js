@@ -17,19 +17,24 @@ const MAX_MODULE1_ADDONS = 2;
 
 const LINE_ITEMS = {
   module1: {
-    name: "Code the Future — Summer Module 1",
-    description: "Module 1: What Is AI? Includes platform access plus the summer cohort experience.",
+    name: "Code the Future — Module 1",
+    description: "Module 1: What Is AI? Includes platform access, the in-person library session, and the cohort experience.",
     amount: 7500
   },
   additional: {
-    name: "Code the Future — Additional Summer Module",
+    name: "Code the Future — Additional Module",
     description: "Add-on module for a camper already enrolled in Module 1.",
-    amount: 2500
+    amount: 7500
   },
   bundle: {
-    name: "Code the Future — All Four Summer Modules",
-    description: "Best value: Module 1 plus all three additional summer modules.",
-    amount: 12500
+    name: "Code the Future — All Four Modules",
+    description: "Best value: all four modules — save $75 vs. buying each module separately.",
+    amount: 22500
+  },
+  depositAugust: {
+    name: "Code the Future — August Session Seat Deposit",
+    description: "Holds one of 15 seats for the August session. Fully credited toward tuition at enrollment.",
+    amount: 1000
   }
 };
 
@@ -58,13 +63,15 @@ export default async (req) => {
   const origin = checkoutOrigin(req);
   const form = new URLSearchParams();
   form.set("mode", "payment");
-  form.set("success_url", origin + "/checkout-success.html?session_id={CHECKOUT_SESSION_ID}");
+  form.set("success_url", origin + "/checkout-success.html?session_id={CHECKOUT_SESSION_ID}" + (plan === "deposit-august" ? "&plan=deposit" : ""));
   form.set("cancel_url", origin + "/#checkout");
   form.set("phone_number_collection[enabled]", "true");
   form.set("billing_address_collection", "auto");
   form.set("allow_promotion_codes", "true");
   if (email) form.set("customer_email", email);
-  form.set("custom_text[submit][message]", "After checkout, Code the Future will email your camper's login details and cohort next steps.");
+  form.set("custom_text[submit][message]", plan === "deposit-august"
+    ? "Your $10 holds a seat for the August session and is fully credited toward tuition. We'll email enrollment details as soon as dates are locked."
+    : "After checkout, Code the Future will email your camper's login details and cohort next steps.");
 
   form.set("metadata[program]", "Code the Future Summer 2026");
   form.set("metadata[plan]", plan);
@@ -119,6 +126,10 @@ function buildLineItems(plan, rawAdditionalModules) {
 
   if (plan === "all-four") {
     return { ok: true, lines: [{ ...LINE_ITEMS.bundle, quantity: 1 }], additionalModules: MAX_ADDITIONAL_MODULES };
+  }
+
+  if (plan === "deposit-august") {
+    return { ok: true, lines: [{ ...LINE_ITEMS.depositAugust, quantity: 1 }], additionalModules: 0 };
   }
 
   return { ok: false, error: "Unknown checkout plan." };

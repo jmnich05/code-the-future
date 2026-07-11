@@ -22,8 +22,18 @@ const SYSTEM = {
     "When natural, briefly connect what you are doing to the ideas they just learned: " +
     "learning from patterns, attention, predicting the next token, and that confidence is " +
     "not the same as correctness. Define any term you introduce in one short line."
+  ,musicriff:
+    "You generate beat patterns for a kids' music-making app (ages 8-11). The kid gives a " +
+    "vibe; you reply with ONLY minified JSON on one line, no markdown, no explanation: " +
+    '{"name":"...","emoji":"🎵","drums":{"kick":[16],"snare":[16],"hat":[16],"clap":[16]},"melody":[16]} ' +
+    "Each drums array is exactly 16 entries of 0 or 1 (one bar of 16th notes). melody is " +
+    "exactly 16 integers from -1 to 7 (-1 = rest, 0 = low note up to 7 = high note). Make it " +
+    "GROOVE: kick anchors beats 1/5/9/13-ish, hats keep time, snare on 5 and 13 or a fun " +
+    "variation, melody catchy with some rests. Match the kid's vibe (spooky = sparse minor " +
+    "feel, party = busy and bright). name is a fun kid-safe title under 24 characters that " +
+    "matches their vibe; emoji is one matching kid-safe emoji."
 };
-const MAX_TOKENS = { kids: 220, adults: 400 };
+const MAX_TOKENS = { kids: 220, adults: 400, musicriff: 300 };
 
 export default async (req) => {
   if (req.method !== "POST") return json({ error: "Method not allowed" }, 405);
@@ -34,12 +44,13 @@ export default async (req) => {
   let body = {};
   try { body = await req.json(); } catch (e) { return json({ error: "Invalid JSON body." }, 400); }
 
-  const mode = body.mode === "adults" ? "adults" : "kids";
+  const mode = ["adults","musicriff"].indexOf(body.mode) > -1 ? body.mode : "kids";
   const prompt = (body.prompt || "").toString().slice(0, 2000).trim();
   if (!prompt) return json({ error: "Please type something first." }, 400);
 
   // Temperature only honored for adults (the lesson dial); kids stay steady.
   let temperature = 0.7;
+  if (mode === "musicriff") temperature = 0.9;   // variety between riffs
   if (mode === "adults" && typeof body.temperature === "number") {
     temperature = Math.max(0, Math.min(1.2, body.temperature));
   }

@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<link rel="icon" type="image/svg+xml" href="/platform/assets/logo-icon-tile.svg">
+<title>The Sandbox — Code the Future</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap');
+:root{ --display:'Space Grotesk',sans-serif; --body:'Plus Jakarta Sans',system-ui,sans-serif; --mono:'JetBrains Mono',monospace;
+  --purple:#9B7BFF; --teal:#26C7D1; --green:#3FD08A; --amber:#FFB320; --paper:#f3e9d2; --ink:#4a3b2a; }
+*{ box-sizing:border-box; margin:0; }
+html,body{ height:100%; }
+body{ font-family:var(--body); color:#EAF1FF; overflow:hidden; background:
+  radial-gradient(120% 90% at 82% -10%, rgba(155,123,255,.22), transparent 55%),
+  radial-gradient(120% 90% at 8% 110%, rgba(38,199,209,.2), transparent 55%),
+  linear-gradient(165deg,#101a3c,#0A1024 55%,#070C1A); }
+#app{ position:fixed; inset:0; display:flex; flex-direction:column; }
+.screen{ position:absolute; inset:0; display:none; flex-direction:column; }
+.screen.on{ display:flex; }
+.center{ align-items:center; justify-content:center; text-align:center; padding:20px; overflow-y:auto; }
+.kicker{ font-family:var(--mono); font-size:12px; letter-spacing:.2em; text-transform:uppercase; color:var(--purple); margin-bottom:10px; }
+h1.big{ font-family:var(--display); font-weight:700; font-size:clamp(1.8rem,5vw,3rem); letter-spacing:-.02em; line-height:1.08; }
+.lede{ max-width:48ch; opacity:.9; line-height:1.5; margin:12px auto 4px; font-size:1.05rem; }
+.btn{ font-family:var(--display); font-weight:700; font-size:1rem; color:#06122b; border:none; cursor:pointer; padding:13px 24px; border-radius:999px; text-decoration:none; display:inline-block;
+  background:linear-gradient(120deg,#9fb6ff,#9B7BFF); box-shadow:0 10px 26px rgba(155,123,255,.45); }
+.btn.green{ background:linear-gradient(120deg,#9BF5C7,#26C7D1); box-shadow:0 10px 26px rgba(38,199,209,.45); }
+.btn.ghost{ background:rgba(255,255,255,.1); color:#fff; box-shadow:none; }
+.btn:disabled{ opacity:.45; cursor:not-allowed; }
+.toast{ position:fixed; left:50%; bottom:24px; transform:translateX(-50%); z-index:90; background:rgba(8,14,30,.95); border:1px solid rgba(63,208,138,.5); color:#c9ffe3; padding:12px 18px; border-radius:14px; font-weight:600; max-width:84vw; text-align:center; opacity:0; transition:opacity .2s; pointer-events:none; }
+.toast.on{ opacity:1; }
+.busyveil{ position:absolute; inset:0; z-index:60; background:rgba(8,12,30,.78); display:none; flex-direction:column; align-items:center; justify-content:center; gap:14px; }
+.busyveil.on{ display:flex; }
+.spin{ width:44px; height:44px; border:5px solid rgba(155,123,255,.3); border-top-color:#9B7BFF; border-radius:50%; animation:sp .9s linear infinite; }
+@keyframes sp{ to{ transform:rotate(360deg); } }
+.busyveil b{ font-family:var(--display); font-size:1.05rem; }
+
+/* ---------- HOME ---------- */
+.hometop{ display:flex; align-items:center; gap:12px; padding:14px 18px; }
+.hometop .back{ color:#cfe0ff; text-decoration:none; font-weight:600; font-size:.9rem; background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.14); border-radius:999px; padding:8px 15px; }
+.hometop h1{ font-family:var(--display); font-size:1.25rem; }
+.hometop .new{ font-family:var(--mono); font-size:10px; letter-spacing:.14em; color:#06223b; background:linear-gradient(120deg,#9BF5C7,#26C7D1); border-radius:999px; padding:4px 10px; }
+.spark{ margin:0 18px 10px; background:rgba(255,179,32,.12); border:1.5px solid rgba(255,179,32,.4); border-radius:14px; padding:10px 16px; font-size:.95rem; }
+.spark b{ color:#FFD980; }
+.fullban{ margin:0 18px 10px; background:rgba(63,208,138,.12); border:1.5px solid rgba(63,208,138,.4); border-radius:14px; padding:10px 16px; font-size:.95rem; color:#c9ffe3; display:none; }
+.doors{ flex:1; display:grid; grid-template-columns:repeat(3,1fr); gap:16px; padding:6px 18px 12px; min-height:0; }
+@media(max-width:1000px){ .doors{ grid-template-columns:1fr 1fr; overflow-y:auto; } }
+@media(max-width:700px){ .doors{ grid-template-columns:1fr; overflow-y:auto; } }
+.door{ position:relative; border-radius:24px; border:2px solid rgba(127,227,255,.25); cursor:pointer; overflow:hidden; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:8px; text-align:center; padding:22px; transition:transform .15s, border-color .15s; background:rgba(255,255,255,.04); }
+.door:hover{ transform:translateY(-3px); border-color:#9fd6ff; }
+.door .di{ font-size:4rem; }
+.door h2{ font-family:var(--display); font-size:1.6rem; }
+.door p{ color:#bccbe6; max-width:34ch; font-size:.95rem; line-height:1.45; }
+.door.scene{ background:radial-gradient(120% 120% at 20% 0%, rgba(61,116,255,.25), transparent 60%), rgba(255,255,255,.04); }
+.door.story{ background:radial-gradient(120% 120% at 80% 0%, rgba(255,179,32,.2), transparent 60%), rgba(255,255,255,.04); }
+.door .lockveil{ position:absolute; inset:0; background:rgba(7,11,26,.78); backdrop-filter:blur(2px); display:flex; flex-direction:column; align-items:center; justify-content:center; gap:8px; }
+.door .lockveil .lk{ font-size:2.4rem; }
+.door .lockveil b{ font-family:var(--display); font-size:1.05rem; }
+.door .lockveil small{ color:#9fb6e6; }
+.galrow{ padding:0 18px 16px; }
+.galrow h3{ font-family:var(--display); font-size:.95rem; margin-bottom:8px; color:#bccbe6; }
+.gal{ display:flex; gap:10px; overflow-x:auto; padding-bottom:4px; }
+.gal .g{ flex:0 0 auto; width:120px; border-radius:12px; overflow:hidden; border:1px solid rgba(127,227,255,.25); background:#0b1124; }
+.gal img{ display:block; width:120px; height:80px; object-fit:cover; }
+.gal .gt{ font-size:.72rem; padding:4px 7px; color:#cfe3ff; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.gal .empty{ color:#7f8db0; font-size:.88rem; padding:10px 0; }
+
+/* ---------- GATE ---------- */
+#gate .big{ font-size:4rem; }
+.gatedots{ display:flex; gap:10px; justify-content:center; margin:18px 0 6px; }
+.gd{ width:34px; height:34px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-family:var(--display); font-weight:700; font-size:.9rem; background:rgba(255,255,255,.08); border:2px solid rgba(255,255,255,.2); color:#8fa2c8; }
+.gd.done{ background:rgba(63,208,138,.25); border-color:var(--green); color:#c9ffe3; }
+.gd.next{ border-color:var(--amber); color:#FFD980; animation:pulse 1.6s infinite; }
+@keyframes pulse{ 50%{ box-shadow:0 0 0 8px rgba(255,179,32,0); } 0%{ box-shadow:0 0 0 0 rgba(255,179,32,.5); } }
+
+/* ---------- SCENE BUILDER ---------- */
+.topbar{ flex:0 0 auto; display:flex; align-items:center; gap:10px; padding:10px 14px; border-bottom:1px solid rgba(255,255,255,.1); }
+.topbar .tb-back{ color:#cfe0ff; text-decoration:none; font-weight:600; font-size:.85rem; background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.14); border-radius:999px; padding:7px 13px; cursor:pointer; }
+.topbar .tt{ font-family:var(--display); font-weight:700; font-size:1.05rem; }
+.topbar .grow{ flex:1; }
+.topbar .btn{ padding:9px 16px; font-size:.85rem; }
+.stagewrap{ flex:1; position:relative; display:flex; align-items:center; justify-content:center; min-height:0; padding:10px; }
+#stage{ position:relative; aspect-ratio:3/2; max-width:100%; max-height:100%; width:auto; height:100%; border-radius:16px; overflow:hidden; background:#0b1124; border:1px solid rgba(127,227,255,.25); box-shadow:0 20px 60px rgba(0,0,0,.5); touch-action:none; }
+#stage .bgimg{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; }
+#stage .bgempty{ position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:8px; color:#5F6B82; text-align:center; padding:20px; }
+#stage .bgempty .be{ font-size:3rem; }
+#stage .obj{ position:absolute; transform:translate(-50%,-50%); cursor:grab; user-select:none; -webkit-user-drag:none; }
+#stage .obj img{ display:block; width:100%; height:auto; pointer-events:none; filter:drop-shadow(0 4px 8px rgba(0,0,0,.4)); }
+#stage .obj{ animation:objland .35s cubic-bezier(.34,1.56,.64,1); }
+@keyframes objland{ from{ transform:translate(-50%,-50%) scale(.4); opacity:0; } to{ transform:translate(-50%,-50%) scale(1); opacity:1; } }
+#stage .obj.flip img{ transform:scaleX(-1); }
+#stage .obj.sel{ outline:3px dashed #FFD980; outline-offset:3px; border-radius:8px; }
+#paintcv{ position:absolute; inset:0; width:100%; height:100%; z-index:30; pointer-events:none; }
+body.mode-paint #paintcv{ pointer-events:auto; cursor:crosshair; }
+.objctl{ position:absolute; top:12px; right:12px; z-index:40; display:none; gap:6px; background:rgba(8,14,30,.9); border:1px solid rgba(255,217,128,.5); border-radius:999px; padding:6px 8px; }
+.objctl.on{ display:flex; }
+.objctl button{ font-size:1rem; background:rgba(255,255,255,.1); color:#fff; border:none; border-radius:999px; width:36px; height:36px; cursor:pointer; }
+.objctl button:hover{ background:rgba(255,255,255,.22); }
+.dock{ flex:0 0 auto; padding:8px 12px calc(10px + env(safe-area-inset-bottom)); background:linear-gradient(180deg,transparent,rgba(6,10,22,.7)); }
+.modes{ display:flex; gap:6px; justify-content:center; margin-bottom:8px; }
+.mode{ font-family:var(--display); font-weight:700; font-size:.88rem; color:#cfe3ff; cursor:pointer; background:rgba(255,255,255,.07); border:2px solid rgba(127,227,255,.25); border-radius:999px; padding:9px 18px; }
+.mode.on{ color:#06122b; background:linear-gradient(120deg,#9fb6ff,#9B7BFF); border-color:transparent; }
+.dockrow{ display:none; gap:8px; max-width:860px; margin:0 auto; align-items:center; flex-wrap:wrap; justify-content:center; }
+.dockrow.on{ display:flex; }
+.dockrow input{ flex:1; min-width:160px; font-family:var(--body); font-size:1rem; color:#fff; background:rgba(255,255,255,.08); border:1.5px solid rgba(127,227,255,.35); border-radius:13px; padding:12px 14px; outline:none; }
+.dockrow input:focus{ border-color:var(--purple); }
+.stylechips{ display:flex; gap:6px; flex-wrap:wrap; justify-content:center; width:100%; }
+.stych{ font-size:.8rem; font-weight:700; color:#cfe3ff; cursor:pointer; background:rgba(127,227,255,.08); border:1.5px solid rgba(127,227,255,.3); border-radius:999px; padding:6px 12px; }
+.stych.on{ color:#06223b; background:linear-gradient(120deg,#7ef0e6,#26C7D1); border-color:transparent; }
+.objcount{ font-family:var(--mono); font-size:.8rem; color:#9fb6e6; }
+.dot{ width:28px; height:28px; border-radius:50%; border:3px solid transparent; cursor:pointer; padding:0; }
+.dot.on{ border-color:#fff; }
+.szbtn{ font-family:var(--mono); font-size:.78rem; color:#cfe3ff; cursor:pointer; background:rgba(255,255,255,.08); border:1.5px solid rgba(127,227,255,.3); border-radius:999px; padding:6px 12px; }
+.szbtn.on{ color:#06122b; background:#9fb6ff; }
+
+/* ---------- STORYBOOK ---------- */
+#story{ background:radial-gradient(100% 100% at 50% 0%, #1a1206, #0d0903 70%); }
+.deskwrap{ flex:1; position:relative; display:flex; align-items:center; justify-content:center; min-height:0; padding:14px; perspective:1600px; }
+.book{ position:relative; width:min(880px,96%); height:min(560px,100%); display:flex; border-radius:10px 14px 14px 10px; box-shadow:0 30px 80px rgba(0,0,0,.7); }
+.page{ flex:1; position:relative; padding:26px 26px 40px; overflow:hidden; color:var(--ink); font-family:Georgia,'Iowan Old Style',serif;
+  background:linear-gradient(105deg,#efe4c8,#f7efdc 20%,#f3e9d2 80%,#e8dcbe); }
+.page.left{ border-radius:10px 0 0 10px; box-shadow:inset -18px 0 26px -18px rgba(74,59,42,.45); }
+.page.right{ border-radius:0 14px 14px 0; box-shadow:inset 18px 0 26px -18px rgba(74,59,42,.45); }
+.page::after{ content:""; position:absolute; inset:0; pointer-events:none; background:radial-gradient(120% 120% at 50% 50%, transparent 62%, rgba(93,74,49,.16)); }
+.page .pno{ position:absolute; bottom:12px; font-family:var(--mono); font-size:11px; color:#8a7454; }
+.page.left .pno{ left:20px; } .page.right .pno{ right:20px; }
+.page .ptext{ font-size:1.06rem; line-height:1.65; white-space:pre-wrap; }
+.page .pwho{ font-size:.72rem; letter-spacing:.14em; text-transform:uppercase; color:#a08a63; margin-bottom:10px; font-family:var(--mono); }
+.page .deco{ text-align:center; font-size:1.4rem; color:#b49a6d; margin-top:14px; }
+.writer{ position:absolute; inset:0; padding:24px 24px 20px; display:flex; flex-direction:column; gap:10px; }
+.writer textarea{ flex:1; resize:none; font-family:Georgia,serif; font-size:1.05rem; line-height:1.6; color:var(--ink); background:transparent; border:none; outline:none; }
+.writer textarea::placeholder{ color:#b3a081; }
+.writer .wbtns{ display:flex; gap:8px; flex-wrap:wrap; }
+.wbtn{ font-family:var(--display); font-weight:700; font-size:.85rem; cursor:pointer; border-radius:999px; padding:10px 16px; border:2px solid #b49a6d; background:#efe1c2; color:#4a3b2a; }
+.wbtn.gold{ background:linear-gradient(120deg,#e8c876,#d4a437); border-color:#a67c1d; }
+.wbtn:disabled{ opacity:.5; cursor:not-allowed; }
+/* page flip */
+.flipper{ position:absolute; right:0; top:0; width:50%; height:100%; transform-origin:left center; z-index:20; border-radius:0 14px 14px 0;
+  background:linear-gradient(105deg,#f7efdc,#efe4c8); box-shadow:6px 0 18px rgba(0,0,0,.25); backface-visibility:hidden; }
+@keyframes flipL{ from{ transform:rotateY(0); } to{ transform:rotateY(-178deg); } }
+.flipper.go{ animation:flipL .85s cubic-bezier(.6,.05,.3,1) forwards; }
+/* the closed book / cover */
+.cover{ position:absolute; inset:0; margin:auto; width:min(440px,90%); height:min(560px,96%); border-radius:10px 18px 18px 10px; overflow:hidden; display:none;
+  box-shadow:0 34px 90px rgba(0,0,0,.75), inset 6px 0 12px rgba(0,0,0,.4); background:#3b2a16; transform:scale(.6) rotateY(40deg); opacity:0; }
+.cover.on{ display:block; animation:coverin 1s cubic-bezier(.22,1,.36,1) forwards; }
+@keyframes coverin{ to{ transform:scale(1) rotateY(0); opacity:1; } }
+.cover img{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; }
+.cover .plate{ position:absolute; left:8%; right:8%; top:6%; background:rgba(30,20,8,.72); border:2px solid #d4a437; border-radius:12px; padding:14px 10px; text-align:center; }
+.cover .plate h2{ font-family:Georgia,serif; color:#f3e3b8; font-size:1.4rem; line-height:1.25; }
+.cover .byline{ position:absolute; left:8%; right:8%; bottom:6%; text-align:center; font-family:Georgia,serif; color:#f3e3b8; background:rgba(30,20,8,.72); border-radius:10px; padding:8px; font-size:.95rem; }
+.storynav{ display:flex; gap:8px; align-items:center; justify-content:center; padding:0 12px 12px; }
+.storynav .pgbtn{ font-size:1.1rem; background:rgba(255,255,255,.1); color:#fff; border:none; border-radius:999px; width:42px; height:42px; cursor:pointer; }
+.storynav .pgbtn:disabled{ opacity:.3; }
+.storynav .pglbl{ font-family:var(--mono); font-size:.8rem; color:#cbb894; }
+.confetti{ position:fixed; inset:0; pointer-events:none; overflow:hidden; z-index:80; }
+.confetti i{ position:absolute; top:-12px; width:9px; height:14px; border-radius:2px; animation:fall linear forwards; }
+@keyframes fall{ to{ transform:translateY(110vh) rotate(540deg); opacity:.9; } }
+
+/* phones: the builder topbar packs Share off-screen — let it swipe sideways */
+@media (max-width:640px){
+  .topbar{ overflow-x:auto; -webkit-overflow-scrolling:touch; scrollbar-width:none; }
+  .topbar::-webkit-scrollbar{ display:none; }
+  .topbar > *{ flex:none; white-space:nowrap; }
+  .topbar .grow{ flex:none; width:4px; }
+  .topbar .tt{ font-size:.95rem; }
+}
+</style>
+</head>
+<body>
+<div id="app">
+
+  <!-- GATE -->
+  <section class="screen center" id="gate">
+    <div>
+      <div class="big" style="font-size:4rem">🔒</div>
+      <p class="kicker">🧪 The Sandbox</p>
+      <h1 class="big" id="gateTitle">Come back soon!</h1>
+      <p class="lede" id="gateMsg"></p>
+      <div class="gatedots" id="gateDots"></div>
+      <a class="btn" href="missions.html" style="margin-top:14px">🗺️ To my missions</a>
+    </div>
+  </section>
+
+  <!-- HOME -->
+  <section class="screen" id="home">
+    <div class="hometop">
+      <a class="back" href="index.html">← Home</a>
+      <h1>🧪 The Sandbox</h1><span class="new">NEW</span>
+    </div>
+    <div class="spark">⚡ <b>Today's spark:</b> <span id="sparkTxt"></span></div>
+    <div class="fullban" id="fullban">🌟 <b>Fully unlocked!</b> You finished the Big Mission — every corner of the Sandbox is yours.</div>
+    <div class="doors">
+      <div class="door scene" id="doorScene">
+        <div class="di">🏙️</div><h2>Scene Builder</h2>
+        <p>Make a background with AI in any art style, create up to <b>20 objects</b>, then drag them around YOUR world — and paint on top.</p>
+        <span class="btn">Build a scene →</span>
+      </div>
+      <div class="door story" id="doorStory">
+        <div class="di">📖</div><h2>Storybook</h2>
+        <p>Write a real book with a robot co-author — watch the pages come together, then get a magical cover at "The End."</p>
+        <span class="btn green">Write my book →</span>
+        <div class="lockveil" id="storyLock" style="display:none">
+          <span class="lk">🔒</span><b>Opens after Mission 8</b><small id="storyLockSub"></small>
+        </div>
+      </div>
+      <div class="door" id="doorMusic" style="border-color:rgba(255,196,77,.45)">
+        <div class="di">🎧</div><h2>Beat Lab</h2>
+        <p>A live keyboard, a beat machine, and sound effects — plus an <b>AI riff maker</b> that composes beats from any vibe you type. Drag them into YOUR mix.</p>
+        <span class="btn" style="background:linear-gradient(120deg,#FFD479,#FFB320);color:#3a2200">Make some noise →</span>
+      </div>
+    </div>
+    <div class="galrow"><h3>🖼️ My gallery <span style="font-weight:500;color:#7f8db0">(saved on this device)</span></h3><div class="gal" id="gal"></div></div>
+  </section>
+
+  <!-- SCENE BUILDER -->
+  <section class="screen" id="scene">
+    <div class="topbar">
+      <button class="tb-back" id="sceneBack">‹ Sandbox</button>
+      <span class="tt">🏙️ Scene Builder</span>
+      <span class="objcount" id="objCount"></span>
+      <span class="grow"></span>
+      <button class="btn ghost" id="sceneNew">🆕 New</button>
+      <button class="btn ghost" id="sceneDl">⬇️</button>
+      <button class="btn green" id="sceneShare">🏆 Share</button>
+    </div>
+    <div class="stagewrap">
+      <div id="stage">
+        <div class="bgempty" id="bgEmpty"><div class="be">🖼️</div><div>Start below — describe a background,<br>pick an art style, and tap <b>Make it</b>!</div></div>
+        <canvas id="paintcv" width="1536" height="1024"></canvas>
+        <div class="busyveil" id="sceneBusy"><div class="spin"></div><b id="sceneBusyMsg">Painting…</b></div>
+      </div>
+      <div class="objctl" id="objctl">
+        <button data-act="bigger" title="Bigger">➕</button><button data-act="smaller" title="Smaller">➖</button>
+        <button data-act="flip" title="Flip">↔️</button><button data-act="front" title="To front">🔝</button>
+        <button data-act="del" title="Remove">🗑️</button><button data-act="done" title="Done">✔️</button>
+      </div>
+    </div>
+    <div class="dock">
+      <div class="modes">
+        <button class="mode on" data-m="bg">🖼️ Background</button>
+        <button class="mode" data-m="obj">🚗 Objects</button>
+        <button class="mode" data-m="paint">🖌️ Paint</button>
+      </div>
+      <div class="dockrow on" data-m="bg">
+        <div class="stylechips" id="styleChips"></div>
+        <input id="bgIdea" maxlength="200" placeholder="Describe your background… (a futuristic city at sunset)">
+        <button class="btn" id="bgGo">✨ Make it</button>
+      </div>
+      <div class="dockrow" data-m="obj">
+        <input id="objIdea" maxlength="120" placeholder="Create an object… (a little red flying car)">
+        <button class="btn" id="objGo">➕ Add object</button>
+      </div>
+      <div class="dockrow" data-m="paint">
+        <span id="paintDots"></span>
+        <button class="szbtn on" data-sz="6">thin</button><button class="szbtn" data-sz="14">med</button><button class="szbtn" data-sz="26">BIG</button>
+        <button class="szbtn" id="paintClear">clear my paint</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- STORYBOOK -->
+  <section class="screen" id="story">
+    <div class="topbar">
+      <button class="tb-back" id="storyBack">‹ Sandbox</button>
+      <span class="tt">📖 My Storybook</span>
+      <span class="grow"></span>
+      <button class="btn ghost" id="storyNew">🆕 New book</button>
+      <button class="btn green" id="storyShare" style="display:none">🏆 Share my book</button>
+    </div>
+    <div class="deskwrap">
+      <div class="book" id="book">
+        <div class="page left" id="pgL"></div>
+        <div class="page right" id="pgR"></div>
+      </div>
+      <div class="cover" id="cover"></div>
+      <div class="busyveil" id="storyBusy"><div class="spin"></div><b id="storyBusyMsg">The story robot is thinking…</b></div>
+    </div>
+    <div class="storynav">
+      <button class="pgbtn" id="pgPrev">‹</button>
+      <span class="pglbl" id="pgLbl"></span>
+      <button class="pgbtn" id="pgNext">›</button>
+    </div>
+  </section>
+
+</div>
+<div class="toast" id="toast"></div>
+
+<script src="lib/config.js"></script>
+<script src="lib/filter.js"></script>
+<script type="module">
+import { CTFDB } from "./lib/ctf-db.js";
+
+const $=(id)=>document.getElementById(id);
+const esc=(s)=>String(s==null?'':s).replace(/[&<>"]/g,(c)=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+let toastT; const toast=(m)=>{ const t=$('toast'); t.textContent=m; t.classList.add('on'); clearTimeout(toastT); toastT=setTimeout(()=>t.classList.remove('on'),3400); };
+const clean=(v)=>{ if(v && window.CTFFilter && CTFFilter.isClean && !CTFFilter.isClean(v)){ toast("Let's keep it kind and fun!"); return false; } return true; };
+const name=(()=>{ try{ return (JSON.parse(localStorage.getItem('ctf:profile')||'null')||{}).display_name||'A builder'; }catch(e){ return 'A builder'; } })();
+const qs=new URLSearchParams(location.search);
+function show(id){ document.querySelectorAll('.screen').forEach(s=>s.classList.toggle('on', s.id===id)); }
+
+// ============ PROGRESS GATE ============
+// Sandbox unlocks with the drip: Scene Builder after Mission 4 (Part 1),
+// Storybook after Mission 8 (Part 2), everything celebrated after Mission 12.
+const PREFIXES=[/^kids-m(\d+)$/, /^kids-mod2-(\d+)$/, /^kids-mod3-(\d+)$/, /^kids-mod4-(\d+)$/];
+async function progress(){
+  try{ await CTFDB.init(); if(!CTFDB.enabled) return 0;
+    const badges=await CTFDB.listBadges(); let best=0;
+    (badges||[]).forEach(b=>{ const k=String(b.badge_key||''); PREFIXES.forEach(rx=>{ const m=k.match(rx); if(m) best=Math.max(best,+m[1]); }); });
+    return best;
+  }catch(e){ return 0; }
+}
+const staff=(()=>{ try{ return localStorage.getItem('ctf:unlockall')==='1'; }catch(e){ return false; } })();
+let tier = qs.has('demo') ? Math.max(0,Math.min(12,parseInt(qs.get('demo'),10)||0)) : (staff?12:await progress());
+
+function route(){
+  if(tier<4){
+    $('gateTitle').textContent='Come back after Mission 4!';
+    $('gateMsg').innerHTML='The Sandbox opens when you finish your first four missions — that\'s where you learn the powers you\'ll use in here. You\'re at <b>'+tier+' of 4</b>. Keep going, '+esc(name)+'!';
+    const d=$('gateDots'); d.innerHTML='';
+    for(let i=1;i<=4;i++){ const s=document.createElement('span'); s.className='gd'+(i<=tier?' done':(i===tier+1?' next':'')); s.textContent=i<=tier?'✓':i; d.appendChild(s); }
+    show('gate'); return;
+  }
+  const storyOpen = tier>=8;
+  $('storyLock').style.display = storyOpen?'none':'flex';
+  $('storyLockSub').textContent = 'You\'re at Mission '+tier+' — Part 2 finishes at 8.';
+  $('fullban').style.display = tier>=12?'block':'none';
+  renderGal(); show('home');
+}
+
+// daily spark
+const SPARKS=['Build a scene of your dream treehouse — then put YOU in it!','Write a story where your pet saves the day.','Build Louisville in the year 3000 — add flying cars!','Write a story that starts with "The elevator went UP forever…"','Build a scene with a brand-new animal nobody has ever seen.','Write a story about a robot who is scared of the dark.','Build an underwater playground scene.','Write a story where you shrink to the size of an ant.','Build a candy-planet scene with a candy rover.','Write a happy story about the last dinosaur on Earth.','Build a spooky (but friendly!) haunted mansion scene.','Write a story where the moon starts talking to you.'];
+$('sparkTxt').textContent=SPARKS[Math.floor(Date.now()/86400000)%SPARKS.length];
+
+// ============ SHARE (one button) ============
+async function shareImage(dataUrl, title, storyText){
+  try{
+    await CTFDB.init();
+    const tok = CTFDB.enabled && CTFDB.getAccessToken ? await CTFDB.getAccessToken() : null;
+    if(!tok){ toast('Connect to the internet to share!'); return false; }
+    const payload={ image:dataUrl, title:title }; if(storyText) payload.text=storyText;
+    const r=await fetch('/api/share-art',{ method:'POST', headers:{'Content-Type':'application/json',Authorization:'Bearer '+tok}, body:JSON.stringify(payload) });
+    const d=await r.json();
+    if(!r.ok||!d.ok){ toast(d.error||'Sharing hiccup — try again!'); return false; }
+    burst(); toast('🏆 Shared to Show & Tell! Go see it on the Board.');
+    return true;
+  }catch(e){ toast('Sharing hiccup — try again!'); return false; }
+}
+function burst(){ const c=document.createElement('div'); c.className='confetti'; document.body.appendChild(c);
+  const cols=['#9B7BFF','#FFD479','#7FE3FF','#3FD08A','#3D74FF','#fff'];
+  for(let i=0;i<60;i++){ const x=document.createElement('i'); x.style.left=Math.random()*100+'%'; x.style.background=cols[i%cols.length]; x.style.animationDuration=(1.6+Math.random()*1.6)+'s'; x.style.animationDelay=(Math.random()*.4)+'s'; c.appendChild(x); }
+  setTimeout(()=>c.remove(),3800); }
+
+// ============ GALLERY ============
+const GKEY='ctf:sandbox:gallery';
+const galList=()=>{ try{ return JSON.parse(localStorage.getItem(GKEY)||'[]'); }catch(e){ return []; } };
+function renderGal(){
+  const g=galList(), el=$('gal');
+  el.innerHTML=g.length? g.map(x=>'<div class="g"><img src="'+x.img+'" alt=""><div class="gt">'+esc(x.t)+'</div></div>').join('')
+    : '<div class="empty">Nothing here yet — build a scene or write a book!</div>';
+}
+function saveToGal(dataUrl,t){
+  const g=galList(); g.unshift({ img:dataUrl, t:t, when:Date.now() });
+  while(g.length>6) g.pop();
+  try{ localStorage.setItem(GKEY,JSON.stringify(g)); }catch(e){ g.length=2; try{ localStorage.setItem(GKEY,JSON.stringify(g)); }catch(e2){} }
+}
+
+// ============ SCENE BUILDER ============
+const MAX_OBJ=20;
+const STYLES=[['storybook','📚 Storybook'],['anime','🌸 Anime'],['watercolor','🎨 Watercolor'],['pixel','👾 Pixel art'],['comic','💥 Comic'],['clay','🧱 Clay 3D']];
+let scene={ bg:null, style:'storybook', objs:[] };   // obj: {id,src,x,y,w,flip,z}
+try{ const s=JSON.parse(localStorage.getItem('ctf:sandbox:scene')||'null'); if(s&&s.objs) scene=s; }catch(e){}
+let mode='bg', sel=null, zTop=10;
+const stage=$('stage'), pcv=$('paintcv'), pctx=pcv.getContext('2d');
+pctx.lineCap='round'; pctx.lineJoin='round';
+let brush='#FF5A38', bsz=6, painting=false;
+
+STYLES.forEach(([k,l],i)=>{ const b=document.createElement('button'); b.className='stych'+(scene.style===k?' on':''); b.textContent=l; b.dataset.k=k;
+  b.onclick=()=>{ scene.style=k; document.querySelectorAll('.stych').forEach(x=>x.classList.toggle('on',x===b)); persistScene(); }; $('styleChips').appendChild(b); });
+['#FF5A38','#FFB320','#3FD08A','#26C7D1','#3D74FF','#9B7BFF','#FF6FB1','#ffffff','#0C1322'].forEach((c,i)=>{
+  const d=document.createElement('button'); d.className='dot'+(i===0?' on':''); d.style.background=c;
+  d.onclick=()=>{ brush=c; document.querySelectorAll('#paintDots .dot').forEach(x=>x.classList.toggle('on',x===d)); }; $('paintDots').appendChild(d); });
+document.querySelectorAll('.szbtn[data-sz]').forEach(b=>b.onclick=()=>{ bsz=+b.dataset.sz; document.querySelectorAll('.szbtn[data-sz]').forEach(x=>x.classList.toggle('on',x===b)); });
+$('paintClear').onclick=()=>{ pctx.clearRect(0,0,pcv.width,pcv.height); persistScene(); };
+
+document.querySelectorAll('.mode').forEach(m=>m.onclick=()=>{
+  mode=m.dataset.m;
+  document.querySelectorAll('.mode').forEach(x=>x.classList.toggle('on',x===m));
+  document.querySelectorAll('.dockrow').forEach(r=>r.classList.toggle('on',r.dataset.m===mode));
+  document.body.classList.toggle('mode-paint',mode==='paint');
+  if(mode==='paint') select(null);
+});
+
+function sceneBusy(on,msg){ $('sceneBusy').classList.toggle('on',on); if(msg)$('sceneBusyMsg').textContent=msg; }
+function persistScene(){
+  // downscale before storing so localStorage survives (bg→jpeg, sprites already small)
+  try{
+    const copy={ bg:scene.bg, style:scene.style, objs:scene.objs, paint:pcv.toDataURL('image/png') };
+    localStorage.setItem('ctf:sandbox:scene',JSON.stringify(copy));
+  }catch(e){ /* over quota — keep playing, saving is best-effort */ }
+}
+function renderScene(){
+  stage.querySelectorAll('.bgimg,.obj').forEach(n=>n.remove());
+  $('bgEmpty').style.display=scene.bg?'none':'flex';
+  if(scene.bg){ const im=document.createElement('img'); im.className='bgimg'; im.src=scene.bg; im.draggable=false; stage.insertBefore(im, pcv); }
+  scene.objs.forEach(o=>{
+    const d=document.createElement('div'); d.className='obj'+(o.flip?' flip':'')+(sel===o.id?' sel':''); d.dataset.id=o.id;
+    d.style.left=o.x+'%'; d.style.top=o.y+'%'; d.style.width=o.w+'%'; d.style.zIndex=o.z||10;
+    const im=document.createElement('img'); im.src=o.src; im.draggable=false; d.appendChild(im);
+    stage.insertBefore(d, pcv);
+    d.addEventListener('pointerdown',(e)=>{ if(mode==='paint')return; e.preventDefault(); select(o.id); dragStart(e,o,d); });
+  });
+  $('objCount').textContent=scene.objs.length+' / '+MAX_OBJ+' objects';
+  $('objctl').classList.toggle('on', !!sel);
+}
+// lightweight select — updates classes in place so a pointerdown-drag never
+// loses its element (a full re-render mid-gesture kills pointer capture)
+function select(id){
+  sel=id;
+  stage.querySelectorAll('.obj').forEach(el=>el.classList.toggle('sel', el.dataset.id===sel));
+  $('objctl').classList.toggle('on', !!sel);
+}
+let drag=null;
+function dragStart(e,o,el){ try{ el.setPointerCapture(e.pointerId); }catch(err){} const r=stage.getBoundingClientRect();
+  drag={ o, dx:e.clientX - (r.left + o.x/100*r.width), dy:e.clientY - (r.top + o.y/100*r.height), r }; }
+stage.addEventListener('pointermove',(e)=>{
+  if(drag){ const {o,dx,dy,r}=drag;
+    o.x=Math.max(0,Math.min(100,((e.clientX-dx)-r.left)/r.width*100));
+    o.y=Math.max(0,Math.min(100,((e.clientY-dy)-r.top)/r.height*100));
+    const el=stage.querySelector('.obj[data-id="'+o.id+'"]'); if(el){ el.style.left=o.x+'%'; el.style.top=o.y+'%'; }
+  }
+});
+stage.addEventListener('pointerup',()=>{ if(drag){ drag=null; persistScene(); } });
+stage.addEventListener('pointerdown',(e)=>{ if(e.target===stage||e.target.classList.contains('bgimg')){ if(mode!=='paint') select(null); } });
+$('objctl').addEventListener('click',(e)=>{
+  const act=e.target.dataset.act; if(!act||!sel) return;
+  const o=scene.objs.find(x=>x.id===sel); if(!o) return;
+  if(act==='bigger') o.w=Math.min(70,o.w*1.18);
+  else if(act==='smaller') o.w=Math.max(4,o.w/1.18);
+  else if(act==='flip') o.flip=!o.flip;
+  else if(act==='front') o.z=++zTop;
+  else if(act==='del'){ scene.objs=scene.objs.filter(x=>x.id!==sel); sel=null; }
+  else if(act==='done') sel=null;
+  persistScene(); renderScene();
+});
+
+$('bgGo').onclick=async ()=>{
+  const idea=($('bgIdea').value||'').trim(); if(!idea){ $('bgIdea').focus(); return; }
+  if(!clean(idea)) return;
+  sceneBusy(true,'Painting your background…');
+  try{
+    const r=await fetch('/api/image',{ method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({ prompt:idea, kind:'scene', style:scene.style }) });
+    const d=await r.json(); if(!r.ok||!d.image) throw new Error(d.error||'x');
+    scene.bg=d.image; persistScene(); renderScene();
+  }catch(e){ toast(e.message&&e.message!=='x'?e.message:'The art robot got stuck — try again!'); }
+  sceneBusy(false);
+};
+$('objGo').onclick=async ()=>{
+  if(scene.objs.length>=MAX_OBJ){ toast('That\'s the max — 20 objects! Remove one to add more.'); return; }
+  const idea=($('objIdea').value||'').trim(); if(!idea){ $('objIdea').focus(); return; }
+  if(!clean(idea)) return;
+  sceneBusy(true,'Building your object…');
+  try{
+    const r=await fetch('/api/image',{ method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({ prompt:idea, kind:'sprite', style:scene.style }) });
+    const d=await r.json(); if(!r.ok||!d.image) throw new Error(d.error||'x');
+    const small=await shrink(d.image, 320, true);
+    const id='o'+Date.now();
+    scene.objs.push({ id, src:small, x:50, y:60, w:18, flip:false, z:++zTop });
+    $('objIdea').value=''; persistScene();
+    renderScene();      // put the new object ON the stage…
+    select(id);         // …then highlight it, controls ready
+  }catch(e){ toast(e.message&&e.message!=='x'?e.message:'The art robot got stuck — try again!'); }
+  sceneBusy(false);
+};
+function shrink(dataUrl,maxW,alpha){ return new Promise((res)=>{ const im=new Image(); im.onload=()=>{
+  const w=Math.min(maxW,im.naturalWidth), h=Math.round(im.naturalHeight*(w/im.naturalWidth));
+  const c=document.createElement('canvas'); c.width=w; c.height=h; c.getContext('2d').drawImage(im,0,0,w,h);
+  res(alpha?c.toDataURL('image/png'):c.toDataURL('image/jpeg',.82)); }; im.src=dataUrl; }); }
+
+// paint (fixed 1536x1024 backing canvas, scaled by CSS)
+function ppos(e){ const r=pcv.getBoundingClientRect(); return { x:(e.clientX-r.left)*(pcv.width/r.width), y:(e.clientY-r.top)*(pcv.height/r.height) }; }
+pcv.addEventListener('pointerdown',(e)=>{ if(mode!=='paint')return; painting=true; pcv.setPointerCapture(e.pointerId);
+  const p=ppos(e); pctx.beginPath(); pctx.moveTo(p.x,p.y); pctx.lineTo(p.x+.1,p.y+.1); pctx.strokeStyle=brush; pctx.lineWidth=bsz*2; pctx.stroke(); });
+pcv.addEventListener('pointermove',(e)=>{ if(!painting)return; const p=ppos(e); pctx.lineTo(p.x,p.y); pctx.strokeStyle=brush; pctx.lineWidth=bsz*2; pctx.stroke(); });
+pcv.addEventListener('pointerup',()=>{ if(painting){ painting=false; persistScene(); } });
+
+async function compositeScene(){
+  const W=1536,H=1024, out=document.createElement('canvas'); out.width=W; out.height=H; const c=out.getContext('2d');
+  c.fillStyle='#0b1124'; c.fillRect(0,0,W,H);
+  const draw=(src)=>new Promise(res=>{ const im=new Image(); im.onload=()=>res(im); im.src=src; });
+  if(scene.bg){ const im=await draw(scene.bg); const s=Math.max(W/im.width,H/im.height); const w=im.width*s,h=im.height*s; c.drawImage(im,(W-w)/2,(H-h)/2,w,h); }
+  for(const o of [...scene.objs].sort((a,b)=>(a.z||0)-(b.z||0))){
+    const im=await draw(o.src); const w=o.w/100*W, h=im.height*(w/im.width), x=o.x/100*W, y=o.y/100*H;
+    c.save(); c.translate(x,y); if(o.flip) c.scale(-1,1); c.drawImage(im,-w/2,-h/2,w,h); c.restore();
+  }
+  c.drawImage(pcv,0,0,W,H);
+  return out.toDataURL('image/jpeg',.85);
+}
+$('sceneDl').onclick=async ()=>{ const a=document.createElement('a'); a.href=await compositeScene(); a.download='my-scene.jpg'; a.click(); };
+$('sceneShare').onclick=async ()=>{
+  if(!scene.bg&&!scene.objs.length){ toast('Build something first!'); return; }
+  const btn=$('sceneShare'); btn.disabled=true; btn.textContent='Sharing…';
+  const img=await compositeScene();
+  const title=($('bgIdea').value||'my scene').slice(0,100);
+  saveToGal(await shrink(img,320,false), title.slice(0,60));
+  await shareImage(img, title);
+  btn.disabled=false; btn.textContent='🏆 Share';
+};
+$('sceneNew').onclick=()=>{ if(!confirm('Start a brand-new scene? Your current one goes away.'))return;
+  scene={ bg:null, style:scene.style, objs:[] }; sel=null; pctx.clearRect(0,0,pcv.width,pcv.height); persistScene(); renderScene(); };
+$('sceneBack').onclick=()=>{ persistScene(); route(); };
+$('doorScene').onclick=()=>{ show('scene');
+  // restore saved paint layer once per load
+  try{ const s=JSON.parse(localStorage.getItem('ctf:sandbox:scene')||'null');
+    if(s&&s.paint&&!pcv._restored){ pcv._restored=1; const im=new Image(); im.onload=()=>pctx.drawImage(im,0,0); im.src=s.paint; } }catch(e){}
+  renderScene(); };
+
+// ============ STORYBOOK ============
+let book={ title:'', pages:[], done:false, cover:null };
+try{ const b=JSON.parse(localStorage.getItem('ctf:sandbox:book')||'null'); if(b&&b.pages) book=b; }catch(e){}
+let view=0;   // index of the left page of the current spread
+function persistBook(){ try{ localStorage.setItem('ctf:sandbox:book',JSON.stringify(book)); }catch(e){} }
+function storyBusy(on,msg){ $('storyBusy').classList.toggle('on',on); if(msg)$('storyBusyMsg').textContent=msg; }
+
+function pageHTML(i){
+  const p=book.pages[i];
+  if(!p) return '';
+  return '<div class="pwho">'+(p.who==='me'?esc(name):'🤖 the story robot')+'</div><div class="ptext">'+esc(p.text)+'</div>'+(p.end?'<div class="deco">❦ The End ❦</div>':'')+'<span class="pno">'+(i+1)+'</span>';
+}
+function renderBook(){
+  const total=book.pages.length;
+  if(book.done && book.cover){ $('book').style.display='none'; $('cover').classList.add('on');
+    $('cover').innerHTML='<img src="'+book.cover+'" alt=""><div class="plate"><h2>'+esc(book.title||'My Story')+'</h2></div><div class="byline">written by '+esc(name)+' &amp; a robot friend</div>';
+    $('pgLbl').textContent='📕 '+total+' pages inside'; $('pgPrev').disabled=true; $('pgNext').disabled=true;
+    $('storyShare').style.display='inline-block';
+    return;
+  }
+  $('book').style.display='flex'; $('cover').classList.remove('on'); $('storyShare').style.display=book.done?'inline-block':'none';
+  const L=view, R=view+1, atEnd=R>=total;
+  $('pgL').innerHTML = total===0
+    ? '<div class="pwho">a brand-new book</div><div class="ptext" style="color:#a08a63">This book is empty… start your story on the right! ✒️</div>'
+    : pageHTML(L);
+  if(atEnd && !book.done){
+    $('pgR').innerHTML='<div class="writer"><div class="pwho" style="font-family:var(--mono);font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;color:#a08a63">'+(total===0?'page 1 — how does it begin?':'page '+(total+1)+' — what happens next?')+'</div>'+
+      '<textarea id="wTa" maxlength="400" placeholder="'+(total===0?'Once upon a time…':'Write the next part…')+'"></textarea>'+
+      '<div class="wbtns"><button class="wbtn" id="wAdd">✍️ Add my page</button>'+
+      (total>0?'<button class="wbtn" id="wAI">🤖 Robot, you write one!</button><button class="wbtn gold" id="wEnd">🏁 Finish my book</button>':'')+'</div></div><span class="pno">'+(total+1)+'</span>';
+    const ta=$('wTa');
+    $('wAdd').onclick=()=>{ const v=(ta.value||'').trim(); if(!v){ ta.focus(); return; } if(!clean(v)) return; addPage({who:'me',text:v}); };
+    if($('wAI')) $('wAI').onclick=()=>aiPage(false);
+    if($('wEnd')) $('wEnd').onclick=()=>finishBook();
+  } else {
+    $('pgR').innerHTML=pageHTML(R);
+  }
+  $('pgLbl').textContent= total? ('pages '+(L+1)+'–'+Math.min(R+1,Math.max(total,R+1))+' of '+(book.done?total:total+1)) : 'page 1';
+  $('pgPrev').disabled=view<=0;
+  $('pgNext').disabled=atEnd||R>=total&&!book.done;
+}
+function flipThen(fn){
+  const f=document.createElement('div'); f.className='flipper'; $('book').appendChild(f);
+  requestAnimationFrame(()=>{ f.classList.add('go'); });
+  setTimeout(()=>{ f.remove(); fn(); },820);
+}
+function addPage(p){
+  book.pages.push(p); persistBook();
+  flipThen(()=>{ view=Math.max(0,book.pages.length-1); renderBook(); });
+}
+async function aiPage(ending){
+  storyBusy(true, ending?'Writing the grand finale…':'The story robot is writing a page…');
+  const so=book.pages.map(p=>p.text).join(' ').slice(-2400);
+  const ask=ending
+    ? 'We are writing a storybook with a kid age 8-11. Write a happy, satisfying final page in 2-3 short sentences. Story so far: '+so
+    : 'We are writing a storybook with a kid age 8-11, taking turns page by page. Write the NEXT page in 2-3 short, exciting, kid-friendly sentences. Do NOT end the story. Story so far: '+so;
+  try{
+    const r=await fetch('/api/ai',{ method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({ prompt:ask, mode:'kids' }) });
+    const d=await r.json(); if(!r.ok||!d.text) throw new Error(d.error||'x');
+    storyBusy(false);
+    addPage({ who:'ai', text:d.text.trim(), end:ending });
+    return true;
+  }catch(e){ storyBusy(false); toast('The story robot got stuck — try again!'); return false; }
+}
+async function finishBook(){
+  const ok=await aiPage(true); if(!ok) return;
+  setTimeout(async ()=>{
+    let t=prompt('🎉 Your book is done! What\'s its TITLE?','')||'';
+    t=t.trim().slice(0,60); if(t&&!clean(t)) t='';
+    book.title=t||'My Amazing Story';
+    storyBusy(true,'Painting your book cover…');
+    try{
+      const about=(book.title+': '+book.pages.slice(0,2).map(p=>p.text).join(' ')).slice(0,300);
+      const r=await fetch('/api/image',{ method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({ prompt:about, kind:'cover', style:'storybook' }) });
+      const d=await r.json(); if(r.ok&&d.image) book.cover=await shrink(d.image,640,false);
+    }catch(e){}
+    if(!book.cover){ // graceful cover even if the art robot is napping
+      const c=document.createElement('canvas'); c.width=640; c.height=960; const x=c.getContext('2d');
+      const g=x.createLinearGradient(0,0,0,960); g.addColorStop(0,'#3b2a16'); g.addColorStop(1,'#1e1408'); x.fillStyle=g; x.fillRect(0,0,640,960);
+      book.cover=c.toDataURL('image/jpeg',.85);
+    }
+    book.done=true; persistBook(); storyBusy(false); burst(); renderBook();
+  }, 900);
+}
+async function coverComposite(){
+  return new Promise(res=>{ const im=new Image(); im.onload=()=>{
+    const W=640,H=960,c=document.createElement('canvas'); c.width=W; c.height=H; const x=c.getContext('2d');
+    x.drawImage(im,0,0,W,H);
+    x.fillStyle='rgba(30,20,8,.75)'; roundRect(x,50,55,W-100,150,14); x.fill();
+    x.strokeStyle='#d4a437'; x.lineWidth=3; roundRect(x,50,55,W-100,150,14); x.stroke();
+    x.fillStyle='#f3e3b8'; x.font='bold 40px Georgia'; x.textAlign='center';
+    wrapText(x, book.title||'My Story', W/2, 115, W-140, 44);
+    x.fillStyle='rgba(30,20,8,.75)'; roundRect(x,90,H-110,W-180,60,10); x.fill();
+    x.fillStyle='#f3e3b8'; x.font='24px Georgia'; x.fillText('by '+name+' & a robot friend', W/2, H-70);
+    res(c.toDataURL('image/jpeg',.85)); }; im.src=book.cover; });
+}
+function roundRect(x,px,py,w,h,r){ x.beginPath(); x.moveTo(px+r,py); x.arcTo(px+w,py,px+w,py+h,r); x.arcTo(px+w,py+h,px,py+h,r); x.arcTo(px,py+h,px,py,r); x.arcTo(px,py,px+w,py,r); x.closePath(); }
+function wrapText(x,t,cx,cy,maxW,lh){ const words=t.split(' '); let line='',y=cy;
+  for(const w of words){ const test=line?line+' '+w:w; if(x.measureText(test).width>maxW&&line){ x.fillText(line,cx,y); line=w; y+=lh; } else line=test; }
+  x.fillText(line,cx,y); }
+
+$('storyShare').onclick=async ()=>{
+  const btn=$('storyShare'); btn.disabled=true; btn.textContent='Sharing…';
+  const img=await coverComposite();
+  saveToGal(await shrink(img,240,false), book.title||'My story');
+  await shareImage(img, book.title||'My story', book.pages.map(p=>p.text).join('\n\n'));
+  btn.disabled=false; btn.textContent='🏆 Share my book';
+};
+$('storyNew').onclick=()=>{ if(!confirm('Start a brand-new book? This one goes away.'))return;
+  book={ title:'', pages:[], done:false, cover:null }; view=0; persistBook(); renderBook(); };
+$('pgPrev').onclick=()=>{ view=Math.max(0,view-2); renderBook(); };
+$('pgNext').onclick=()=>{ view=Math.min(Math.max(0,book.pages.length-1),view+2); renderBook(); };
+$('storyBack').onclick=()=>route();
+$('doorMusic').onclick=()=>{ location.href='musiclab.html'; };
+$('doorStory').onclick=()=>{ if(tier<8&&!staff&&!qs.has('demo')){ toast('The Storybook opens after Mission 8 — keep going!'); return; }
+  view=Math.max(0,book.pages.length-1); show('story'); renderBook(); };
+
+route();
+</script>
+</body>
+</html>
