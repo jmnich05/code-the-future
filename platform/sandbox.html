@@ -43,7 +43,8 @@ h1.big{ font-family:var(--display); font-weight:700; font-size:clamp(1.8rem,5vw,
 .spark{ margin:0 18px 10px; background:rgba(255,179,32,.12); border:1.5px solid rgba(255,179,32,.4); border-radius:14px; padding:10px 16px; font-size:.95rem; }
 .spark b{ color:#FFD980; }
 .fullban{ margin:0 18px 10px; background:rgba(63,208,138,.12); border:1.5px solid rgba(63,208,138,.4); border-radius:14px; padding:10px 16px; font-size:.95rem; color:#c9ffe3; display:none; }
-.doors{ flex:1; display:grid; grid-template-columns:1fr 1fr; gap:16px; padding:6px 18px 12px; min-height:0; }
+.doors{ flex:1; display:grid; grid-template-columns:repeat(3,1fr); gap:16px; padding:6px 18px 12px; min-height:0; }
+@media(max-width:1000px){ .doors{ grid-template-columns:1fr 1fr; overflow-y:auto; } }
 @media(max-width:700px){ .doors{ grid-template-columns:1fr; overflow-y:auto; } }
 .door{ position:relative; border-radius:24px; border:2px solid rgba(127,227,255,.25); cursor:pointer; overflow:hidden; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:8px; text-align:center; padding:22px; transition:transform .15s, border-color .15s; background:rgba(255,255,255,.04); }
 .door:hover{ transform:translateY(-3px); border-color:#9fd6ff; }
@@ -201,6 +202,11 @@ body.mode-paint #paintcv{ pointer-events:auto; cursor:crosshair; }
         <div class="lockveil" id="storyLock" style="display:none">
           <span class="lk">🔒</span><b>Opens after Mission 8</b><small id="storyLockSub"></small>
         </div>
+      </div>
+      <div class="door" id="doorMusic" style="border-color:rgba(255,196,77,.45)">
+        <div class="di">🎧</div><h2>Beat Lab</h2>
+        <p>A live keyboard, a beat machine, and sound effects — plus an <b>AI riff maker</b> that composes beats from any vibe you type. Drag them into YOUR mix.</p>
+        <span class="btn" style="background:linear-gradient(120deg,#FFD479,#FFB320);color:#3a2200">Make some noise →</span>
       </div>
     </div>
     <div class="galrow"><h3>🖼️ My gallery <span style="font-weight:500;color:#7f8db0">(saved on this device)</span></h3><div class="gal" id="gal"></div></div>
@@ -621,6 +627,7 @@ $('storyNew').onclick=()=>{ if(!confirm('Start a brand-new book? This one goes a
 $('pgPrev').onclick=()=>{ view=Math.max(0,view-2); renderBook(); };
 $('pgNext').onclick=()=>{ view=Math.min(Math.max(0,book.pages.length-1),view+2); renderBook(); };
 $('storyBack').onclick=()=>route();
+$('doorMusic').onclick=()=>{ location.href='musiclab.html'; };
 $('doorStory').onclick=()=>{ if(tier<8&&!staff&&!qs.has('demo')){ toast('The Storybook opens after Mission 8 — keep going!'); return; }
   view=Math.max(0,book.pages.length-1); show('story'); renderBook(); };
 
