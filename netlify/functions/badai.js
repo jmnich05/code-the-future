@@ -71,6 +71,43 @@ const ROUNDS = {
     "Make their idea feel amazing — it is THEIR idea, you just organized it."
 };
 
+// The animation coder: writes a bespoke canvas renderer for the idea, live,
+// in the exact style of the attract loops. The page compiles + mounts it.
+const ANIM =
+  "You write ONE JavaScript function BODY that draws a looping animated preview of a " +
+  "kid's game idea. It runs ~60x/second as f(c, w, h, t) on a 640x300 canvas that " +
+  "already has a dark navy background.\n" +
+  "AVAILABLE (passed as arguments — use ONLY these plus Math):\n" +
+  "c = CanvasRenderingContext2D · w = 640 · h = 300 · t = seconds elapsed\n" +
+  "E(c, emoji, x, y, sizePx, rotationRad, flipX) draws an emoji\n" +
+  "chip(c, text, x, y, heightPx) draws a rounded score pill\n" +
+  "rr(c, x, y, width, height, radius) traces a rounded rect (then c.fill() / c.stroke())\n" +
+  "ease(x) smoothstep clamped 0..1 · clamp(x) clamps 0..1\n" +
+  "P = brand colors { purple, teal, green, amber, coral, blue, ink, light }\n" +
+  "HARD RULES:\n" +
+  "- STATELESS: no variables outside the body, no randomness, no Date — derive ALL " +
+  "motion from t with phases like var ph=(t%2.5)/2.5; everything must loop cleanly.\n" +
+  "- Show the HERO doing the CORE ACTION toward the GOAL of the specific idea, using " +
+  "3-7 big kid-safe emoji (sizes h*0.2 to h*0.5). Add one chip() score/progress pill. " +
+  "Small touches (✨ on success, +1 float-ups) make it feel alive.\n" +
+  "- Everything visible: keep x in 0..w, y in 0..h.\n" +
+  "- FORBIDDEN: window, document, fetch, localStorage, setTimeout, setInterval, eval, " +
+  "Function, import, while(true), any DOM or network access. Drawing only.\n" +
+  "- Output RAW JavaScript statements ONLY — no markdown fences, no function wrapper, " +
+  "no explanation. Max ~45 lines. Short comments inside the code are fine.\n" +
+  "EXAMPLE BODY (a burger-stacking idea) — match this style exactly:\n" +
+  "var per=3.2, ph=(t%per)/per, done=Math.floor(t/per);\n" +
+  "var parts=['🍞','🥬','🍅','🥩','🍞'];\n" +
+  "for(var i=0;i<parts.length;i++){\n" +
+  "  var at=clamp((ph-(i*0.16))/0.12);           // each part drops in sequence\n" +
+  "  if(at<=0) continue;\n" +
+  "  var y=h*0.82-i*h*0.09-(1-ease(at))*h*0.5;   // falls into the stack\n" +
+  "  E(c,parts[i],w*0.5,y,h*0.22);\n" +
+  "}\n" +
+  "if(ph>0.9) E(c,'✨',w*0.5,h*0.3,h*0.3*(1-(ph-0.9)/0.1));\n" +
+  "E(c,'🧑‍🍳',w*0.22,h*0.62,h*0.4,Math.sin(t*2)*0.08);\n" +
+  "chip(c,'🍔 '+(12+done),w*0.8,h*0.14,h*0.16);";
+
 export default async (req) => {
   if (req.method !== "POST") return json({ error: "Method not allowed" }, 405);
   const key = process.env.OPENAI_API_KEY;
@@ -81,6 +118,7 @@ export default async (req) => {
   const round = [1, 2, 3].includes(+body.round) ? +body.round : 1;
   const prompt = (body.prompt || "").toString().slice(0, 1500).trim();
   if (!prompt) return json({ error: "Type the kids' prompt first." }, 400);
+  const anim = body.mode === "anim";   // second pass: write the custom animation
 
   const model = process.env.OPENAI_BUILD_MODEL || process.env.OPENAI_MODEL || "gpt-5.4-mini";
 
@@ -90,10 +128,14 @@ export default async (req) => {
     body: JSON.stringify({
       model,
       stream: true,
-      max_completion_tokens: 1200,
+      max_completion_tokens: anim ? 2200 : 1200,
       messages: [
-        { role: "system", content: ROUNDS[round] },
-        { role: "user", content: prompt }
+        { role: "system", content: anim ? ANIM : ROUNDS[round] },
+        { role: "user", content: anim
+            ? "Write the animation body for this game idea. Round " + round +
+              (round === 1 ? " (a vague prompt — keep the animation as plain and generic as the idea deserves)" : "") +
+              ":\n" + prompt
+            : prompt }
       ]
     })
   });
