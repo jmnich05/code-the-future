@@ -47,7 +47,7 @@ details p{ margin:9px 0; font-size:.94rem; }
 </head>
 <body>
 <nav>
-  <a href="#intro">Intro</a><a href="#ice">Icebreaker</a><a href="#badai">Bad AI</a><a href="#lecture">Mini-lecture</a>
+  <a href="#codes">🔑 Codes</a><a href="#intro">Intro</a><a href="#ice">Icebreaker</a><a href="#badai">Bad AI</a><a href="#lecture">Mini-lecture</a>
   <a href="#break">Break</a><a href="#bigbuild">Big Build</a><a href="#journal">Journals</a><a href="#close">Close</a><a href="#answerkey">📡 Answer key</a><a href="#metaphors">🧰 Metaphors</a>
 </nav>
 <div class="wrap">
@@ -62,6 +62,25 @@ details p{ margin:9px 0; font-size:.94rem; }
       <a href="/platform/live/badai.html">🎯 Bad AI tool</a>
     </div>
   </div>
+
+
+  <h2 id="codes"><span class="tm">Before kids arrive</span>🔑 Kid login codes</h2>
+  <div class="card" id="codesCard">
+    <div class="lab">Roster · sign in at codethefuture.net/platform → "I have a code"</div>
+    <div id="codesBody" style="font-family:var(--mono);font-size:1.02rem;line-height:2">Staff login required — sign in on the Staff tab, then reload this page.</div>
+    <p style="font-size:.82rem;color:var(--sub);margin-top:8px">New families register on the "New here" tab with their parent email + cohort password <b>launchpad-july6</b> — a fresh code is minted on the spot.</p>
+  </div>
+  <script>
+  (function(){
+    if (localStorage.getItem('ctf:unlockall') !== '1') return;   // staff eyes only
+    try{
+      var R = JSON.parse(atob('W1siQWRhbSBIdWxzbWFuIiwgInBpeGVsIG5vdmEiLCAiWjgyQy1WS1pRIl0sIFsiQ2hhcmxvdHRlIChDaGFyKSBOaWNob2xzIiwgIkJhZGRpZSIsICJTOEZWLUZYNEEiXSwgWyJEZXZvbiBHdWFybmllcmkiLCAiU3RpY2ttZW4gdW5pdGUiLCAiQ1pSTi1aNTMyIl0sIFsiTGlhbSBOaWNob2xzIiwgIihubyBuaWNrbmFtZSB5ZXQpIiwgIjUzNzUtOEVGTSJdXQ=='));
+      document.getElementById('codesBody').innerHTML = R.map(function(r){
+        return '<div><b style="color:#fff">' + r[2] + '</b> &nbsp;— ' + r[0] + ' <span style="color:#9fb6e6">· ' + r[1] + '</span></div>';
+      }).join('');
+    }catch(e){}
+  })();
+  </script>
 
   <h2 id="intro"><span class="tm">10:00–10:10</span>👋 Welcome & your intro</h2>
   <div class="card say"><div class="lab">Say it like this</div>
