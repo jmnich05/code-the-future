@@ -21,12 +21,6 @@ window.LIVE_SESSION = {
              {e:'🐶', t:'A puppy you train with examples'} ],
       why:'No wrong answers — but by the end of camp, most builders vote 📚 or 🐶. AI learns patterns from examples!' },
 
-    // ---- watch together (projected) — "Computer Science is Changing Everything"
-    // (Code.org, 5:35). NOT used in any self-serve module — the modules use
-    // "How AI Works" (Ok-xpKjKp2g), so never reuse that one here.
-    { id:'vid1', type:'video', title:'Movie time: YOU build the future 🍿', yt:'QvyTEx1wyOY',
-      sub:'Eyes on the big screen! Music, sports, medicine, games — technology is rebuilding ALL of it, and AI just hit the gas. Your generation gets to do the building. Then… the game show begins.' },
-
     // ---- AI or NOT? — 6 scored rounds ---------------------------------------
     // All-fresh items: the module's arcade game already quizzes YouTube recs,
     // calculator, face-finding, flashlight, autocorrect, maps, robot vacuum,
@@ -55,6 +49,12 @@ window.LIVE_SESSION = {
       q:'Rolling dice in a board game app', answer:1,
       opts:[ {e:'🤖', t:'AI'}, {e:'🚫', t:'NOT AI'} ],
       why:'Random isn\'t smart! Picking a random number takes no learning at all.' },
+
+    // ---- watch together (projected) — "Computer Science is Changing Everything"
+    // (Code.org, 5:35). NOT used in any self-serve module — the modules use
+    // "How AI Works" (Ok-xpKjKp2g), so never reuse that one here.
+    { id:'vid1', type:'video', title:'Movie time: YOU build the future 🍿', yt:'QvyTEx1wyOY',
+      sub:'Eyes on the big screen! Music, sports, medicine, games — technology is rebuilding ALL of it, and AI just hit the gas. Your generation gets to do the building. Catch your breath — Mythbusters is next.' },
 
     // ---- Mythbusters — 3 scored votes ---------------------------------------
     // All-fresh myths: the module already TEACHES "AI has no feelings" and
