@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" type="image/svg+xml" href="/platform/assets/logo-icon-tile.svg">
+<title>The Bad AI Challenge — Code the Future</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&family=JetBrains+Mono:wght@500;600;700&display=swap');
+:root{ --display:'Space Grotesk',sans-serif; --body:'Plus Jakarta Sans',system-ui,sans-serif; --mono:'JetBrains Mono',monospace;
+  --purple:#9B7BFF; --teal:#26C7D1; --green:#3FD08A; --amber:#FFC44D; --coral:#FF7452; }
+*{ box-sizing:border-box; margin:0; }
+html,body{ height:100%; }
+body{ font-family:var(--body); color:#EAF1FF; height:100vh; display:flex; flex-direction:column; overflow:hidden;
+  background:radial-gradient(120% 90% at 82% -10%, rgba(155,123,255,.25), transparent 55%),
+  radial-gradient(120% 90% at 8% 110%, rgba(38,199,209,.2), transparent 55%),
+  linear-gradient(165deg,#101a3c,#0A1024 55%,#070C1A); }
+
+.hd{ flex:none; display:flex; align-items:center; gap:16px; padding:14px 24px; border-bottom:1px solid rgba(255,255,255,.1); }
+.hd .logo{ display:flex; align-items:center; gap:9px; font-family:var(--display); font-weight:700; font-size:1.05rem; }
+.hd .logo img{ width:28px; height:28px; }
+.hd .logo span{ color:var(--teal); }
+.hd .tt{ font-family:var(--mono); font-size:12px; letter-spacing:.18em; text-transform:uppercase; color:var(--purple); }
+.rounds{ margin-left:auto; display:flex; gap:8px; }
+.rb{ font-family:var(--display); font-weight:700; font-size:.95rem; color:#cfe3ff; cursor:pointer;
+  background:rgba(255,255,255,.07); border:2px solid rgba(255,255,255,.16); border-radius:999px; padding:9px 18px; }
+.rb.on{ color:#06122b; border-color:transparent; }
+.rb[data-r="1"].on{ background:linear-gradient(120deg,#FF9579,#FF5A38); }
+.rb[data-r="2"].on{ background:linear-gradient(120deg,#FFD479,#FFB320); }
+.rb[data-r="3"].on{ background:linear-gradient(120deg,#54E29B,#26C7D1); }
+
+.ask{ flex:none; display:flex; gap:12px; padding:16px 24px 6px; align-items:center; }
+.ask input{ flex:1; font-family:var(--body); font-weight:600; font-size:1.5rem; color:#fff; padding:16px 20px;
+  background:rgba(255,255,255,.07); border:2px solid rgba(127,227,255,.35); border-radius:16px; outline:none; }
+.ask input:focus{ border-color:var(--purple); }
+.ask button{ font-family:var(--display); font-weight:700; font-size:1.25rem; color:#06122b; border:none; cursor:pointer;
+  border-radius:999px; padding:16px 34px; background:linear-gradient(120deg,#9fb6ff,#9B7BFF); white-space:nowrap; }
+.ask button:disabled{ opacity:.4; cursor:wait; }
+.status{ flex:none; padding:2px 26px 8px; font-family:var(--mono); font-size:12px; letter-spacing:.12em; color:#7ef0e6; min-height:22px; }
+.status .dot{ display:inline-block; width:9px; height:9px; border-radius:50%; background:var(--green); margin-right:8px; vertical-align:1px; }
+.status.busy .dot{ background:var(--amber); animation:blink .8s ease-in-out infinite; }
+@keyframes blink{ 50%{ opacity:.25; } }
+
+.stage{ flex:1; min-height:0; display:grid; grid-template-columns:minmax(300px,.34fr) .66fr; gap:16px; padding:8px 24px 20px; }
+@media (max-width:900px){ .stage{ grid-template-columns:1fr; grid-template-rows:auto 1fr; } }
+.pane{ min-height:0; border-radius:18px; padding:18px 20px; overflow-y:auto; }
+.pane h3{ font-family:var(--mono); font-size:12px; letter-spacing:.2em; text-transform:uppercase; margin-bottom:12px; }
+.think{ background:rgba(155,123,255,.08); border:1.5px solid rgba(155,123,255,.35); }
+.think h3{ color:#c9b8ff; }
+.think .body{ font-family:var(--mono); font-size:clamp(.95rem,1.5vw,1.25rem); line-height:1.7; color:#d5c8ff; white-space:pre-wrap; }
+.result{ background:rgba(255,255,255,.05); border:1.5px solid rgba(127,227,255,.3); }
+.result h3{ color:#7ef0e6; }
+.result .body{ font-size:clamp(1.25rem,2.2vw,2rem); line-height:1.55; font-weight:600; white-space:pre-wrap; }
+.result .body .title-line{ font-family:var(--display); font-weight:700; font-size:1.35em; color:#FFD98C; }
+.caret{ display:inline-block; width:.55em; height:1.15em; background:var(--teal); vertical-align:-.2em; animation:blink .7s step-end infinite; border-radius:2px; }
+.empty{ margin:auto; text-align:center; color:#9fb6e6; align-self:center; }
+.empty .big{ font-size:3.2rem; }
+.gatemsg{ margin:auto; text-align:center; }
+.asked{ font-size:clamp(1rem,1.6vw,1.35rem); color:#FFD98C; font-weight:700; margin-bottom:12px; }
+.asked span{ color:#9fb6e6; font-weight:600; font-family:var(--mono); font-size:.75em; letter-spacing:.14em; margin-right:10px; }
+</style>
+</head>
+<body>
+<div class="hd">
+  <div class="logo"><img src="/platform/assets/logo-icon-tile.svg" alt="">Code the <span>Future</span></div>
+  <div class="tt">🎯 The Bad AI Challenge</div>
+  <div class="rounds">
+    <button class="rb on" data-r="1">R1 · Terrible</button>
+    <button class="rb" data-r="2">R2 · Better</button>
+    <button class="rb" data-r="3">R3 · Team</button>
+  </div>
+</div>
+<div class="ask">
+  <input id="prompt" placeholder='Type the kids&apos; prompt… (Round 1: "Make me a game")' autocomplete="off">
+  <button id="go">Ask the AI →</button>
+</div>
+<div class="status" id="status"><span class="dot"></span><span id="stTxt">READY — CONNECTED TO THE REAL AI</span></div>
+<div class="stage" id="stage">
+  <div class="pane think" id="thinkPane" style="display:none"><h3>🤔 The AI is thinking…</h3><div class="body" id="thinkBody"></div></div>
+  <div class="pane result" id="resultPane" style="display:none"><div class="asked" id="asked"></div><h3>✨ What it made</h3><div class="body" id="resultBody"></div></div>
+  <div class="empty" id="empty" style="grid-column:1/-1">
+    <div class="big">🎯</div>
+    <h2 style="font-family:var(--display);margin:10px 0 6px">Round 1: give it a TERRIBLE prompt.</h2>
+    <p>Type exactly what the kids say — even "make me a game" — and hit Ask.<br>Watch it think, watch what vagueness earns… then let the room fix it.</p>
+  </div>
+</div>
+
+<script>
+(function(){
+  // staff-only, same soft gate as the host screen
+  if (localStorage.getItem('ctf:unlockall') !== '1'){
+    document.body.innerHTML = '<div class="gatemsg" style="margin:auto;text-align:center;font-family:Plus Jakarta Sans,system-ui"><div style="font-size:3rem">🔒</div><h1 style="font-family:Space Grotesk">Staff only</h1><p style="color:#9fb6e6">Log in on the Staff tab first, then come back.</p></div>';
+    return;
+  }
+  var round = 1, busy = false;
+  var $ = function(id){ return document.getElementById(id); };
+  document.querySelectorAll('.rb').forEach(function(b){
+    b.addEventListener('click', function(){
+      round = +b.dataset.r;
+      document.querySelectorAll('.rb').forEach(function(x){ x.classList.toggle('on', x===b); });
+      $('prompt').placeholder = round===1 ? 'Type the kids\' prompt… (Round 1: "Make me a game")'
+        : round===2 ? 'Round 2: paste the group\'s improved prompt — every detail they add…'
+        : 'Round 3: the team\'s full prompt — characters, world, goal, style, twist…';
+      $('prompt').focus();
+    });
+  });
+
+  function setStatus(txt, isBusy){ $('stTxt').textContent = txt; $('status').classList.toggle('busy', !!isBusy); }
+
+  async function run(){
+    if (busy) return;
+    var q = $('prompt').value.trim();
+    if (!q){ $('prompt').focus(); return; }
+    busy = true; $('go').disabled = true;
+    $('empty').style.display = 'none';
+    $('thinkPane').style.display = ''; $('resultPane').style.display = '';
+    $('thinkBody').innerHTML = ''; $('resultBody').innerHTML = '';
+    $('asked').innerHTML = '<span>ROUND ' + round + ' · WE ASKED</span>“' + esc(q) + '”';
+    setStatus('TALKING TO THE AI…', true);
+
+    try {
+      var r = await fetch('/api/badai', { method:'POST', headers:{ 'Content-Type':'application/json' },
+        body: JSON.stringify({ round: round, prompt: q }) });
+      if (!r.ok){ var e = await r.json().catch(function(){ return {}; });
+        setStatus('ERROR — ' + (e.error || r.status), false); busy=false; $('go').disabled=false; return; }
+      var model = r.headers.get('X-Model') || 'the model';
+      setStatus('STREAMING FROM ' + model.toUpperCase() + '…', true);
+
+      var reader = r.body.getReader(), dec = new TextDecoder();
+      var all = '', inResult = false;
+      var think = $('thinkBody'), res = $('resultBody');
+      var caret = document.createElement('span'); caret.className = 'caret';
+      think.appendChild(caret);
+      while (true){
+        var chunk = await reader.read();
+        if (chunk.done) break;
+        all += dec.decode(chunk.value, { stream:true });
+        // split on the --- divider once, route text to the right pane
+        var parts = all.split(/\n-{3,}\n?/);
+        var thinkTxt = parts[0].replace(/^\s*THINKING\s*\n?/i, '');
+        think.textContent = thinkTxt;
+        if (parts.length > 1){
+          if (!inResult){ inResult = true; }
+          res.textContent = parts.slice(1).join('\n');
+          styleTitle(res);
+          res.appendChild(caret);
+          res.scrollIntoView === undefined || $('resultPane').scrollTo(0, $('resultPane').scrollHeight);
+        } else {
+          think.appendChild(caret);
+          $('thinkPane').scrollTo(0, $('thinkPane').scrollHeight);
+        }
+      }
+      caret.remove();
+      setStatus('DONE — ASK THE ROOM: IS THIS WHAT YOU IMAGINED?', false);
+    } catch (err){
+      setStatus('CONNECTION ERROR — TRY AGAIN', false);
+    }
+    busy = false; $('go').disabled = false;
+  }
+
+  // first line of the result gets title treatment when it's short & loud
+  function styleTitle(res){
+    var t = res.textContent, nl = t.indexOf('\n');
+    if (nl > 0 && nl < 70){
+      res.innerHTML = '<span class="title-line">' + esc(t.slice(0, nl)) + '</span>' + esc(t.slice(nl));
+    }
+  }
+  function esc(s){ return String(s).replace(/[&<>"]/g, function(c){ return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'})[c]; }); }
+
+  $('go').addEventListener('click', run);
+  $('prompt').addEventListener('keydown', function(e){ if (e.key === 'Enter') run(); });
+})();
+</script>
+</body>
+</html>
