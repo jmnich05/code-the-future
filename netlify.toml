@@ -80,6 +80,11 @@
   force = true
 
 [[redirects]]
+  from = "/api/badai"
+  to = "/.netlify/functions/badai"
+  status = 200
+
+[[redirects]]
   from = "/api/ai"
   to = "/.netlify/functions/ai"
   status = 200
@@ -102,6 +107,11 @@
 [[redirects]]
   from = "/api/image"
   to = "/.netlify/functions/image"
+  status = 200
+
+[[redirects]]
+  from = "/api/share-art"
+  to = "/.netlify/functions/share-art"
   status = 200
 
 [[redirects]]
