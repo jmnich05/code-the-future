@@ -5,19 +5,19 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="icon" type="image/svg+xml" href="/platform/assets/logo-icon-tile.svg">
 <link rel="apple-touch-icon" href="/platform/assets/touch-icon.png">
-<title>Code the Future — AI Summer Camp for Kids in Louisville (Ages 8–11)</title>
-<meta name="description" content="Code the Future is Louisville's hands-on AI summer camp for kids ages 8–11. Real AI tools, game-like missions, small groups at the public library, and a curriculum designed with a child psychologist.">
+<title>AI Learning for Kids, Young Teens &amp; Older Adults | Code the Future</title>
+<meta name="description" content="Code the Future builds practical AI literacy across generations in Louisville, with a live program for older kids and expanding tracks for young teens and older adults.">
 <meta name="robots" content="index, follow">
 <link rel="canonical" href="https://codethefuture.net/">
 <meta property="og:type" content="website">
-<meta property="og:title" content="Code the Future — AI Summer Camp for Kids in Louisville">
-<meta property="og:description" content="Kids ages 8–11 learn what AI really is by using it — drawing for a real AI, training mini-models, and building with the tools shaping their future.">
+<meta property="og:title" content="Code the Future — AI Learning Across Generations">
+<meta property="og:description" content="Practical AI learning for older kids, young teens, and older adults in Louisville.">
 <meta property="og:url" content="https://codethefuture.net/">
 <meta property="og:image" content="https://codethefuture.net/platform/assets/fb-share-landscape.png">
 <meta property="og:image:secure_url" content="https://codethefuture.net/platform/assets/fb-share-landscape.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
-<meta property="og:image:alt" content="Code the Future — a hands-on AI camp for kids 8-11 in Louisville. codethefuture.net">
+<meta property="og:image:alt" content="Code the Future — hands-on AI learning across generations in Louisville. codethefuture.net">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image" content="https://codethefuture.net/platform/assets/fb-share-landscape.png">
 <script type="application/ld+json">
@@ -40,8 +40,8 @@
       "url": "https://codethefuture.net/",
       "logo": "https://codethefuture.net/platform/assets/logo-icon-tile.svg",
       "image": "https://codethefuture.net/platform/assets/fb-share-landscape.png",
-      "description": "Hands-on AI literacy camp and learning platform for kids ages 8-11 in Louisville, Kentucky. Kids learn what AI is by using it through game-like missions and a weekly in-person session.",
-      "slogan": "The kids who understand AI will build the future.",
+      "description": "Practical AI literacy programs for older kids, young teens, and older adults in Louisville, Kentucky. The live founding program serves ages 8-11, with additional tracks in development.",
+      "slogan": "The people who understand AI will build the future.",
       "foundingDate": "2026",
       "founder": [
         { "@type": "Person", "name": "Jon Nichols", "jobTitle": "Co-founder & CEO" },
@@ -49,7 +49,11 @@
       ],
       "address": { "@type": "PostalAddress", "addressLocality": "Louisville", "addressRegion": "KY", "addressCountry": "US" },
       "areaServed": { "@type": "City", "name": "Louisville, Kentucky" },
-      "audience": { "@type": "EducationalAudience", "educationalRole": "student", "audienceType": "Children ages 8-11" }
+      "audience": [
+        { "@type": "EducationalAudience", "educationalRole": "student", "audienceType": "Older children ages 8-11" },
+        { "@type": "EducationalAudience", "educationalRole": "student", "audienceType": "Young teenagers" },
+        { "@type": "EducationalAudience", "educationalRole": "student", "audienceType": "Older adults" }
+      ]
     },
     {
       "@type": "Course",
@@ -361,6 +365,26 @@
   .lead.sent .hideme{display:none}
   @media(max-width:880px){.signup .wrap{grid-template-columns:1fr}}
 
+  /* ---- audiences ---- */
+  .audiences{background:#fff}
+  .audience-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+  .audience-card{border:1px solid var(--line);border-radius:22px;padding:28px;background:linear-gradient(180deg,#fff,#FAFBFF);box-shadow:0 12px 34px rgba(12,19,34,.06)}
+  .audience-card .status{display:inline-flex;margin-bottom:18px;border-radius:999px;padding:6px 11px;font-family:var(--mono);font-size:10.5px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;background:rgba(18,178,188,.12);color:#0B7E86}
+  .audience-card .status.soon{background:rgba(255,179,32,.16);color:#8A5D00}
+  .audience-card h3{font-size:21px;margin-bottom:10px}
+  .audience-card p{font-size:14.5px;color:rgba(12,19,34,.7);margin-bottom:18px}
+  .audience-card a{color:var(--blue);font-family:var(--display);font-weight:700;text-decoration:none}
+  @media(max-width:880px){.audience-grid{grid-template-columns:1fr}}
+
+  /* ---- founder ecosystem ---- */
+  .ecosystem{background:var(--paper);padding:70px 0}
+  .ecosystem-card{display:grid;grid-template-columns:1.2fr auto;gap:38px;align-items:center;background:var(--navy-deep);color:#fff;border-radius:24px;padding:40px 44px;box-shadow:0 22px 60px rgba(7,12,26,.18)}
+  .ecosystem-card .kicker{color:var(--teal-bright)}
+  .ecosystem-card h2{font-size:clamp(25px,3vw,36px);margin:12px 0}
+  .ecosystem-card p{max-width:700px;color:rgba(255,255,255,.76)}
+  .ecosystem-card .btn{justify-content:center}
+  @media(max-width:760px){.ecosystem-card{grid-template-columns:1fr;padding:30px 24px}.ecosystem-card .btn{width:100%}}
+
   /* footer */
   footer{background:var(--navy-deep);color:rgba(255,255,255,.6);padding:34px 0;font-size:13.5px;border-top:1px solid rgba(255,255,255,.08)}
   footer .wrap{display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap}
@@ -398,6 +422,7 @@
     <a class="logo" href="/"><img src="/platform/assets/logo-icon-tile.svg" alt="Code the Future logo">Code the <span class="logo-accent">Future</span></a>
     <div class="nav-links">
       <a href="#why">Why AI Now</a>
+      <a href="#audiences">Who It's For</a>
       <a href="#platform">The Platform</a>
       <a href="#learns">What They Learn</a>
       <a href="/about.html">About</a>
@@ -405,7 +430,7 @@
     </div>
     <div class="nav-cta">
       <a class="btn btn-ghost" href="/platform/">Log In</a>
-      <a class="btn btn-primary" href="#checkout">Check Out</a>
+      <a class="btn btn-primary" href="#audiences">Explore Programs</a>
     </div>
   </div>
 </nav>
@@ -413,18 +438,18 @@
 <header class="hero">
   <div class="wrap">
     <div>
-      <span class="pill"><span class="dot"></span>Louisville · Summer 2026 · Ages 8–11</span>
-      <h1>The kids who understand AI will <span class="grad">build the future.</span></h1>
-      <p class="lede">Code the Future is a hands-on AI camp where kids don't watch videos about technology — they <b>use real AI</b>: drawing for an AI that actually sees, training mini-models, and building things they're proud of.</p>
-      <p class="lede">And they get a weekly hands-on session with a <b>coach who works in the industry</b> and is passionate about the future, alongside a <b>psychologist who specializes in child development</b> and helped develop the platform and curriculum.</p>
+      <span class="pill"><span class="dot"></span>Louisville · AI learning across generations</span>
+      <h1>The people who understand AI will <span class="grad">build the future.</span></h1>
+      <p class="lede">Code the Future creates hands-on AI learning for <b>older kids, young teens, and older adults</b>—built around real tools, practical judgment, and the confidence to stay in control.</p>
+      <p class="lede">Our founding <b>ages 8–11 program is live now</b>, with weekly Louisville sessions, game-like missions, an industry coach, and a psychologist-informed curriculum. Young-teen and older-adult tracks are forming next.</p>
       <div class="hero-ctas">
-        <a class="btn btn-primary btn-big" href="#checkout">Check Out</a>
+        <a class="btn btn-primary btn-big" href="/older-kids.html">Explore the live kids program</a>
         <a class="btn btn-ghost btn-big" href="#film">▶ Walkthrough from co-founder Jon Nichols</a>
       </div>
       <div class="hero-meta">
-        <span><b>12</b> game-like missions</span>
-        <span><b>Real AI</b>, kid-safe by design</span>
-        <span><b>Small groups</b> at the public library</span>
+        <span><b>Ages 8–11</b> enrolling now</span>
+        <span><b>Ages 12–15</b> track forming</span>
+        <span><b>Older adults</b> workshops forming</span>
       </div>
     </div>
     <!-- in the field: real photos from the live sessions -->
@@ -453,6 +478,37 @@
     <div class="t"><span class="ic">⚡</span><span><b>Real AI, really used</b>Not videos about AI — the actual tools</span></div>
   </div>
 </div>
+
+<!-- ============ AUDIENCES ============ -->
+<section class="audiences" id="audiences">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="kicker" style="color:var(--blue)">AI learning across generations</span>
+      <h2>Different ages. The same need to understand what AI can—and cannot—do.</h2>
+      <p>Code the Future is building hands-on AI literacy for people at pivotal learning moments. Our founding program is live for older kids, with young-teen and older-adult tracks now forming.</p>
+    </div>
+    <div class="audience-grid">
+      <article class="audience-card">
+        <span class="status">Enrolling now</span>
+        <h3>Older kids · ages 8–11</h3>
+        <p>Game-like missions, real AI tools, and small-group Louisville sessions designed to build curiosity, judgment, and confidence.</p>
+        <a href="/older-kids.html">Explore the current program →</a>
+      </article>
+      <article class="audience-card">
+        <span class="status soon">Track forming</span>
+        <h3>Young teens · ages 12–15</h3>
+        <p>A more advanced path focused on responsible AI use, creative building, research judgment, and the changing nature of coding and schoolwork.</p>
+        <a href="/young-teens.html">Explore the young-teen track →</a>
+      </article>
+      <article class="audience-card">
+        <span class="status soon">Track forming</span>
+        <h3>Older adults</h3>
+        <p>Patient, practical workshops for understanding modern AI, using it safely, and applying it to communication, planning, learning, and everyday life.</p>
+        <a href="/older-adults.html">Explore older-adult workshops →</a>
+      </article>
+    </div>
+  </div>
+</section>
 
 <!-- ============ FOUNDERS FILM ============ -->
 <section class="filmsec" id="filmsec">
@@ -776,27 +832,42 @@
   </div>
 </section>
 
+<section class="ecosystem" id="animo" aria-labelledby="animo-heading">
+  <div class="wrap">
+    <div class="ecosystem-card">
+      <div>
+        <span class="kicker">Another venture from Jon</span>
+        <h2 id="animo-heading">Ready to put AI to work inside a business?</h2>
+        <p>Code the Future builds AI confidence across generations. For professionals and small teams ready to connect company data, deploy agents, and improve real workflows, Jon also leads Ánimo AI Consulting.</p>
+      </div>
+      <a class="btn btn-blue btn-big" data-cross-promo="animo" href="https://animoplatform.net/?utm_source=codethefuture&utm_medium=referral&utm_campaign=founder_ecosystem">Explore Ánimo for business →</a>
+    </div>
+  </div>
+</section>
+
 <section class="signup" id="signup">
   <div class="wrap">
     <div class="reveal">
       <span class="kicker">Get on the list</span>
-      <h2>Have a question before you check out?</h2>
-      <p>Tell us a little about your camper and which session you're eyeing. If you're ready to enroll now, use the secure checkout above.</p>
+      <h2>Who wants to learn?</h2>
+      <p>Ask about the current kids program or join the early interest list for young-teen and older-adult learning tracks.</p>
       <p style="margin-top:18px;font-size:14px">Already enrolled? <a href="/platform/" style="color:var(--teal-bright)">Log in to the platform →</a></p>
     </div>
     <form class="lead reveal" name="cohort-interest" method="POST" data-netlify="true" netlify-honeypot="bot-field" id="leadForm">
       <input type="hidden" name="form-name" value="cohort-interest">
       <p style="display:none"><label>Don't fill this out: <input name="bot-field"></label></p>
       <div class="row2 hideme">
-        <label>Parent / guardian name <input type="text" name="parent_name" required placeholder="Jordan Smith"></label>
+        <label>Your name <input type="text" name="contact_name" required placeholder="Jordan Smith"></label>
         <label>Email <input type="email" name="email" required placeholder="you@example.com"></label>
       </div>
       <div class="row2 hideme">
-        <label>Camper's age
-          <select name="child_age" required>
+        <label>Learner's age group
+          <select name="learner_age_group" id="audienceSelect" required>
             <option value="" selected disabled>Pick one…</option>
-            <option>8</option><option>9</option><option>10</option><option>11</option>
-            <option>Other / multiple kids</option>
+            <option>Older kid · age 8</option><option>Older kid · age 9</option><option>Older kid · age 10</option><option>Older kid · age 11</option>
+            <option>Young teen · ages 12–15</option>
+            <option>Older adult</option>
+            <option>Multiple learners / another age</option>
           </select>
         </label>
         <label>Preferred session
@@ -879,12 +950,47 @@
   var any = document.createElement("option");
   any.textContent = "Not sure yet — tell me about all of them";
   sel.appendChild(any);
+  ["Young teen track · ages 12–15", "Older adult AI workshops"].forEach(function (label) {
+    var option = document.createElement("option");
+    option.textContent = label;
+    sel.appendChild(option);
+  });
+  var requestedAudience = new URLSearchParams(location.search).get("audience");
+  if (requestedAudience === "teen" || requestedAudience === "adult") {
+    var requestedLabel = requestedAudience === "adult" ? "Older adult AI workshops" : "Young teen track · ages 12–15";
+    for (var si = 0; si < sel.options.length; si++) {
+      if (sel.options[si].textContent === requestedLabel) { sel.selectedIndex = si; break; }
+    }
+    var audienceField = document.getElementById("audienceSelect");
+    if (audienceField) audienceField.value = requestedAudience === "adult" ? "Older adult" : "Young teen · ages 12–15";
+  }
   grid.addEventListener("click", function (e) {
     var a = e.target.closest("[data-session]");
     if (!a) return;
     var want = a.getAttribute("data-session");
     for (var i = 0; i < sel.options.length; i++)
       if (sel.options[i].textContent.indexOf(want) === 0) { sel.selectedIndex = i; break; }
+  });
+  document.querySelectorAll("[data-audience-interest]").forEach(function (link) {
+    link.addEventListener("click", function () {
+      var interest = link.getAttribute("data-audience-interest");
+      for (var i = 0; i < sel.options.length; i++) {
+        if (sel.options[i].textContent === interest) { sel.selectedIndex = i; break; }
+      }
+      var audience = document.getElementById("audienceSelect");
+      if (audience) audience.value = interest.indexOf("Older adult") === 0 ? "Older adult" : "Young teen · ages 12–15";
+    });
+  });
+
+  // Cross-site attribution: UTMs are captured by Ánimo GA4; this event is ready
+  // for Code the Future analytics when a site-wide tag is added.
+  window.dataLayer = window.dataLayer || [];
+  document.querySelectorAll("[data-cross-promo]").forEach(function (link) {
+    link.addEventListener("click", function () {
+      var eventData = { event: "cross_promo_click", destination: link.getAttribute("data-cross-promo"), source_site: "codethefuture" };
+      window.dataLayer.push(eventData);
+      if (typeof window.gtag === "function") window.gtag("event", "cross_promo_click", eventData);
+    });
   });
 
   // Stripe checkout — secret key stays server-side in /api/checkout.
