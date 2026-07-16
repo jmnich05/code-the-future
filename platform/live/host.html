@@ -86,7 +86,8 @@ h1{ font-family:var(--display); font-weight:700; font-size:clamp(2rem,4.5vw,3.4r
 
 <script src="/platform/lib/config.js"></script>
 <script>
-  var _m = (new URLSearchParams(location.search).get('m')||'1').replace(/[^0-9]/g,'')||'1';
+  // default = the CURRENT session's module (kids just type /platform/live/)
+  var _m = (new URLSearchParams(location.search).get('m')||'2').replace(/[^0-9]/g,'')||'2';
   document.write('<script src="config-m'+_m+'.js"><\/script>');
 </script>
 <script type="module">
@@ -196,6 +197,14 @@ function render(){
     html='<div class="kick">The finale</div><div class="qe">🌉</div><h1>'+esc(s.title)+'</h1><p class="sub">'+esc(s.sub||'')+'</p><div class="dgrid">'+
       Object.keys(byLabel).map(l=>'<div class="dcell has"><span class="de">'+esc(byLabel[l].icon)+'</span> <span class="dl">'+esc(l)+'</span><div class="dn">'+byLabel[l].names.map(esc).join('<br>')+'</div></div>').join('')+
       '</div><div class="acount">'+Object.keys(dreams).length+' of '+Object.keys(kids).length+' picked their Big Build</div>';
+  }
+  else if(s.type==='board'){
+    // live leaderboard checkpoint — same scores object the finale uses
+    const top=Object.keys(scores).map(u=>scores[u]).sort((a,b)=>b.score-a.score).slice(0,8);
+    const medals=['🥇','🥈','🥉','🏅','🏅','🏅','🏅','🏅'];
+    html='<div class="kick">Scoreboard</div><div class="qe">📊</div><h1>'+esc(s.title)+'</h1><p class="sub">'+esc(s.sub||'')+'</p>'+
+      (top.length?('<div class="lead">'+top.map((p,i)=>'<div class="lrow"><span class="medal">'+medals[i]+'</span>'+esc(p.name)+'<span class="pts">'+p.score+' pts</span></div>').join('')+'</div>')
+      :'<p class="sub">No points on the board yet — get answering!</p>');
   }
   else if(s.type==='end'){
     const top=Object.keys(scores).map(u=>scores[u]).sort((a,b)=>b.score-a.score).slice(0,5);

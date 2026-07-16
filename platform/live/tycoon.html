@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<link rel="icon" type="image/svg+xml" href="/platform/assets/logo-icon-tile.svg">
+<title>AI Business Tycoon — Code the Future</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600;700&display=swap');
+:root{ --display:'Space Grotesk',sans-serif; --body:'Plus Jakarta Sans',system-ui,sans-serif; --mono:'JetBrains Mono',monospace;
+  --purple:#9B7BFF; --teal:#26C7D1; --green:#3FD08A; --amber:#FFC44D; --coral:#FF7452; }
+*{ box-sizing:border-box; margin:0; }
+html,body{ min-height:100%; }
+body{ font-family:var(--body); color:#EAF1FF; min-height:100vh; display:flex; flex-direction:column;
+  background:radial-gradient(120% 90% at 82% -10%, rgba(255,196,77,.16), transparent 55%),
+  radial-gradient(120% 90% at 8% 110%, rgba(63,208,138,.18), transparent 55%),
+  linear-gradient(165deg,#101a3c,#0A1024 55%,#070C1A); }
+.hd{ flex:0 0 auto; display:flex; align-items:center; gap:12px; padding:12px 18px; border-bottom:1px solid rgba(255,255,255,.1); flex-wrap:wrap; }
+.hd .logo{ display:flex; align-items:center; gap:8px; font-family:var(--display); font-weight:700; font-size:1rem; }
+.hd .logo img{ width:26px; height:26px; }
+.hd .logo span{ color:var(--teal); }
+.hd .co{ font-family:var(--display); font-weight:700; font-size:.95rem; color:#FFD98C; }
+.hd .meters{ margin-left:auto; display:flex; gap:8px; align-items:center; }
+.chip{ font-family:var(--mono); font-weight:700; font-size:13px; border-radius:999px; padding:6px 14px; }
+.chip.cash{ color:#04331f; background:linear-gradient(120deg,#9BF5C7,#3FD08A); font-size:15px; }
+.chip.cash.pop{ animation:cashpop .6s cubic-bezier(.34,1.56,.64,1); }
+@keyframes cashpop{ 40%{ transform:scale(1.18); } }
+.chip.heart{ color:#3a1020; background:linear-gradient(120deg,#FFC1D6,#FF7BA6); letter-spacing:1px; }
+.chip.join{ background:rgba(255,255,255,.08); color:#9BF5C7; border:1px solid rgba(255,255,255,.15); }
+.stage{ flex:1 1 auto; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:18px 20px; text-align:center; overflow-y:auto; min-height:0; }
+.kick{ font-family:var(--mono); font-size:12px; letter-spacing:.2em; text-transform:uppercase; color:var(--amber); margin-bottom:8px; }
+.qe{ font-size:3.2rem; margin-bottom:4px; }
+h1{ font-family:var(--display); font-weight:700; font-size:clamp(1.5rem,4vw,2.7rem); line-height:1.1; letter-spacing:-.02em; max-width:26ch; }
+.sub{ font-size:1.05rem; opacity:.88; max-width:56ch; margin-top:10px; line-height:1.5; }
+.hit{ margin:10px auto 0; font-weight:700; max-width:52ch; background:rgba(255,116,82,.14); border:2px solid rgba(255,116,82,.5); border-radius:16px; padding:12px 18px; color:#ffd9cd; animation:shake .5s; }
+@keyframes shake{ 20%{ transform:translateX(-6px);} 40%{ transform:translateX(6px);} 60%{ transform:translateX(-4px);} 80%{ transform:translateX(3px);} }
+/* host option rows w/ live vote bars */
+.rows{ display:grid; gap:10px; width:min(880px,94%); margin-top:18px; }
+.rows.wide{ grid-template-columns:1fr 1fr; }
+.row{ position:relative; display:flex; align-items:center; gap:12px; text-align:left; background:rgba(255,255,255,.06); border:2px solid rgba(127,227,255,.22);
+  border-radius:14px; padding:10px 14px; cursor:pointer; overflow:hidden; color:#EAF1FF; font-family:var(--body); }
+.row .fill{ position:absolute; inset:0 auto 0 0; width:0%; background:linear-gradient(90deg,rgba(155,123,255,.35),rgba(38,199,209,.3)); transition:width .4s; }
+.row>*{ position:relative; z-index:1; }
+.row .re{ font-size:1.5rem; }
+.row .rt{ font-family:var(--display); font-weight:700; font-size:1.02rem; line-height:1.25; }
+.row .rd{ font-size:.85rem; color:#9fb6e6; line-height:1.3; }
+.row .rc{ margin-left:auto; font-family:var(--mono); font-weight:700; font-size:1.1rem; color:#cfe3ff; flex:none; }
+.row .price{ flex:none; font-family:var(--mono); font-size:11px; font-weight:700; border-radius:999px; padding:3px 9px; background:rgba(255,196,77,.15); border:1px solid rgba(255,196,77,.4); color:#FFD98C; }
+.row.manual{ border-color:var(--amber); box-shadow:0 0 0 3px rgba(255,196,77,.25); }
+.row.won{ border-color:var(--green); box-shadow:0 0 0 4px rgba(63,208,138,.35), 0 0 24px rgba(63,208,138,.35); }
+.row.lost{ opacity:.35; filter:grayscale(.6); }
+.out{ margin-top:18px; max-width:60ch; background:rgba(63,208,138,.1); border:2px solid rgba(63,208,138,.45); border-radius:18px; padding:16px 22px; text-align:left; animation:bannerin .45s cubic-bezier(.34,1.56,.64,1); }
+@keyframes bannerin{ from{ transform:scale(.75); opacity:0; } }
+.out .ot{ font-family:var(--display); font-weight:700; font-size:1.15rem; color:#c9ffe3; }
+.out .ob{ margin-top:6px; line-height:1.5; font-size:1rem; }
+.out .delta{ font-family:var(--mono); font-weight:700; font-size:1.2rem; margin-top:8px; }
+.out .delta.up{ color:#9BF5C7; } .out .delta.down{ color:#ffb3a0; }
+.out .lesson{ display:inline-block; margin-top:10px; font-family:var(--mono); font-size:11px; letter-spacing:.08em; border-radius:999px; padding:5px 12px; background:rgba(155,123,255,.18); border:1px solid rgba(155,123,255,.5); color:#e4d9ff; }
+.rescue{ margin-top:10px; font-weight:700; color:#FFD98C; }
+.acount{ font-family:var(--mono); font-size:12px; color:#9fb6e6; margin-top:12px; }
+/* kid tiles */
+.tiles{ display:grid; grid-template-columns:1fr 1fr; gap:9px; margin:14px 0 6px; width:min(560px,100%); }
+.tiles.n3{ grid-template-columns:1fr; } .tiles.n3 .tile{ min-height:70px; }
+.tile{ min-height:92px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px; padding:10px 8px; border:none; border-radius:16px; cursor:pointer;
+  color:#fff; font-family:var(--display); font-weight:700; font-size:.92rem; line-height:1.2; box-shadow:0 7px 0 rgba(0,0,0,.28); transition:transform .1s; }
+.tile:active{ transform:translateY(4px); box-shadow:0 3px 0 rgba(0,0,0,.28); }
+.tile .te{ font-size:1.5rem; } .tile .tp{ font-family:var(--mono); font-weight:700; font-size:10px; opacity:.9; }
+.tile.c0{ background:linear-gradient(160deg,#FF7452,#E23F1C); } .tile.c1{ background:linear-gradient(160deg,#5C8BFF,#2A5FF0); }
+.tile.c2{ background:linear-gradient(160deg,#FFC44D,#E8930C); color:#3a2200; } .tile.c3{ background:linear-gradient(160deg,#54E29B,#1FA864); color:#04331f; }
+.tile.c4{ background:linear-gradient(160deg,#C58BFF,#8C46E8); } .tile.c5{ background:linear-gradient(160deg,#7EE8F0,#1FA8B8); color:#04262b; }
+.tile.sel{ outline:4px solid #fff; outline-offset:3px; }
+.tile.dim{ filter:grayscale(.75) brightness(.5); }
+.tile.won{ outline:4px solid #9BF5C7; outline-offset:3px; }
+.lockrow{ min-height:20px; font-family:var(--mono); font-size:11px; letter-spacing:.1em; color:#9BF5C7; margin-top:4px; }
+/* finale */
+.valu{ margin-top:16px; display:flex; gap:12px; flex-wrap:wrap; justify-content:center; }
+.vcard{ background:rgba(255,255,255,.06); border:1.5px solid rgba(127,227,255,.25); border-radius:18px; padding:14px 22px; min-width:150px; }
+.vcard .vl{ font-family:var(--mono); font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:#9fb6e6; }
+.vcard .vv{ font-family:var(--display); font-weight:700; font-size:1.7rem; margin-top:2px; }
+.lessons{ display:flex; flex-wrap:wrap; gap:8px; justify-content:center; margin-top:16px; max-width:760px; }
+.lessons .lesson{ font-family:var(--mono); font-size:11px; letter-spacing:.06em; border-radius:999px; padding:6px 12px; background:rgba(155,123,255,.16); border:1px solid rgba(155,123,255,.45); color:#e4d9ff; }
+.ctrl{ flex:0 0 auto; display:flex; gap:10px; align-items:center; justify-content:center; padding:12px 18px calc(12px + env(safe-area-inset-bottom)); border-top:1px solid rgba(255,255,255,.1); background:rgba(6,10,22,.55); }
+.cb{ font-family:var(--display); font-weight:700; font-size:1rem; border:none; cursor:pointer; border-radius:999px; padding:12px 24px; color:#fff; background:rgba(255,255,255,.1); }
+.cb.primary{ color:#06122b; background:linear-gradient(120deg,#FFD479,#FFB320); }
+.cb.lock{ color:#04331f; background:linear-gradient(120deg,#9BF5C7,#3FD08A); }
+.cb:disabled{ opacity:.35; cursor:not-allowed; }
+.ctrl .pos{ font-family:var(--mono); font-size:12px; color:#9fb6e6; margin:0 6px; }
+.nameform{ display:flex; gap:8px; margin-top:16px; width:min(480px,94%); }
+.nameform input{ flex:1; font-family:var(--display); font-weight:700; font-size:1.2rem; color:#fff; background:rgba(255,255,255,.08); border:2px solid rgba(255,196,77,.5); border-radius:14px; padding:12px 16px; outline:none; text-align:center; }
+.confetti{ position:fixed; inset:0; pointer-events:none; overflow:hidden; z-index:80; }
+.confetti i{ position:absolute; top:-12px; width:8px; height:13px; border-radius:2px; animation:fall linear forwards; }
+@keyframes fall{ to{ transform:translateY(110vh) rotate(540deg); opacity:.9; } }
+</style>
+</head>
+<body>
+<div class="hd">
+  <div class="logo"><img src="/platform/assets/logo-icon-tile.svg" alt="">Tycoon: <span>Build-a-Business</span></div>
+  <div class="co" id="coName"></div>
+  <div class="meters">
+    <span class="chip heart" id="heartChip">❤️❤️❤️🖤🖤</span>
+    <span class="chip cash" id="cashChip">$1,000</span>
+    <span class="chip join" id="joined" style="display:none">0 in</span>
+  </div>
+</div>
+<div class="stage" id="stage"><h1>Connecting…</h1></div>
+<div class="ctrl" id="ctrl" style="display:none">
+  <button class="cb" id="prev">‹ Back</button>
+  <span class="pos" id="pos"></span>
+  <button class="cb lock" id="lock">Lock it in 🔒</button>
+  <button class="cb primary" id="next">Next ›</button>
+</div>
+
+<script src="/platform/lib/config.js"></script>
+<script type="module">
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+
+const esc=(s)=>String(s==null?'':s).replace(/[&<>"]/g,(c)=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const fmt=(n)=>'$'+Math.round(n).toLocaleString('en-US');
+const IS_HOST = localStorage.getItem('ctf:unlockall')==='1';
+
+// ============================================================================
+// GAME DATA — every decision teaches a Module 2 lesson.
+// opts: cost (money out), earn (money in), trust (-2..+2), out (what happened),
+//       lesson (chip shown on reveal + collected for the finale recap)
+// ============================================================================
+const BIZ=[
+  {e:'🩺', t:'MediMinder',   d:'AI that reminds grandparents to take their medicine'},
+  {e:'🌱', t:'PlantPal',     d:'AI drones that help farms save water'},
+  {e:'🐾', t:'PetFinder',    d:'AI that matches lost pets with their families'},
+  {e:'♻️', t:'SortBot',      d:'AI recycling sorter for schools'},
+  {e:'📚', t:'ReadingBuddy', d:'AI that helps little kids learn to read'},
+  {e:'🌪️', t:'StormSpotter', d:'AI storm warnings for neighborhoods'},
+  {e:'🍎', t:'NoWaste',      d:'AI that helps cafeterias waste less food'},
+  {e:'🧏', t:'SignSpeak',    d:'AI that translates sign language for classmates'},
+  {e:'🚲', t:'SafeRoute',    d:'AI that finds the safest bike routes to school'},
+  {e:'🎨', t:'ArtAccess',    d:'AI art studio for kids stuck in hospitals'}
+];
+const ROUNDS=[
+  { k:'intro', e:'🏢', title:'Start a company. Change the world.',
+    sub:'Your team just got $1,000 and one rule: build a business that uses AI to make the world BETTER. Every big decision is a group VOTE. Choose wisely — money runs out, but so does trust.' },
+
+  { k:'biz', e:'🚀', q:'FIRST VOTE: which company do we start?',
+    sub:'All ten use AI for good. Pick the one THIS team believes in.', opts:BIZ.map(b=>({e:b.e,t:b.t,d:b.d})) },
+
+  { k:'name', e:'✍️', title:'Name your company!',
+    sub:'Shout out ideas! Coach types the winner on the big screen.' },
+
+  { k:'d', e:'💸', q:'You have $1,000. What\'s our FIRST move?',
+    opts:[
+      {e:'🛠️', t:'Build version 1 with AI tools', d:'Get something real working fast', cost:300, earn:250, trust:1,
+        out:'One week later you have a WORKING version 1! It\'s rough — but real. Your first customers try it and start telling you what to fix.', lesson:'🛠️ Builders ship, then improve'},
+      {e:'📢', t:'Huge ad campaign first', d:'Get famous before we build', cost:500, earn:100, trust:0,
+        out:'Thousands of people clicked your ad… and found NOTHING to use. Oops — you advertised a product that doesn\'t exist yet.', lesson:'📢 Hype without a product = expensive'},
+      {e:'🗣️', t:'Ask 50 real people what they need', d:'Research before building', cost:100, earn:300, trust:1,
+        out:'GOLD. Real people told you exactly what they need — and 12 of them pre-ordered on the spot. Now you know precisely what to build.', lesson:'🗣️ Listen to humans first'}
+    ]},
+
+  { k:'d', e:'🤖', q:'Uh oh — your AI gave a customer a WRONG answer… super confidently.',
+    sub:'Remember: AI predicts likely answers, not always TRUE ones.',
+    opts:[
+      {e:'🤫', t:'Ship it anyway', d:'Probably fine…?', cost:250, earn:0, trust:-2,
+        out:'It was not fine. More wrong answers went out sounding 100% sure, and you paid refunds to upset families. Confidence ≠ correctness!', lesson:'😅 AI can be confidently wrong'},
+      {e:'🧑', t:'Add a human check for tricky cases', d:'AI does the loop, a person handles exceptions', cost:100, earn:350, trust:1,
+        out:'Perfect play. The AI handles the easy 99% at super speed, and a human catches the weird ones. Customers say it\'s the most trustworthy app they use.', lesson:'🚨 Humans handle the exceptions'},
+      {e:'🔌', t:'Unplug the AI forever', d:'No AI, no mistakes', cost:0, earn:50, trust:0,
+        out:'Safe… but now everything is slow and by-hand, and rivals with AI helpers zoom past you. The answer to a tool problem usually isn\'t "throw away the tool."', lesson:'⚖️ Don\'t ditch the tool — guide it'}
+    ]},
+
+  { k:'d', e:'🕵️', q:'A mystery company offers $500 for your users\' private info.',
+    sub:'Names, locations, what they do in your app… all of it.',
+    opts:[
+      {e:'🤑', t:'SELL IT — easy money!', d:'+$500 right now', cost:650, earn:500, trust:-2,
+        out:'You got the $500… then families found out. "You sold WHAT?" They quit in waves and told their friends why. The easy money cost you way more than it paid.', lesson:'🔒 Diary stuff is never for sale'},
+      {e:'🛡️', t:'No thanks — we protect the diary stuff', d:'Privacy is the promise', cost:0, earn:250, trust:1,
+        out:'Word gets around: "the app that doesn\'t sell you out." Parents trust you, and trust brings customers you never had to pay for.', lesson:'🔒 Privacy is a superpower'},
+      {e:'🙋', t:'Ask users\' permission, share only bulletin-board stuff', d:'They choose what\'s shared', cost:0, earn:350, trust:1,
+        out:'Users got to CHOOSE — and most happily shared the harmless stuff. You made money AND kept the promise. Being the boss of your own info goes both ways.', lesson:'🙋 People choose what\'s shared'}
+    ]},
+
+  { k:'d', e:'📈', q:'Orders are piling up! How do we grow?',
+    opts:[
+      {e:'🧑‍🤝‍🧑', t:'Hire a friend + AI team', d:'Humans and AI, each doing what they\'re best at', cost:200, earn:500, trust:1,
+        out:'The dream team. Your friend handles the caring and deciding, the AI handles the repeating — you\'re shipping twice as fast and customers feel the difference.', lesson:'🧢 Humans + AI = a team'},
+      {e:'🤖', t:'Let AI do EVERYTHING alone', d:'It\'s free labor!', cost:0, earn:100, trust:-1,
+        out:'With nobody steering, the AI produced… the most average, boring version of everything. Generic in, generic out. Customers can tell no human cared.', lesson:'🎯 AI multiplies YOUR ideas — it has none'},
+      {e:'🥱', t:'Do it all yourself, all night', d:'Sleep is for the weak', cost:0, earn:150, trust:0,
+        out:'You survived… barely. Some orders shipped, some didn\'t, and you fell asleep in your cereal. Heroes burn out; teams keep going.', lesson:'🥱 Captains need crews'}
+    ]},
+
+  { k:'d', e:'💰', q:'Time to set your price. Who gets to use your product?',
+    sub:'Remember the recess ball question…',
+    opts:[
+      {e:'💎', t:'Super expensive — fancy schools only', d:'Maximum money!', cost:150, earn:600, trust:-2,
+        out:'Big checks came in… but the kids who NEEDED it most got locked out, and people noticed. "Wasn\'t this supposed to help everyone?" The mission got blurry.', lesson:'⚖️ Tools should help everybody'},
+      {e:'🤝', t:'Fair price — free for libraries', d:'Everyone gets in', cost:0, earn:450, trust:2,
+        out:'Libraries spread it everywhere, families paid the fair price happily, and your name now means something. Fair turned out to be great business.', lesson:'🤝 Fair share wins long-term'},
+      {e:'🆓', t:'Totally free for everyone', d:'We\'re heroes!', cost:100, earn:0, trust:1,
+        out:'Everyone loves you… and you can\'t pay for the computers that run the AI. Generous is great — but a company that runs out of money helps nobody.', lesson:'🌱 Sustainable > saintly'}
+    ]},
+
+  { k:'d', e:'⛈️', q:'How do we bounce back?',
+    hit:{t:'⛈️ DISASTER! A storm knocks out your computers. Orders frozen! −$250', delta:-250},
+    opts:[
+      {e:'☁️', t:'Pay for cloud backup — fix it fast', d:'Costs money, saves the day', cost:150, earn:300, trust:1,
+        out:'Back online in hours! And now a storm can never freeze you again — your stuff lives safely in the cloud. Customers barely noticed.', lesson:'☁️ Plan for the weird days'},
+      {e:'🫠', t:'Wait for it to fix itself', d:'It\'s free…', cost:200, earn:0, trust:-1,
+        out:'Three days of silence. Customers wandered off to competitors, and "we waited" is not a great story to tell them.', lesson:'🐌 Doing nothing costs money too'},
+      {e:'📚', t:'Ask the community for help', d:'The library has computers!', cost:0, earn:150, trust:1,
+        out:'Your local library lent you computers and half your customers offered to help — because you\'d been good to them. Trust, it turns out, is a savings account.', lesson:'🏘️ Community pays trust back'}
+    ]},
+
+  { k:'d', e:'🌟', q:'FINAL MOVE: one last investment. Make it count!',
+    opts:[
+      {e:'🎁', t:'Build the feature customers keep begging for', d:'They literally told us what they want', cost:200, earn:700, trust:1,
+        out:'Of course it worked — they TOLD you they wanted it. Sales explode. Listening to real humans wins again, one last time.', lesson:'🗣️ Listen. Build. Repeat.'},
+      {e:'🛝', t:'A fancy office with a slide', d:'Real companies have slides', cost:400, earn:50, trust:0,
+        out:'The slide is, honestly, awesome. But customers can\'t use your slide, and your product didn\'t get one bit better this month.', lesson:'🛝 Shiny ≠ better'},
+      {e:'🏦', t:'Keep it safe in the bank', d:'No risks!', cost:0, earn:60, trust:0,
+        out:'Safe and sound — plus a little interest. But while you played it safe, a braver team shipped the feature your customers wanted. Sometimes careful is expensive.', lesson:'🏦 No risk, no rocket'}
+    ]},
+
+  { k:'end', e:'🎉', title:'Demo day! What\'s your company worth?' }
+];
+
+// ============================================================================
+// shared state (host is the source of truth; kids mirror via presence)
+// ============================================================================
+let st={ i:0, ph:'static', pick:-1, money:1000, trust:3, biz:-1, cname:'', rescued:0 };
+let manual=-1, lessons=[], hitsApplied={}, locked={};   // host-side extras
+const votes={};                                          // i -> {uid:{name,choice}}
+const kids={};
+let channel=null, myChoice={}, uid, kidName='Builder';
+
+const stageEl=document.getElementById('stage');
+function heartStr(n){ return '❤️'.repeat(Math.max(0,Math.min(5,n)))+'🖤'.repeat(Math.max(0,5-Math.max(0,n))); }
+function meters(){
+  const c=document.getElementById('cashChip'); const old=c.textContent;
+  c.textContent=fmt(st.money); if(old!==c.textContent){ c.classList.remove('pop'); void c.offsetWidth; c.classList.add('pop'); }
+  document.getElementById('heartChip').textContent=heartStr(st.trust);
+  const b=st.biz>=0?BIZ[st.biz]:null;
+  document.getElementById('coName').textContent = b ? (b.e+' '+(st.cname||b.t)) : '';
+}
+function burst(){ const c=document.createElement('div'); c.className='confetti'; document.body.appendChild(c);
+  const cols=['#FFD479','#9BF5C7','#9B7BFF','#7FE3FF','#FF7452','#fff'];
+  for(let i=0;i<50;i++){ const x=document.createElement('i'); x.style.left=Math.random()*100+'%'; x.style.background=cols[i%cols.length]; x.style.animationDuration=(1.4+Math.random()*1.4)+'s'; x.style.animationDelay=(Math.random()*.3)+'s'; c.appendChild(x); }
+  setTimeout(()=>c.remove(),3200); }
+
+// --- realtime ----------------------------------------------------------------
+const URL=window.CTF_SUPABASE_URL, KEY=window.CTF_SUPABASE_ANON_KEY;
+if(URL&&KEY&&!/PASTE|YOUR_/.test(KEY)){
+  const sb=createClient(URL,KEY,{ auth:{ persistSession:false } });
+  if(IS_HOST){
+    channel=sb.channel('live:tycoon',{ config:{ presence:{ key:'host' }, broadcast:{ self:false } } });
+    channel.on('presence',{event:'sync'},()=>{
+      const s=channel.presenceState(); Object.keys(kids).forEach(k=>delete kids[k]);
+      Object.keys(s).forEach(k=>(s[k]||[]).forEach(m=>{ if(m.role==='kid') kids[m.uid]=m.name; }));
+      const j=document.getElementById('joined'); j.style.display='inline-block'; j.textContent=Object.keys(kids).length+' in';
+      render();
+    });
+    channel.on('broadcast',{event:'tvote'},({payload:p})=>{
+      if(!p||p.i!==st.i||locked[p.i]) return;
+      (votes[p.i]=votes[p.i]||{})[p.uid]={name:p.name,choice:p.choice}; render();
+    });
+    channel.subscribe(async(s)=>{ if(s==='SUBSCRIBED'){ await sync(); render(); } });
+  }else{
+    try{ kidName=(JSON.parse(localStorage.getItem('ctf:profile')||'null')||{}).display_name||'Builder'; }catch(e){}
+    kidName=String(kidName).slice(0,20);
+    try{ uid=localStorage.getItem('ctf:liveuid')||('k'+Math.random().toString(36).slice(2,10)); localStorage.setItem('ctf:liveuid',uid); }catch(e){ uid='k'+Date.now(); }
+    channel=sb.channel('live:tycoon',{ config:{ presence:{ key:uid }, broadcast:{ self:false } } });
+    channel.on('presence',{event:'sync'},()=>{
+      const s=channel.presenceState(); let host=null;
+      Object.keys(s).forEach(k=>(s[k]||[]).forEach(m=>{ if(m.role==='host') host=m; }));
+      if(host){ const was=st.ph+st.i+st.pick; st={...st,...host.st}; if(was!==st.ph+st.i+st.pick) render(); meters(); }
+      else{ stageEl.innerHTML='<div class="qe">🕐</div><h1>Waiting for your coach…</h1><p class="sub">The big screen starts the company. You\'re in, '+esc(kidName)+'!</p>'; }
+    });
+    channel.subscribe(async(s)=>{ if(s==='SUBSCRIBED'){ await channel.track({ role:'kid', uid, name:kidName }); } });
+  }
+}else if(!IS_HOST){ stageEl.innerHTML='<div class="qe">🔌</div><h1>The room isn\'t on</h1><p class="sub">Ask your coach for help!</p>'; }
+
+// throttle presence updates (same reason as host.html)
+let syncT=null, syncLast=0;
+function sync(){ if(!IS_HOST||!channel) return;
+  const now=Date.now(), wait=Math.max(0,350-(now-syncLast)); clearTimeout(syncT);
+  syncT=setTimeout(()=>{ syncLast=Date.now(); channel.track({ role:'host', st:{ i:st.i, ph:st.ph, pick:st.pick, money:st.money, trust:st.trust, biz:st.biz, cname:st.cname, rescued:st.rescued } }); }, wait); }
+
+// ============================================================================
+// HOST — controls & round logic
+// ============================================================================
+function isVote(r){ return r.k==='biz'||r.k==='d'; }
+function applyHit(r){ if(r.hit && !hitsApplied[st.i]){ hitsApplied[st.i]=true; st.money+=r.hit.delta; } }
+function go(d){
+  st.i=Math.max(0,Math.min(ROUNDS.length-1,st.i+d));
+  const r=ROUNDS[st.i];
+  st.ph = isVote(r) ? (locked[st.i]?'out':'vote') : 'static';
+  st.pick = locked[st.i]!=null ? locked[st.i] : -1;
+  manual=-1;
+  if(d>0) applyHit(r);
+  sync(); render();
+}
+function doLock(){
+  const r=ROUNDS[st.i];
+  if(!isVote(r)||st.ph!=='vote') return;
+  const v=votes[st.i]||{}, counts=r.opts.map((_,x)=>Object.keys(v).filter(u=>v[u].choice===x).length);
+  let pick=manual;
+  if(pick<0){ const mx=Math.max(...counts); pick=counts.indexOf(mx); if(mx===0) pick=-1; }
+  if(pick<0) return;                                   // nothing to lock yet — tap a row to choose by hand
+  locked[st.i]=pick; st.pick=pick; st.ph='out';
+  if(r.k==='biz'){ st.biz=pick; burst(); }
+  else{
+    const o=r.opts[pick];
+    st.money += (o.earn-o.cost);
+    st.trust = Math.max(0,Math.min(5,st.trust+(o.trust||0)));
+    lessons.push(o.lesson);
+    if(st.money<50){ st.money=150; st.rescued++; }     // emergency investor — keeps the game alive
+    if(o.earn-o.cost>0) burst();
+  }
+  sync(); render();
+}
+if(IS_HOST){
+  document.getElementById('ctrl').style.display='flex';
+  document.getElementById('prev').onclick=(e)=>{ e.currentTarget.blur(); go(-1); };
+  document.getElementById('next').onclick=(e)=>{ e.currentTarget.blur(); go(1); };
+  document.getElementById('lock').onclick=(e)=>{ e.currentTarget.blur(); doLock(); };
+  addEventListener('keydown',(e)=>{
+    if(e.target.tagName==='INPUT') return;
+    if(e.key===' '){ e.preventDefault(); go(1); }
+    else if(e.key==='ArrowRight') go(1); else if(e.key==='ArrowLeft') go(-1);
+    else if(e.key.toLowerCase()==='l') doLock();
+  });
+}
+
+// ============================================================================
+// RENDER — host gets bars+controls, kids get tiles
+// ============================================================================
+function render(){
+  meters();
+  const r=ROUNDS[st.i];
+  if(IS_HOST){
+    document.getElementById('pos').textContent=(st.i+1)+' / '+ROUNDS.length;
+    document.getElementById('lock').disabled=!(isVote(r)&&st.ph==='vote');
+    renderHost(r);
+  } else renderKid(r);
+}
+function renderHost(r){
+  let html='';
+  const v=votes[st.i]||{}, n=Object.keys(v).length;
+  const counts=r.opts?r.opts.map((_,x)=>Object.keys(v).filter(u=>v[u].choice===x).length):[];
+  const mx=Math.max(1,...counts);
+  if(r.k==='intro'){
+    html='<div class="kick">The big game</div><div class="qe">'+r.e+'</div><h1>'+esc(r.title)+'</h1><p class="sub">'+esc(r.sub)+'</p>'+
+      '<div class="url" style="font-family:var(--mono);font-size:1.3rem;color:#9BF5C7;background:rgba(63,208,138,.1);border:1.5px solid rgba(63,208,138,.4);border-radius:16px;padding:12px 22px;margin-top:18px">codethefuture.net/platform/live/tycoon.html</div>';
+  }
+  else if(r.k==='name'){
+    const b=BIZ[st.biz]||{e:'🏢',t:'Your company'};
+    html='<div class="qe">'+r.e+'</div><h1>'+esc(r.title)+'</h1><p class="sub">You chose <b>'+b.e+' '+esc(b.t)+'</b> — '+esc(b.d||'')+'. '+esc(r.sub)+'</p>'+
+      '<div class="nameform"><input id="cnameIn" maxlength="30" placeholder="'+esc(b.t)+'" value="'+esc(st.cname)+'"><button class="cb lock" id="cnameBtn">Name it!</button></div>';
+  }
+  else if(isVote(r)){
+    if(r.hit) html+='<div class="hit">'+esc(r.hit.t)+'</div>';
+    html+='<div class="kick">'+(r.k==='biz'?'Company vote':'Board-meeting vote · every voice counts')+'</div><div class="qe">'+r.e+'</div><h1>'+esc(r.q)+'</h1>'+(r.sub?'<p class="sub">'+esc(r.sub)+'</p>':'');
+    html+='<div class="rows'+(r.opts.length>4?' wide':'')+'">'+r.opts.map((o,x)=>{
+      let cls='row'; if(x===manual&&st.ph==='vote') cls+=' manual';
+      if(st.ph==='out'){ cls+= x===st.pick?' won':' lost'; }
+      return '<div class="'+cls+'" data-i="'+x+'"><div class="fill" style="width:'+Math.round((counts[x]||0)/mx*100)+'%"></div>'+
+        '<span class="re">'+o.e+'</span><span><div class="rt">'+esc(o.t)+'</div>'+(o.d?'<div class="rd">'+esc(o.d)+'</div>':'')+'</span>'+
+        (o.cost?'<span class="price">−'+fmt(o.cost)+'</span>':'')+
+        '<span class="rc">'+(counts[x]||0)+'</span></div>';
+    }).join('')+'</div>';
+    html+='<div class="acount">'+n+' of '+Object.keys(kids).length+' voted'+(st.ph==='vote'?' · tap a row to hand-pick, then Lock it in':'')+'</div>';
+    if(st.ph==='out'&&r.k==='d'){
+      const o=r.opts[st.pick], d=o.earn-o.cost;
+      html+='<div class="out"><div class="ot">'+o.e+' '+esc(o.t)+'</div><div class="ob">'+esc(o.out)+'</div>'+
+        '<div class="delta '+(d>=0?'up':'down')+'">'+(d>=0?'+':'−')+fmt(Math.abs(d))+' → '+fmt(st.money)+
+        (o.trust?'&nbsp;&nbsp;'+(o.trust>0?'❤️ +'+o.trust:'💔 '+o.trust):'')+'</div>'+
+        '<span class="lesson">'+esc(o.lesson)+'</span>'+
+        (st.rescued&&st.money===150?'<div class="rescue">😬 Emergency investor swooped in with a mini-loan so the company survives. That\'s a one-more-chance, team…</div>':'')+'</div>';
+    }
+    if(st.ph==='out'&&r.k==='biz'){ const b=BIZ[st.pick];
+      html+='<div class="out"><div class="ot">'+b.e+' '+esc(b.t)+' — it\'s official!</div><div class="ob">'+esc(b.d)+'. Next up: this company needs a NAME.</div></div>'; }
+  }
+  else if(r.k==='end'){
+    const b=BIZ[st.biz]||{e:'🏢',t:'Your company'};
+    const score=st.money+st.trust*100;
+    const title= score>=2600?'🦄 Unicorn in the making!' : score>=2000?'🚀 Taking off!' : score>=1400?'📈 Solid startup!' : '🌱 Scrappy survivor — real founders lose money learning!';
+    html='<div class="kick">Demo day</div><div class="qe">'+r.e+'</div><h1>'+b.e+' '+esc(st.cname||b.t)+'</h1><p class="sub">'+esc(r.title)+'</p>'+
+      '<div class="valu"><div class="vcard"><div class="vl">💰 In the bank</div><div class="vv">'+fmt(st.money)+'</div></div>'+
+      '<div class="vcard"><div class="vl">❤️ Trust</div><div class="vv">'+heartStr(st.trust)+'</div></div>'+
+      '<div class="vcard"><div class="vl">🏷️ Verdict</div><div class="vv" style="font-size:1.15rem">'+title+'</div></div></div>'+
+      (lessons.length?'<p class="sub" style="margin-top:18px"><b>What this board of directors learned:</b></p><div class="lessons">'+lessons.map(l=>'<span class="lesson">'+esc(l)+'</span>').join('')+'</div>':'')+
+      '<p class="sub" style="margin-top:16px">Started with $1,000 and a vote. Ran it with judgment, fairness, and humans handling the exceptions. That\'s how it\'s really done. 🧢</p>';
+  }
+  stageEl.innerHTML=html;
+  if(r.k==='name'){
+    const btn=document.getElementById('cnameBtn'), inp=document.getElementById('cnameIn');
+    btn.onclick=()=>{ st.cname=(inp.value||'').trim().slice(0,30); sync(); meters(); burst(); };
+    inp.addEventListener('keydown',(e)=>{ if(e.key==='Enter') btn.click(); });
+  }
+  if(isVote(r)&&st.ph==='vote') stageEl.querySelectorAll('.row').forEach(el=>el.addEventListener('click',()=>{ manual=+el.dataset.i===manual?-1:+el.dataset.i; render(); }));
+}
+function renderKid(r){
+  let html='';
+  if(!r){ return; }
+  if(r.k==='intro'){ html='<div class="qe">🏢</div><h1>You\'re on the founding team!</h1><p class="sub">$1,000. One company. Every big call is a VOTE — and your vote counts, '+esc(kidName)+'. Watch the big screen!</p>'; }
+  else if(r.k==='name'){ html='<div class="qe">📣</div><h1>Shout out name ideas!</h1><p class="sub">Best company name wins the big screen. Make it legendary.</p>'; }
+  else if(isVote(r)){
+    const mine=myChoice[st.i];
+    if(st.ph==='vote'){
+      if(r.hit) html+='<div class="hit">'+esc(r.hit.t)+'</div>';
+      html+='<div class="qe">'+r.e+'</div><h1>'+esc(r.q)+'</h1>'+(r.sub?'<p class="sub">'+esc(r.sub)+'</p>':'');
+      html+='<div class="tiles'+(r.opts.length===3?' n3':'')+'">'+r.opts.map((o,x)=>{
+        let cls='tile c'+(x%6); if(mine===x) cls+=' sel';
+        return '<button class="'+cls+'" data-i="'+x+'"><span class="te">'+o.e+'</span><span>'+esc(o.t)+'</span>'+(o.d?'<span class="tp">'+esc(o.d)+'</span>':'')+'</button>';
+      }).join('')+'</div><div class="lockrow">'+(mine!=null?'✓ VOTED — TAP ANOTHER TO CHANGE':'CAST YOUR VOTE!')+'</div>';
+    }else{
+      const o=r.opts[st.pick]||{};
+      const won=mine===st.pick;
+      html='<div class="qe">'+(o.e||'✅')+'</div><h1>The team chose: '+esc(o.t||'')+'</h1>'+
+        (r.k==='d'?'<div class="out" style="text-align:center"><div class="ob">'+esc(o.out||'')+'</div><span class="lesson">'+esc(o.lesson||'')+'</span></div>':'<p class="sub">'+esc(o.d||'')+'</p>')+
+        '<div class="lockrow" style="margin-top:10px">'+(mine==null?'':(won?'🎉 YOUR pick won the vote!':'Democracy! Your pick didn\'t win this one.'))+'</div>';
+      if(won&&r.k!=='biz') burst();
+    }
+  }
+  else if(r.k==='end'){
+    const b=BIZ[st.biz]||{e:'🏢',t:'the company'};
+    html='<div class="qe">🎉</div><h1>'+b.e+' '+esc(st.cname||b.t)+' made it to demo day!</h1>'+
+      '<p class="sub">Final numbers are on the big screen. You just ran a company with real votes, real trade-offs, and AI as your teammate. Founder status: unlocked.</p>';
+  }
+  stageEl.innerHTML=html;
+  if(isVote(r)&&st.ph==='vote') stageEl.querySelectorAll('.tile').forEach(b=>b.addEventListener('click',()=>{
+    const x=+b.dataset.i; myChoice[st.i]=x;
+    stageEl.querySelectorAll('.tile').forEach(t=>t.classList.remove('sel')); b.classList.add('sel');
+    stageEl.querySelector('.lockrow').textContent='✓ VOTED — TAP ANOTHER TO CHANGE';
+    if(channel) channel.send({ type:'broadcast', event:'tvote', payload:{ uid, name:kidName, i:st.i, choice:x } });
+  }));
+}
+render();
+</script>
+</body>
+</html>
