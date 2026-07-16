@@ -87,6 +87,7 @@ h1{ font-family:var(--display); font-weight:700; font-size:clamp(2rem,4.5vw,3.4r
   <span class="pos" id="pos"></span>
   <button class="cb reveal" id="reveal">Reveal ✓</button>
   <button class="cb primary" id="next">Next ›</button>
+  <button class="cb" id="reset" title="Clear the scoreboard for a fresh game">↺ Scores</button>
 </div>
 
 <script src="/platform/lib/config.js"></script>
@@ -123,6 +124,13 @@ const scores={};               // uid -> { name, score }  (frozen at each reveal
 const dreams={};               // uid -> { name, icon, label, hero, world }
 const kids={};                 // uid -> name (presence)
 
+// scoreboard survives a host reload/module hop — a refresh mid-game used to
+// wipe every kid's points. Cleared with the ↺ Scores button for a fresh game.
+const SAVEKEY='ctf:live:'+S.id+':state';
+try{ const sv=JSON.parse(localStorage.getItem(SAVEKEY)||'null');
+  if(sv){ Object.assign(answers, sv.answers||{}); Object.assign(scores, sv.scores||{}); } }catch(e){}
+function persist(){ try{ localStorage.setItem(SAVEKEY, JSON.stringify({ answers, scores })); }catch(e){} }
+
 const URL=window.CTF_SUPABASE_URL, KEY=window.CTF_SUPABASE_ANON_KEY;
 const sb = createClient(URL, KEY, { auth:{ persistSession:false } });
 channel = sb.channel(S.channel, { config:{ presence:{ key:'host' }, broadcast:{ self:false } } });
@@ -136,7 +144,7 @@ channel.on('presence',{event:'sync'},()=>{
 channel.on('broadcast',{event:'answer'},({payload:p})=>{
   if(!p||!p.act) return;
   (answers[p.act]=answers[p.act]||{})[p.uid]={ name:p.name, choice:p.choice };
-  render();
+  persist(); render();
 });
 channel.on('broadcast',{event:'dream'},({payload:p})=>{
   if(!p||!p.uid) return; dreams[p.uid]=p; render();
@@ -165,6 +173,7 @@ function doReveal(){
   if(s.answer!=null){                            // freeze the scores for this round
     const a=answers[s.id]||{};
     Object.keys(a).forEach(u=>{ if(a[u].choice===s.answer){ (scores[u]=scores[u]||{name:a[u].name,score:0}).score++; scores[u].name=a[u].name; } });
+    persist();
   }
   sync(); render();
 }
@@ -174,6 +183,11 @@ function doReveal(){
 document.getElementById('prev').onclick=(e)=>{ e.currentTarget.blur(); go(-1); };
 document.getElementById('next').onclick=(e)=>{ e.currentTarget.blur(); go(1); };
 document.getElementById('reveal').onclick=(e)=>{ e.currentTarget.blur(); doReveal(); };
+document.getElementById('reset').onclick=(e)=>{ e.currentTarget.blur();
+  if(!confirm('Clear the scoreboard and all answers for a fresh game?')) return;
+  Object.keys(answers).forEach(k=>delete answers[k]); Object.keys(scores).forEach(k=>delete scores[k]);
+  try{ localStorage.removeItem(SAVEKEY); }catch(err){}
+  revealed=false; sync(); render(); };
 addEventListener('keydown',(e)=>{
   if(e.key===' '){ e.preventDefault(); go(1); }
   else if(e.key==='ArrowRight') go(1);
