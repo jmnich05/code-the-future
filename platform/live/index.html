@@ -97,17 +97,20 @@ h1{ font-family:var(--display); font-weight:700; font-size:clamp(1.35rem,5.6vw,1
 </div>
 
 <script src="/platform/lib/config.js"></script>
-<script>
-  // default = the CURRENT session's module (kids just type /platform/live/)
-  var _m = (new URLSearchParams(location.search).get('m')||'2').replace(/[^0-9]/g,'')||'2';
-  document.write('<script src="config-m'+_m+'.js"><\/script>');
-</script>
 <script src="/platform/lib/filter.js"></script>
 <script src="attract.js?v=2"></script>
 <script type="module">
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
-const S = window.LIVE_SESSION;
+// ============================================================================
+// Module discovery — kids just type /platform/live/ and this page joins
+// whatever session the HOST screen is running (m1…m4). The host announces its
+// module on the shared 'live:lobby' presence channel; ?m=N still forces one.
+// ============================================================================
+const DEFAULT_M = '2';                       // newest module — fallback when no host is on yet
+const OVERRIDE = (new URLSearchParams(location.search).get('m')||'').replace(/[^0-9]/g,'');
+
+let S = null;                                // the loaded session config
 const view = document.getElementById('view');
 const esc = (s)=>String(s==null?'':s).replace(/[&<>"]/g,(c)=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const clean=(v)=>{ if(v && window.CTFFilter && CTFFilter.isClean && !CTFFilter.isClean(v)) return false; return true; };
@@ -116,7 +119,6 @@ const clean=(v)=>{ if(v && window.CTFFilter && CTFFilter.isClean && !CTFFilter.i
 function profile(){ try{ return JSON.parse(localStorage.getItem('ctf:profile')||'null')||{}; }catch(e){ return {}; } }
 let uid; try{ uid = localStorage.getItem('ctf:liveuid') || ('k'+Math.random().toString(36).slice(2,10)); localStorage.setItem('ctf:liveuid', uid); }catch(e){ uid='k'+Date.now(); }
 const name = (profile().display_name||'Builder').toString().slice(0,20);
-document.getElementById('sess').textContent = S.title;
 
 // --- the dream menu (same 12 builds + seeds as the Dream Picker) -------------
 const IDEAS=[
@@ -139,17 +141,50 @@ const SHAPES=['▲','◆','●','■'];
 // --- state ------------------------------------------------------------------
 let stageId='connecting', revealed=false, myChoices={}, myScore=0, myStreak=0, scoredActs={}, channel=null, dreamSent=false;
 let pickSel=null, pickVibe='';
-const stageById=(id)=>S.stages.find(s=>s.id===id);
+let LOADED_M=null, sb=null;
+const stageById=(id)=>S?S.stages.find(s=>s.id===id):null;
 const chips=document.getElementById('chips');
 function updateChips(){ chips.style.display=myScore||myStreak>1?'flex':'none';
   document.getElementById('scoreChip').textContent='⭐ '+myScore;
   const st=document.getElementById('streakChip'); st.style.display=myStreak>1?'inline-block':'none'; st.textContent='🔥 x'+myStreak; }
 
-// --- realtime ---------------------------------------------------------------
 const URL=window.CTF_SUPABASE_URL, KEY=window.CTF_SUPABASE_ANON_KEY;
-if(!URL||!KEY||/PASTE|YOUR_/.test(KEY)){ view.innerHTML='<div class="wait">🔌</div><h1>Live Room isn\'t on</h1><p class="sub">Ask your coach for help!</p>'; }
-else{
-  const sb = createClient(URL, KEY, { auth:{ persistSession:false } });
+const rtOk = URL && KEY && !/PASTE|YOUR_/.test(KEY);
+
+// --- find the room: watch the lobby for the host's module announcement -------
+function loadConfig(m){
+  return new Promise(function(res,rej){
+    const t=document.createElement('script'); t.src='config-m'+m+'.js';
+    t.onload=res; t.onerror=rej; document.head.appendChild(t);
+  });
+}
+function watchLobby(onModule){
+  const lobby = sb.channel('live:lobby', { config:{ presence:{ key:'lk'+uid } } });
+  lobby.on('presence',{event:'sync'},()=>{
+    const st=lobby.presenceState(); let m=null;
+    Object.keys(st).forEach(k=>(st[k]||[]).forEach(x=>{ if(x.role==='host'&&x.m) m=String(x.m); }));
+    if(m) onModule(m);
+  });
+  lobby.subscribe();
+}
+async function discover(){
+  if(OVERRIDE) return OVERRIDE;
+  if(!rtOk) return DEFAULT_M;
+  return new Promise(function(resolve){
+    let done=false;
+    const finish=(m)=>{ if(!done){ done=true; resolve(m); } };
+    watchLobby(function(m){
+      // after boot: if the host switches modules, hop rooms automatically
+      if(LOADED_M && m!==LOADED_M){ location.replace(location.pathname+'?m='+m); return; }
+      finish(m);
+    });
+    setTimeout(function(){ finish(DEFAULT_M); }, 3500);   // no host yet → newest module's lobby
+  });
+}
+
+// --- realtime ---------------------------------------------------------------
+function startRealtime(){
+  if(!rtOk){ view.innerHTML='<div class="wait">🔌</div><h1>Live Room isn\'t on</h1><p class="sub">Ask your coach for help!</p>'; return; }
   channel = sb.channel(S.channel, { config:{ presence:{ key:uid }, broadcast:{ self:false } } });
   channel.on('presence', { event:'sync' }, ()=>{
     const st = channel.presenceState();
@@ -283,7 +318,24 @@ function renderPicker(s){
     renderDream(stageById(stageId));
   });
 }
-render();
+
+// --- boot: find the host's module, load its config, join the room ------------
+(async function boot(){
+  render();                                   // "Connecting…"
+  if(rtOk) sb = createClient(URL, KEY, { auth:{ persistSession:false } });
+  let m = await discover();
+  try{ await loadConfig(m); }
+  catch(e){ if(m!==DEFAULT_M){ m=DEFAULT_M; await loadConfig(m).catch(()=>{}); } }
+  S = window.LIVE_SESSION;
+  if(!S){ view.innerHTML='<div class="wait">🔌</div><h1>Live Room isn\'t on</h1><p class="sub">Ask your coach for help!</p>'; return; }
+  LOADED_M = m;
+  if(OVERRIDE && rtOk) watchLobby(function(hm){    // forced room still follows a host switch
+    if(LOADED_M && hm!==LOADED_M) location.replace(location.pathname+'?m='+hm);
+  });
+  document.getElementById('sess').textContent = S.title;
+  startRealtime();
+  render();
+})();
 </script>
 </body>
 </html>

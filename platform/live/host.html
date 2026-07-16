@@ -129,6 +129,11 @@ channel.on('broadcast',{event:'dream'},({payload:p})=>{
   if(!p||!p.uid) return; dreams[p.uid]=p; render();
 });
 channel.subscribe(async (status)=>{ if(status==='SUBSCRIBED'){ await sync(); render(); } });
+// announce which module this room is running on the shared lobby channel —
+// kid devices at /platform/live/ discover it and auto-join the right session
+const _mNum = (S.id||'m1').replace(/\D/g,'')||'1';
+const lobby = sb.channel('live:lobby', { config:{ presence:{ key:'host' } } });
+lobby.subscribe((st)=>{ if(st==='SUBSCRIBED') lobby.track({ role:'host', m:_mNum }); });
 // Throttled presence sync — rapid Back/Next clicking would otherwise burst past
 // Supabase Realtime's per-second message limit and get the channel dropped.
 let syncT=null, syncLast=0;
