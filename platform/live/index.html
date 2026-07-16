@@ -98,7 +98,8 @@ h1{ font-family:var(--display); font-weight:700; font-size:clamp(1.35rem,5.6vw,1
 
 <script src="/platform/lib/config.js"></script>
 <script>
-  var _m = (new URLSearchParams(location.search).get('m')||'1').replace(/[^0-9]/g,'')||'1';
+  // default = the CURRENT session's module (kids just type /platform/live/)
+  var _m = (new URLSearchParams(location.search).get('m')||'2').replace(/[^0-9]/g,'')||'2';
   document.write('<script src="config-m'+_m+'.js"><\/script>');
 </script>
 <script src="/platform/lib/filter.js"></script>
@@ -211,6 +212,10 @@ function render(){
       view.querySelector('.lockrow').textContent='✓ LOCKED IN — TAP ANOTHER TO CHANGE';
       send('answer',{ act:s.id, uid, name, choice:i });
     }));
+  }
+  else if(s.type==='board'){
+    view.innerHTML='<div class="qe">📊</div><h1>Scoreboard time!</h1><p class="sub">Eyes on the big screen, '+esc(name)+'…</p>'+
+      (myScore?'<div class="banner on win">You\'ve got <b>'+myScore+'</b> point'+(myScore===1?'':'s')+' so far'+(myStreak>1?' — and a 🔥 x'+myStreak+' streak!':'!')+'</div>':'<div class="banner on info">Still time to get on the board — next round is yours!</div>');
   }
   else if(s.type==='dream'){
     renderDream(s);

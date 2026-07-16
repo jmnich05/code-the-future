@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Coach Notes · Saturday Session 2 — Code the Future</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap');
+:root{ --display:'Space Grotesk',sans-serif; --body:'Plus Jakarta Sans',system-ui,sans-serif; --mono:'JetBrains Mono',monospace;
+  --purple:#9B7BFF; --teal:#26C7D1; --green:#3FD08A; --amber:#FFC44D; --coral:#FF7452; --ink:#EAF1FF; --sub:#9fb6e6; }
+*{ box-sizing:border-box; margin:0; }
+body{ font-family:var(--body); color:var(--ink); line-height:1.55; padding:0 0 60px;
+  background:radial-gradient(120% 60% at 85% -5%, rgba(155,123,255,.2), transparent 55%), linear-gradient(170deg,#101a3c,#0A1024 55%,#070C1A); min-height:100vh; }
+.wrap{ max-width:680px; margin:0 auto; padding:18px 14px; }
+.head h1{ font-family:var(--display); font-size:1.45rem; line-height:1.15; margin:4px 0 2px; }
+.kick{ font-family:var(--mono); font-size:11px; letter-spacing:.2em; text-transform:uppercase; color:var(--purple); }
+.head p{ color:var(--sub); font-size:.92rem; }
+nav{ position:sticky; top:0; z-index:50; display:flex; gap:7px; overflow-x:auto; -webkit-overflow-scrolling:touch; scrollbar-width:none;
+  padding:10px 14px; background:rgba(10,16,36,.92); backdrop-filter:blur(10px); border-bottom:1px solid rgba(255,255,255,.1); }
+nav::-webkit-scrollbar{ display:none; }
+nav a{ flex:none; font-family:var(--mono); font-size:11px; letter-spacing:.05em; color:#cfe3ff; text-decoration:none;
+  background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.15); border-radius:999px; padding:7px 12px; }
+h2{ font-family:var(--display); font-size:1.15rem; margin:26px 0 4px; scroll-margin-top:64px; }
+h2 .tm{ font-family:var(--mono); font-size:11px; color:var(--teal); letter-spacing:.06em; display:block; margin-bottom:2px; }
+.card{ background:rgba(255,255,255,.05); border:1.5px solid rgba(127,227,255,.22); border-radius:16px; padding:13px 15px; margin:10px 0; }
+.card.say{ border-color:rgba(63,208,138,.4); background:rgba(63,208,138,.07); }
+.card.why{ border-color:rgba(155,123,255,.4); background:rgba(155,123,255,.08); }
+.lab{ font-family:var(--mono); font-size:10px; letter-spacing:.18em; text-transform:uppercase; margin-bottom:5px; }
+.say .lab{ color:#9BF5C7; } .why .lab{ color:#c9b8ff; } .card .lab{ color:#7ef0e6; }
+ul{ padding-left:20px; margin:6px 0; } li{ margin:5px 0; }
+b{ color:#fff; }
+.q{ color:#FFD98C; font-weight:700; }
+details{ background:rgba(255,255,255,.05); border:1.5px solid rgba(127,227,255,.22); border-radius:16px; margin:10px 0; overflow:hidden; }
+summary{ cursor:pointer; padding:12px 15px; font-family:var(--display); font-weight:700; font-size:1rem; list-style:none; display:flex; gap:9px; align-items:center; }
+summary::-webkit-details-marker{ display:none; }
+summary .pill{ margin-left:auto; flex:none; font-family:var(--mono); font-size:10px; letter-spacing:.08em; border-radius:999px; padding:4px 9px; }
+.pill.ans{ background:rgba(63,208,138,.2); color:#9BF5C7; border:1px solid rgba(63,208,138,.5); }
+.pill.myth{ background:rgba(255,196,77,.16); color:#FFD98C; border:1px solid rgba(255,196,77,.5); }
+.pill.op{ background:rgba(155,123,255,.18); color:#e4d9ff; border:1px solid rgba(155,123,255,.5); }
+details > div{ padding:0 15px 13px; border-top:1px solid rgba(255,255,255,.08); }
+details p{ margin:9px 0; font-size:.94rem; }
+.tip{ background:rgba(255,196,77,.1); border:1.5px solid rgba(255,196,77,.35); border-radius:14px; padding:11px 14px; margin:10px 0; font-size:.92rem; }
+.links{ display:flex; flex-wrap:wrap; gap:8px; margin-top:8px; }
+.links a{ font-family:var(--mono); font-size:11px; color:#9BF5C7; text-decoration:none; background:rgba(63,208,138,.1); border:1px solid rgba(63,208,138,.35); border-radius:999px; padding:7px 12px; }
+table{ width:100%; border-collapse:collapse; font-size:.88rem; margin:8px 0; }
+th,td{ text-align:left; padding:6px 8px; border-bottom:1px solid rgba(255,255,255,.08); vertical-align:top; }
+th{ font-family:var(--mono); font-size:10px; letter-spacing:.14em; text-transform:uppercase; color:#7ef0e6; }
+td b{ font-family:var(--display); }
+</style>
+</head>
+<body>
+<nav>
+  <a href="#codes">🔑 Codes</a><a href="#intro">Q&A open</a><a href="#trivia">🎮 Trivia</a><a href="#tycoon">🏢 Tycoon</a>
+  <a href="#video">🍿 Video</a><a href="#mixers">🧠 Mixers</a><a href="#journal">📓 Notebooks</a><a href="#close">🎛️ Sandbox</a>
+  <a href="#answerkey">📡 Answer key</a><a href="#tycoonkey">🗝️ Tycoon key</a>
+</nav>
+<div class="wrap">
+  <div class="head">
+    <div class="kick">🎤 Coach notes · in your pocket</div>
+    <h1>Saturday Session 2 — Mr. Jon's companion</h1>
+    <p>South Central Regional Library · 10:00–11:30 · Module 2: AI and Our World. Same rhythm as last week: recap Q&A → game show (20 questions, prize!) → the NEW big game (AI Business Tycoon) → movie → memory mixers → notebooks → open Sandbox.</p>
+    <div class="links">
+      <a href="/platform/live/host.html">📡 Host screen (now defaults to M2)</a>
+      <a href="/platform/live/tycoon.html">🏢 Tycoon game</a>
+      <a href="/platform/sandbox.html">🎨 Sandbox</a>
+      <a href="/platform/musiclab.html">🎵 Beat Lab</a>
+    </div>
+  </div>
+
+  <h2 id="codes"><span class="tm">Before kids arrive</span>🔑 Kid login codes</h2>
+  <div class="card" id="codesCard">
+    <div class="lab">Roster · sign in at codethefuture.net/platform → "I have a code"</div>
+    <div id="codesBody" style="font-family:var(--mono);font-size:1.02rem;line-height:2">Staff login required — sign in on the Staff tab, then reload this page.</div>
+    <p style="font-size:.82rem;color:var(--sub);margin-top:8px">New families register on the "New here" tab with their parent email + cohort password <b>launchpad-july6</b> — a fresh code is minted on the spot.</p>
+  </div>
+  <script>
+  (function(){
+    if (localStorage.getItem('ctf:unlockall') !== '1') return;   // staff eyes only
+    try{
+      var R = JSON.parse(atob('W1siQWRhbSBIdWxzbWFuIiwgInBpeGVsIG5vdmEiLCAiWjgyQy1WS1pRIl0sIFsiQ2hhcmxvdHRlIChDaGFyKSBOaWNob2xzIiwgIkJhZGRpZSIsICJTOEZWLUZYNEEiXSwgWyJEZXZvbiBHdWFybmllcmkiLCAiU3RpY2ttZW4gdW5pdGUiLCAiQ1pSTi1aNTMyIl0sIFsiTGlhbSBOaWNob2xzIiwgIihubyBuaWNrbmFtZSB5ZXQpIiwgIjUzNzUtOEVGTSJdXQ=='));
+      document.getElementById('codesBody').innerHTML = R.map(function(r){
+        return '<div><b style="color:#fff">' + r[2] + '</b> &nbsp;— ' + r[0] + ' <span style="color:#9fb6e6">· ' + r[1] + '</span></div>';
+      }).join('');
+    }catch(e){}
+  })();
+  </script>
+  <div class="tip">📡 <b>Tech check (5 min before):</b> projector → <b>host.html</b> (it now loads Module 2 by default — kids type the SAME URL as last week: <b>codethefuture.net/platform/live/</b>). Keep a second tab ready on <b>tycoon.html</b>. Prizes in your bag: candy + the Code the Future stickers.</div>
+
+  <h2 id="intro"><span class="tm">10:00–10:08</span>👋 Welcome back + Q&A recap</h2>
+  <div class="card say"><div class="lab">Say it like this</div>
+    "Last week you learned what AI IS. This week's module was about something bigger — what AI is DOING out in the world: hospitals, farms, storms, jobs… and some giant questions about fairness and who's in charge. Today you're going to prove what you know, and then — for the first time — you're going to RUN A COMPANY with it."</div>
+  <div class="card"><div class="lab">Q&A prompts — let THEM teach</div>
+    <ul>
+      <li><span class="q">"Who can tell me one place AI is already working that ISN'T a phone or a chatbot?"</span> (doctor's scans, farm drones, storm warnings, traffic, medicine labs)</li>
+      <li><span class="q">"What was the hammer thing about?"</span> — a tool isn't good or bad, the choices are.</li>
+      <li><span class="q">"Finish the rule: code does the ___, AI does the ___, humans handle the ___."</span> (loop / judgment / exceptions — they'll need this for a trivia point AND for Tycoon)</li>
+      <li><span class="q">"What's a digital footprint — and what's a 'diary thing'?"</span></li>
+      <li>Anyone who answers well: "Save that brain — there's a trophy on the line in two minutes."</li>
+    </ul></div>
+
+  <h2 id="trivia"><span class="tm">10:08–10:32</span>🎮 Game show: 20 questions · scoreboard · PRIZE</h2>
+  <div class="card"><div class="lab">Run of show</div>
+    <ul>
+      <li>Kids log in and join at <b>codethefuture.net/platform/live/</b> — names pop on the lobby screen.</li>
+      <li>Warm-up opinion vote first (no points) — sets the theme and warms up thumbs.</li>
+      <li><b>New this week:</b> a live <b>halftime scoreboard</b> after Q10 (stage 13) — milk it: "anything can happen in the second half…"</li>
+      <li>After Q20 comes the <b>🏆 Trivia Champion board — award the prize RIGHT THERE</b> (candy or stickers, their pick). Runner-ups get a sticker anyway; you brought plenty.</li>
+      <li>Rhythm per question: read it aloud → they tap → grab one defender <span class="q">"why?"</span> → <b>R</b>eveal → read the why + add your color from the answer key below → Next. ~60–70 seconds each keeps you on time.</li>
+      <li>Quick keys: <b>space/→</b> next · <b>R</b> reveal · <b>←</b> back.</li>
+      <li>⚠️ STOP at the Champion board (stage 24). The video and the Detective/Privacy rounds live AFTER it in the same deck — you'll come back for those at 11:00. Leave the tab open.</li>
+    </ul></div>
+  <div class="tip">💡 Full answer key with the deeper "why" + a follow-up question for all 20 → <a href="#answerkey" style="color:#9BF5C7">jump to the appendix</a>.</div>
+
+  <h2 id="tycoon"><span class="tm">10:32–11:02</span>🏢 THE BIG GAME — AI Business Tycoon</h2>
+  <div class="card why"><div class="lab">The why (your study notes)</div>
+    This is Module 2 turned into a game. The kids get <b>$1,000</b> and start ONE company together — every decision is a <b>group vote</b> on their devices, and every option secretly maps to a module lesson: confidently-wrong AI (humans handle exceptions), selling user data (privacy), pricing (fairness/recess balls), AI-does-everything (generic in, generic out). Money is the flashy score, but <b>Trust ❤️</b> is the real one — kind choices literally pay off later in the game (the storm round pays trust back).</div>
+  <div class="card say"><div class="lab">Say it like this</div>
+    "Every company you love started exactly like this: a little money, a big idea, and a thousand decisions. Today YOU are the board of directors. Majority vote rules. Spend wisely — and watch the hearts, because trust is a kind of money too."</div>
+  <div class="card"><div class="lab">How to run it (host = projector, staff login)</div>
+    <ul>
+      <li>Open <b>codethefuture.net/platform/live/tycoon.html</b> on the projector; kids open the same URL on devices (their view auto-becomes voting tiles).</li>
+      <li>Controls: <b>Next ›</b> advances · tap a row to hand-pick (tie-breaks/overrides) · <b>Lock it in 🔒</b> applies the winning vote, moves the money, shows the outcome. Keys: space/→/←, <b>L</b> = lock.</li>
+      <li>Flow: intro → <b>vote the company</b> (10 choices, all AI-for-good) → <b>name it</b> (they shout, you type — this moment is pure gold) → 6 board-meeting votes + 1 storm disaster → demo-day finale with valuation, hearts, and every lesson they collected.</li>
+      <li>Before each Lock In: take 60 seconds of debate. <span class="q">"Someone argue for the risky one. Someone argue against."</span> THEN vote. The arguing is the learning.</li>
+      <li>After each outcome: connect it back — "that's the hammer thing / that's the diary thing / that's humans-handle-exceptions."</li>
+      <li>If money tanks: an <b>emergency investor</b> auto-rescues them once at $150 — play it dramatic ("one more chance, board…"). Losing rounds are GREAT — real founders lose money learning.</li>
+      <li>Budget ~3–4 min per decision → ~30 min total. Running long? Skip the office round (Final move works from anywhere — just hit Next past one).</li>
+    </ul></div>
+  <div class="tip">🎯 Full decision-by-decision key (best plays, traps, and what each option teaches) → <a href="#tycoonkey" style="color:#9BF5C7">Tycoon key appendix</a>. There is no "losing" ending — the worst verdict is "Scrappy survivor," which you frame as founder street-cred.</div>
+
+  <h2 id="video"><span class="tm">11:02–11:10</span>🍿 Movie: "How will AI change the world?" (TED-Ed · 5:55)</h2>
+  <div class="card"><div class="lab">Setup</div>
+    Back to the Live Room tab (host screen) → hit <b>Next</b> past the Champion board → the video stage plays it embedded, big. It's TED-Ed animation: where AI is headed as these kids grow up, and how humans stay in charge of what it optimizes (the King Midas / "be careful what you ask for" idea — a perfect callback to Bad AI Challenge's literal-genie).</div>
+  <div class="card say"><div class="lab">Before you press play</div>
+    "This one is about YOUR future — the world you'll be grown-ups in. Two things to hunt for: what the robot gets wrong about the coffee… and what the smart humans say we should always keep control of. We'll talk after."</div>
+  <div class="card"><div class="lab">After — 2-minute talk (the "protect yourself" beat)</div>
+    <ul>
+      <li><span class="q">"What did the video say could go wrong if we tell an AI the goal the sloppy way?"</span> → exactly the Bad AI Challenge: machines do what we SAY, not what we mean. Being precise is a safety skill, not just a building skill.</li>
+      <li><span class="q">"So how does a kid stay the boss of AI as it gets stronger?"</span> Board their answers, then land the module's three: <b>be the fact-checker</b> (AI can be confidently wrong), <b>guard the diary stuff</b> (your data trains it), <b>learn how it works</b> — "which is literally what you're doing on a Saturday morning. You're ahead of most adults."</li>
+      <li>Backup/bonus if time is weird: Code.org's <b>"AI: Impact on Society"</b> (1:56) — a tight little recap of the whole module.</li>
+    </ul></div>
+
+  <h2 id="mixers"><span class="tm">11:10–11:16</span>🧠 Memory mixers (same deck, keep hitting Next)</h2>
+  <div class="card"><div class="lab">Two lightning games, right after the video stage</div>
+    <ul>
+      <li><b>🕵️ Detective: Help or Hurt?</b> — 3 scored rounds. Same-tool-different-setup scenarios. The book-bubble one is the sneaky one; let them argue before revealing.</li>
+      <li><b>🔒 Privacy power: Share or Keep?</b> — 3 scored rounds, three buckets (share / keep / ask-a-grown-up). The school-photo one teaches the best reflex of all: <b>when it's a mix, ask.</b></li>
+      <li>These add points, so the end-screen leaderboard may reshuffle — fun for glory, but the candy was already won at the Champion board. Say that out loud if anyone lawyers you. 😄</li>
+    </ul></div>
+
+  <h2 id="journal"><span class="tm">11:16–11:24</span>📓 Notebooks + Big Build think</h2>
+  <div class="card"><div class="lab">The page (write these prompts on the whiteboard)</div>
+    <ul>
+      <li>One way AI could make MY neighborhood better · One thing I'll always double-check AI on · One "diary thing" I'll never share · <b>My Big Build:</b> what's one screen of my app, sketched?</li>
+      <li>Bridge to the apps: "In Tycoon your company needed an app people loved. YOUR Big Build is that app. What would make someone love yours?"</li>
+      <li>Stuck kid → steal from Tycoon: <span class="q">"Who does your app help? What's the boring loop AI could do? What decision stays human?"</span></li>
+      <li>Sketching counts as designing. Say it out loud — frees the artists.</li>
+    </ul></div>
+
+  <h2 id="close"><span class="tm">11:24–11:30</span>🎛️ Open Sandbox + close</h2>
+  <div class="card"><div class="lab">Free play — you float</div>
+    <ul>
+      <li>Sandbox is open: <b>Scene Builder</b>, <b>Storybook</b>, and the new <b>🎵 Beat Lab</b> (platform → musiclab.html — sequencer, live keys, and an AI riff maker). Pitch it: "you can literally make music with an AI band today."</li>
+      <li>Anything they love → share it to Show &amp; Tell before they log off.</li>
+    </ul></div>
+  <div class="card say"><div class="lab">Closing beat</div>
+    "Today you proved you understand AI in the real world, you ran a whole company on votes and judgment, and you saw where this is all going. The missions keep going on the platform this week — and next Saturday, we get closer to building YOUR app. Founders: dismissed."</div>
+
+  <h2 id="answerkey"><span class="tm">Appendix</span>📡 Trivia answer key — the WHY behind all 20</h2>
+  <p style="color:var(--sub);font-size:.9rem;margin:4px 0 10px">Order matches the deck. Each has the answer, the deeper reason, and a follow-up to ask before or after Reveal. Mission numbers = where they learned it this week.</p>
+
+  <details><summary>🌍 Warm-up · "Point AI at ONE big problem…"<span class="pill op">opinion</span></summary><div>
+    <p>No wrong answer — a thermometer. Note the room's favorite; when the Tycoon business menu appears at 10:32, call it back: "half of you voted planet — PlantPal and NoWaste are right there."</p></div></details>
+
+  <details><summary>Q1 · AI is like which old invention?<span class="pill ans">💡 Electricity</span></summary><div>
+    <p><b>Why (M2):</b> electricity began as a novelty bulb people stared at, then slipped quietly behind everything — lights, fridges, hospitals. AI is mid-slip right now: from "wow, a chatbot" to running behind hospitals, farms, and cities. That's why this module exists: things THAT common have to be used well.</p>
+    <p><span class="q">Ask:</span> "When did you last think about electricity?" (Never — it disappeared into the walls. AI is disappearing into the world the same way, in their lifetime.)</p></div></details>
+
+  <details><summary>Q2 · Farm drone that learns thirsty plants<span class="pill ans">🤖 AI</span></summary><div>
+    <p><b>Why (M2):</b> it LEARNS from examples — thirsty vs. happy plants — and improves. Last week's master question still rules everything: <b>does it get better with practice?</b></p>
+    <p><span class="q">Ask:</span> "What are its training examples?" (Millions of plant photos + which ones turned out to need water.)</p></div></details>
+
+  <details><summary>Q3 · Paper map of Louisville<span class="pill ans">🚫 NOT AI</span></summary><div>
+    <p><b>Why (M2):</b> same ink forever — never learns, never updates. Useful ≠ smart. Nice contrast pair with Q2 on purpose.</p>
+    <p><span class="q">Ask:</span> "What would the map need to become AI-ish?" (Learn from traffic, reroute you, get better — congrats, you invented the maps app.)</p></div></details>
+
+  <details><summary>Q4 · AI helping a doctor is like a…<span class="pill ans">🔍 Metal detector</span></summary><div>
+    <p><b>Why (M3):</b> a metal detector doesn't dig or decide — it BEEPS so the human knows where to look. AI that studied millions of scans points at faint patterns a tired human eye might miss. Earlier catches = earlier help.</p>
+    <p><b>Misconception to catch:</b> "robot doctor." No — helper, never boss.</p>
+    <p><span class="q">Ask:</span> "What does the beep NOT tell you?" (What it means or what to do — that's the doctor's job.)</p></div></details>
+
+  <details><summary>Q5 · Who makes the FINAL call on a patient?<span class="pill ans">🧑‍⚕️ Human doctor</span></summary><div>
+    <p><b>Why (M3):</b> caring for a person takes judgment and kindness — human superpowers. This is the module's spine and it comes back in Tycoon's "add a human check" round.</p>
+    <p><span class="q">Ask:</span> "Why not let the AI decide if it studied MORE scans than any doctor?" (Because knowing patterns isn't the same as caring for THIS person — the exception might be sitting in the chair.)</p></div></details>
+
+  <details><summary>Q6 · How does AI help invent medicine?<span class="pill ans">🔑 Tests millions of ideas fast</span></summary><div>
+    <p><b>Why (M3):</b> like trying a million keys in a lock in the time it used to take to try a few. Scientists still choose the lock and check the key that turns.</p>
+    <p><span class="q">Ask:</span> "Somebody in this room could be the scientist who cracks a disease with an AI helper. What disease would you point it at?"</p></div></details>
+
+  <details><summary>Q7 · Why is AI good at storm warnings?<span class="pill ans">📚 Studied a billion storms</span></summary><div>
+    <p><b>Why (M4):</b> nobody sees tomorrow — forecasting is patterns from a zillion past days. Same trick as everything else: examples in, predictions out. Earlier warnings save lives.</p>
+    <p><span class="q">Ask:</span> "Is the AI ever WRONG about a storm?" (Yes — prediction, not prophecy. That's why humans still make the call to evacuate.)</p></div></details>
+
+  <details><summary>Q8 · AI cracked a 50-year science puzzle<span class="pill ans">✅ TRUE</span></summary><div>
+    <p><b>Why (M4):</b> protein shapes — the tiny machines inside living things. Scientists were stuck for ~50 years; AI + scientists cracked nearly all of them. Helps medicine, food, understanding nature.</p>
+    <p><span class="q">Ask:</span> "Did the AI do it alone?" (No — scientists built it, aimed it, checked it. Team win.)</p></div></details>
+
+  <details><summary>Q9 · "Code handles the ___"<span class="pill ans">🔁 Loop</span></summary><div>
+    <p><b>Why (M5):</b> the camp's whole thesis begins here. Code repeats perfectly and never gets bored — ten thousand emails, no yawns.</p>
+    <p><span class="q">Ask:</span> tee up Q10 — "so who's on deck for the weird stuff…?"</p></div></details>
+
+  <details><summary>Q10 · Who handles the EXCEPTIONS?<span class="pill ans">🧑 Humans</span></summary><div>
+    <p><b>Why (M5):</b> the strange, sad, brand-new stuff the AI has never seen needs care and judgment. Full rule on the board: <b>code does the loop, AI does the judgment inside the loop, humans handle the exceptions.</b> They'll live this rule inside Tycoon in 20 minutes.</p>
+    <p><span class="q">Ask:</span> "Which part sounds like the job YOU'D want?"</p></div></details>
+
+  <details><summary>📊 HALFTIME BOARD<span class="pill op">no points</span></summary><div>
+    <p>New this week. Names + scores, live. Hype line: "ten questions left — the trophy has changed hands at halftime before…" Then breathe; you're halfway on the clock too.</p></div></details>
+
+  <details><summary>Q11 · Sad tricky email shows up<span class="pill ans">🧑 A human steps in</span></summary><div>
+    <p><b>Why (M5):</b> that's an EXCEPTION. The AI took the boring 9,999 precisely so a person has time for the one that matters. Kindness doesn't automate.</p>
+    <p><span class="q">Ask:</span> "Why not let the AI answer it — it's read a billion emails?" (Reading about sad ≠ caring. The person on the other end deserves a person.)</p></div></details>
+
+  <details><summary>Q12 · "The dishwasher ended cooking"<span class="pill myth">MYTH</span></summary><div>
+    <p><b>Why (M5):</b> the dishwasher freed the cook to COOK more. AI is that for lots of jobs — it eats the repeating part; the caring/deciding/creating part grows. And brand-new jobs appear: teaching AIs, checking AIs, deciding their rules. "App maker" wasn't a job when your parents were kids.</p>
+    <p><span class="q">Ask:</span> "What job might exist when YOU'RE 25 that doesn't exist today?" (Board the wild ones — some will be right.)</p></div></details>
+
+  <details><summary>Q13 · Is AI good or bad?<span class="pill ans">🔨 Neither — choices matter</span></summary><div>
+    <p><b>Why (M6):</b> the hammer test. Treehouse or broken window — same hammer. AI is the same, just vastly more powerful, so the choices matter vastly more.</p>
+    <p><span class="q">Ask:</span> "Give me one thing in your house that passes the hammer test." (Everything does. That's the point.)</p></div></details>
+
+  <details><summary>Q14 · "Should we?" and…<span class="pill ans">⚖️ "Who gets to choose?"</span></summary><div>
+    <p><b>Why (M6):</b> the two grown-up questions. CAN ≠ SHOULD, and who decides shapes who benefits. These two questions run the entire back half of Tycoon.</p>
+    <p><span class="q">Ask:</span> "Name something we CAN do but maybe shouldn't." (Their examples get deep fast — let one breathe.)</p></div></details>
+
+  <details><summary>Q15 · Your trail online = digital ___<span class="pill ans">👣 Footprint</span></summary><div>
+    <p><b>Why (M7):</b> watch, search, type, go — little trails everywhere. Not scary, just real: AI learns from data like yours, so you should be the boss of what you leave behind.</p>
+    <p><span class="q">Ask:</span> "What did YOU add to your footprint this morning before 9am?" (YouTube, a game login, a search…)</p></div></details>
+
+  <details><summary>Q16 · Your home address is a…<span class="pill ans">📔 Diary thing</span></summary><div>
+    <p><b>Why (M7):</b> bulletin board = favorite color, proud drawings; diary = address, passwords, where you'll be Saturday. Thoughtful, not scared.</p>
+    <p><span class="q">Ask:</span> lightning-sort a few out loud — "favorite team?" (board) "your school's name plus your full name?" (careful — that's the mixer question sneaking up later 😏)</p></div></details>
+
+  <details><summary>Q17 · One kid owns every ball at recess<span class="pill ans">⚖️ Not fair — even if nice</span></summary><div>
+    <p><b>Why (M8):</b> no villain needed — even a nice kid owning everything means everyone else has to come asking. The biggest AI tools today are held by a few companies/countries because they're insanely expensive. Fairness question, not a monster question: tools that shape the world should help everybody.</p>
+    <p><span class="q">Ask:</span> "How does it get fairer?" (More people learning it, using it, having a say — "which is literally you, on a Saturday, at a library.")</p></div></details>
+
+  <details><summary>Q18 · What keeps powerful tools HELPING?<span class="pill ans">📜 Good rules + many voices</span></summary><div>
+    <p><b>Why (M9):</b> the flashlight — lights your path home, or gets shined in your face. Tools don't decide; PEOPLE do. Good rules (like traffic lights — rules can be kind!) and many voices keep the light on the path.</p>
+    <p><b>Handle with care:</b> if a kid brings up scary surveillance stuff, validate ("big thought — allowed") and land on the hopeful mechanics: rules, voices, people like them.</p>
+    <p><span class="q">Ask:</span> "What's a rule that makes recess MORE fun, not less?" (Taking turns — rules can be the kind thing.)</p></div></details>
+
+  <details><summary>Q19 · Who decides the future of AI?<span class="pill ans">🌍 Nobody alone — incl. YOU</span></summary><div>
+    <p><b>Why (M10):</b> not one company, not one ruler. Rules made together, voting, speaking up, new builders with fresh ideas. The future of AI is NOT decided yet — it's being figured out while they're kids, which means their voice is in it.</p>
+    <p><span class="q">Ask:</span> "If you could make ONE rule every AI must follow, what is it?" (Gold — write the best on the whiteboard and leave it up all session.)</p></div></details>
+
+  <details><summary>Q20 · Great builder = curiosity + kindness + ___<span class="pill ans">🧠 Judgment</span></summary><div>
+    <p><b>Why (M11):</b> the module's summit. AI brings speed; the human brings wisdom — should we, is it fair, who could this hurt. A robot can sort a million photos; only a person decides which idea DESERVES building.</p>
+    <p><span class="q">Ask (right before the champion board):</span> "Which of the three do you already have the most of?" Then reveal, crown the champ, hand out the candy and stickers. 🏆</p></div></details>
+
+  <details><summary>🕵️ Mixer key · Help or Hurt? (after the video)</summary><div>
+    <p><b>1 · Book AI locked to ONE kind forever → 😬 Could hurt.</b> Recommendations are great; a forever-bubble means never discovering anything. Same tool, different setup — the choices matter (M6). <span class="q">Ask:</span> "How would you set it up instead?" (Mostly what I love + a surprise sometimes.)</p>
+    <p><b>2 · City energy saver → 🙌 Helping.</b> Huge-number problems are AI's home turf (M4); humans picked the goal, AI executes it better.</p>
+    <p><b>3 · Watches everyone all the time → 😬 Could hurt.</b> The flashlight in your face (M9). Not a fear beat — a WHY-rules-matter beat.</p></div></details>
+
+  <details><summary>🔒 Mixer key · Share or Keep?</summary><div>
+    <p><b>1 · Favorite color → 📌 Share.</b> Being the boss of your info ≠ hiding everything.</p>
+    <p><b>2 · Password → 🔒 Keep. Always.</b> No app, no game, no "friend online" ever needs it. Ever.</p>
+    <p><b>3 · Project photo + full name + school → 🧑 Ask first.</b> The best reflex in the whole module: when it's a MIX, ask a grown-up you trust. Not babyish — exactly what smart people do.</p></div></details>
+
+  <h2 id="tycoonkey"><span class="tm">Appendix</span>🗝️ Tycoon key — every decision, decoded</h2>
+  <p style="color:var(--sub);font-size:.9rem;margin:4px 0 10px">Money shown is net (earn − cost). ❤️ = trust change. You can override any vote by tapping a row before Lock In — use it for ties, not to save them from bad calls. Bad calls are curriculum.</p>
+
+  <details open><summary>🚀 The 10 businesses (all AI-for-good)</summary><div>
+    <p>MediMinder 🩺 · PlantPal 🌱 · PetFinder 🐾 · SortBot ♻️ · ReadingBuddy 📚 · StormSpotter 🌪️ · NoWaste 🍎 · SignSpeak 🧏 · SafeRoute 🚲 · ArtAccess 🎨.</p>
+    <p>No wrong pick — the decisions that follow are the same. Callback move: match the pick to the warm-up vote and to specific kids' Big Build ideas. Then the NAME vote: they shout, you type, you hit "Name it!" — confetti. Instant ownership.</p></div></details>
+
+  <details><summary>1 · First move ($1,000 in hand)</summary><div>
+    <table><tr><th>Option</th><th>Net</th><th>❤️</th><th>Teaches</th></tr>
+    <tr><td><b>🛠️ Build v1</b></td><td>−$50</td><td>+1</td><td>ship rough, then improve</td></tr>
+    <tr><td><b>📢 Ads first</b></td><td>−$400</td><td>—</td><td>hype without a product (the trap)</td></tr>
+    <tr><td><b>🗣️ Ask 50 people</b></td><td>+$200</td><td>+1</td><td>listen to humans first (best play)</td></tr></table>
+    <p><span class="q">Debate spark:</span> "Ads FEEL like the fast lane — who wants to argue for them?" Let them fall in or dodge; both are lessons.</p></div></details>
+
+  <details><summary>2 · AI is confidently WRONG</summary><div>
+    <table><tr><th>Option</th><th>Net</th><th>❤️</th><th>Teaches</th></tr>
+    <tr><td><b>🤫 Ship anyway</b></td><td>−$250</td><td>−2</td><td>confidence ≠ correctness</td></tr>
+    <tr><td><b>🧑 Human check</b></td><td>+$250</td><td>+1</td><td>humans handle exceptions (best play — THE camp rule)</td></tr>
+    <tr><td><b>🔌 Unplug forever</b></td><td>+$50</td><td>—</td><td>don't ditch the tool, guide it</td></tr></table>
+    <p>Connect to Q11 from trivia — they JUST answered this. If they still ship it anyway: "interesting… the board chose chaos" and let the refunds sting.</p></div></details>
+
+  <details><summary>3 · $500 for your users' private info</summary><div>
+    <table><tr><th>Option</th><th>Net</th><th>❤️</th><th>Teaches</th></tr>
+    <tr><td><b>🤑 Sell it</b></td><td>−$150</td><td>−2</td><td>easy money costs more than it pays</td></tr>
+    <tr><td><b>🛡️ Protect it</b></td><td>+$250</td><td>+1</td><td>privacy is a superpower</td></tr>
+    <tr><td><b>🙋 Ask permission</b></td><td>+$350</td><td>+1</td><td>users choose (sneaky best play)</td></tr></table>
+    <p>The subtlety worth saying out loud: protecting ≠ hiding everything — ASKING beats both. Bulletin-board stuff, shared by choice, is fine. That's Mission 7 exactly.</p></div></details>
+
+  <details><summary>4 · How do we grow?</summary><div>
+    <table><tr><th>Option</th><th>Net</th><th>❤️</th><th>Teaches</th></tr>
+    <tr><td><b>🧑‍🤝‍🧑 Friend + AI team</b></td><td>+$300</td><td>+1</td><td>humans + AI, each at their best (best play)</td></tr>
+    <tr><td><b>🤖 AI does everything</b></td><td>+$100</td><td>−1</td><td>generic in, generic out — nobody steering</td></tr>
+    <tr><td><b>🥱 Solo all-nighters</b></td><td>+$150</td><td>—</td><td>captains need crews</td></tr></table></div></details>
+
+  <details><summary>5 · Set your price (the recess-ball round)</summary><div>
+    <table><tr><th>Option</th><th>Net</th><th>❤️</th><th>Teaches</th></tr>
+    <tr><td><b>💎 Expensive, fancy schools only</b></td><td>+$450</td><td>−2</td><td>most money, mission lost</td></tr>
+    <tr><td><b>🤝 Fair + free libraries</b></td><td>+$450</td><td>+2</td><td>SAME money, hearts up (best play — that's the punchline: fair cost nothing)</td></tr>
+    <tr><td><b>🆓 Totally free</b></td><td>−$100</td><td>+1</td><td>sustainable &gt; saintly</td></tr></table>
+    <p>Say the punchline after reveal: "look — fair made the SAME money as greedy. The hearts were free."</p></div></details>
+
+  <details><summary>6 · ⛈️ STORM! (auto −$250 when the round opens)</summary><div>
+    <table><tr><th>Option</th><th>Net</th><th>❤️</th><th>Teaches</th></tr>
+    <tr><td><b>☁️ Cloud backup</b></td><td>+$150</td><td>+1</td><td>plan for the weird days</td></tr>
+    <tr><td><b>🫠 Wait it out</b></td><td>−$200</td><td>−1</td><td>doing nothing costs money too</td></tr>
+    <tr><td><b>📚 Ask the community</b></td><td>+$150</td><td>+1</td><td>trust pays back — ESPECIALLY sweet if their hearts are high; point at the meter</td></tr></table>
+    <p>Play the disaster banner big. "This is the exceptions part of the rule — the stuff no plan saw coming. Who handles exceptions?" (Everyone: "HUMANS.")</p></div></details>
+
+  <details><summary>7 · Final move</summary><div>
+    <table><tr><th>Option</th><th>Net</th><th>❤️</th><th>Teaches</th></tr>
+    <tr><td><b>🎁 The begged-for feature</b></td><td>+$500</td><td>+1</td><td>listen → build → repeat (best play, bookends round 1)</td></tr>
+    <tr><td><b>🛝 Office slide</b></td><td>−$350</td><td>—</td><td>shiny ≠ better</td></tr>
+    <tr><td><b>🏦 Bank it</b></td><td>+$60</td><td>—</td><td>sometimes careful is expensive</td></tr></table></div></details>
+
+  <details><summary>🎉 Demo-day verdicts</summary><div>
+    <p>Score = cash + hearts×100. <b>🦄 Unicorn</b> ≥2600 · <b>🚀 Taking off</b> ≥2000 · <b>📈 Solid startup</b> ≥1400 · <b>🌱 Scrappy survivor</b> below. Perfect play lands ~$2,950 + 5 hearts. Whatever they get, read the collected lesson chips out loud — that's the module recap disguised as a trophy screen. Close: "You started with $1,000 and a vote. You ran it with judgment, fairness, and humans handling the exceptions. That's not pretend — that's the actual job."</p></div></details>
+
+  <div class="tip">🎛️ Cheat row: Live Room keys <b>space/→</b> next · <b>R</b> reveal · <b>←</b> back. Tycoon keys: <b>space/→</b> next · <b>L</b> lock · tap a row to hand-pick. Prize at stage 24 (Champion board). Video + mixers live after it — come back at 11:00.</div>
+</div>
+</body>
+</html>
