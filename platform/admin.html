@@ -23,8 +23,15 @@
   .grid2{ display:grid; grid-template-columns:1.6fr 1fr; gap:18px; align-items:start; margin-bottom:50px; }
   @media (max-width:980px){ .grid2{ grid-template-columns:1fr; } }
   .panel{ background:var(--white); border:1px solid var(--ink-200); border-radius:var(--radius-lg); box-shadow:var(--shadow-sm); overflow:hidden; }
-  .panel-h{ font-family:var(--font-mono); font-size:11px; letter-spacing:.1em; text-transform:uppercase; color:var(--ink-500); padding:16px 18px 10px; display:flex; align-items:center; gap:8px; }
+  .panel-h{ font-family:var(--font-mono); font-size:11px; letter-spacing:.1em; text-transform:uppercase; color:var(--ink-500); padding:16px 18px 10px; display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
   .panel-h .n{ margin-left:auto; background:var(--blue-50); color:var(--blue-700); border-radius:999px; padding:2px 10px; font-weight:700; }
+
+  /* module switcher tabs */
+  .modtabs{ display:flex; gap:6px; }
+  .modtab{ font-family:var(--font-mono); font-size:10.5px; letter-spacing:.06em; font-weight:700; cursor:pointer; border:1px solid var(--ink-200);
+    background:var(--white); color:var(--ink-500); border-radius:999px; padding:5px 12px; }
+  .modtab.on{ background:var(--blue-700,#2A5FF0); border-color:var(--blue-700,#2A5FF0); color:#fff; }
+  .modtab:not(.on):hover{ background:var(--blue-50); color:var(--blue-700); }
 
   /* roster table */
   .krow{ display:flex; align-items:center; gap:14px; padding:14px 18px; border-top:1px solid var(--ink-100); }
@@ -33,6 +40,8 @@
   .krow .who b{ display:block; color:var(--ink-900); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
   .krow .who small{ color:var(--ink-400); font-size:.75rem; }
   .krow .prog{ flex:1; min-width:120px; }
+  .krow .xmods{ display:flex; gap:8px; margin-top:5px; font-family:var(--font-mono); font-size:9.5px; letter-spacing:.04em; color:var(--ink-400); }
+  .krow .xmods b{ color:var(--ink-700); font-weight:700; }
   .krow .prog .lbl{ display:flex; justify-content:space-between; font-size:.8rem; font-weight:700; color:var(--ink-700); margin-bottom:5px; }
   .krow .prog .lbl small{ color:var(--ink-400); font-weight:600; }
   .pbar{ height:8px; background:var(--ink-100); border-radius:999px; overflow:hidden; }
@@ -94,7 +103,7 @@
 
     <div class="grid2">
       <div class="panel">
-        <div class="panel-h">🚀 Cohort progress — <span id="cohortLabel"></span><span class="n" id="rosterN"></span></div>
+        <div class="panel-h">🚀 Cohort progress — <span id="cohortLabel"></span><span class="modtabs" id="modTabs"></span><span class="n" id="rosterN"></span></div>
         <div id="roster"><div class="empty">Loading…</div></div>
       </div>
 
@@ -128,8 +137,19 @@
 <script>
 (function(){
   var A = window.CTFAvatar;
-  var MODULE = "module-01-what-is-ai", TRACK = "kids";
+  var TRACK = "kids";
+  // Every module the console can show. badgeSet matches CTFBadge.setFor();
+  // floor = launch floor (mirrors the module player's LAUNCH_FLOOR — pace
+  // anchor is the LATER of cohort starts_on and this date). Add a row here
+  // when a new module ships.
+  var MODULES = [
+    { key:"module-01-what-is-ai",      label:"Module 1 · What Is AI?",    short:"M1", badgeSet:"",      floor:null },
+    { key:"module-02-ai-and-society",  label:"Module 2 · AI & Our World", short:"M2", badgeSet:"mod2-", floor:"2026-07-13" }
+  ];
+  // all modules drip the same way: 3 parts on days 0 / +2 / +4
   var PARTS = [ { first:1, last:4, offset:0 }, { first:5, last:8, offset:2 }, { first:9, last:12, offset:4 } ];
+  // default view = the newest module that has launched
+  var current = MODULES.filter(function(m){ return !m.floor || new Date() >= new Date(m.floor + "T00:00:00"); }).pop() || MODULES[0];
 
   function esc(s){ return String(s==null?"":s).replace(/[&<>"]/g, function(c){ return ({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"})[c]; }); }
 
@@ -169,23 +189,26 @@
   function ago(ts){ var s=(Date.now()-new Date(ts).getTime())/1000; if(s<60)return"just now"; if(s<3600)return Math.floor(s/60)+"m ago"; if(s<86400)return Math.floor(s/3600)+"h ago"; return Math.floor(s/86400)+"d ago"; }
   function days(ts){ return (Date.now()-new Date(ts).getTime()) / 86400000; }
 
-  // mission map from the lesson content (mirrors player.js flatten():
-  // one title step per non-capstone mission + one step per beat)
-  var MAP = null, TOTAL = 152;
-  async function loadMap(){
-    try{
-      var r = await fetch("../curriculum/" + MODULE + "/lessons/content/" + TRACK + ".json");
-      var data = await r.json();
-      var steps = 0; MAP = [];
-      data.missions.forEach(function(m){
-        var count = (m.kind === "capstone" ? 0 : 1) + (m.beats || []).length;
-        MAP.push({ start: steps, end: steps + count - 1, n: m.kind === "capstone" ? 12 : m.n, kind: m.kind, title: m.title || "" });
-        steps += count;
-      });
-      TOTAL = steps;
-    } catch(e){ MAP = null; }
+  // mission maps from the lesson content, one per module (mirrors player.js
+  // flatten(): one title step per non-capstone mission + one step per beat)
+  var MAPS = {};   // module key -> { MAP:[...], TOTAL:n }
+  async function loadMaps(){
+    await Promise.all(MODULES.map(async function(mod){
+      try{
+        var r = await fetch("../curriculum/" + mod.key + "/lessons/content/" + TRACK + ".json");
+        var data = await r.json();
+        var steps = 0, map = [];
+        data.missions.forEach(function(m){
+          var count = (m.kind === "capstone" ? 0 : 1) + (m.beats || []).length;
+          map.push({ start: steps, end: steps + count - 1, n: m.kind === "capstone" ? 12 : m.n, kind: m.kind, title: m.title || "" });
+          steps += count;
+        });
+        MAPS[mod.key] = { MAP: map, TOTAL: steps };
+      } catch(e){ MAPS[mod.key] = { MAP: null, TOTAL: 152 }; }
+    }));
   }
-  function missionAt(pos){
+  function missionAt(modKey, pos){
+    var MAP = (MAPS[modKey] || {}).MAP;
     if (!MAP) return { label: "Step " + (pos+1), n: null };
     for (var i = 0; i < MAP.length; i++){
       if (pos <= MAP[i].end){
@@ -197,9 +220,12 @@
     }
     return { label: "Done", n: 12 };
   }
-  function unlockedPartLast(startsOn){
-    var anchor = startsOn ? new Date(startsOn + "T00:00:00") : new Date();
-    var last = 4;
+  // pace anchor = the LATER of cohort starts_on and the module's launch floor
+  function unlockedPartLast(startsOn, floor){
+    var a = startsOn || "";
+    if (floor && (!a || floor > a)) a = floor;
+    var anchor = a ? new Date(a + "T00:00:00") : new Date();
+    var last = 0;
     PARTS.forEach(function(p){
       var u = new Date(anchor); u.setDate(u.getDate() + p.offset);
       if (new Date() >= u) last = p.last;
@@ -219,73 +245,108 @@
     }
     var cohort = cohorts[0];
     document.getElementById("cohortLabel").textContent = cohort.name;
-    await loadMap();
+    await loadMaps();
 
     var members = await D.listMembers(cohort.id);
     var uids = members.map(function(m){ return m.user_id; });
     var results = await Promise.all([ D.progressByUsers(uids), D.badgesByUsers(uids), D.myDmMessages(cohort.id), D.helpPosts(cohort.id) ]);
     var progress = results[0], badges = results[1], dms = results[2], help = results[3];
 
-    var progByUser = {}; progress.forEach(function(p){ if (p.module === MODULE) progByUser[p.user_id] = p; });
+    // progress rows come back for ALL modules — index them module -> user -> row
+    var progByMod = {}; MODULES.forEach(function(mod){ progByMod[mod.key] = {}; });
+    progress.forEach(function(p){ if (progByMod[p.module] && p.track === TRACK) progByMod[p.module][p.user_id] = p; });
     var badgesByUser = {}; badges.forEach(function(b){ (badgesByUser[b.user_id] = badgesByUser[b.user_id] || []).push(b); });
 
-    var partLast = unlockedPartLast(cohort.starts_on);
     var learners = members.filter(function(m){ return m.role !== "staff"; });
     var staffIds = {}; members.forEach(function(m){ if (m.role === "staff") staffIds[m.user_id] = true; });
 
-    // ---- roster ----
-    var attention = 0, missionSum = 0, missionCount = 0;
-    var rows = learners.map(function(m){
-      var pr = m.profiles || {};
-      var p = progByUser[m.user_id];
-      var bds = (badgesByUser[m.user_id] || []).slice().sort(function(a,b){ return (window.CTFBadge.numFor(a.badge_key)||0) - (window.CTFBadge.numFor(b.badge_key)||0); });
-      var signals = [];
-      var mission = { label: "Not started", n: null };
-      var pct = 0;
+    // tiny cross-module status line shown under each kid's bar (M1 ✓ · M2 Mission 4)
+    function xmodLine(uid){
+      return '<span class="xmods">' + MODULES.map(function(mod){
+        var p = progByMod[mod.key][uid], t = "—";
+        if (p) t = p.completed ? "✓ done" : missionAt(mod.key, p.position).label.replace("Mission ", "M");
+        var b = mod.key === current.key;
+        return (b ? "<b>" : "") + mod.short + " " + t + (b ? "</b>" : "");
+      }).join(" · ") + "</span>";
+    }
 
-      if (!p){ signals.push({ cls:"muted", t:"⚪ not started" }); attention++; }
-      else {
-        mission = p.completed ? { label: "Completed! 🏆", n: 12 } : missionAt(p.position);
-        pct = Math.min(100, Math.round(100 * (p.position + 1) / TOTAL));
-        if (p.completed) pct = 100;
-        if (mission.n != null){ missionSum += mission.n; missionCount++; }
-        var flagged = false;
-        if (!p.completed && days(p.updated_at) >= 3){ signals.push({ cls:"bad", t:"🔴 quiet " + Math.floor(days(p.updated_at)) + "d" }); flagged = true; }
-        if (!p.completed && mission.n != null){
-          var expectedFirst = PARTS.filter(function(pp){ return pp.last <= partLast; }).pop();
-          if (expectedFirst && mission.n < expectedFirst.first){ signals.push({ cls:"warn", t:"🟡 behind pace" }); flagged = true; }
+    // ---- roster + summary cards for the selected module (no refetch) ----
+    function renderModule(){
+      var MODULE = current.key, TOTAL = (MAPS[MODULE] || {}).TOTAL || 152;
+      var progByUser = progByMod[MODULE];
+      var partLast = unlockedPartLast(cohort.starts_on, current.floor);
+
+      document.querySelectorAll(".modtab").forEach(function(t){ t.classList.toggle("on", t.dataset.mod === MODULE); });
+
+      var attention = 0, missionSum = 0, missionCount = 0, modBadges = 0;
+      var rows = learners.map(function(m){
+        var pr = m.profiles || {};
+        var p = progByUser[m.user_id];
+        var bds = (badgesByUser[m.user_id] || []).filter(function(b){
+          return (window.CTFBadge.setFor ? window.CTFBadge.setFor(b.badge_key) : "") === current.badgeSet;
+        }).sort(function(a,b){ return (window.CTFBadge.numFor(a.badge_key)||0) - (window.CTFBadge.numFor(b.badge_key)||0); });
+        modBadges += bds.length;
+        var signals = [];
+        var mission = { label: "Not started", n: null };
+        var pct = 0;
+
+        if (!p){ signals.push({ cls:"muted", t:"⚪ not started" }); attention++; }
+        else {
+          mission = p.completed ? { label: "Completed! 🏆", n: 12 } : missionAt(MODULE, p.position);
+          pct = Math.min(100, Math.round(100 * (p.position + 1) / TOTAL));
+          if (p.completed) pct = 100;
+          if (mission.n != null){ missionSum += mission.n; missionCount++; }
+          var flagged = false;
+          if (!p.completed && days(p.updated_at) >= 3){ signals.push({ cls:"bad", t:"🔴 quiet " + Math.floor(days(p.updated_at)) + "d" }); flagged = true; }
+          if (!p.completed && mission.n != null){
+            var expectedFirst = PARTS.filter(function(pp){ return pp.last <= partLast; }).pop();
+            if (expectedFirst && mission.n < expectedFirst.first){ signals.push({ cls:"warn", t:"🟡 behind pace" }); flagged = true; }
+          }
+          if (!signals.length) signals.push({ cls:"ok", t:"🟢 on track" });
+          if (flagged) attention++;
         }
-        if (!signals.length) signals.push({ cls:"ok", t:"🟢 on track" });
-        if (flagged) attention++;
-      }
 
-      var bimgs = bds.slice(0, 3).map(function(b){
-        var n = window.CTFBadge.numFor(b.badge_key);
-        var set = window.CTFBadge.setFor ? window.CTFBadge.setFor(b.badge_key) : "";
-        return n ? '<img src="assets/badges/badge-' + set + n + '.png" title="' + esc(window.CTFBadge.nameFor(b.badge_key)) + '" alt="">' : "";
+        var bimgs = bds.slice(0, 3).map(function(b){
+          var n = window.CTFBadge.numFor(b.badge_key);
+          var set = window.CTFBadge.setFor ? window.CTFBadge.setFor(b.badge_key) : "";
+          return n ? '<img src="assets/badges/badge-' + set + n + '.png" title="' + esc(window.CTFBadge.nameFor(b.badge_key)) + '" alt="">' : "";
+        }).join("");
+        if (bds.length > 3) bimgs += '<span class="more">+' + (bds.length - 3) + "</span>";
+        if (!bds.length) bimgs = '<span class="more">—</span>';
+
+        return '<div class="krow">' +
+          '<span class="avatar sm">' + av(pr.avatar) + "</span>" +
+          '<span class="who"><b>' + esc(pr.display_name || "Explorer") + "</b><small>" + (p ? "active " + ago(p.updated_at) : "not started") + "</small></span>" +
+          '<span class="prog"><span class="lbl"><span>' + mission.label + '</span><small>' + (p ? (p.position + 1) + "/" + TOTAL : "0/" + TOTAL) + '</small></span>' +
+          '<span class="pbar' + (p && p.completed ? " done" : "") + '"><i style="width:' + pct + '%"></i></span>' + xmodLine(m.user_id) + '</span>' +
+          '<span class="bdg">' + bimgs + "</span>" +
+          '<span class="chips">' + signals.map(function(s){ return '<span class="chip ' + s.cls + '">' + s.t + "</span>"; }).join("") + "</span>" +
+          '<a class="dm" href="board.html?dm=' + encodeURIComponent(m.user_id) + '#chat">💬 DM</a>' +
+          "</div>";
       }).join("");
-      if (bds.length > 3) bimgs += '<span class="more">+' + (bds.length - 3) + "</span>";
-      if (!bds.length) bimgs = '<span class="more">—</span>';
+      document.getElementById("roster").innerHTML = rows || '<div class="empty">No learners yet — share the join code!</div>';
+      document.getElementById("rosterN").textContent = learners.length;
 
-      return '<div class="krow">' +
-        '<span class="avatar sm">' + av(pr.avatar) + "</span>" +
-        '<span class="who"><b>' + esc(pr.display_name || "Explorer") + "</b><small>" + (p ? "active " + ago(p.updated_at) : "never started") + "</small></span>" +
-        '<span class="prog"><span class="lbl"><span>' + mission.label + '</span><small>' + (p ? (p.position + 1) + "/" + TOTAL : "0/" + TOTAL) + '</small></span>' +
-        '<span class="pbar' + (p && p.completed ? " done" : "") + '"><i style="width:' + pct + '%"></i></span></span>' +
-        '<span class="bdg">' + bimgs + "</span>" +
-        '<span class="chips">' + signals.map(function(s){ return '<span class="chip ' + s.cls + '">' + s.t + "</span>"; }).join("") + "</span>" +
-        '<a class="dm" href="board.html?dm=' + encodeURIComponent(m.user_id) + '#chat">💬 DM</a>' +
-        "</div>";
+      document.getElementById("stBuilders").textContent = learners.length;
+      document.getElementById("stAvg").textContent = missionCount ? (Math.round(10 * missionSum / missionCount) / 10) : "—";
+      document.getElementById("stBadges").textContent = modBadges;
+      document.getElementById("stAttention").textContent = attention;
+      document.querySelector("#stAvg + span").textContent = "Avg mission (" + current.short + ")";
+      document.querySelector("#stBadges + span").textContent = "Badges (" + current.short + ")";
+      document.querySelector("#stAttention + span").textContent = "Need attention (" + current.short + ")";
+    }
+
+    // module switcher tabs
+    document.getElementById("modTabs").innerHTML = MODULES.map(function(mod){
+      return '<span class="modtab" data-mod="' + mod.key + '" title="' + esc(mod.label) + '">' + mod.short + "</span>";
     }).join("");
-    document.getElementById("roster").innerHTML = rows || '<div class="empty">No learners yet — share the join code!</div>';
-    document.getElementById("rosterN").textContent = learners.length;
-
-    // ---- summary cards ----
-    var totalBadges = badges.filter(function(b){ return !staffIds[b.user_id]; }).length;
-    document.getElementById("stBuilders").textContent = learners.length;
-    document.getElementById("stAvg").textContent = missionCount ? (Math.round(10 * missionSum / missionCount) / 10) : "—";
-    document.getElementById("stBadges").textContent = totalBadges;
-    document.getElementById("stAttention").textContent = attention;
+    document.querySelectorAll(".modtab").forEach(function(t){
+      t.addEventListener("click", function(){
+        current = MODULES.filter(function(mod){ return mod.key === t.dataset.mod; })[0] || current;
+        renderModule();
+      });
+    });
+    renderModule();
 
     // ---- DM inbox: latest message per partner thread, flag if kid spoke last ----
     var profs = {}; members.forEach(function(m){ profs[m.user_id] = m.profiles || {}; });
