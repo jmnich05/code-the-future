@@ -19,6 +19,10 @@ body{ font-family:var(--body); color:#EAF1FF; height:100vh; display:flex; flex-d
 .hd .logo img{ width:30px; height:30px; }
 .hd .logo span{ color:var(--teal); }
 .hd .sess{ font-family:var(--mono); font-size:12px; letter-spacing:.16em; text-transform:uppercase; color:var(--purple); }
+.hd .modsw{ display:flex; gap:6px; }
+.hd .modsw a{ font-family:var(--mono); font-size:11px; font-weight:700; letter-spacing:.06em; text-decoration:none; color:#9fb6e6;
+  border:1px solid rgba(255,255,255,.18); border-radius:999px; padding:4px 11px; }
+.hd .modsw a.on{ color:#06122b; background:linear-gradient(120deg,#9fb6ff,#9B7BFF); border-color:transparent; }
 .hd .joined{ margin-left:auto; font-family:var(--mono); font-size:13px; color:#9BF5C7; }
 .stage{ flex:1 1 auto; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:20px 40px; text-align:center; overflow-y:auto; min-height:0; }
 .kick{ font-family:var(--mono); font-size:14px; letter-spacing:.22em; text-transform:uppercase; color:var(--purple); margin-bottom:12px; }
@@ -74,6 +78,7 @@ h1{ font-family:var(--display); font-weight:700; font-size:clamp(2rem,4.5vw,3.4r
 <div class="hd">
   <div class="logo"><img src="/platform/assets/logo-icon-tile.svg" alt="">Code the <span>Future</span></div>
   <div class="sess" id="sess"></div>
+  <div class="modsw" id="modsw"></div>
   <div class="joined" id="joined">0 in the room</div>
 </div>
 <div class="stage" id="stage"><div class="gatemsg"><h1>Connecting…</h1></div></div>
@@ -97,6 +102,14 @@ const S = window.LIVE_SESSION;
 const stageEl = document.getElementById('stage');
 const esc = (s)=>String(s==null?'':s).replace(/[&<>"]/g,(c)=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 document.getElementById('sess').textContent = S.title;
+
+// module switcher — add each module here as its config-mN.js ships. Clicking
+// reloads the host in that room; the lobby announcement makes every kid
+// device hop over automatically.
+const SESSIONS = ['1','2'];
+const _cur = (S.id||'m1').replace(/\D/g,'')||'1';
+document.getElementById('modsw').innerHTML = SESSIONS.map(n=>
+  '<a href="?m='+n+'" class="'+(n===_cur?'on':'')+'">M'+n+'</a>').join('');
 
 // soft staff check — the room is cohort-gated anyway; this keeps kids out of the controls
 if(localStorage.getItem('ctf:unlockall')!=='1'){
