@@ -119,6 +119,7 @@ const clean=(v)=>{ if(v && window.CTFFilter && CTFFilter.isClean && !CTFFilter.i
 function profile(){ try{ return JSON.parse(localStorage.getItem('ctf:profile')||'null')||{}; }catch(e){ return {}; } }
 let uid; try{ uid = localStorage.getItem('ctf:liveuid') || ('k'+Math.random().toString(36).slice(2,10)); localStorage.setItem('ctf:liveuid', uid); }catch(e){ uid='k'+Date.now(); }
 const name = (profile().display_name||'Builder').toString().slice(0,20);
+const myAvatar = profile().avatar || {};   // the character they built — sent to the host screen
 
 // --- the dream menu (same 12 builds + seeds as the Dream Picker) -------------
 const IDEAS=[
@@ -197,7 +198,7 @@ function startRealtime(){
     if(stageId!==prev || revealed!==prevR) render();
   });
   channel.subscribe(async (status)=>{
-    if(status==='SUBSCRIBED'){ await channel.track({ role:'kid', uid, name }); render(); }
+    if(status==='SUBSCRIBED'){ await channel.track({ role:'kid', uid, name, avatar:myAvatar }); render(); }
   });
 }
 function send(event,payload){ if(channel) channel.send({ type:'broadcast', event, payload }); }
