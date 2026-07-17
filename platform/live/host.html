@@ -27,7 +27,10 @@ h1{ font-family:var(--display); font-weight:700; font-size:clamp(2rem,4.5vw,3.4r
 .sub{ font-size:1.25rem; opacity:.88; max-width:56ch; margin-top:12px; line-height:1.5; }
 .url{ font-family:var(--mono); font-size:clamp(1.2rem,2.6vw,1.9rem); color:#9BF5C7; background:rgba(63,208,138,.1); border:1.5px solid rgba(63,208,138,.4); border-radius:16px; padding:14px 26px; margin-top:20px; }
 .people{ display:flex; flex-wrap:wrap; gap:10px; justify-content:center; margin-top:24px; max-width:900px; }
-.pp{ font-family:var(--display); font-weight:700; font-size:1.05rem; background:rgba(155,123,255,.18); border:1.5px solid rgba(155,123,255,.45); border-radius:999px; padding:10px 20px; animation:pop .3s; }
+.pp{ display:inline-flex; align-items:center; gap:9px; font-family:var(--display); font-weight:700; font-size:1.05rem; background:rgba(155,123,255,.18); border:1.5px solid rgba(155,123,255,.45); border-radius:999px; padding:7px 20px 7px 8px; animation:pop .3s; }
+.pp .ppav{ width:34px; height:34px; border-radius:10px; overflow:hidden; flex:none; }
+.pp .ppav svg, .lrow .lav svg{ width:100%; height:100%; display:block; }
+.lrow .lav{ width:46px; height:46px; border-radius:12px; overflow:hidden; flex:none; box-shadow:0 3px 0 rgba(0,0,0,.25); }
 @keyframes pop{ from{ transform:scale(.6); opacity:0; } }
 .bars{ display:grid; gap:14px; width:min(860px,92%); margin-top:26px; }
 .brow{ display:grid; grid-template-columns:56px 1fr 90px; align-items:center; gap:14px; text-align:left; animation:rowin .45s cubic-bezier(.34,1.56,.64,1) both; }
@@ -86,6 +89,7 @@ h1{ font-family:var(--display); font-weight:700; font-size:clamp(2rem,4.5vw,3.4r
 </div>
 
 <script src="/platform/lib/config.js"></script>
+<script src="/platform/lib/avatar.js"></script>
 <script>
   // default = the CURRENT session's module (kids just type /platform/live/)
   var _m = (new URLSearchParams(location.search).get('m')||'2').replace(/[^0-9]/g,'')||'2';
@@ -109,6 +113,8 @@ let idx=0, revealed=false, channel=null;
 const answers={};              // act -> { uid: {name, choice} }
 const dreams={};               // uid -> { name, icon, label, hero, world }
 const kids={};                 // uid -> name (presence)
+const avatars={};              // uid -> avatar config (the character each kid built)
+const av=(cfg)=>window.CTFAvatar ? window.CTFAvatar.render(cfg && Object.keys(cfg).length ? cfg : window.CTFAvatar.DEFAULT) : '';
 
 // The scoreboard is computed live from every answer collected, so it's always
 // right whether or not the coach pressed Reveal on each question. Answers
@@ -125,7 +131,7 @@ function tally(){               // uid -> {name, score}, summed across every sco
     const a=answers[st.id]||{};
     Object.keys(a).forEach(u=>{ if(a[u].choice===st.answer){ (sc[u]=sc[u]||{name:a[u].name,score:0}).score++; sc[u].name=a[u].name; } });
   });
-  return Object.keys(sc).map(u=>sc[u]).sort((x,y)=>y.score-x.score);
+  return Object.keys(sc).map(u=>({ uid:u, name:sc[u].name, score:sc[u].score })).sort((x,y)=>y.score-x.score);
 }
 
 const URL=window.CTF_SUPABASE_URL, KEY=window.CTF_SUPABASE_ANON_KEY;
@@ -134,7 +140,7 @@ channel = sb.channel(S.channel, { config:{ presence:{ key:'host' }, broadcast:{ 
 channel.on('presence',{event:'sync'},()=>{
   const st=channel.presenceState();
   Object.keys(kids).forEach(k=>delete kids[k]);
-  Object.keys(st).forEach(k=>(st[k]||[]).forEach(m=>{ if(m.role==='kid') kids[m.uid]=m.name; }));
+  Object.keys(st).forEach(k=>(st[k]||[]).forEach(m=>{ if(m.role==='kid'){ kids[m.uid]=m.name; if(m.avatar) avatars[m.uid]=m.avatar; } }));
   document.getElementById('joined').textContent = Object.keys(kids).length+' in the room';
   render();
 });
@@ -196,7 +202,7 @@ function render(){
   if(s.type==='lobby'){
     html='<div class="kick">'+esc(S.title)+'</div><h1>'+esc(s.title)+'</h1><p class="sub">'+esc(s.sub||'')+'</p>'+
       '<div class="url">codethefuture.net/platform/live/</div><div class="people">'+
-      Object.keys(kids).map(u=>'<span class="pp">'+esc(kids[u])+'</span>').join('')+'</div>';
+      Object.keys(kids).map(u=>'<span class="pp"><span class="ppav">'+av(avatars[u])+'</span>'+esc(kids[u])+'</span>').join('')+'</div>';
   }
   else if(s.type==='video'){
     html='<div class="kick">'+esc(s.title)+'</div>'+
@@ -227,14 +233,14 @@ function render(){
     const top=tally().slice(0,8);
     const medals=['🥇','🥈','🥉','🏅','🏅','🏅','🏅','🏅'];
     html='<div class="kick">Scoreboard</div><div class="qe">📊</div><h1>'+esc(s.title)+'</h1><p class="sub">'+esc(s.sub||'')+'</p>'+
-      (top.length?('<div class="lead">'+top.map((p,i)=>'<div class="lrow"><span class="medal">'+medals[i]+'</span>'+esc(p.name)+'<span class="pts">'+p.score+' pts</span></div>').join('')+'</div>')
+      (top.length?('<div class="lead">'+top.map((p,i)=>'<div class="lrow"><span class="medal">'+medals[i]+'</span><span class="lav">'+av(avatars[p.uid])+'</span>'+esc(p.name)+'<span class="pts">'+p.score+' pts</span></div>').join('')+'</div>')
       :'<p class="sub">No points on the board yet — get answering!</p>');
   }
   else if(s.type==='end'){
     const top=tally().slice(0,5);
     const medals=['🥇','🥈','🥉','🏅','🏅'];
     html='<div class="kick">'+esc(S.title)+'</div><div class="qe">🏆</div><h1>'+esc(s.title)+'</h1><p class="sub">'+esc(s.sub||'')+'</p>'+
-      (top.length?('<div class="lead">'+top.map((p,i)=>'<div class="lrow"><span class="medal">'+medals[i]+'</span>'+esc(p.name)+'<span class="pts">'+p.score+' pts</span></div>').join('')+'</div>'):'');
+      (top.length?('<div class="lead">'+top.map((p,i)=>'<div class="lrow"><span class="medal">'+medals[i]+'</span><span class="lav">'+av(avatars[p.uid])+'</span>'+esc(p.name)+'<span class="pts">'+p.score+' pts</span></div>').join('')+'</div>'):'');
   }
   stageEl.innerHTML=html;
 }
