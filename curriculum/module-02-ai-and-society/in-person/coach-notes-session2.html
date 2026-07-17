@@ -69,15 +69,15 @@ td b{ font-family:var(--display); }
 
   <h2 id="codes"><span class="tm">Before kids arrive</span>🔑 Kid login codes</h2>
   <div class="card" id="codesCard">
-    <div class="lab">Roster · sign in at codethefuture.net/platform → "I have a code"</div>
-    <div id="codesBody" style="font-family:var(--mono);font-size:1.02rem;line-height:2">Staff login required — sign in on the Staff tab, then reload this page.</div>
-    <p style="font-size:.82rem;color:var(--sub);margin-top:8px">New families register on the "New here" tab with their parent email + cohort password <b>launchpad-july6</b> — a fresh code is minted on the spot.</p>
+    <div class="lab">Roster · kids sign in at codethefuture.net/platform → "I have a code"</div>
+    <div id="codesBody" style="font-family:var(--mono);font-size:1.02rem;line-height:2">🔒 Codes are hidden until you sign in on the <b>Staff</b> tab (email + admin password). Do that first, then reload this page and they'll appear here.</div>
+    <p style="font-size:.82rem;color:var(--sub);margin-top:8px"><b>Expected tomorrow:</b> Adam (pixel nova) + Elliott, a walk-in guest. Elliott's login is <b>pre-made</b> below — hand him <b>6EV9-G55C</b> and he logs in like anyone else, then picks his own name + avatar on the quick first-run screen. (The "New here" self-serve tab only works for families already on the enrollment list, so a pre-made code is the reliable way in for a walk-in.)</p>
   </div>
   <script>
   (function(){
     if (localStorage.getItem('ctf:unlockall') !== '1') return;   // staff eyes only
     try{
-      var R = JSON.parse(atob('W1siQWRhbSBIdWxzbWFuIiwgInBpeGVsIG5vdmEiLCAiWjgyQy1WS1pRIl0sIFsiQ2hhcmxvdHRlIChDaGFyKSBOaWNob2xzIiwgIkJhZGRpZSIsICJTOEZWLUZYNEEiXSwgWyJEZXZvbiBHdWFybmllcmkiLCAiU3RpY2ttZW4gdW5pdGUiLCAiQ1pSTi1aNTMyIl0sIFsiTGlhbSBOaWNob2xzIiwgIihubyBuaWNrbmFtZSB5ZXQpIiwgIjUzNzUtOEVGTSJdXQ=='));
+      var R = JSON.parse(atob('W1siQWRhbSBIdWxzbWFuIiwicGl4ZWwgbm92YSIsIlo4MkMtVktaUSJdLFsiQ2hhcmxvdHRlIChDaGFyKSBOaWNob2xzIiwiQmFkZGllIiwiUzhGVi1GWDRBIl0sWyJEZXZvbiBHdWFybmllcmkiLCJTdGlja21lbiB1bml0ZSIsIkNaUk4tWjUzMiJdLFsiTGlhbSBOaWNob2xzIiwiKG5vIG5pY2tuYW1lIHlldCkiLCI1Mzc1LThFRk0iXSxbIkVsbGlvdHQgKGd1ZXN0IHdhbGstaW4pIiwicGlja3MgaGlzIG5hbWUgYXQgbG9naW4iLCI2RVY5LUc1NUMiXV0='));
       document.getElementById('codesBody').innerHTML = R.map(function(r){
         return '<div><b style="color:#fff">' + r[2] + '</b> &nbsp;— ' + r[0] + ' <span style="color:#9fb6e6">· ' + r[1] + '</span></div>';
       }).join('');
