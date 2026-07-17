@@ -85,11 +85,13 @@ window.LIVE_SESSION = {
       sub:'Ten questions about how AI is changing the whole world — and look who was paying attention. Champion, come claim your prize!' },
 
     // ============== LATER IN THE SESSION: movie + memory mixers ==============
-    // TED-Ed "How will AI change the world?" (5:55). NOT used in any self-serve
-    // module — modules use "How AI Works" (Ok-xpKjKp2g) and session 1 used
-    // Code.org's QvyTEx1wyOY, so never reuse those here.
-    { id:'vid1', type:'video', title:'Movie time: AI and YOUR future 🍿', yt:'RzkD_rTEBYs',
-      sub:'Eyes on the big screen! Where is AI headed as you grow up — and how do humans stay the boss of it? Watch for the coffee robot. We\'ll talk after.' },
+    // Bloomberg Originals "How AI is Revolutionizing Medicine" (7:51, Apr 2025):
+    // a real Yale cardiologist using AI to spot heart problems invisible to the
+    // human eye — real-world, everyday people, hopeful. Pays off Mission 3's
+    // "metal detector for sickness." Videos used before (never reuse): TED-Ed
+    // RzkD_rTEBYs, Code.org Ok-xpKjKp2g (modules) + QvyTEx1wyOY (session 1).
+    { id:'vid1', type:'video', title:'Movie time: AI in the real world 🍿', yt:'FqsvgFTQv8w',
+      sub:'Eyes on the big screen! A real doctor uses AI to spot heart problems the human eye can\'t see — the "metal detector for sickness" from your missions, out in the real world. We\'ll talk after.' },
 
     // ---- Memory mixer 1 · Help or Hurt? (Missions 6 & 9) ----
     { id:'d1', type:'vote', title:'Detective round · Help or Hurt? · 1', e:'📚',
