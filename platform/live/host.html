@@ -107,16 +107,26 @@ if(localStorage.getItem('ctf:unlockall')!=='1'){
 
 let idx=0, revealed=false, channel=null;
 const answers={};              // act -> { uid: {name, choice} }
-const scores={};               // uid -> { name, score }  (frozen at each reveal)
 const dreams={};               // uid -> { name, icon, label, hero, world }
 const kids={};                 // uid -> name (presence)
 
-// scoreboard survives a host reload/module hop — a refresh mid-game used to
-// wipe every kid's points. Cleared with the ↺ Scores button for a fresh game.
+// The scoreboard is computed live from every answer collected, so it's always
+// right whether or not the coach pressed Reveal on each question. Answers
+// persist so a host reload / module hop can't wipe the board; the ↺ Scores
+// button clears them for a fresh game.
 const SAVEKEY='ctf:live:'+S.id+':state';
 try{ const sv=JSON.parse(localStorage.getItem(SAVEKEY)||'null');
-  if(sv){ Object.assign(answers, sv.answers||{}); Object.assign(scores, sv.scores||{}); } }catch(e){}
-function persist(){ try{ localStorage.setItem(SAVEKEY, JSON.stringify({ answers, scores })); }catch(e){} }
+  if(sv && sv.answers){ Object.assign(answers, sv.answers); } }catch(e){}
+function persist(){ try{ localStorage.setItem(SAVEKEY, JSON.stringify({ answers })); }catch(e){} }
+function tally(){               // uid -> {name, score}, summed across every scored round
+  const sc={};
+  S.stages.forEach(st=>{
+    if(st.type!=='vote' || st.answer==null) return;   // skip lobby, opinion polls, boards
+    const a=answers[st.id]||{};
+    Object.keys(a).forEach(u=>{ if(a[u].choice===st.answer){ (sc[u]=sc[u]||{name:a[u].name,score:0}).score++; sc[u].name=a[u].name; } });
+  });
+  return Object.keys(sc).map(u=>sc[u]).sort((x,y)=>y.score-x.score);
+}
 
 const URL=window.CTF_SUPABASE_URL, KEY=window.CTF_SUPABASE_ANON_KEY;
 const sb = createClient(URL, KEY, { auth:{ persistSession:false } });
@@ -156,12 +166,7 @@ function go(d){ idx=Math.max(0,Math.min(S.stages.length-1, idx+d)); revealed=fal
 function doReveal(){
   const s=S.stages[idx];
   if(revealed || s.type!=='vote') return;
-  revealed=true;
-  if(s.answer!=null){                            // freeze the scores for this round
-    const a=answers[s.id]||{};
-    Object.keys(a).forEach(u=>{ if(a[u].choice===s.answer){ (scores[u]=scores[u]||{name:a[u].name,score:0}).score++; scores[u].name=a[u].name; } });
-    persist();
-  }
+  revealed=true;                                  // the board tallies from answers — no freeze needed
   sync(); render();
 }
 // blur after every click: a mouse-clicked button keeps focus, so a later space
@@ -172,7 +177,7 @@ document.getElementById('next').onclick=(e)=>{ e.currentTarget.blur(); go(1); };
 document.getElementById('reveal').onclick=(e)=>{ e.currentTarget.blur(); doReveal(); };
 document.getElementById('reset').onclick=(e)=>{ e.currentTarget.blur();
   if(!confirm('Clear the scoreboard and all answers for a fresh game?')) return;
-  Object.keys(answers).forEach(k=>delete answers[k]); Object.keys(scores).forEach(k=>delete scores[k]);
+  Object.keys(answers).forEach(k=>delete answers[k]);
   try{ localStorage.removeItem(SAVEKEY); }catch(err){}
   revealed=false; sync(); render(); };
 addEventListener('keydown',(e)=>{
@@ -218,15 +223,15 @@ function render(){
       '</div><div class="acount">'+Object.keys(dreams).length+' of '+Object.keys(kids).length+' picked their Big Build</div>';
   }
   else if(s.type==='board'){
-    // live leaderboard checkpoint — same scores object the finale uses
-    const top=Object.keys(scores).map(u=>scores[u]).sort((a,b)=>b.score-a.score).slice(0,8);
+    // live leaderboard — computed from every answer collected so far
+    const top=tally().slice(0,8);
     const medals=['🥇','🥈','🥉','🏅','🏅','🏅','🏅','🏅'];
     html='<div class="kick">Scoreboard</div><div class="qe">📊</div><h1>'+esc(s.title)+'</h1><p class="sub">'+esc(s.sub||'')+'</p>'+
       (top.length?('<div class="lead">'+top.map((p,i)=>'<div class="lrow"><span class="medal">'+medals[i]+'</span>'+esc(p.name)+'<span class="pts">'+p.score+' pts</span></div>').join('')+'</div>')
       :'<p class="sub">No points on the board yet — get answering!</p>');
   }
   else if(s.type==='end'){
-    const top=Object.keys(scores).map(u=>scores[u]).sort((a,b)=>b.score-a.score).slice(0,5);
+    const top=tally().slice(0,5);
     const medals=['🥇','🥈','🥉','🏅','🏅'];
     html='<div class="kick">'+esc(S.title)+'</div><div class="qe">🏆</div><h1>'+esc(s.title)+'</h1><p class="sub">'+esc(s.sub||'')+'</p>'+
       (top.length?('<div class="lead">'+top.map((p,i)=>'<div class="lrow"><span class="medal">'+medals[i]+'</span>'+esc(p.name)+'<span class="pts">'+p.score+' pts</span></div>').join('')+'</div>'):'');
