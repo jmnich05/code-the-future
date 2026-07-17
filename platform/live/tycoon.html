@@ -27,7 +27,19 @@ body{ font-family:var(--body); color:#EAF1FF; min-height:100vh; display:flex; fl
 @keyframes cashpop{ 40%{ transform:scale(1.18); } }
 .chip.heart{ color:#3a1020; background:linear-gradient(120deg,#FFC1D6,#FF7BA6); letter-spacing:1px; }
 .chip.join{ background:rgba(255,255,255,.08); color:#9BF5C7; border:1px solid rgba(255,255,255,.15); }
-.stage{ flex:1 1 auto; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:18px 20px; text-align:center; overflow-y:auto; min-height:0; }
+/* running decision timeline (host) — the story so far, pinned under the header */
+.timeline{ flex:0 0 auto; display:flex; gap:0; align-items:center; padding:9px 18px; overflow-x:auto; border-bottom:1px solid rgba(255,255,255,.08); background:rgba(6,10,22,.4); scrollbar-width:none; }
+.timeline::-webkit-scrollbar{ display:none; }
+.timeline:empty{ display:none; }
+.timeline .tlchip{ flex:none; display:flex; align-items:center; gap:6px; font-family:var(--mono); font-size:12px; font-weight:700; border-radius:999px; padding:5px 11px; background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.16); color:#cfe3ff; animation:tlin .4s cubic-bezier(.34,1.56,.64,1); }
+@keyframes tlin{ from{ opacity:0; transform:scale(.6); } }
+.timeline .tlchip .e{ font-size:15px; }
+.timeline .tlchip.up{ color:#9BF5C7; border-color:rgba(63,208,138,.45); background:rgba(63,208,138,.1); }
+.timeline .tlchip.down{ color:#ffb3a0; border-color:rgba(255,116,82,.45); background:rgba(255,116,82,.1); }
+.timeline .tlsep{ flex:none; color:#5F6B82; padding:0 5px; font-size:13px; }
+/* safe center: centers short stages, but aligns to top (no clipping) when a
+   stage — like the finale journey map — is taller than the screen */
+.stage{ flex:1 1 auto; display:flex; flex-direction:column; align-items:center; justify-content:safe center; padding:18px 20px; text-align:center; overflow-y:auto; min-height:0; }
 .kick{ font-family:var(--mono); font-size:12px; letter-spacing:.2em; text-transform:uppercase; color:var(--amber); margin-bottom:8px; }
 .qe{ font-size:3.2rem; margin-bottom:4px; }
 h1{ font-family:var(--display); font-weight:700; font-size:clamp(1.5rem,4vw,2.7rem); line-height:1.1; letter-spacing:-.02em; max-width:26ch; }
@@ -64,6 +76,33 @@ h1{ font-family:var(--display); font-weight:700; font-size:clamp(1.5rem,4vw,2.7r
 .out .delta{ font-family:var(--mono); font-weight:700; font-size:1.2rem; margin-top:8px; }
 .out .delta.up{ color:#9BF5C7; } .out .delta.down{ color:#ffb3a0; }
 .out .lesson{ display:inline-block; margin-top:10px; font-family:var(--mono); font-size:11px; letter-spacing:.08em; border-radius:999px; padding:5px 12px; background:rgba(155,123,255,.18); border:1px solid rgba(155,123,255,.5); color:#e4d9ff; }
+/* honest money math on each outcome */
+.out .money{ margin-top:10px; }
+.out .money .brk{ font-family:var(--mono); font-size:1rem; font-weight:700; margin-bottom:5px; }
+.out .money .brk .up{ color:#9BF5C7; } .out .money .brk .down{ color:#ffb3a0; }
+.out .money .brk .eq{ color:#9fb6e6; margin:0 4px; }
+.out .money .net{ font-family:var(--mono); font-weight:700; font-size:1.7rem; display:flex; align-items:baseline; gap:12px; flex-wrap:wrap; }
+.out .money .net.up{ color:#9BF5C7; } .out .money .net.down{ color:#ffb3a0; }
+.out .money .net .run{ font-size:1rem; color:#cfe3ff; font-weight:600; }
+.out .money .tr{ font-family:var(--mono); font-size:.95rem; font-weight:700; margin-top:4px; }
+.out .money .tr.up{ color:#9BF5C7; } .out .money .tr.down{ color:#ffb3a0; }
+.kmoney{ font-family:var(--mono); font-weight:700; font-size:1.5rem; margin:8px 0 2px; }
+.kmoney.up{ color:#9BF5C7; } .kmoney.down{ color:#ffb3a0; }
+/* finale journey map — the decisions we made, like a mission map */
+.jmap{ width:min(560px,96%); margin:18px auto 4px; text-align:left; }
+.jhead{ font-family:var(--display); font-weight:700; font-size:1.05rem; margin:0 0 12px; text-align:center; color:#EAF1FF; }
+.jnode{ display:flex; gap:14px; align-items:stretch; }
+.jrail{ display:flex; flex-direction:column; align-items:center; flex:none; }
+.jdot{ width:46px; height:46px; border-radius:13px; display:flex; align-items:center; justify-content:center; font-size:1.5rem; flex:none;
+  background:rgba(255,255,255,.07); border:1.5px solid rgba(127,227,255,.3); box-shadow:0 4px 0 rgba(0,0,0,.25); }
+.jline{ width:3px; flex:1; min-height:16px; background:linear-gradient(rgba(127,227,255,.4),rgba(127,227,255,.15)); margin:3px 0; border-radius:2px; }
+.jnode:last-child .jline{ display:none; }
+.jbody{ padding-bottom:14px; flex:1; min-width:0; }
+.jlabel{ font-family:var(--display); font-weight:700; font-size:1rem; line-height:1.2; }
+.jmoney{ font-family:var(--mono); font-size:.88rem; font-weight:700; margin-top:3px; line-height:1.5; }
+.jmoney .up{ color:#9BF5C7; } .jmoney .down{ color:#ffb3a0; } .jmoney .run{ color:#cfe3ff; } .jmoney .eq{ color:#7c8aa8; margin:0 3px; }
+.jnode.start .jdot,.jnode.finish .jdot{ background:linear-gradient(120deg,#9BF5C7,#3FD08A); color:#04331f; border:none; }
+.jnode.finish .jdot{ background:linear-gradient(120deg,#FFD479,#FFB320); color:#3a2200; }
 .rescue{ margin-top:10px; font-weight:700; color:#FFD98C; }
 .acount{ font-family:var(--mono); font-size:12px; color:#9fb6e6; margin-top:12px; }
 /* kid tiles */
@@ -110,6 +149,7 @@ h1{ font-family:var(--display); font-weight:700; font-size:clamp(1.5rem,4vw,2.7r
     <span class="chip join" id="joined" style="display:none">0 in</span>
   </div>
 </div>
+<div class="timeline" id="timeline"></div>
 <div class="stage" id="stage"><h1>Connecting…</h1></div>
 <div class="ctrl" id="ctrl" style="display:none">
   <button class="cb" id="prev">‹ Back</button>
@@ -124,9 +164,12 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const esc=(s)=>String(s==null?'':s).replace(/[&<>"]/g,(c)=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const fmt=(n)=>'$'+Math.round(n).toLocaleString('en-US');
-const IS_HOST = localStorage.getItem('ctf:unlockall')==='1';
+// ?join=1 (the kid QR/link) always forces PLAYER mode, even on a staff device —
+// so scanning the code never lands a kid on the host screen.
+const FORCE_KID = new URLSearchParams(location.search).has('join');
+const IS_HOST = !FORCE_KID && localStorage.getItem('ctf:unlockall')==='1';
 // QR to the Tycoon join URL — kids scan it on the intro screen to play
-const TQR_SVG = `<svg viewBox='0 0 33 33' xmlns='http://www.w3.org/2000/svg' shape-rendering='crispEdges' class='tqr'><path d='M0 0h7v1h-7zM8 0h2v1h-2zM11 0h1v1h-1zM14 0h1v1h-1zM16 0h1v1h-1zM18 0h2v1h-2zM23 0h1v1h-1zM26 0h7v1h-7zM0 1h1v1h-1zM6 1h1v1h-1zM8 1h3v1h-3zM12 1h1v1h-1zM14 1h1v1h-1zM16 1h2v1h-2zM21 1h3v1h-3zM26 1h1v1h-1zM32 1h1v1h-1zM0 2h1v1h-1zM2 2h3v1h-3zM6 2h1v1h-1zM9 2h1v1h-1zM11 2h4v1h-4zM16 2h1v1h-1zM18 2h3v1h-3zM24 2h1v1h-1zM26 2h1v1h-1zM28 2h3v1h-3zM32 2h1v1h-1zM0 3h1v1h-1zM2 3h3v1h-3zM6 3h1v1h-1zM8 3h1v1h-1zM15 3h1v1h-1zM18 3h1v1h-1zM22 3h1v1h-1zM24 3h1v1h-1zM26 3h1v1h-1zM28 3h3v1h-3zM32 3h1v1h-1zM0 4h1v1h-1zM2 4h3v1h-3zM6 4h1v1h-1zM10 4h3v1h-3zM16 4h1v1h-1zM18 4h1v1h-1zM21 4h1v1h-1zM24 4h1v1h-1zM26 4h1v1h-1zM28 4h3v1h-3zM32 4h1v1h-1zM0 5h1v1h-1zM6 5h1v1h-1zM9 5h1v1h-1zM12 5h7v1h-7zM22 5h1v1h-1zM24 5h1v1h-1zM26 5h1v1h-1zM32 5h1v1h-1zM0 6h7v1h-7zM8 6h1v1h-1zM10 6h1v1h-1zM12 6h1v1h-1zM14 6h1v1h-1zM16 6h1v1h-1zM18 6h1v1h-1zM20 6h1v1h-1zM22 6h1v1h-1zM24 6h1v1h-1zM26 6h7v1h-7zM8 7h1v1h-1zM10 7h3v1h-3zM14 7h4v1h-4zM19 7h1v1h-1zM24 7h1v1h-1zM0 8h1v1h-1zM2 8h2v1h-2zM5 8h3v1h-3zM9 8h2v1h-2zM14 8h5v1h-5zM21 8h1v1h-1zM23 8h2v1h-2zM26 8h1v1h-1zM29 8h1v1h-1zM31 8h2v1h-2zM0 9h2v1h-2zM7 9h2v1h-2zM12 9h2v1h-2zM16 9h5v1h-5zM23 9h1v1h-1zM26 9h2v1h-2zM29 9h2v1h-2zM32 9h1v1h-1zM2 10h1v1h-1zM6 10h1v1h-1zM8 10h1v1h-1zM10 10h1v1h-1zM13 10h1v1h-1zM18 10h1v1h-1zM20 10h10v1h-10zM31 10h2v1h-2zM1 11h1v1h-1zM3 11h1v1h-1zM9 11h3v1h-3zM17 11h1v1h-1zM22 11h1v1h-1zM24 11h1v1h-1zM27 11h1v1h-1zM29 11h1v1h-1zM31 11h2v1h-2zM0 12h1v1h-1zM2 12h8v1h-8zM11 12h1v1h-1zM14 12h1v1h-1zM16 12h1v1h-1zM24 12h1v1h-1zM27 12h3v1h-3zM1 13h1v1h-1zM8 13h2v1h-2zM12 13h3v1h-3zM20 13h1v1h-1zM24 13h1v1h-1zM27 13h1v1h-1zM30 13h2v1h-2zM3 14h2v1h-2zM6 14h2v1h-2zM10 14h5v1h-5zM17 14h3v1h-3zM24 14h1v1h-1zM26 14h1v1h-1zM29 14h1v1h-1zM2 15h1v1h-1zM7 15h1v1h-1zM9 15h1v1h-1zM12 15h1v1h-1zM15 15h1v1h-1zM18 15h1v1h-1zM20 15h7v1h-7zM30 15h1v1h-1zM1 16h1v1h-1zM3 16h1v1h-1zM6 16h1v1h-1zM8 16h2v1h-2zM12 16h1v1h-1zM18 16h2v1h-2zM21 16h3v1h-3zM25 16h2v1h-2zM28 16h3v1h-3zM2 17h1v1h-1zM4 17h1v1h-1zM7 17h1v1h-1zM10 17h2v1h-2zM15 17h1v1h-1zM20 17h7v1h-7zM28 17h2v1h-2zM32 17h1v1h-1zM0 18h1v1h-1zM2 18h1v1h-1zM5 18h2v1h-2zM10 18h6v1h-6zM18 18h1v1h-1zM20 18h1v1h-1zM22 18h1v1h-1zM24 18h5v1h-5zM30 18h2v1h-2zM2 19h1v1h-1zM4 19h2v1h-2zM7 19h1v1h-1zM9 19h2v1h-2zM17 19h2v1h-2zM23 19h3v1h-3zM28 19h1v1h-1zM31 19h1v1h-1zM0 20h1v1h-1zM3 20h1v1h-1zM6 20h1v1h-1zM8 20h1v1h-1zM16 20h1v1h-1zM19 20h1v1h-1zM21 20h1v1h-1zM27 20h1v1h-1zM29 20h2v1h-2zM32 20h1v1h-1zM0 21h1v1h-1zM3 21h3v1h-3zM8 21h1v1h-1zM13 21h1v1h-1zM15 21h2v1h-2zM19 21h3v1h-3zM23 21h1v1h-1zM25 21h2v1h-2zM29 21h1v1h-1zM32 21h1v1h-1zM6 22h4v1h-4zM11 22h1v1h-1zM13 22h1v1h-1zM15 22h1v1h-1zM17 22h2v1h-2zM21 22h4v1h-4zM26 22h2v1h-2zM30 22h3v1h-3zM1 23h2v1h-2zM4 23h2v1h-2zM10 23h2v1h-2zM15 23h1v1h-1zM18 23h3v1h-3zM22 23h1v1h-1zM26 23h1v1h-1zM29 23h1v1h-1zM32 23h1v1h-1zM0 24h1v1h-1zM3 24h1v1h-1zM6 24h1v1h-1zM8 24h4v1h-4zM13 24h2v1h-2zM16 24h2v1h-2zM19 24h2v1h-2zM22 24h7v1h-7zM8 25h1v1h-1zM14 25h3v1h-3zM18 25h2v1h-2zM21 25h4v1h-4zM28 25h2v1h-2zM0 26h7v1h-7zM8 26h3v1h-3zM12 26h1v1h-1zM14 26h1v1h-1zM17 26h3v1h-3zM22 26h3v1h-3zM26 26h1v1h-1zM28 26h1v1h-1zM0 27h1v1h-1zM6 27h1v1h-1zM8 27h2v1h-2zM11 27h2v1h-2zM14 27h1v1h-1zM16 27h3v1h-3zM20 27h2v1h-2zM23 27h2v1h-2zM28 27h3v1h-3zM32 27h1v1h-1zM0 28h1v1h-1zM2 28h3v1h-3zM6 28h1v1h-1zM14 28h5v1h-5zM20 28h9v1h-9zM30 28h3v1h-3zM0 29h1v1h-1zM2 29h3v1h-3zM6 29h1v1h-1zM8 29h1v1h-1zM10 29h2v1h-2zM13 29h2v1h-2zM16 29h1v1h-1zM20 29h1v1h-1zM23 29h2v1h-2zM27 29h1v1h-1zM29 29h2v1h-2zM32 29h1v1h-1zM0 30h1v1h-1zM2 30h3v1h-3zM6 30h1v1h-1zM8 30h3v1h-3zM13 30h4v1h-4zM21 30h3v1h-3zM26 30h2v1h-2zM30 30h1v1h-1zM0 31h1v1h-1zM6 31h1v1h-1zM10 31h1v1h-1zM12 31h1v1h-1zM14 31h1v1h-1zM17 31h1v1h-1zM22 31h1v1h-1zM24 31h5v1h-5zM32 31h1v1h-1zM0 32h7v1h-7zM8 32h2v1h-2zM11 32h1v1h-1zM14 32h1v1h-1zM16 32h2v1h-2zM19 32h3v1h-3zM23 32h1v1h-1zM25 32h1v1h-1zM28 32h1v1h-1zM30 32h1v1h-1z' fill='#0A1024'/></svg>`;
+const TQR_SVG = `<svg viewBox='0 0 33 33' xmlns='http://www.w3.org/2000/svg' shape-rendering='crispEdges' class='tqr'><path d='M0 0h7v1h-7zM10 0h1v1h-1zM13 0h2v1h-2zM16 0h4v1h-4zM23 0h1v1h-1zM26 0h7v1h-7zM0 1h1v1h-1zM6 1h1v1h-1zM10 1h1v1h-1zM12 1h7v1h-7zM20 1h1v1h-1zM22 1h1v1h-1zM24 1h1v1h-1zM26 1h1v1h-1zM32 1h1v1h-1zM0 2h1v1h-1zM2 2h3v1h-3zM6 2h1v1h-1zM8 2h4v1h-4zM13 2h1v1h-1zM15 2h1v1h-1zM18 2h1v1h-1zM20 2h3v1h-3zM26 2h1v1h-1zM28 2h3v1h-3zM32 2h1v1h-1zM0 3h1v1h-1zM2 3h3v1h-3zM6 3h1v1h-1zM8 3h1v1h-1zM10 3h1v1h-1zM14 3h4v1h-4zM22 3h1v1h-1zM24 3h1v1h-1zM26 3h1v1h-1zM28 3h3v1h-3zM32 3h1v1h-1zM0 4h1v1h-1zM2 4h3v1h-3zM6 4h1v1h-1zM8 4h1v1h-1zM11 4h1v1h-1zM15 4h1v1h-1zM17 4h4v1h-4zM23 4h1v1h-1zM26 4h1v1h-1zM28 4h3v1h-3zM32 4h1v1h-1zM0 5h1v1h-1zM6 5h1v1h-1zM8 5h1v1h-1zM10 5h1v1h-1zM14 5h4v1h-4zM20 5h2v1h-2zM26 5h1v1h-1zM32 5h1v1h-1zM0 6h7v1h-7zM8 6h1v1h-1zM10 6h1v1h-1zM12 6h1v1h-1zM14 6h1v1h-1zM16 6h1v1h-1zM18 6h1v1h-1zM20 6h1v1h-1zM22 6h1v1h-1zM24 6h1v1h-1zM26 6h7v1h-7zM8 7h3v1h-3zM15 7h1v1h-1zM18 7h4v1h-4zM23 7h1v1h-1zM0 8h1v1h-1zM2 8h5v1h-5zM10 8h1v1h-1zM12 8h4v1h-4zM17 8h1v1h-1zM19 8h1v1h-1zM22 8h2v1h-2zM26 8h5v1h-5zM1 9h1v1h-1zM5 9h1v1h-1zM8 9h1v1h-1zM10 9h1v1h-1zM12 9h1v1h-1zM16 9h5v1h-5zM23 9h1v1h-1zM26 9h2v1h-2zM29 9h2v1h-2zM32 9h1v1h-1zM1 10h1v1h-1zM3 10h1v1h-1zM5 10h4v1h-4zM10 10h3v1h-3zM15 10h1v1h-1zM17 10h1v1h-1zM22 10h1v1h-1zM25 10h1v1h-1zM28 10h1v1h-1zM30 10h2v1h-2zM2 11h1v1h-1zM4 11h2v1h-2zM8 11h1v1h-1zM10 11h1v1h-1zM12 11h1v1h-1zM14 11h3v1h-3zM19 11h1v1h-1zM21 11h1v1h-1zM25 11h1v1h-1zM28 11h3v1h-3zM32 11h1v1h-1zM1 12h3v1h-3zM6 12h6v1h-6zM17 12h1v1h-1zM20 12h1v1h-1zM24 12h1v1h-1zM27 12h3v1h-3zM1 13h2v1h-2zM5 13h1v1h-1zM7 13h5v1h-5zM14 13h6v1h-6zM21 13h1v1h-1zM23 13h1v1h-1zM26 13h1v1h-1zM29 13h1v1h-1zM31 13h2v1h-2zM0 14h1v1h-1zM3 14h2v1h-2zM6 14h2v1h-2zM9 14h1v1h-1zM12 14h1v1h-1zM14 14h1v1h-1zM17 14h1v1h-1zM21 14h2v1h-2zM25 14h7v1h-7zM1 15h1v1h-1zM4 15h1v1h-1zM8 15h1v1h-1zM10 15h1v1h-1zM13 15h2v1h-2zM16 15h1v1h-1zM18 15h1v1h-1zM20 15h7v1h-7zM30 15h1v1h-1zM1 16h2v1h-2zM4 16h1v1h-1zM6 16h1v1h-1zM8 16h1v1h-1zM10 16h4v1h-4zM17 16h1v1h-1zM19 16h2v1h-2zM22 16h1v1h-1zM24 16h2v1h-2zM27 16h2v1h-2zM32 16h1v1h-1zM0 17h1v1h-1zM8 17h2v1h-2zM16 17h5v1h-5zM23 17h1v1h-1zM26 17h2v1h-2zM29 17h4v1h-4zM1 18h2v1h-2zM5 18h3v1h-3zM9 18h3v1h-3zM13 18h1v1h-1zM15 18h1v1h-1zM18 18h1v1h-1zM20 18h1v1h-1zM22 18h1v1h-1zM24 18h5v1h-5zM30 18h2v1h-2zM0 19h1v1h-1zM5 19h1v1h-1zM7 19h3v1h-3zM13 19h1v1h-1zM15 19h1v1h-1zM20 19h2v1h-2zM25 19h8v1h-8zM0 20h2v1h-2zM4 20h1v1h-1zM6 20h1v1h-1zM9 20h3v1h-3zM13 20h1v1h-1zM15 20h1v1h-1zM17 20h1v1h-1zM22 20h1v1h-1zM24 20h2v1h-2zM28 20h2v1h-2zM31 20h2v1h-2zM0 21h3v1h-3zM7 21h2v1h-2zM11 21h5v1h-5zM18 21h4v1h-4zM23 21h1v1h-1zM25 21h2v1h-2zM29 21h1v1h-1zM32 21h1v1h-1zM0 22h1v1h-1zM2 22h1v1h-1zM6 22h8v1h-8zM15 22h2v1h-2zM20 22h1v1h-1zM22 22h1v1h-1zM29 22h1v1h-1zM31 22h1v1h-1zM0 23h1v1h-1zM2 23h3v1h-3zM9 23h1v1h-1zM12 23h2v1h-2zM15 23h1v1h-1zM20 23h2v1h-2zM24 23h7v1h-7zM32 23h1v1h-1zM0 24h1v1h-1zM5 24h2v1h-2zM8 24h3v1h-3zM12 24h6v1h-6zM19 24h2v1h-2zM22 24h7v1h-7zM32 24h1v1h-1zM8 25h5v1h-5zM14 25h1v1h-1zM16 25h2v1h-2zM19 25h2v1h-2zM22 25h1v1h-1zM24 25h1v1h-1zM28 25h1v1h-1zM30 25h1v1h-1zM32 25h1v1h-1zM0 26h7v1h-7zM9 26h2v1h-2zM13 26h1v1h-1zM15 26h3v1h-3zM21 26h1v1h-1zM23 26h2v1h-2zM26 26h1v1h-1zM28 26h1v1h-1zM30 26h2v1h-2zM0 27h1v1h-1zM6 27h1v1h-1zM8 27h5v1h-5zM14 27h1v1h-1zM16 27h1v1h-1zM18 27h1v1h-1zM20 27h2v1h-2zM23 27h2v1h-2zM28 27h3v1h-3zM32 27h1v1h-1zM0 28h1v1h-1zM2 28h3v1h-3zM6 28h1v1h-1zM8 28h4v1h-4zM14 28h1v1h-1zM16 28h3v1h-3zM22 28h1v1h-1zM24 28h6v1h-6zM31 28h1v1h-1zM0 29h1v1h-1zM2 29h3v1h-3zM6 29h1v1h-1zM8 29h3v1h-3zM12 29h1v1h-1zM19 29h5v1h-5zM25 29h1v1h-1zM28 29h2v1h-2zM31 29h2v1h-2zM0 30h1v1h-1zM2 30h3v1h-3zM6 30h1v1h-1zM8 30h1v1h-1zM14 30h3v1h-3zM21 30h3v1h-3zM26 30h2v1h-2zM30 30h1v1h-1zM0 31h1v1h-1zM6 31h1v1h-1zM9 31h2v1h-2zM12 31h2v1h-2zM15 31h2v1h-2zM18 31h1v1h-1zM20 31h4v1h-4zM25 31h1v1h-1zM28 31h3v1h-3zM0 32h7v1h-7zM8 32h7v1h-7zM17 32h2v1h-2zM20 32h1v1h-1zM22 32h3v1h-3zM27 32h1v1h-1zM31 32h1v1h-1z' fill='#0A1024'/></svg>`;
 
 // ============================================================================
 // GAME DATA — every decision teaches a Module 2 lesson.
@@ -179,8 +222,8 @@ const ROUNDS=[
   { k:'d', e:'🕵️', q:'A mystery company offers $500 for your users\' private info.',
     sub:'Names, locations, what they do in your app… all of it.',
     opts:[
-      {e:'🤑', t:'SELL IT — easy money!', d:'+$500 right now', cost:650, earn:500, trust:-2,
-        out:'You got the $500… then families found out. "You sold WHAT?" They quit in waves and told their friends why. The easy money cost you way more than it paid.', lesson:'🔒 Diary stuff is never for sale'},
+      {e:'🤑', t:'SELL IT — easy money!', d:'Quick cash from a stranger', cost:650, earn:500, trust:-2,
+        out:'You got the $500… then families found out. "You sold WHAT?" They quit in waves and told their friends why — that cost you $650 in refunds and lost customers. The easy money cost way more than it paid.', lesson:'🔒 Diary stuff is never for sale'},
       {e:'🛡️', t:'No thanks — we protect the diary stuff', d:'Privacy is the promise', cost:0, earn:250, trust:1,
         out:'Word gets around: "the app that doesn\'t sell you out." Parents trust you, and trust brings customers you never had to pay for.', lesson:'🔒 Privacy is a superpower'},
       {e:'🙋', t:'Ask users\' permission, share only bulletin-board stuff', d:'They choose what\'s shared', cost:0, earn:350, trust:1,
@@ -237,6 +280,7 @@ const ROUNDS=[
 // ============================================================================
 let st={ i:0, ph:'static', pick:-1, money:1000, trust:3, biz:-1, cname:'', rescued:0 };
 let manual=-1, lessons=[], hitsApplied={}, locked={};   // host-side extras
+const history=[];   // journey log: one entry per locked decision (for the timeline + finale map)
 const votes={};                                          // i -> {uid:{name,choice}}
 const kids={};
 let channel=null, myChoice={}, uid, kidName='Builder';
@@ -309,20 +353,31 @@ function go(d){
 }
 function doLock(){
   const r=ROUNDS[st.i];
+  // name stage: the "Lock it in" button confirms the typed name and moves on
+  if(r.k==='name'){
+    const inp=document.getElementById('cnameIn'); if(inp) st.cname=(inp.value||'').trim().slice(0,30);
+    sync(); meters(); burst(); go(1); return;
+  }
   if(!isVote(r)||st.ph!=='vote') return;
   const v=votes[st.i]||{}, counts=r.opts.map((_,x)=>Object.keys(v).filter(u=>v[u].choice===x).length);
   let pick=manual;
   if(pick<0){ const mx=Math.max(...counts); pick=counts.indexOf(mx); if(mx===0) pick=-1; }
   if(pick<0) return;                                   // nothing to lock yet — tap a row to choose by hand
   locked[st.i]=pick; st.pick=pick; st.ph='out';
-  if(r.k==='biz'){ st.biz=pick; burst(); }
+  if(r.k==='biz'){ st.biz=pick; burst();
+    history.push({ at:st.i, e:BIZ[pick].e, ce:'🚀', label:BIZ[pick].t, inAmt:0, outAmt:0, net:0, trust:0, money:st.money, kind:'biz' });
+  }
   else{
     const o=r.opts[pick];
-    st.money += (o.earn-o.cost);
+    const hit=(r.hit?r.hit.delta:0);                   // storm etc. already applied on entry
+    const net=(o.earn||0)-(o.cost||0);
+    st.money += net;
     st.trust = Math.max(0,Math.min(5,st.trust+(o.trust||0)));
     lessons.push(o.lesson);
-    if(st.money<50){ st.money=150; st.rescued++; }     // emergency investor — keeps the game alive
-    if(o.earn-o.cost>0) burst();
+    let rescued=false;
+    if(st.money<50){ st.money=150; st.rescued++; rescued=true; }   // emergency investor — keeps the game alive
+    history.push({ at:st.i, e:r.e, ce:o.e, label:o.t, inAmt:o.earn||0, outAmt:o.cost||0, net:net, hit:hit, delta:net+hit, trust:o.trust||0, money:st.money, rescued:rescued, kind:'d' });
+    if(net>0) burst();
   }
   sync(); render();
 }
@@ -347,9 +402,33 @@ function render(){
   const r=ROUNDS[st.i];
   if(IS_HOST){
     document.getElementById('pos').textContent=(st.i+1)+' / '+ROUNDS.length;
-    document.getElementById('lock').disabled=!(isVote(r)&&st.ph==='vote');
+    document.getElementById('lock').disabled=!((isVote(r)&&st.ph==='vote') || r.k==='name');
+    renderTimeline();
     renderHost(r);
   } else renderKid(r);
+}
+function renderTimeline(){
+  const tl=document.getElementById('timeline'); if(!tl) return;
+  tl.innerHTML = history.map(h=>{
+    if(h.kind==='biz') return '<span class="tlchip"><span class="e">'+h.e+'</span>'+esc(h.label)+'</span>';
+    const cls=h.delta>0?'up':(h.delta<0?'down':'');
+    return '<span class="tlchip '+cls+'"><span class="e">'+h.ce+'</span>'+(h.delta>=0?'+':'−')+fmt(Math.abs(h.delta))+'</span>';
+  }).join('<span class="tlsep">→</span>');
+}
+// honest money breakdown for a decision outcome (both host + finale reuse the pieces)
+function moneyBlock(o, r){
+  const inAmt=o.earn||0, outAmt=o.cost||0, hit=(r&&r.hit?r.hit.delta:0);
+  const net=inAmt-outAmt, delta=net+hit;
+  const parts=[];
+  if(hit) parts.push('<span class="down">⛈️ −'+fmt(Math.abs(hit))+' storm</span>');
+  if(inAmt) parts.push('<span class="up">+'+fmt(inAmt)+' in</span>');
+  if(outAmt) parts.push('<span class="down">−'+fmt(outAmt)+' out</span>');
+  const brk = parts.length>1 ? '<div class="brk">'+parts.join('<span class="eq">·</span>')+'</div>' : '';
+  return '<div class="money">'+brk+
+    '<div class="net '+(delta>=0?'up':'down')+'">'+(delta>=0?'▲ +':'▼ −')+fmt(Math.abs(delta))+
+      '<span class="run">→ '+fmt(st.money)+' in the bank</span></div>'+
+    (o.trust?'<div class="tr '+(o.trust>0?'up':'down')+'">'+(o.trust>0?'❤️ Trust +'+o.trust:'💔 Trust '+o.trust)+'</div>':'')+
+  '</div>';
 }
 function renderHost(r){
   let html='';
@@ -364,7 +443,7 @@ function renderHost(r){
   else if(r.k==='name'){
     const b=BIZ[st.biz]||{e:'🏢',t:'Your company'};
     html='<div class="qe">'+r.e+'</div><h1>'+esc(r.title)+'</h1><p class="sub">You chose <b>'+b.e+' '+esc(b.t)+'</b> — '+esc(b.d||'')+'. '+esc(r.sub)+'</p>'+
-      '<div class="nameform"><input id="cnameIn" maxlength="30" placeholder="'+esc(b.t)+'" value="'+esc(st.cname)+'"><button class="cb lock" id="cnameBtn">Name it!</button></div>';
+      '<div class="nameform"><input id="cnameIn" maxlength="30" placeholder="'+esc(b.t)+'" value="'+esc(st.cname)+'"><button class="cb lock" id="cnameBtn">🔒 Lock it in →</button></div>';
   }
   else if(isVote(r)){
     if(r.hit) html+='<div class="hit">'+esc(r.hit.t)+'</div>';
@@ -374,15 +453,13 @@ function renderHost(r){
       if(st.ph==='out'){ cls+= x===st.pick?' won':' lost'; }
       return '<div class="'+cls+'" data-i="'+x+'"><div class="fill" style="width:'+Math.round((counts[x]||0)/mx*100)+'%"></div>'+
         '<span class="re">'+o.e+'</span><span><div class="rt">'+esc(o.t)+'</div>'+(o.d?'<div class="rd">'+esc(o.d)+'</div>':'')+'</span>'+
-        (o.cost?'<span class="price">−'+fmt(o.cost)+'</span>':'')+
         '<span class="rc">'+(counts[x]||0)+'</span></div>';
     }).join('')+'</div>';
     html+='<div class="acount">'+n+' of '+Object.keys(kids).length+' voted'+(st.ph==='vote'?' · tap a row to hand-pick, then Lock it in':'')+'</div>';
     if(st.ph==='out'&&r.k==='d'){
-      const o=r.opts[st.pick], d=o.earn-o.cost;
+      const o=r.opts[st.pick];
       html+='<div class="out"><div class="ot">'+o.e+' '+esc(o.t)+'</div><div class="ob">'+esc(o.out)+'</div>'+
-        '<div class="delta '+(d>=0?'up':'down')+'">'+(d>=0?'+':'−')+fmt(Math.abs(d))+' → '+fmt(st.money)+
-        (o.trust?'&nbsp;&nbsp;'+(o.trust>0?'❤️ +'+o.trust:'💔 '+o.trust):'')+'</div>'+
+        moneyBlock(o, r)+
         '<span class="lesson">'+esc(o.lesson)+'</span>'+
         (st.rescued&&st.money===150?'<div class="rescue">😬 Emergency investor swooped in with a mini-loan so the company survives. That\'s a one-more-chance, team…</div>':'')+'</div>';
     }
@@ -393,18 +470,37 @@ function renderHost(r){
     const b=BIZ[st.biz]||{e:'🏢',t:'Your company'};
     const score=st.money+st.trust*100;
     const title= score>=2600?'🦄 Unicorn in the making!' : score>=2000?'🚀 Taking off!' : score>=1400?'📈 Solid startup!' : '🌱 Scrappy survivor — real founders lose money learning!';
+    // journey map — every decision we made, running money, ending at demo day
+    const jmoney=(h)=>{
+      const parts=[];
+      if(h.hit) parts.push('<span class="down">⛈️ −'+fmt(Math.abs(h.hit))+'</span>');
+      if(h.inAmt&&h.outAmt){ parts.push('<span class="up">+'+fmt(h.inAmt)+'</span><span class="eq">·</span><span class="down">−'+fmt(h.outAmt)+'</span>'); }
+      const netStr='<span class="'+(h.delta>=0?'up':'down')+'">'+(h.delta>=0?'+':'−')+fmt(Math.abs(h.delta))+'</span>';
+      const trStr=h.trust?' <span class="'+(h.trust>0?'up':'down')+'">'+(h.trust>0?'❤️+'+h.trust:'💔'+h.trust)+'</span>':'';
+      return (parts.length?parts.join('<span class="eq">·</span>')+'<span class="eq">=</span>':'')+netStr+' <span class="run">→ '+fmt(h.money)+'</span>'+trStr;
+    };
+    let jmap='<div class="jmap"><div class="jhead">🗺️ The road we took</div>'+
+      '<div class="jnode start"><div class="jrail"><div class="jdot">💵</div><div class="jline"></div></div><div class="jbody"><div class="jlabel">Started with $1,000</div></div></div>';
+    history.forEach(h=>{
+      jmap+='<div class="jnode"><div class="jrail"><div class="jdot">'+(h.kind==='biz'?h.e:h.ce)+'</div><div class="jline"></div></div>'+
+        '<div class="jbody"><div class="jlabel">'+esc(h.kind==='biz'?('Founded '+h.label):h.label)+'</div>'+
+        (h.kind==='d'?'<div class="jmoney">'+jmoney(h)+'</div>':'')+'</div></div>';
+    });
+    jmap+='<div class="jnode finish"><div class="jrail"><div class="jdot">🏆</div></div><div class="jbody"><div class="jlabel">Demo day — '+esc(st.cname||b.t)+'</div>'+
+      '<div class="jmoney"><span class="run">'+fmt(st.money)+' in the bank · '+heartStr(st.trust)+'</span></div></div></div></div>';
     html='<div class="kick">Demo day</div><div class="qe">'+r.e+'</div><h1>'+b.e+' '+esc(st.cname||b.t)+'</h1><p class="sub">'+esc(r.title)+'</p>'+
       '<div class="valu"><div class="vcard"><div class="vl">💰 In the bank</div><div class="vv">'+fmt(st.money)+'</div></div>'+
       '<div class="vcard"><div class="vl">❤️ Trust</div><div class="vv">'+heartStr(st.trust)+'</div></div>'+
       '<div class="vcard"><div class="vl">🏷️ Verdict</div><div class="vv" style="font-size:1.15rem">'+title+'</div></div></div>'+
-      (lessons.length?'<p class="sub" style="margin-top:18px"><b>What this board of directors learned:</b></p><div class="lessons">'+lessons.map(l=>'<span class="lesson">'+esc(l)+'</span>').join('')+'</div>':'')+
+      jmap+
+      (lessons.length?'<p class="sub" style="margin-top:14px"><b>What this board of directors learned:</b></p><div class="lessons">'+lessons.map(l=>'<span class="lesson">'+esc(l)+'</span>').join('')+'</div>':'')+
       '<p class="sub" style="margin-top:16px">Started with $1,000 and a vote. Ran it with judgment, fairness, and humans handling the exceptions. That\'s how it\'s really done. 🧢</p>';
   }
   stageEl.innerHTML=html;
   if(r.k==='name'){
     const btn=document.getElementById('cnameBtn'), inp=document.getElementById('cnameIn');
-    btn.onclick=()=>{ st.cname=(inp.value||'').trim().slice(0,30); sync(); meters(); burst(); };
-    inp.addEventListener('keydown',(e)=>{ if(e.key==='Enter') btn.click(); });
+    btn.onclick=()=>{ doLock(); };                       // set the name + advance
+    inp.addEventListener('keydown',(e)=>{ if(e.key==='Enter'){ e.preventDefault(); doLock(); } });
   }
   if(isVote(r)&&st.ph==='vote') stageEl.querySelectorAll('.row').forEach(el=>el.addEventListener('click',()=>{ manual=+el.dataset.i===manual?-1:+el.dataset.i; render(); }));
 }
@@ -425,8 +521,9 @@ function renderKid(r){
     }else{
       const o=r.opts[st.pick]||{};
       const won=mine===st.pick;
+      const knet=(o.earn||0)-(o.cost||0)+(r.hit?r.hit.delta:0);
       html='<div class="qe">'+(o.e||'✅')+'</div><h1>The team chose: '+esc(o.t||'')+'</h1>'+
-        (r.k==='d'?'<div class="out" style="text-align:center"><div class="ob">'+esc(o.out||'')+'</div><span class="lesson">'+esc(o.lesson||'')+'</span></div>':'<p class="sub">'+esc(o.d||'')+'</p>')+
+        (r.k==='d'?'<div class="out" style="text-align:center"><div class="kmoney '+(knet>=0?'up':'down')+'">'+(knet>=0?'▲ +':'▼ −')+fmt(Math.abs(knet))+'</div><div class="ob">'+esc(o.out||'')+'</div><span class="lesson">'+esc(o.lesson||'')+'</span></div>':'<p class="sub">'+esc(o.d||'')+'</p>')+
         '<div class="lockrow" style="margin-top:10px">'+(mine==null?'':(won?'🎉 YOUR pick won the vote!':'Democracy! Your pick didn\'t win this one.'))+'</div>';
       if(won&&r.k!=='biz') burst();
     }
