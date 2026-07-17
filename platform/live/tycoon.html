@@ -33,6 +33,14 @@ body{ font-family:var(--body); color:#EAF1FF; min-height:100vh; display:flex; fl
 h1{ font-family:var(--display); font-weight:700; font-size:clamp(1.5rem,4vw,2.7rem); line-height:1.1; letter-spacing:-.02em; max-width:26ch; }
 .sub{ font-size:1.05rem; opacity:.88; max-width:56ch; margin-top:10px; line-height:1.5; }
 .hit{ margin:10px auto 0; font-weight:700; max-width:52ch; background:rgba(255,116,82,.14); border:2px solid rgba(255,116,82,.5); border-radius:16px; padding:12px 18px; color:#ffd9cd; animation:shake .5s; }
+/* intro join: QR + URL */
+.tjoin{ display:flex; align-items:center; justify-content:center; gap:28px; margin-top:20px; flex-wrap:wrap; }
+.tqrcard{ background:#fff; border-radius:16px; padding:14px; box-shadow:0 14px 34px rgba(0,0,0,.45); }
+.tqrcard .tqr{ width:clamp(140px,18vw,200px); height:clamp(140px,18vw,200px); display:block; }
+.tqrcard .tscan{ font-family:var(--display); font-weight:700; font-size:.9rem; color:#0A1024; text-align:center; margin-top:7px; }
+.tjoincol{ display:flex; flex-direction:column; align-items:center; gap:7px; }
+.tjoincol .tor{ font-family:var(--mono); font-size:12px; letter-spacing:.2em; text-transform:uppercase; color:#9fb6e6; }
+.tjoincol .url{ font-family:var(--mono); font-size:clamp(1rem,2.2vw,1.3rem); color:#9BF5C7; background:rgba(63,208,138,.1); border:1.5px solid rgba(63,208,138,.4); border-radius:14px; padding:12px 20px; }
 @keyframes shake{ 20%{ transform:translateX(-6px);} 40%{ transform:translateX(6px);} 60%{ transform:translateX(-4px);} 80%{ transform:translateX(3px);} }
 /* host option rows w/ live vote bars */
 .rows{ display:grid; gap:10px; width:min(880px,94%); margin-top:18px; }
@@ -117,6 +125,8 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 const esc=(s)=>String(s==null?'':s).replace(/[&<>"]/g,(c)=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const fmt=(n)=>'$'+Math.round(n).toLocaleString('en-US');
 const IS_HOST = localStorage.getItem('ctf:unlockall')==='1';
+// QR to the Tycoon join URL — kids scan it on the intro screen to play
+const TQR_SVG = `<svg viewBox='0 0 33 33' xmlns='http://www.w3.org/2000/svg' shape-rendering='crispEdges' class='tqr'><path d='M0 0h7v1h-7zM8 0h2v1h-2zM11 0h1v1h-1zM14 0h1v1h-1zM16 0h1v1h-1zM18 0h2v1h-2zM23 0h1v1h-1zM26 0h7v1h-7zM0 1h1v1h-1zM6 1h1v1h-1zM8 1h3v1h-3zM12 1h1v1h-1zM14 1h1v1h-1zM16 1h2v1h-2zM21 1h3v1h-3zM26 1h1v1h-1zM32 1h1v1h-1zM0 2h1v1h-1zM2 2h3v1h-3zM6 2h1v1h-1zM9 2h1v1h-1zM11 2h4v1h-4zM16 2h1v1h-1zM18 2h3v1h-3zM24 2h1v1h-1zM26 2h1v1h-1zM28 2h3v1h-3zM32 2h1v1h-1zM0 3h1v1h-1zM2 3h3v1h-3zM6 3h1v1h-1zM8 3h1v1h-1zM15 3h1v1h-1zM18 3h1v1h-1zM22 3h1v1h-1zM24 3h1v1h-1zM26 3h1v1h-1zM28 3h3v1h-3zM32 3h1v1h-1zM0 4h1v1h-1zM2 4h3v1h-3zM6 4h1v1h-1zM10 4h3v1h-3zM16 4h1v1h-1zM18 4h1v1h-1zM21 4h1v1h-1zM24 4h1v1h-1zM26 4h1v1h-1zM28 4h3v1h-3zM32 4h1v1h-1zM0 5h1v1h-1zM6 5h1v1h-1zM9 5h1v1h-1zM12 5h7v1h-7zM22 5h1v1h-1zM24 5h1v1h-1zM26 5h1v1h-1zM32 5h1v1h-1zM0 6h7v1h-7zM8 6h1v1h-1zM10 6h1v1h-1zM12 6h1v1h-1zM14 6h1v1h-1zM16 6h1v1h-1zM18 6h1v1h-1zM20 6h1v1h-1zM22 6h1v1h-1zM24 6h1v1h-1zM26 6h7v1h-7zM8 7h1v1h-1zM10 7h3v1h-3zM14 7h4v1h-4zM19 7h1v1h-1zM24 7h1v1h-1zM0 8h1v1h-1zM2 8h2v1h-2zM5 8h3v1h-3zM9 8h2v1h-2zM14 8h5v1h-5zM21 8h1v1h-1zM23 8h2v1h-2zM26 8h1v1h-1zM29 8h1v1h-1zM31 8h2v1h-2zM0 9h2v1h-2zM7 9h2v1h-2zM12 9h2v1h-2zM16 9h5v1h-5zM23 9h1v1h-1zM26 9h2v1h-2zM29 9h2v1h-2zM32 9h1v1h-1zM2 10h1v1h-1zM6 10h1v1h-1zM8 10h1v1h-1zM10 10h1v1h-1zM13 10h1v1h-1zM18 10h1v1h-1zM20 10h10v1h-10zM31 10h2v1h-2zM1 11h1v1h-1zM3 11h1v1h-1zM9 11h3v1h-3zM17 11h1v1h-1zM22 11h1v1h-1zM24 11h1v1h-1zM27 11h1v1h-1zM29 11h1v1h-1zM31 11h2v1h-2zM0 12h1v1h-1zM2 12h8v1h-8zM11 12h1v1h-1zM14 12h1v1h-1zM16 12h1v1h-1zM24 12h1v1h-1zM27 12h3v1h-3zM1 13h1v1h-1zM8 13h2v1h-2zM12 13h3v1h-3zM20 13h1v1h-1zM24 13h1v1h-1zM27 13h1v1h-1zM30 13h2v1h-2zM3 14h2v1h-2zM6 14h2v1h-2zM10 14h5v1h-5zM17 14h3v1h-3zM24 14h1v1h-1zM26 14h1v1h-1zM29 14h1v1h-1zM2 15h1v1h-1zM7 15h1v1h-1zM9 15h1v1h-1zM12 15h1v1h-1zM15 15h1v1h-1zM18 15h1v1h-1zM20 15h7v1h-7zM30 15h1v1h-1zM1 16h1v1h-1zM3 16h1v1h-1zM6 16h1v1h-1zM8 16h2v1h-2zM12 16h1v1h-1zM18 16h2v1h-2zM21 16h3v1h-3zM25 16h2v1h-2zM28 16h3v1h-3zM2 17h1v1h-1zM4 17h1v1h-1zM7 17h1v1h-1zM10 17h2v1h-2zM15 17h1v1h-1zM20 17h7v1h-7zM28 17h2v1h-2zM32 17h1v1h-1zM0 18h1v1h-1zM2 18h1v1h-1zM5 18h2v1h-2zM10 18h6v1h-6zM18 18h1v1h-1zM20 18h1v1h-1zM22 18h1v1h-1zM24 18h5v1h-5zM30 18h2v1h-2zM2 19h1v1h-1zM4 19h2v1h-2zM7 19h1v1h-1zM9 19h2v1h-2zM17 19h2v1h-2zM23 19h3v1h-3zM28 19h1v1h-1zM31 19h1v1h-1zM0 20h1v1h-1zM3 20h1v1h-1zM6 20h1v1h-1zM8 20h1v1h-1zM16 20h1v1h-1zM19 20h1v1h-1zM21 20h1v1h-1zM27 20h1v1h-1zM29 20h2v1h-2zM32 20h1v1h-1zM0 21h1v1h-1zM3 21h3v1h-3zM8 21h1v1h-1zM13 21h1v1h-1zM15 21h2v1h-2zM19 21h3v1h-3zM23 21h1v1h-1zM25 21h2v1h-2zM29 21h1v1h-1zM32 21h1v1h-1zM6 22h4v1h-4zM11 22h1v1h-1zM13 22h1v1h-1zM15 22h1v1h-1zM17 22h2v1h-2zM21 22h4v1h-4zM26 22h2v1h-2zM30 22h3v1h-3zM1 23h2v1h-2zM4 23h2v1h-2zM10 23h2v1h-2zM15 23h1v1h-1zM18 23h3v1h-3zM22 23h1v1h-1zM26 23h1v1h-1zM29 23h1v1h-1zM32 23h1v1h-1zM0 24h1v1h-1zM3 24h1v1h-1zM6 24h1v1h-1zM8 24h4v1h-4zM13 24h2v1h-2zM16 24h2v1h-2zM19 24h2v1h-2zM22 24h7v1h-7zM8 25h1v1h-1zM14 25h3v1h-3zM18 25h2v1h-2zM21 25h4v1h-4zM28 25h2v1h-2zM0 26h7v1h-7zM8 26h3v1h-3zM12 26h1v1h-1zM14 26h1v1h-1zM17 26h3v1h-3zM22 26h3v1h-3zM26 26h1v1h-1zM28 26h1v1h-1zM0 27h1v1h-1zM6 27h1v1h-1zM8 27h2v1h-2zM11 27h2v1h-2zM14 27h1v1h-1zM16 27h3v1h-3zM20 27h2v1h-2zM23 27h2v1h-2zM28 27h3v1h-3zM32 27h1v1h-1zM0 28h1v1h-1zM2 28h3v1h-3zM6 28h1v1h-1zM14 28h5v1h-5zM20 28h9v1h-9zM30 28h3v1h-3zM0 29h1v1h-1zM2 29h3v1h-3zM6 29h1v1h-1zM8 29h1v1h-1zM10 29h2v1h-2zM13 29h2v1h-2zM16 29h1v1h-1zM20 29h1v1h-1zM23 29h2v1h-2zM27 29h1v1h-1zM29 29h2v1h-2zM32 29h1v1h-1zM0 30h1v1h-1zM2 30h3v1h-3zM6 30h1v1h-1zM8 30h3v1h-3zM13 30h4v1h-4zM21 30h3v1h-3zM26 30h2v1h-2zM30 30h1v1h-1zM0 31h1v1h-1zM6 31h1v1h-1zM10 31h1v1h-1zM12 31h1v1h-1zM14 31h1v1h-1zM17 31h1v1h-1zM22 31h1v1h-1zM24 31h5v1h-5zM32 31h1v1h-1zM0 32h7v1h-7zM8 32h2v1h-2zM11 32h1v1h-1zM14 32h1v1h-1zM16 32h2v1h-2zM19 32h3v1h-3zM23 32h1v1h-1zM25 32h1v1h-1zM28 32h1v1h-1zM30 32h1v1h-1z' fill='#0A1024'/></svg>`;
 
 // ============================================================================
 // GAME DATA — every decision teaches a Module 2 lesson.
@@ -348,7 +358,8 @@ function renderHost(r){
   const mx=Math.max(1,...counts);
   if(r.k==='intro'){
     html='<div class="kick">The big game</div><div class="qe">'+r.e+'</div><h1>'+esc(r.title)+'</h1><p class="sub">'+esc(r.sub)+'</p>'+
-      '<div class="url" style="font-family:var(--mono);font-size:1.3rem;color:#9BF5C7;background:rgba(63,208,138,.1);border:1.5px solid rgba(63,208,138,.4);border-radius:16px;padding:12px 22px;margin-top:18px">codethefuture.net/platform/live/tycoon.html</div>';
+      '<div class="tjoin"><div class="tqrcard">'+TQR_SVG+'<div class="tscan">\ud83d\udcf1 Scan to play</div></div>'+
+      '<div class="tjoincol"><span class="tor">or go to</span><div class="url">codethefuture.net/platform/live/tycoon.html</div></div></div>';
   }
   else if(r.k==='name'){
     const b=BIZ[st.biz]||{e:'🏢',t:'Your company'};
@@ -423,7 +434,8 @@ function renderKid(r){
   else if(r.k==='end'){
     const b=BIZ[st.biz]||{e:'🏢',t:'the company'};
     html='<div class="qe">🎉</div><h1>'+b.e+' '+esc(st.cname||b.t)+' made it to demo day!</h1>'+
-      '<p class="sub">Final numbers are on the big screen. You just ran a company with real votes, real trade-offs, and AI as your teammate. Founder status: unlocked.</p>';
+      '<p class="sub">Final numbers are on the big screen. You just ran a company with real votes, real trade-offs, and AI as your teammate. Founder status: unlocked.</p>'+
+      '<a class="cb lock" style="text-decoration:none;display:inline-block;margin-top:14px" href="/platform/live/">🎮 Back to the Live Room</a>';
   }
   stageEl.innerHTML=html;
   if(isVote(r)&&st.ph==='vote') stageEl.querySelectorAll('.tile').forEach(b=>b.addEventListener('click',()=>{

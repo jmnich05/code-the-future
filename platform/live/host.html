@@ -19,6 +19,12 @@ body{ font-family:var(--body); color:#EAF1FF; height:100vh; display:flex; flex-d
 .hd .logo img{ width:30px; height:30px; }
 .hd .logo span{ color:var(--teal); }
 .hd .sess{ font-family:var(--mono); font-size:12px; letter-spacing:.16em; text-transform:uppercase; color:var(--purple); }
+.hd .modsw{ display:flex; gap:6px; }
+.hd .modsw a{ font-family:var(--mono); font-size:11px; font-weight:700; letter-spacing:.06em; text-decoration:none; color:#9fb6e6;
+  border:1px solid rgba(255,255,255,.18); border-radius:999px; padding:4px 11px; }
+.hd .modsw a.on{ color:#06122b; background:linear-gradient(120deg,#9fb6ff,#9B7BFF); border-color:transparent; }
+.hd .tycoonlink{ font-family:var(--display); font-weight:700; font-size:12px; letter-spacing:.04em; text-decoration:none; color:#3a2200;
+  background:linear-gradient(120deg,#FFD479,#FFB320); border-radius:999px; padding:6px 13px; box-shadow:0 4px 12px rgba(255,179,32,.35); }
 .hd .joined{ margin-left:auto; font-family:var(--mono); font-size:13px; color:#9BF5C7; }
 .stage{ flex:1 1 auto; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:20px 40px; text-align:center; overflow-y:auto; min-height:0; }
 .kick{ font-family:var(--mono); font-size:14px; letter-spacing:.22em; text-transform:uppercase; color:var(--purple); margin-bottom:12px; }
@@ -26,6 +32,12 @@ body{ font-family:var(--body); color:#EAF1FF; height:100vh; display:flex; flex-d
 h1{ font-family:var(--display); font-weight:700; font-size:clamp(2rem,4.5vw,3.4rem); line-height:1.08; letter-spacing:-.02em; max-width:22ch; }
 .sub{ font-size:1.25rem; opacity:.88; max-width:56ch; margin-top:12px; line-height:1.5; }
 .url{ font-family:var(--mono); font-size:clamp(1.2rem,2.6vw,1.9rem); color:#9BF5C7; background:rgba(63,208,138,.1); border:1.5px solid rgba(63,208,138,.4); border-radius:16px; padding:14px 26px; margin-top:20px; }
+.joinrow{ display:flex; align-items:center; justify-content:center; gap:30px; margin-top:22px; flex-wrap:wrap; }
+.qrcard{ background:#fff; border-radius:18px; padding:16px; box-shadow:0 16px 40px rgba(0,0,0,.45); }
+.qrcard .qr{ width:clamp(150px,20vw,220px); height:clamp(150px,20vw,220px); display:block; }
+.qrcard .scan{ font-family:var(--display); font-weight:700; font-size:.95rem; color:#0A1024; text-align:center; margin-top:8px; letter-spacing:.02em; }
+.joincol{ display:flex; flex-direction:column; align-items:center; gap:6px; }
+.joincol .or{ font-family:var(--mono); font-size:12px; letter-spacing:.2em; text-transform:uppercase; color:#9fb6e6; }
 .people{ display:flex; flex-wrap:wrap; gap:10px; justify-content:center; margin-top:24px; max-width:900px; }
 .pp{ display:inline-flex; align-items:center; gap:9px; font-family:var(--display); font-weight:700; font-size:1.05rem; background:rgba(155,123,255,.18); border:1.5px solid rgba(155,123,255,.45); border-radius:999px; padding:7px 20px 7px 8px; animation:pop .3s; }
 .pp .ppav{ width:34px; height:34px; border-radius:10px; overflow:hidden; flex:none; }
@@ -77,6 +89,8 @@ h1{ font-family:var(--display); font-weight:700; font-size:clamp(2rem,4.5vw,3.4r
 <div class="hd">
   <div class="logo"><img src="/platform/assets/logo-icon-tile.svg" alt="">Code the <span>Future</span></div>
   <div class="sess" id="sess"></div>
+  <div class="modsw" id="modsw"></div>
+  <a class="tycoonlink" id="tycoonLink" href="tycoon.html" target="_blank" rel="noopener">🏢 Tycoon game →</a>
   <div class="joined" id="joined">0 in the room</div>
 </div>
 <div class="stage" id="stage"><div class="gatemsg"><h1>Connecting…</h1></div></div>
@@ -103,6 +117,16 @@ const stageEl = document.getElementById('stage');
 const esc = (s)=>String(s==null?'':s).replace(/[&<>"]/g,(c)=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 document.getElementById('sess').textContent = S.title;
 
+// module switcher — add each module here as its config-mN.js ships. Clicking
+// reloads the host in that room; the lobby announcement makes every kid
+// device hop over automatically.
+const SESSIONS = ['1','2'];
+const _cur = (S.id||'m1').replace(/\D/g,'')||'1';
+document.getElementById('modsw').innerHTML = SESSIONS.map(n=>
+  '<a href="?m='+n+'" class="'+(n===_cur?'on':'')+'">M'+n+'</a>').join('');
+// the Tycoon big-game is part of the Module 2 session only
+document.getElementById('tycoonLink').style.display = (_cur==='2') ? '' : 'none';
+
 // soft staff check — the room is cohort-gated anyway; this keeps kids out of the controls
 if(localStorage.getItem('ctf:unlockall')!=='1'){
   stageEl.innerHTML='<div class="gatemsg"><div class="qe">🔒</div><h1>Host screen is staff-only</h1><p class="sub">Log in on the Staff tab first, then come back. (Kids join at <b>codethefuture.net/platform/live/</b>)</p></div>';
@@ -115,6 +139,9 @@ const dreams={};               // uid -> { name, icon, label, hero, world }
 const kids={};                 // uid -> name (presence)
 const avatars={};              // uid -> avatar config (the character each kid built)
 const av=(cfg)=>window.CTFAvatar ? window.CTFAvatar.render(cfg && Object.keys(cfg).length ? cfg : window.CTFAvatar.DEFAULT) : '';
+// QR to codethefuture.net/platform/live/ — kids scan it to join (also printable
+// from the coach notes). Static; regenerate only if the join URL changes.
+const QR_SVG = `<svg viewBox='0 0 29 29' xmlns='http://www.w3.org/2000/svg' shape-rendering='crispEdges' class='qr'><path d='M0 0h7v1h-7zM8 0h2v1h-2zM11 0h1v1h-1zM14 0h5v1h-5zM22 0h7v1h-7zM0 1h1v1h-1zM6 1h1v1h-1zM10 1h2v1h-2zM13 1h2v1h-2zM17 1h1v1h-1zM19 1h2v1h-2zM22 1h1v1h-1zM28 1h1v1h-1zM0 2h1v1h-1zM2 2h3v1h-3zM6 2h1v1h-1zM9 2h2v1h-2zM12 2h1v1h-1zM14 2h2v1h-2zM17 2h1v1h-1zM19 2h2v1h-2zM22 2h1v1h-1zM24 2h3v1h-3zM28 2h1v1h-1zM0 3h1v1h-1zM2 3h3v1h-3zM6 3h1v1h-1zM8 3h1v1h-1zM10 3h2v1h-2zM13 3h2v1h-2zM16 3h1v1h-1zM18 3h2v1h-2zM22 3h1v1h-1zM24 3h3v1h-3zM28 3h1v1h-1zM0 4h1v1h-1zM2 4h3v1h-3zM6 4h1v1h-1zM8 4h1v1h-1zM13 4h1v1h-1zM15 4h2v1h-2zM18 4h1v1h-1zM20 4h1v1h-1zM22 4h1v1h-1zM24 4h3v1h-3zM28 4h1v1h-1zM0 5h1v1h-1zM6 5h1v1h-1zM8 5h4v1h-4zM16 5h1v1h-1zM19 5h1v1h-1zM22 5h1v1h-1zM28 5h1v1h-1zM0 6h7v1h-7zM8 6h1v1h-1zM10 6h1v1h-1zM12 6h1v1h-1zM14 6h1v1h-1zM16 6h1v1h-1zM18 6h1v1h-1zM20 6h1v1h-1zM22 6h7v1h-7zM8 7h1v1h-1zM10 7h2v1h-2zM17 7h2v1h-2zM20 7h1v1h-1zM0 8h1v1h-1zM4 8h1v1h-1zM6 8h6v1h-6zM15 8h1v1h-1zM17 8h1v1h-1zM19 8h7v1h-7zM28 8h1v1h-1zM1 9h2v1h-2zM4 9h1v1h-1zM8 9h1v1h-1zM10 9h2v1h-2zM13 9h3v1h-3zM21 9h8v1h-8zM0 10h4v1h-4zM5 10h3v1h-3zM10 10h1v1h-1zM14 10h2v1h-2zM17 10h2v1h-2zM22 10h1v1h-1zM28 10h1v1h-1zM0 11h1v1h-1zM2 11h3v1h-3zM14 11h2v1h-2zM17 11h1v1h-1zM19 11h1v1h-1zM21 11h2v1h-2zM25 11h1v1h-1zM27 11h2v1h-2zM1 12h4v1h-4zM6 12h1v1h-1zM8 12h2v1h-2zM11 12h2v1h-2zM14 12h2v1h-2zM17 12h3v1h-3zM21 12h1v1h-1zM27 12h1v1h-1zM0 13h2v1h-2zM5 13h1v1h-1zM7 13h1v1h-1zM10 13h2v1h-2zM14 13h5v1h-5zM22 13h7v1h-7zM0 14h1v1h-1zM4 14h3v1h-3zM8 14h1v1h-1zM10 14h1v1h-1zM13 14h4v1h-4zM18 14h1v1h-1zM20 14h2v1h-2zM23 14h1v1h-1zM25 14h2v1h-2zM28 14h1v1h-1zM0 15h1v1h-1zM3 15h3v1h-3zM7 15h1v1h-1zM11 15h1v1h-1zM14 15h1v1h-1zM16 15h3v1h-3zM20 15h3v1h-3zM27 15h2v1h-2zM0 16h1v1h-1zM2 16h6v1h-6zM9 16h2v1h-2zM13 16h2v1h-2zM16 16h2v1h-2zM19 16h1v1h-1zM21 16h1v1h-1zM27 16h1v1h-1zM0 17h4v1h-4zM7 17h3v1h-3zM11 17h2v1h-2zM14 17h3v1h-3zM22 17h4v1h-4zM27 17h2v1h-2zM2 18h1v1h-1zM6 18h3v1h-3zM11 18h1v1h-1zM13 18h3v1h-3zM17 18h1v1h-1zM22 18h1v1h-1zM24 18h1v1h-1zM26 18h1v1h-1zM28 18h1v1h-1zM3 19h2v1h-2zM7 19h1v1h-1zM9 19h5v1h-5zM17 19h1v1h-1zM20 19h1v1h-1zM22 19h1v1h-1zM24 19h1v1h-1zM27 19h2v1h-2zM0 20h2v1h-2zM4 20h3v1h-3zM10 20h1v1h-1zM13 20h1v1h-1zM15 20h1v1h-1zM17 20h1v1h-1zM19 20h7v1h-7zM28 20h1v1h-1zM8 21h1v1h-1zM10 21h9v1h-9zM20 21h1v1h-1zM24 21h1v1h-1zM28 21h1v1h-1zM0 22h7v1h-7zM8 22h2v1h-2zM11 22h1v1h-1zM15 22h6v1h-6zM22 22h1v1h-1zM24 22h3v1h-3zM28 22h1v1h-1zM0 23h1v1h-1zM6 23h1v1h-1zM10 23h1v1h-1zM14 23h1v1h-1zM17 23h1v1h-1zM19 23h2v1h-2zM24 23h1v1h-1zM27 23h2v1h-2zM0 24h1v1h-1zM2 24h3v1h-3zM6 24h1v1h-1zM8 24h1v1h-1zM12 24h3v1h-3zM17 24h1v1h-1zM19 24h7v1h-7zM28 24h1v1h-1zM0 25h1v1h-1zM2 25h3v1h-3zM6 25h1v1h-1zM9 25h3v1h-3zM15 25h2v1h-2zM18 25h1v1h-1zM20 25h2v1h-2zM28 25h1v1h-1zM0 26h1v1h-1zM2 26h3v1h-3zM6 26h1v1h-1zM10 26h1v1h-1zM12 26h2v1h-2zM15 26h3v1h-3zM19 26h1v1h-1zM21 26h1v1h-1zM25 26h4v1h-4zM0 27h1v1h-1zM6 27h1v1h-1zM9 27h4v1h-4zM14 27h2v1h-2zM17 27h4v1h-4zM22 27h1v1h-1zM24 27h2v1h-2zM27 27h2v1h-2zM0 28h7v1h-7zM8 28h1v1h-1zM11 28h2v1h-2zM16 28h2v1h-2zM20 28h1v1h-1zM22 28h1v1h-1zM24 28h2v1h-2zM27 28h1v1h-1z' fill='#0A1024'/></svg>`;
 
 // The scoreboard is computed live from every answer collected, so it's always
 // right whether or not the coach pressed Reveal on each question. Answers
@@ -201,7 +228,11 @@ function render(){
   let html='';
   if(s.type==='lobby'){
     html='<div class="kick">'+esc(S.title)+'</div><h1>'+esc(s.title)+'</h1><p class="sub">'+esc(s.sub||'')+'</p>'+
-      '<div class="url">codethefuture.net/platform/live/</div><div class="people">'+
+      '<div class="joinrow">'+
+        '<div class="qrcard">'+QR_SVG+'<div class="scan">📱 Scan to join</div></div>'+
+        '<div class="joincol"><span class="or">or go to</span><div class="url">codethefuture.net/platform/live/</div></div>'+
+      '</div>'+
+      '<div class="people">'+
       Object.keys(kids).map(u=>'<span class="pp"><span class="ppav">'+av(avatars[u])+'</span>'+esc(kids[u])+'</span>').join('')+'</div>';
   }
   else if(s.type==='video'){
