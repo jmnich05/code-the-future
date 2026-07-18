@@ -139,9 +139,14 @@
   @keyframes pulse{50%{opacity:.4}}
   .hero h1{font-size:clamp(38px,5.2vw,60px);font-weight:700;margin-bottom:18px}
   .hero h1 .grad{background:linear-gradient(90deg,var(--teal-bright),var(--blue-bright) 55%,#9DB8FF);-webkit-background-clip:text;background-clip:text;color:transparent}
-  .hero p.lede{font-size:18px;color:rgba(255,255,255,.85);max-width:520px;margin-bottom:16px}
-  .hero p.lede:last-of-type{margin-bottom:30px;font-size:16px;color:rgba(255,255,255,.78)}
-  .hero-ctas{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:26px}
+  .hero p.lede{font-size:18px;color:rgba(255,255,255,.85);max-width:520px;margin-bottom:30px}
+  .hero-ctas{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:16px}
+  /* fall-cohort CTA — the one clear ask, on desktop AND mobile */
+  .cta-fall{display:inline-flex;align-items:center;gap:8px;margin-bottom:26px;padding:14px 22px;border-radius:999px;
+    font-family:var(--display);font-weight:700;font-size:16px;text-decoration:none;color:#2a1a00;
+    background:linear-gradient(120deg,#FFD479,#FFB320);box-shadow:0 12px 30px rgba(255,179,32,.35);transition:transform .15s}
+  .cta-fall:hover{transform:translateY(-2px)}
+  .cta-fall b{font-weight:800}
   .hero-meta{display:flex;gap:22px;flex-wrap:wrap;font-size:13.5px;color:rgba(255,255,255,.72)}
   .hero-meta b{color:#fff;font-family:var(--display)}
   /* ---- in the field (hero photos) ---- */
@@ -401,7 +406,8 @@
     .hero{padding:92px 0 56px}
     .hero h1{font-size:clamp(30px,9vw,38px)}
     .hero p.lede{font-size:16px}
-    .hero p.lede:last-of-type{font-size:14.5px}
+    .hero-ctas .btn-big{width:100%;justify-content:center}
+    .cta-fall{display:block;text-align:center;font-size:15px;padding:14px 16px;line-height:1.45}
     section{padding:56px 0}
     .trust .wrap{grid-template-columns:1fr;gap:14px;padding:20px 18px}
     .creed{padding:24px 22px}
@@ -440,12 +446,11 @@
     <div>
       <span class="pill"><span class="dot"></span>Louisville · AI learning across generations</span>
       <h1>The people who understand AI will <span class="grad">build the future.</span></h1>
-      <p class="lede">Code the Future creates hands-on AI learning for <b>older kids, young teens, and older adults</b>—built around real tools, practical judgment, and the confidence to stay in control.</p>
-      <p class="lede">Our founding <b>ages 8–11 program is live now</b>, with weekly Louisville sessions, game-like missions, an industry coach, and a psychologist-informed curriculum. Young-teen and older-adult tracks are forming next.</p>
+      <p class="lede">Code the Future creates hands-on AI learning for <b>older kids, young teens, and older adults</b> — built around real tools, practical judgment, a <b>psychologist-informed curriculum</b>, and the confidence to stay in control.</p>
       <div class="hero-ctas">
         <a class="btn btn-primary btn-big" href="/older-kids.html">Explore the live kids program</a>
-        <a class="btn btn-ghost btn-big" href="#film">▶ Walkthrough from co-founder Jon Nichols</a>
       </div>
+      <a class="cta-fall" href="#deposit">🚀 Join the fall 2026 cohort — <b>reserve your spot for $10</b> →</a>
       <div class="hero-meta">
         <span><b>Ages 8–11</b> enrolling now</span>
         <span><b>Ages 12–15</b> track forming</span>
@@ -469,6 +474,25 @@
     </div>
   </div>
 </header>
+
+<section class="filmsec" id="filmsec">
+  <div class="wrap">
+    <div class="sec-head reveal" style="margin-left:auto;margin-right:auto;text-align:center;max-width:560px">
+      <span class="kicker" style="color:var(--teal-bright);justify-content:center">Program walkthrough</span>
+      <h2>A walkthrough of the program &amp; platform — from co-founder Jon Nichols.</h2>
+    </div>
+    <div class="film reveal" id="film">
+      <!-- VIDEO SLOT — when Jon's film is ready, set FILM_URL in the script
+           at the bottom of this file (YouTube embed URL or hosted .mp4). -->
+      <div class="film-poster"></div>
+      <div class="film-shade"></div>
+      <div class="film-play">
+        <div class="ring">▶</div>
+        <span>The film — coming soon</span>
+      </div>
+    </div>
+  </div>
+</section>
 
 <div class="trust">
   <div class="wrap">
@@ -511,24 +535,6 @@
 </section>
 
 <!-- ============ FOUNDERS FILM ============ -->
-<section class="filmsec" id="filmsec">
-  <div class="wrap">
-    <div class="sec-head reveal" style="margin-left:auto;margin-right:auto;text-align:center;max-width:560px">
-      <span class="kicker" style="color:var(--teal-bright);justify-content:center">Program walkthrough</span>
-      <h2>A walkthrough of the program &amp; platform — from co-founder Jon Nichols.</h2>
-    </div>
-    <div class="film reveal" id="film">
-      <!-- VIDEO SLOT — when Jon's film is ready, set FILM_URL in the script
-           at the bottom of this file (YouTube embed URL or hosted .mp4). -->
-      <div class="film-poster"></div>
-      <div class="film-shade"></div>
-      <div class="film-play">
-        <div class="ring">▶</div>
-        <span>The film — coming soon</span>
-      </div>
-    </div>
-  </div>
-</section>
 
 <section class="why" id="why">
   <div class="wrap">
