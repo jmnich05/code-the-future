@@ -1,6 +1,6 @@
 # Code the Future
 
-A platform and in-person summer camp teaching kids AI literacy and modern coding — with
+A platform and in-person program (year-round cohorts) teaching kids AI literacy and modern coding — with
 special attention to how AI is reshaping software development.
 
 **Two things, one mission:**

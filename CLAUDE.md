@@ -10,7 +10,8 @@ and how I like to work; read `MEMORY.md` for durable decisions; read
 
 1. **A platform** — a web product for learning AI and modern coding, aimed at kids and
    beginners, with an operator/builder bent (real tools, real workflows, not toy CS).
-2. **An in-person summer camp** — a hands-on summer program (2026) where kids learn what
+2. **An in-person program** — hands-on cohorts running year-round (launched summer
+   2026; now an annual program with rolling 4-week cohorts) where kids learn what
    AI is, how to use it well, and how it is reshaping coding and software development.
 
 The throughline: teach AI literacy and coding *together*, the way the work actually
