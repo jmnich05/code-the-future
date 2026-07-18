@@ -148,6 +148,10 @@ body.mode-paint #paintcv{ pointer-events:auto; cursor:crosshair; }
 .cover .plate{ position:absolute; left:8%; right:8%; top:6%; background:rgba(30,20,8,.72); border:2px solid #d4a437; border-radius:12px; padding:14px 10px; text-align:center; }
 .cover .plate h2{ font-family:Georgia,serif; color:#f3e3b8; font-size:1.4rem; line-height:1.25; }
 .cover .byline{ position:absolute; left:8%; right:8%; bottom:6%; text-align:center; font-family:Georgia,serif; color:#f3e3b8; background:rgba(30,20,8,.72); border-radius:10px; padding:8px; font-size:.95rem; }
+.cover .openhint{ position:absolute; left:8%; right:8%; bottom:15%; text-align:center; font-family:Georgia,serif; color:#f3e3b8; font-size:.9rem; opacity:.9;
+  text-shadow:0 2px 8px rgba(0,0,0,.8); animation:hintpulse 1.8s ease-in-out infinite; }
+@keyframes hintpulse{ 50%{ opacity:.45; } }
+.cover.on{ cursor:pointer; }
 .storynav{ display:flex; gap:8px; align-items:center; justify-content:center; padding:0 12px 12px; }
 .storynav .pgbtn{ font-size:1.1rem; background:rgba(255,255,255,.1); color:#fff; border:none; border-radius:999px; width:42px; height:42px; cursor:pointer; }
 .storynav .pgbtn:disabled{ opacity:.3; }
@@ -294,7 +298,12 @@ const $=(id)=>document.getElementById(id);
 const esc=(s)=>String(s==null?'':s).replace(/[&<>"]/g,(c)=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 let toastT; const toast=(m)=>{ const t=$('toast'); t.textContent=m; t.classList.add('on'); clearTimeout(toastT); toastT=setTimeout(()=>t.classList.remove('on'),3400); };
 const clean=(v)=>{ if(v && window.CTFFilter && CTFFilter.isClean && !CTFFilter.isClean(v)){ toast("Let's keep it kind and fun!"); return false; } return true; };
-const name=(()=>{ try{ return (JSON.parse(localStorage.getItem('ctf:profile')||'null')||{}).display_name||'A builder'; }catch(e){ return 'A builder'; } })();
+let name=(()=>{ try{ return (JSON.parse(localStorage.getItem('ctf:profile')||'null')||{}).display_name||'A builder'; }catch(e){ return 'A builder'; } })();
+// upgrade to the kid's real FIRST name once the DB session is up (storybook byline)
+(async()=>{ try{ await CTFDB.init(); if(!CTFDB.enabled) return;
+  const pi=await CTFDB.getPrivateIdentity();
+  if(pi && pi.first_name){ name=String(pi.first_name).trim().split(/\s+/)[0]; renderBook(); }
+}catch(e){} })();
 const qs=new URLSearchParams(location.search);
 function show(id){ document.querySelectorAll('.screen').forEach(s=>s.classList.toggle('on', s.id===id)); }
 
@@ -518,6 +527,7 @@ $('doorScene').onclick=()=>{ show('scene');
 let book={ title:'', pages:[], done:false, cover:null };
 try{ const b=JSON.parse(localStorage.getItem('ctf:sandbox:book')||'null'); if(b&&b.pages) book=b; }catch(e){}
 let view=0;   // index of the left page of the current spread
+let opened=false;   // finished book: false = admiring the cover, true = reading inside
 function persistBook(){ try{ localStorage.setItem('ctf:sandbox:book',JSON.stringify(book)); }catch(e){} }
 function storyBusy(on,msg){ $('storyBusy').classList.toggle('on',on); if(msg)$('storyBusyMsg').textContent=msg; }
 
@@ -528,9 +538,12 @@ function pageHTML(i){
 }
 function renderBook(){
   const total=book.pages.length;
-  if(book.done && book.cover){ $('book').style.display='none'; $('cover').classList.add('on');
-    $('cover').innerHTML='<img src="'+book.cover+'" alt=""><div class="plate"><h2>'+esc(book.title||'My Story')+'</h2></div><div class="byline">written by '+esc(name)+' &amp; a robot friend</div>';
-    $('pgLbl').textContent='📕 '+total+' pages inside'; $('pgPrev').disabled=true; $('pgNext').disabled=true;
+  if(book.done && book.cover && !opened){ $('book').style.display='none'; $('cover').classList.add('on');
+    $('cover').innerHTML='<img src="'+book.cover+'" alt=""><div class="plate"><h2>'+esc(book.title||'My Story')+'</h2></div>'+
+      '<div class="openhint">👆 Tap the cover to open your book</div>'+
+      '<div class="byline">written by '+esc(name)+'</div>';
+    $('cover').onclick=()=>{ opened=true; view=0; renderBook(); };
+    $('pgLbl').textContent='📕 '+total+' pages inside'; $('pgPrev').disabled=true; $('pgNext').disabled=false;
     $('storyShare').style.display='inline-block';
     return;
   }
@@ -552,7 +565,8 @@ function renderBook(){
     $('pgR').innerHTML=pageHTML(R);
   }
   $('pgLbl').textContent= total? ('pages '+(L+1)+'–'+Math.min(R+1,Math.max(total,R+1))+' of '+(book.done?total:total+1)) : 'page 1';
-  $('pgPrev').disabled=view<=0;
+  // at the first spread of a finished book, ‹ goes back to the cover
+  $('pgPrev').disabled = view<=0 && !(book.done&&book.cover);
   $('pgNext').disabled=atEnd||R>=total&&!book.done;
 }
 function flipThen(fn){
@@ -607,7 +621,7 @@ async function coverComposite(){
     x.fillStyle='#f3e3b8'; x.font='bold 40px Georgia'; x.textAlign='center';
     wrapText(x, book.title||'My Story', W/2, 115, W-140, 44);
     x.fillStyle='rgba(30,20,8,.75)'; roundRect(x,90,H-110,W-180,60,10); x.fill();
-    x.fillStyle='#f3e3b8'; x.font='24px Georgia'; x.fillText('by '+name+' & a robot friend', W/2, H-70);
+    x.fillStyle='#f3e3b8'; x.font='24px Georgia'; x.fillText('written by '+name, W/2, H-70);
     res(c.toDataURL('image/jpeg',.85)); }; im.src=book.cover; });
 }
 function roundRect(x,px,py,w,h,r){ x.beginPath(); x.moveTo(px+r,py); x.arcTo(px+w,py,px+w,py+h,r); x.arcTo(px+w,py+h,px,py+h,r); x.arcTo(px,py+h,px,py,r); x.arcTo(px,py,px+w,py,r); x.closePath(); }
@@ -623,9 +637,20 @@ $('storyShare').onclick=async ()=>{
   btn.disabled=false; btn.textContent='🏆 Share my book';
 };
 $('storyNew').onclick=()=>{ if(!confirm('Start a brand-new book? This one goes away.'))return;
-  book={ title:'', pages:[], done:false, cover:null }; view=0; persistBook(); renderBook(); };
-$('pgPrev').onclick=()=>{ view=Math.max(0,view-2); renderBook(); };
-$('pgNext').onclick=()=>{ view=Math.min(Math.max(0,book.pages.length-1),view+2); renderBook(); };
+  book={ title:'', pages:[], done:false, cover:null }; view=0; opened=false; persistBook(); renderBook(); };
+$('pgPrev').onclick=()=>{
+  if(book.done && book.cover && opened && view<=0){ opened=false; renderBook(); return; }   // close back to the cover
+  view=Math.max(0,view-2); renderBook(); };
+$('pgNext').onclick=()=>{
+  if(book.done && book.cover && !opened){ opened=true; view=0; renderBook(); return; }      // open the book
+  view=Math.min(Math.max(0,book.pages.length-1),view+2); renderBook(); };
+// keyboard page-turning (← →) whenever the storybook is on screen
+addEventListener('keydown',(e)=>{
+  if(e.target && /TEXTAREA|INPUT/.test(e.target.tagName)) return;
+  const nx=$('pgNext'); if(!nx || !nx.offsetParent) return;   // storybook not visible
+  if(e.key==='ArrowRight' && !nx.disabled){ e.preventDefault(); nx.click(); }
+  else if(e.key==='ArrowLeft' && !$('pgPrev').disabled){ e.preventDefault(); $('pgPrev').click(); }
+});
 $('storyBack').onclick=()=>route();
 $('doorMusic').onclick=()=>{ location.href='musiclab.html'; };
 $('doorStory').onclick=()=>{ if(tier<8&&!staff&&!qs.has('demo')){ toast('The Storybook opens after Mission 8 — keep going!'); return; }
