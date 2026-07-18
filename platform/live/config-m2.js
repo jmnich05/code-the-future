@@ -13,7 +13,8 @@ window.LIVE_SESSION = {
   title: 'Module 2 · AI and Our World',
   stages: [
     { id:'lobby', type:'lobby', title:'Welcome back, Future Builders! 🌍',
-      sub:'Grab your device, log in, and join the room. This week: AI out in the REAL world — and 10 questions between you and the trophy.' },
+      sub:'Grab your device, log in, and join the room. This week: AI out in the REAL world — and 10 questions between you and the trophy.',
+      reel:'/curriculum/module-02-ai-and-society/in-person/module2-sizzle-reel.mp4' },
 
     // ---- warm-up opinion vote (no right answer — discussion starter) -------
     { id:'poll1', type:'vote', title:'Warm-up vote', e:'🌍',
