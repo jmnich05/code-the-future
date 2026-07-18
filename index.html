@@ -140,9 +140,17 @@
   .hero h1{font-size:clamp(38px,5.2vw,60px);font-weight:700;margin-bottom:18px}
   .hero h1 .grad{background:linear-gradient(90deg,var(--teal-bright),var(--blue-bright) 55%,#9DB8FF);-webkit-background-clip:text;background-clip:text;color:transparent}
   .hero p.lede{font-size:18px;color:rgba(255,255,255,.85);max-width:520px;margin-bottom:22px}
-  /* summer-cohort photo — sits where the old second paragraph was */
-  .hero-shot{display:block;max-width:560px;margin-bottom:24px}
+  /* summer-cohort photo — the hero visual.
+     Desktop (>880px): big, in the right column (.hero-side).
+     Mobile/tablet (≤880px): inline between the lede and the CTAs (.hero-shot). */
+  .hero-shot{display:none}
   .hero-shot img{display:block;width:100%;height:auto;border-radius:16px;border:1px solid rgba(255,255,255,.22);box-shadow:0 22px 55px rgba(0,0,0,.45)}
+  .hero-side img{display:block;width:100%;height:auto;border-radius:20px;border:1px solid rgba(255,255,255,.24);box-shadow:0 30px 80px rgba(0,0,0,.55)}
+  .hero-side .hs-note{margin-top:14px;text-align:center;font-size:13.5px;color:rgba(255,255,255,.72)}
+  @media(max-width:880px){
+    .hero-side{display:none}
+    .hero-shot{display:block;max-width:560px;margin-bottom:24px}
+  }
   .hero-ctas{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:16px}
   /* fall-cohort CTA — the one clear ask, on desktop AND mobile */
   .cta-fall{display:inline-flex;align-items:center;gap:8px;margin-bottom:26px;padding:14px 22px;border-radius:999px;
@@ -152,17 +160,6 @@
   .cta-fall b{font-weight:800}
   .hero-meta{display:flex;gap:22px;flex-wrap:wrap;font-size:13.5px;color:rgba(255,255,255,.72)}
   .hero-meta b{color:#fff;font-family:var(--display)}
-  /* ---- in the field (hero photos) ---- */
-  .field{background:var(--card,#fff);border:1.5px solid var(--line);border-radius:24px;padding:22px;box-shadow:0 24px 70px rgba(12,19,34,.12)}
-  .fd-kick{font-family:var(--mono);font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--teal);font-weight:700;margin-bottom:14px;text-align:center}
-  .fd-stack{display:grid;grid-template-columns:1fr 1fr;gap:14px}
-  .fd-shot{margin:0;background:#fff;padding:10px 10px 12px;border-radius:6px;box-shadow:0 14px 34px rgba(12,19,34,.18);border:1px solid var(--line);transition:transform .25s}
-  .fd-shot.a{transform:rotate(-2.2deg)} .fd-shot.b{transform:rotate(1.8deg)}
-  .fd-shot:hover{transform:rotate(0) scale(1.02)}
-  .fd-shot img{width:100%;aspect-ratio:4/5;object-fit:cover;border-radius:4px;display:block}
-  .fd-shot figcaption{font-family:var(--display);font-weight:700;font-size:13px;color:var(--ink);text-align:center;margin-top:9px}
-  .fd-note{margin-top:16px;font-size:13px;color:rgba(12,19,34,.62);text-align:center;line-height:1.5}
-  .fd-note em{font-size:11px;opacity:.75}
   /* ---- live sandbox (hero) ---- */
   .sandbox{background:rgba(255,255,255,.97);border-radius:22px;box-shadow:0 30px 80px rgba(0,0,0,.5);padding:16px 16px 14px;color:var(--ink)}
   .sb-kick{display:block;font-family:var(--mono);font-size:10.5px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--coral);margin-bottom:9px}
@@ -464,20 +461,10 @@
         <span><b>Older adults</b> workshops forming</span>
       </div>
     </div>
-    <!-- in the field: real photos from the live sessions -->
-    <div class="field reveal in" id="sandbox">
-      <div class="fd-kick">📍 Code the Future, in the field</div>
-      <div class="fd-stack">
-        <figure class="fd-shot a">
-          <img src="platform/assets/field-session1-teaching.jpg" alt="Coach Jon teaching the first Code the Future session at the library" loading="eager">
-          <figcaption>Session 1 · live at the library</figcaption>
-        </figure>
-        <figure class="fd-shot b">
-          <img src="platform/assets/field-session1-door.jpg" alt="The Code the Future coaches and campers at the Future Builders door" loading="lazy">
-          <figcaption>Future Builders enter here</figcaption>
-        </figure>
-      </div>
-      <p class="fd-note">Real coaches, real kids, really building — Saturdays at the library.</p>
+    <!-- hero visual: Summer Cohort '26 session photo (desktop) -->
+    <div class="hero-side reveal in">
+      <img src="platform/assets/summer-cohort-26-wide.jpg" alt="Coaches Jon and Kenya leading a live Code the Future session at the library — Summer Cohort '26" loading="eager">
+      <p class="hs-note">Real coaches, real kids, really building — Saturdays at the library.</p>
     </div>
   </div>
 </header>
