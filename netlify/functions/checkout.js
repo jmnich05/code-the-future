@@ -32,8 +32,8 @@ const LINE_ITEMS = {
     amount: 22500
   },
   depositAugust: {
-    name: "Code the Future — August Session Seat Deposit",
-    description: "Holds one of 15 seats for Session 2 (starts Aug 31; Saturday library sessions 10am-12pm). Fully credited toward tuition at enrollment.",
+    name: "Code the Future — Fall Session Seat Deposit",
+    description: "Holds one of 15 seats for Session 2 (starts Sept 28; Saturday library sessions 10am-12pm). Fully credited toward tuition at enrollment.",
     amount: 1000
   }
 };
@@ -70,7 +70,7 @@ export default async (req) => {
   form.set("allow_promotion_codes", "true");
   if (email) form.set("customer_email", email);
   form.set("custom_text[submit][message]", plan === "deposit-august"
-    ? "Your $10 holds a seat for Session 2 (starts Aug 31). It's fully credited toward tuition — enrollment details land in your inbox soon."
+    ? "Your $10 holds a seat for Session 2 (starts Sept 28). It's fully credited toward tuition — enrollment details land in your inbox soon."
     : "After checkout, Code the Future will email your camper's login details and cohort next steps.");
 
   form.set("metadata[program]", "Code the Future Summer 2026");
