@@ -107,7 +107,7 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 // whatever session the HOST screen is running (m1…m4). The host announces its
 // module on the shared 'live:lobby' presence channel; ?m=N still forces one.
 // ============================================================================
-const DEFAULT_M = '2';                       // newest module — fallback when no host is on yet
+const DEFAULT_M = '3';                       // newest module — fallback when no host is on yet
 const OVERRIDE = (new URLSearchParams(location.search).get('m')||'').replace(/[^0-9]/g,'');
 
 let S = null;                                // the loaded session config
@@ -219,6 +219,11 @@ function render(){
   }
   else if(s.type==='video'){
     view.innerHTML='<div class="wait">🍿</div><h1>Movie time!</h1><p class="sub">Eyes UP on the big screen — devices down for a few minutes. We\'re watching this one together!</p>';
+  }
+  else if(s.type==='story'){
+    view.innerHTML='<div class="wait">'+(s.e||'📰')+'</div><h1>Eyes on the big screen</h1><p class="sub">'+esc(s.title)+'</p>'+
+      (s.ask?'<div class="banner on info">💬 '+esc(s.ask)+'</div>':'')+
+      '<p class="sub" style="opacity:.7">Devices down for a minute — this one\'s a real story, and we\'re going to talk about it.</p>';
   }
   else if(s.type==='vote'){
     const mine=myChoices[s.id];
