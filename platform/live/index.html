@@ -184,22 +184,94 @@ async function discover(){
 }
 
 // --- realtime ---------------------------------------------------------------
+// Kid devices used to update ONLY when a presence 'sync' event fired. If that
+// single event was missed — phone sleeps at halftime, WebSocket suspends, a
+// blip drops the socket — the screen froze on the old stage with no way back.
+// Now there are four independent paths to the truth:
+//   1. presence sync   (as before)
+//   2. a 'stage' broadcast the host sends on every change
+//   3. a 2s poll of presenceState()  — catches anything the events missed
+//   4. wake/focus/online handlers that reconcile AND rejoin a dead socket
+let lastSeenHost = 0, joined = false, rejoinT = null;
+
+function applyStage(newStage, newRevealed){
+  const prev = stageId, prevR = revealed;
+  stageId = newStage; revealed = !!newRevealed;
+  if(stageId !== prev || revealed !== prevR) render();
+}
+// read the host's state straight out of presence (no event needed)
+function reconcile(){
+  if(!channel) return;
+  let host = null;
+  try{
+    const st = channel.presenceState();
+    Object.keys(st).forEach(k => (st[k]||[]).forEach(m => { if(m.role === 'host') host = m; }));
+  }catch(e){ return; }
+  const dot = document.getElementById('dot');
+  if(host){
+    lastSeenHost = Date.now();
+    if(dot) dot.classList.add('on');
+    applyStage(host.stage || 'lobby', host.revealed);
+  }else{
+    if(dot) dot.classList.remove('on');
+    if(stageId !== 'connecting') applyStage('nohost', false);
+  }
+}
+// (re)join the room — safe to call any time; no-ops while a join is in flight
+function ensureJoined(){
+  if(!channel || joined) return;
+  const state = channel.state;                       // joined | joining | closed | errored
+  if(state === 'joined'){ joined = true; return; }
+  if(state === 'joining') return;
+  clearTimeout(rejoinT);
+  rejoinT = setTimeout(()=>{ try{ channel.subscribe(onSubscribe); }catch(e){} }, 400);
+}
+function onSubscribe(status){
+  if(status === 'SUBSCRIBED'){
+    joined = true;
+    channel.track({ role:'kid', uid, name, avatar:myAvatar }).catch(()=>{});
+    reconcile(); render();
+  }else if(status === 'CHANNEL_ERROR' || status === 'TIMED_OUT' || status === 'CLOSED'){
+    joined = false; ensureJoined();                  // socket died — climb back in
+  }
+}
 function startRealtime(){
   if(!rtOk){ view.innerHTML='<div class="wait">🔌</div><h1>Live Room isn\'t on</h1><p class="sub">Ask your coach for help!</p>'; return; }
   channel = sb.channel(S.channel, { config:{ presence:{ key:uid }, broadcast:{ self:false } } });
-  channel.on('presence', { event:'sync' }, ()=>{
-    const st = channel.presenceState();
-    let host=null;
-    Object.keys(st).forEach(k=>(st[k]||[]).forEach(m=>{ if(m.role==='host') host=m; }));
-    document.getElementById('dot').classList.toggle('on', !!host);
-    const prev=stageId, prevR=revealed;
-    stageId = host ? (host.stage||'lobby') : 'nohost';
-    revealed = !!(host&&host.revealed);
-    if(stageId!==prev || revealed!==prevR) render();
+  channel.on('presence', { event:'sync' }, reconcile);
+  channel.on('presence', { event:'join' },  reconcile);
+  channel.on('presence', { event:'leave' }, reconcile);
+  // the host also broadcasts each stage change — a second, independent path
+  channel.on('broadcast', { event:'stage' }, ({payload:p})=>{
+    if(!p || !p.stage) return;
+    lastSeenHost = Date.now();
+    const dot = document.getElementById('dot'); if(dot) dot.classList.add('on');
+    applyStage(p.stage, p.revealed);
   });
-  channel.subscribe(async (status)=>{
-    if(status==='SUBSCRIBED'){ await channel.track({ role:'kid', uid, name, avatar:myAvatar }); render(); }
-  });
+  channel.subscribe(onSubscribe);
+
+  // 3. steady poll — costs nothing (reads local presence state) and repairs
+  //    any missed event within ~2 seconds
+  setInterval(()=>{ joined = (channel && channel.state === 'joined'); ensureJoined(); reconcile(); }, 2000);
+
+  // 4. the phone woke up / came back / regained signal → resync immediately
+  const wake = ()=>{ joined = (channel && channel.state === 'joined'); ensureJoined(); reconcile(); };
+  document.addEventListener('visibilitychange', ()=>{ if(!document.hidden) wake(); });
+  addEventListener('focus', wake);
+  addEventListener('pageshow', wake);
+  addEventListener('online', wake);
+  // tapping anywhere on the device also forces a resync — a kid poking a stuck
+  // screen is the most likely "fix it" gesture there is
+  addEventListener('pointerdown', wake, { passive:true });
+
+  // emergency lever + test hook: CTFLive.resync() from a console, and
+  // CTFLive.state() to see what the device thinks is happening
+  window.CTFLive = {
+    resync: wake,
+    state: ()=>({ stage:stageId, revealed, channel: channel && channel.state,
+                  secondsSinceHost: lastSeenHost ? Math.round((Date.now()-lastSeenHost)/1000) : null }),
+    channel: ()=>channel
+  };
 }
 function send(event,payload){ if(channel) channel.send({ type:'broadcast', event, payload }); }
 function burst(){ const c=document.createElement('div'); c.className='confetti'; document.body.appendChild(c);
