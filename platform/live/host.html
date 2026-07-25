@@ -26,7 +26,7 @@ body{ font-family:var(--body); color:#EAF1FF; height:100vh; display:flex; flex-d
 .hd .tycoonlink{ font-family:var(--display); font-weight:700; font-size:12px; letter-spacing:.04em; text-decoration:none; color:#3a2200;
   background:linear-gradient(120deg,#FFD479,#FFB320); border-radius:999px; padding:6px 13px; box-shadow:0 4px 12px rgba(255,179,32,.35); }
 .hd .joined{ margin-left:auto; font-family:var(--mono); font-size:13px; color:#9BF5C7; }
-.stage{ flex:1 1 auto; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:20px 40px; text-align:center; overflow-y:auto; min-height:0; }
+.stage{ flex:1 1 auto; display:flex; flex-direction:column; align-items:center; justify-content:safe center; padding:20px 40px; text-align:center; overflow-y:auto; min-height:0; }
 .kick{ font-family:var(--mono); font-size:14px; letter-spacing:.22em; text-transform:uppercase; color:var(--purple); margin-bottom:12px; }
 .qe{ font-size:4.2rem; margin-bottom:6px; }
 h1{ font-family:var(--display); font-weight:700; font-size:clamp(2rem,4.5vw,3.4rem); line-height:1.08; letter-spacing:-.02em; max-width:22ch; }
@@ -92,6 +92,34 @@ h1{ font-family:var(--display); font-weight:700; font-size:clamp(2rem,4.5vw,3.4r
 .cb:disabled{ opacity:.35; cursor:not-allowed; }
 .ctrl .pos{ font-family:var(--mono); font-size:12px; color:#9fb6e6; margin:0 8px; }
 .gatemsg{ margin:auto; text-align:center; }
+/* ---- always-on live scoreboard (top right, every stage) ---- */
+.livesb{ position:fixed; top:70px; right:18px; z-index:60; width:min(280px,26vw); background:rgba(8,13,28,.82); backdrop-filter:blur(10px);
+  border:1.5px solid rgba(127,227,255,.28); border-radius:16px; padding:11px 13px; box-shadow:0 18px 44px rgba(0,0,0,.5); display:none; }
+.livesb.on{ display:block; }
+.livesb .sbh{ font-family:var(--mono); font-size:10px; letter-spacing:.18em; text-transform:uppercase; color:#7ef0e6; margin-bottom:8px; text-align:center; }
+.livesb .sbrow{ display:flex; align-items:center; gap:8px; padding:4px 0; font-family:var(--display); font-weight:700; font-size:.95rem; }
+.livesb .sbrow .m{ font-size:1.05rem; width:22px; flex:none; text-align:center; }
+.livesb .sbav{ width:28px; height:28px; border-radius:8px; overflow:hidden; flex:none; }
+.livesb .sbav svg{ width:100%; height:100%; display:block; }
+.livesb .sbn{ flex:1; min-width:0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.livesb .sbp{ font-family:var(--mono); color:#9BF5C7; flex:none; }
+.livesb .sbrow.lead .sbn{ color:#FFD479; }
+@media(max-width:900px){ .livesb{ display:none !important; } }
+/* ---- full-screen real-news story ---- */
+.storywrap{ width:min(1180px,94%); }
+.storywrap .stitle{ font-family:var(--display); font-weight:700; font-size:clamp(1.5rem,3vw,2.5rem); line-height:1.1; letter-spacing:-.02em; margin-bottom:4px; }
+.storywrap .scols{ display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-top:16px; text-align:left; }
+@media(max-width:980px){ .storywrap .scols{ grid-template-columns:1fr; } }
+.scard{ background:rgba(255,255,255,.05); border:1.5px solid rgba(127,227,255,.24); border-radius:18px; padding:14px 18px; }
+.scard.means{ border-color:rgba(63,208,138,.4); background:rgba(63,208,138,.07); }
+.scard .sh{ font-family:var(--mono); font-size:11px; letter-spacing:.18em; text-transform:uppercase; color:#7ef0e6; margin-bottom:10px; }
+.scard.means .sh{ color:#9BF5C7; }
+.scard p{ font-size:clamp(.95rem,1.3vw,1.15rem); line-height:1.45; margin-bottom:9px; }
+.scard p:last-child{ margin-bottom:0; }
+.storywrap .sask{ margin-top:14px; font-family:var(--display); font-weight:700; font-size:clamp(1rem,1.6vw,1.32rem); color:#FFD98C;
+  background:rgba(255,196,77,.12); border:1.5px solid rgba(255,196,77,.42); border-radius:16px; padding:12px 20px; }
+.story-warn .scard{ border-color:rgba(255,116,82,.4); }
+.story-warn .scard.means{ border-color:rgba(255,196,77,.45); background:rgba(255,196,77,.09); }
 </style>
 </head>
 <body>
@@ -103,6 +131,7 @@ h1{ font-family:var(--display); font-weight:700; font-size:clamp(2rem,4.5vw,3.4r
   <div class="joined" id="joined">0 in the room</div>
 </div>
 <div class="stage" id="stage"><div class="gatemsg"><h1>Connecting…</h1></div></div>
+<div class="livesb" id="livesb"></div>
 <div class="reelwrap" id="reelwrap">
   <button class="reelclose" id="reelclose">✕ Close</button>
   <video id="reelvid" playsinline controls></video>
@@ -119,7 +148,7 @@ h1{ font-family:var(--display); font-weight:700; font-size:clamp(2rem,4.5vw,3.4r
 <script src="/platform/lib/avatar.js"></script>
 <script>
   // default = the CURRENT session's module (kids just type /platform/live/)
-  var _m = (new URLSearchParams(location.search).get('m')||'2').replace(/[^0-9]/g,'')||'2';
+  var _m = (new URLSearchParams(location.search).get('m')||'3').replace(/[^0-9]/g,'')||'2';
   document.write('<script src="config-m'+_m+'.js"><\/script>');
 </script>
 <script type="module">
@@ -133,12 +162,25 @@ document.getElementById('sess').textContent = S.title;
 // module switcher — add each module here as its config-mN.js ships. Clicking
 // reloads the host in that room; the lobby announcement makes every kid
 // device hop over automatically.
-const SESSIONS = ['1','2'];
+const SESSIONS = ['1','2','3'];
 const _cur = (S.id||'m1').replace(/\D/g,'')||'1';
 document.getElementById('modsw').innerHTML = SESSIONS.map(n=>
   '<a href="?m='+n+'" class="'+(n===_cur?'on':'')+'">M'+n+'</a>').join('');
 // the Tycoon big-game is part of the Module 2 session only
 document.getElementById('tycoonLink').style.display = (_cur==='2') ? '' : 'none';
+
+// ---- always-on live scoreboard (top-right corner, every stage) -------------
+function renderLiveSB(){
+  const el=document.getElementById('livesb'); if(!el) return;
+  const top=tally().slice(0,6);
+  if(!top.length){ el.classList.remove('on'); el.innerHTML=''; return; }
+  const medals=['🥇','🥈','🥉','🏅','🏅','🏅'];
+  el.innerHTML='<div class="sbh">⭐ Live scoreboard</div>'+top.map((p,i)=>
+    '<div class="sbrow'+(i===0?' lead':'')+'"><span class="m">'+medals[i]+'</span>'+
+    '<span class="sbav">'+av(avatars[p.uid])+'</span>'+
+    '<span class="sbn">'+esc(p.name)+'</span><span class="sbp">'+p.score+'</span></div>').join('');
+  el.classList.add('on');
+}
 
 // soft staff check — the room is cohort-gated anyway; this keeps kids out of the controls
 if(localStorage.getItem('ctf:unlockall')!=='1'){
@@ -236,6 +278,7 @@ addEventListener('keydown',(e)=>{
 // --- render -------------------------------------------------------------------
 function render(){
   const s=S.stages[idx];
+  renderLiveSB();
   document.getElementById('pos').textContent=(idx+1)+' / '+S.stages.length;
   document.getElementById('reveal').disabled = !(s.type==='vote' && !revealed);
   let html='';
@@ -248,6 +291,19 @@ function render(){
       (s.reel?'<div><button class="reelbtn" id="reelplay">🍿 Play the Module 2 sizzle reel</button></div>':'')+
       '<div class="people">'+
       Object.keys(kids).map(u=>'<span class="pp"><span class="ppav">'+av(avatars[u])+'</span>'+esc(kids[u])+'</span>').join('')+'</div>';
+  }
+  else if(s.type==='story'){
+    // full-screen real-news story: what happened / what it means / discussion ask
+    html='<div class="storywrap'+(s.tone==='warn'?' story-warn':'')+'">'+
+      '<div class="kick">'+esc(s.kicker||'True story')+'</div>'+
+      '<div class="qe" style="font-size:2.6rem;margin-bottom:2px">'+(s.e||'📰')+'</div>'+
+      '<div class="stitle">'+esc(s.title)+'</div>'+
+      '<div class="scols">'+
+        '<div class="scard"><div class="sh">What happened</div>'+(s.happened||[]).map(p=>'<p>'+p+'</p>').join('')+'</div>'+
+        '<div class="scard means"><div class="sh">What it means for YOU</div>'+(s.means||[]).map(p=>'<p>'+p+'</p>').join('')+'</div>'+
+      '</div>'+
+      (s.ask?'<div class="sask">💬 '+esc(s.ask)+'</div>':'')+
+    '</div>';
   }
   else if(s.type==='video'){
     html='<div class="kick">'+esc(s.title)+'</div>'+
