@@ -200,22 +200,35 @@ function applyStage(newStage, newRevealed){
   if(stageId !== prev || revealed !== prevR) render();
 }
 // read the host's state straight out of presence (no event needed)
+// ADDITIVE ONLY. A single failed read must never destroy a known-good stage.
+// (The first version flipped straight to 'nohost' whenever the host wasn't in
+// that one presence read — so a device whose presence was broken, but whose
+// broadcasts worked fine, would show the right screen for a blink and then
+// bounce back to "waiting for your coach" on the very next poll.)
+const HOST_GRACE_MS = 15000;      // only give up after 15s of total silence
 function reconcile(){
   if(!channel) return;
   let host = null;
   try{
     const st = channel.presenceState();
     Object.keys(st).forEach(k => (st[k]||[]).forEach(m => { if(m.role === 'host') host = m; }));
-  }catch(e){ return; }
+  }catch(e){ /* presence unavailable — fall through, do NOT downgrade */ }
   const dot = document.getElementById('dot');
   if(host){
     lastSeenHost = Date.now();
     if(dot) dot.classList.add('on');
     applyStage(host.stage || 'lobby', host.revealed);
-  }else{
-    if(dot) dot.classList.remove('on');
-    if(stageId !== 'connecting') applyStage('nohost', false);
+    return;
   }
+  // no host in presence — that alone proves nothing. Heartbeats and stage
+  // broadcasts also count as "the coach is there".
+  const quietFor = lastSeenHost ? Date.now() - lastSeenHost : Infinity;
+  if(quietFor < HOST_GRACE_MS){
+    if(dot) dot.classList.add('on');       // still connected by another path
+    return;                                 // keep whatever stage we're on
+  }
+  if(dot) dot.classList.remove('on');
+  if(stageId !== 'connecting' && stageId !== 'nohost') applyStage('nohost', false);
 }
 // (re)join the room — safe to call any time; no-ops while a join is in flight
 function ensureJoined(){
@@ -223,8 +236,14 @@ function ensureJoined(){
   const state = channel.state;                       // joined | joining | closed | errored
   if(state === 'joined'){ joined = true; return; }
   if(state === 'joining') return;
+  // Re-subscribing the SAME channel instance is what broke presence before —
+  // supabase-js rejects a second subscribe and the channel ends up half-alive
+  // (broadcasts flow, presence never populates). Build a clean one instead.
   clearTimeout(rejoinT);
-  rejoinT = setTimeout(()=>{ try{ channel.subscribe(onSubscribe); }catch(e){} }, 400);
+  rejoinT = setTimeout(()=>{
+    try{ const dead = channel; channel = null; sb.removeChannel(dead); }catch(e){}
+    buildChannel();
+  }, 500);
 }
 function onSubscribe(status){
   if(status === 'SUBSCRIBED'){
@@ -235,13 +254,16 @@ function onSubscribe(status){
     joined = false; ensureJoined();                  // socket died — climb back in
   }
 }
-function startRealtime(){
-  if(!rtOk){ view.innerHTML='<div class="wait">🔌</div><h1>Live Room isn\'t on</h1><p class="sub">Ask your coach for help!</p>'; return; }
+// builds a fresh channel and wires every listener. Called on boot and again
+// whenever we have to replace a channel that died.
+function buildChannel(){
+  joined = false;
   channel = sb.channel(S.channel, { config:{ presence:{ key:uid }, broadcast:{ self:false } } });
   channel.on('presence', { event:'sync' }, reconcile);
   channel.on('presence', { event:'join' },  reconcile);
   channel.on('presence', { event:'leave' }, reconcile);
-  // the host also broadcasts each stage change — a second, independent path
+  // the host broadcasts each stage change AND a 3s heartbeat — an independent
+  // path that works even when presence is broken on this device
   channel.on('broadcast', { event:'stage' }, ({payload:p})=>{
     if(!p || !p.stage) return;
     lastSeenHost = Date.now();
@@ -249,6 +271,10 @@ function startRealtime(){
     applyStage(p.stage, p.revealed);
   });
   channel.subscribe(onSubscribe);
+}
+function startRealtime(){
+  if(!rtOk){ view.innerHTML='<div class="wait">🔌</div><h1>Live Room isn\'t on</h1><p class="sub">Ask your coach for help!</p>'; return; }
+  buildChannel();
 
   // 3. steady poll — costs nothing (reads local presence state) and repairs
   //    any missed event within ~2 seconds

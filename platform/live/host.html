@@ -240,6 +240,15 @@ channel.subscribe(async (status)=>{ if(status==='SUBSCRIBED'){ await sync(); ren
 const _mNum = (S.id||'m1').replace(/\D/g,'')||'1';
 const lobby = sb.channel('live:lobby', { config:{ presence:{ key:'host' } } });
 lobby.subscribe((st)=>{ if(st==='SUBSCRIBED') lobby.track({ role:'host', m:_mNum }); });
+
+// Heartbeat: re-announce the current stage every 3s. Presence can silently
+// break on an individual device; this guarantees every kid keeps getting an
+// authoritative "here's where we are" over a second, independent path.
+setInterval(()=>{
+  if(!channel) return;
+  try{ channel.send({ type:'broadcast', event:'stage',
+    payload:{ stage:S.stages[idx].id, revealed, beat:true } }); }catch(e){}
+}, 3000);
 // Throttled presence sync — rapid Back/Next clicking would otherwise burst past
 // Supabase Realtime's per-second message limit and get the channel dropped.
 let syncT=null, syncLast=0;
