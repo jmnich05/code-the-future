@@ -321,13 +321,39 @@ if(URL&&KEY&&!/PASTE|YOUR_/.test(KEY)){
     kidName=String(kidName).slice(0,20);
     try{ uid=localStorage.getItem('ctf:liveuid')||('k'+Math.random().toString(36).slice(2,10)); localStorage.setItem('ctf:liveuid',uid); }catch(e){ uid='k'+Date.now(); }
     channel=sb.channel('live:tycoon',{ config:{ presence:{ key:uid }, broadcast:{ self:false } } });
-    channel.on('presence',{event:'sync'},()=>{
-      const s=channel.presenceState(); let host=null;
-      Object.keys(s).forEach(k=>(s[k]||[]).forEach(m=>{ if(m.role==='host') host=m; }));
+    // Same hardening as the Live Room: never depend on a single presence event.
+    // Poll + wake handlers + auto-rejoin recover a device that slept or dropped.
+    let joined=false, rejoinT=null;
+    function reconcile(){
+      if(!channel) return;
+      let host=null;
+      try{ const s=channel.presenceState();
+        Object.keys(s).forEach(k=>(s[k]||[]).forEach(m=>{ if(m.role==='host') host=m; }));
+      }catch(e){ return; }
       if(host){ const was=st.ph+st.i+st.pick; st={...st,...host.st}; if(was!==st.ph+st.i+st.pick) render(); meters(); }
       else{ stageEl.innerHTML='<div class="qe">🕐</div><h1>Waiting for your coach…</h1><p class="sub">The big screen starts the company. You\'re in, '+esc(kidName)+'!</p>'; }
-    });
-    channel.subscribe(async(s)=>{ if(s==='SUBSCRIBED'){ await channel.track({ role:'kid', uid, name:kidName }); } });
+    }
+    function onSub(s){
+      if(s==='SUBSCRIBED'){ joined=true; channel.track({ role:'kid', uid, name:kidName }).catch(()=>{}); reconcile(); }
+      else if(s==='CHANNEL_ERROR'||s==='TIMED_OUT'||s==='CLOSED'){ joined=false; ensureJoined(); }
+    }
+    function ensureJoined(){
+      if(!channel||joined) return;
+      if(channel.state==='joined'){ joined=true; return; }
+      if(channel.state==='joining') return;
+      clearTimeout(rejoinT); rejoinT=setTimeout(()=>{ try{ channel.subscribe(onSub); }catch(e){} },400);
+    }
+    channel.on('presence',{event:'sync'},reconcile);
+    channel.on('presence',{event:'join'},reconcile);
+    channel.on('presence',{event:'leave'},reconcile);
+    channel.on('broadcast',{event:'tstage'},({payload:p})=>{ if(p&&p.st){ const was=st.ph+st.i+st.pick; st={...st,...p.st}; if(was!==st.ph+st.i+st.pick) render(); meters(); } });
+    channel.subscribe(onSub);
+    setInterval(()=>{ joined=(channel&&channel.state==='joined'); ensureJoined(); reconcile(); },2000);
+    const wake=()=>{ joined=(channel&&channel.state==='joined'); ensureJoined(); reconcile(); };
+    document.addEventListener('visibilitychange',()=>{ if(!document.hidden) wake(); });
+    addEventListener('focus',wake); addEventListener('pageshow',wake); addEventListener('online',wake);
+    addEventListener('pointerdown',wake,{passive:true});
+    window.CTFTycoon={ resync:wake, state:()=>({ i:st.i, ph:st.ph, channel:channel&&channel.state }) };
   }
 }else if(!IS_HOST){ stageEl.innerHTML='<div class="qe">🔌</div><h1>The room isn\'t on</h1><p class="sub">Ask your coach for help!</p>'; }
 
@@ -335,7 +361,11 @@ if(URL&&KEY&&!/PASTE|YOUR_/.test(KEY)){
 let syncT=null, syncLast=0;
 function sync(){ if(!IS_HOST||!channel) return;
   const now=Date.now(), wait=Math.max(0,350-(now-syncLast)); clearTimeout(syncT);
-  syncT=setTimeout(()=>{ syncLast=Date.now(); channel.track({ role:'host', st:{ i:st.i, ph:st.ph, pick:st.pick, money:st.money, trust:st.trust, biz:st.biz, cname:st.cname, rescued:st.rescued } }); }, wait); }
+  syncT=setTimeout(()=>{ syncLast=Date.now();
+    const payload={ i:st.i, ph:st.ph, pick:st.pick, money:st.money, trust:st.trust, biz:st.biz, cname:st.cname, rescued:st.rescued };
+    channel.track({ role:'host', st:payload });
+    channel.send({ type:'broadcast', event:'tstage', payload:{ st:payload } });   // second path to the kids
+  }, wait); }
 
 // ============================================================================
 // HOST — controls & round logic

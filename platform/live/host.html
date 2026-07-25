@@ -246,7 +246,15 @@ let syncT=null, syncLast=0;
 function sync(){
   const now=Date.now(), wait=Math.max(0, 350-(now-syncLast));
   clearTimeout(syncT);
-  syncT=setTimeout(()=>{ syncLast=Date.now(); channel.track({ role:'host', stage:S.stages[idx].id, revealed }); }, wait);
+  syncT=setTimeout(()=>{
+    syncLast=Date.now();
+    const stage=S.stages[idx].id;
+    channel.track({ role:'host', stage, revealed });
+    // second, independent path to the kids: a plain broadcast. If a device
+    // missed the presence update (slept through halftime, dropped socket),
+    // this catches it — and its own 2s poll catches anything that misses both.
+    channel.send({ type:'broadcast', event:'stage', payload:{ stage, revealed } });
+  }, wait);
 }
 
 // --- controls ---------------------------------------------------------------
