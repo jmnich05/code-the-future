@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Neon Studio — by Charlotte</title>
+<style>
+  /* ============================================
+     NEON STUDIO — designed by Charlotte Nichols
+     A real art studio in the browser.
+     ============================================ */
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html, body {
+    height: 100%;
+    overflow: hidden;
+    font-family: -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
+    background: #16121f; /* the studio walls, behind everything */
+    touch-action: none;  /* so fingers draw instead of scrolling */
+  }
+
+  /* ---- The toolbar across the top ---- */
+  #toolbar {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 10;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    background: rgba(22, 18, 31, 0.94);
+    box-shadow: 0 2px 12px rgba(0,0,0,0.4);
+  }
+
+  #appTitle {
+    color: #fff;
+    font-weight: 800;
+    font-size: 18px;
+    letter-spacing: 0.5px;
+    margin-right: 6px;
+    background: linear-gradient(90deg, #ff2d95, #39ff14, #00e5ff);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    user-select: none;
+  }
+
+  .toolBtn {
+    border: 2px solid transparent;
+    border-radius: 10px;
+    background: #2a2440;
+    color: #fff;
+    font-size: 14px;
+    padding: 7px 10px;
+    cursor: pointer;
+    user-select: none;
+  }
+  .toolBtn:active { transform: scale(0.95); }
+  .toolBtn.selected {
+    border-color: #ff2d95;
+    background: #3d2a55;
+    box-shadow: 0 0 8px rgba(255, 45, 149, 0.7); /* a little neon glow */
+  }
+  .toolBtn:disabled { opacity: 0.35; cursor: default; }
+
+  /* ---- The color palette dots ---- */
+  #palette { display: flex; flex-wrap: wrap; gap: 5px; align-items: center; }
+  .swatch {
+    width: 24px; height: 24px;
+    border-radius: 50%;
+    border: 2px solid rgba(255,255,255,0.25);
+    cursor: pointer;
+  }
+  .swatch.selected {
+    border-color: #fff;
+    box-shadow: 0 0 8px currentColor;
+    transform: scale(1.15);
+  }
+
+  .group { display: flex; align-items: center; gap: 6px; }
+  .label { color: #b9b3cc; font-size: 12px; user-select: none; }
+
+  #sizeSlider { width: 90px; accent-color: #ff2d95; }
+  #bgPicker {
+    width: 34px; height: 30px;
+    border: none; border-radius: 8px;
+    background: #2a2440; cursor: pointer; padding: 2px;
+  }
+
+  /* ---- The canvas fills everything under the toolbar ---- */
+  #artCanvas {
+    position: fixed;
+    inset: 0;
+    cursor: crosshair;
+    /* the changeable paper color lives on the element style —
+       the drawing itself stays on a see-through layer above it */
+    background: #ffffff;
+  }
+
+  /* ---- Charlotte's signature, always in the corner ---- */
+  #signature {
+    position: fixed;
+    right: 14px; bottom: 12px;
+    z-index: 9;
+    font-size: 14px;
+    font-weight: 700;
+    color: #ff2d95;
+    text-shadow: 0 0 6px rgba(255, 45, 149, 0.55), 0 1px 2px rgba(0,0,0,0.25);
+    pointer-events: none; /* you can draw right underneath it */
+    user-select: none;
+  }
+</style>
+</head>
+<body>
+
+<!-- ======== THE CANVAS ======== -->
+<canvas id="artCanvas"></canvas>
+
+<!-- ======== THE TOOLBAR ======== -->
+<div id="toolbar">
+  <span id="appTitle">NEON STUDIO</span>
+
+  <!-- The mediums — each one really feels different -->
+  <div class="group" id="brushes">
+    <button class="toolBtn selected" data-brush="pencil"     title="Pencil — thin and hard">✏️ Pencil</button>
+    <button class="toolBtn"          data-brush="paint"      title="Paint — thick and bold">🖌️ Paint</button>
+    <button class="toolBtn"          data-brush="watercolor" title="Watercolor — soft and dreamy">💧 Watercolor</button>
+    <button class="toolBtn"          data-brush="charcoal"   title="Charcoal — grainy and smudgy">🌑 Charcoal</button>
+    <button class="toolBtn"          data-brush="eraser"     title="Magic eraser — poof!">🪄 Eraser</button>
+  </div>
+
+  <!-- The color palette -->
+  <div id="palette"></div>
+
+  <!-- Brush size -->
+  <div class="group">
+    <span class="label">Size</span>
+    <input type="range" id="sizeSlider" min="2" max="60" value="14">
+  </div>
+
+  <!-- The changeable paper color -->
+  <div class="group">
+    <span class="label">Paper</span>
+    <input type="color" id="bgPicker" value="#ffffff" title="Change the canvas color">
+  </div>
+
+  <!-- Fix-it buttons -->
+  <button class="toolBtn" id="undoBtn"  title="Undo">↩️ Undo</button>
+  <button class="toolBtn" id="redoBtn"  title="Redo">↪️ Redo</button>
+  <button class="toolBtn" id="clearBtn" title="Start over">🗑️ Clear</button>
+
+  <!-- Save it to your photos -->
+  <button class="toolBtn" id="downloadBtn" title="Save your art as a picture">⬇️ Download</button>
+</div>
+
+<!-- Charlotte's signature — always there, like a creator watermark -->
+<div id="signature">✨ by Charlotte</div>
+
+<script>
+/* =====================================================
+   NEON STUDIO — the code
+   Charlotte designed it. This makes it real.
+   ===================================================== */
+
+const canvas = document.getElementById('artCanvas');
+const ctx = canvas.getContext('2d');
+
+// ----- The studio's settings (what's picked right now) -----
+let currentBrush = 'pencil';     // pencil / paint / watercolor / charcoal / eraser
+let currentColor = '#ff2d95';    // neon pink to start!
+let brushSize    = 14;
+let bgColor      = '#ffffff';    // white paper by default — but changeable
+
+// ----- Charlotte's palette: neon colors + black + white -----
+const PALETTE = [
+  '#ff2d95', // neon pink
+  '#ff3131', // neon red
+  '#ff8c00', // neon orange
+  '#ffee00', // neon yellow
+  '#39ff14', // neon green
+  '#00ffcc', // neon mint
+  '#00e5ff', // neon cyan
+  '#2979ff', // electric blue
+  '#b026ff', // neon purple
+  '#ff6ec7', // bubblegum
+  '#000000', // black
+  '#ffffff', // white
+];
+
+/* =====================================================
+   SETTING UP THE CANVAS
+   The drawing lives on a SEE-THROUGH layer. The paper
+   color is behind it — so changing the paper color
+   never erases your art. Sneaky!
+   ===================================================== */
+
+function sizeCanvas() {
+  // Keep whatever is already drawn when the window changes size
+  const saved = document.createElement('canvas');
+  saved.width = canvas.width;
+  saved.height = canvas.height;
+  if (canvas.width > 0) saved.getContext('2d').drawImage(canvas, 0, 0);
+
+  canvas.width  = window.innerWidth;
+  canvas.height = window.innerHeight;
+  if (saved.width > 0) ctx.drawImage(saved, 0, 0);
+}
+sizeCanvas();
+window.addEventListener('resize', sizeCanvas);
+
+/* =====================================================
+   UNDO + REDO — the time machine
+   We keep snapshots of the canvas (up to 30) so Undo
+   can jump back and Redo can jump forward.
+   ===================================================== */
+
+const MAX_SNAPSHOTS = 30;
+let undoStack = [];   // pictures of the past (the last one = right now)
+let redoStack = [];   // pictures of the future (after you hit Undo)
+
+function takeSnapshot() {
+  undoStack.push(ctx.getImageData(0, 0, canvas.width, canvas.height));
+  if (undoStack.length > MAX_SNAPSHOTS) undoStack.shift(); // forget the oldest
+  redoStack = []; // drawing something new erases the "future"
+  updateUndoRedoButtons();
+}
+
+function undo() {
+  if (undoStack.length < 2) return; // nothing before "right now"
+  redoStack.push(undoStack.pop());  // move "right now" to the future pile
+  ctx.putImageData(undoStack[undoStack.length - 1], 0, 0);
+  updateUndoRedoButtons();
+}
+
+function redo() {
+  if (redoStack.length === 0) return;
+  const next = redoStack.pop();
+  undoStack.push(next);
+  ctx.putImageData(next, 0, 0);
+  updateUndoRedoButtons();
+}
+
+function updateUndoRedoButtons() {
+  document.getElementById('undoBtn').disabled = undoStack.length < 2;
+  document.getElementById('redoBtn').disabled = redoStack.length === 0;
+}
+
+// The very first snapshot: a blank canvas
+takeSnapshot();
+
+/* =====================================================
+   THE BRUSHES — each medium really feels different
+   ===================================================== */
+
+// A tiny helper: a random number between -n and n (for texture!)
+function jitter(n) { return (Math.random() - 0.5) * 2 * n; }
+
+// Draw one little piece of a stroke, from point A to point B
+function drawSegment(x0, y0, x1, y1) {
+  ctx.save();
+
+  if (currentBrush === 'eraser') {
+    // MAGIC ERASER — it doesn't paint white, it truly erases,
+    // so the paper color shows through. Poof!
+    ctx.globalCompositeOperation = 'destination-out';
+    ctx.strokeStyle = 'rgba(0,0,0,1)';
+    ctx.lineWidth = brushSize * 2;
+    ctx.lineCap = 'round';
+    ctx.beginPath();
+    ctx.moveTo(x0, y0);
+    ctx.lineTo(x1, y1);
+    ctx.stroke();
+
+  } else if (currentBrush === 'pencil') {
+    // PENCIL — thin, hard, precise
+    ctx.globalAlpha = 0.95;
+    ctx.strokeStyle = currentColor;
+    ctx.lineWidth = Math.max(1, brushSize * 0.3);
+    ctx.lineCap = 'round';
+    ctx.beginPath();
+    ctx.moveTo(x0, y0);
+    ctx.lineTo(x1, y1);
+    ctx.stroke();
+
+  } else if (currentBrush === 'paint') {
+    // PAINT — thick, bold, totally opaque
+    ctx.globalAlpha = 1;
+    ctx.strokeStyle = currentColor;
+    ctx.lineWidth = brushSize * 1.4;
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
+    ctx.beginPath();
+    ctx.moveTo(x0, y0);
+    ctx.lineTo(x1, y1);
+    ctx.stroke();
+
+  } else if (currentBrush === 'watercolor') {
+    // WATERCOLOR — soft see-through blobs that melt together.
+    // We stamp fuzzy circles along the stroke instead of a hard line.
+    const dist = Math.hypot(x1 - x0, y1 - y0);
+    const steps = Math.max(1, Math.floor(dist / 4));
+    for (let i = 0; i <= steps; i++) {
+      const x = x0 + (x1 - x0) * (i / steps) + jitter(2);
+      const y = y0 + (y1 - y0) * (i / steps) + jitter(2);
+      const r = brushSize * (0.9 + Math.random() * 0.5);
+      const blob = ctx.createRadialGradient(x, y, 0, x, y, r);
+      blob.addColorStop(0, currentColor);
+      blob.addColorStop(1, 'rgba(0,0,0,0)'); // fades out at the edge
+      ctx.globalAlpha = 0.06; // very see-through — layers build up like real water
+      ctx.fillStyle = blob;
+      ctx.beginPath();
+      ctx.arc(x, y, r, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+  } else if (currentBrush === 'charcoal') {
+    // CHARCOAL — grainy, jittery, smudgy. We scatter lots of
+    // scratchy little strokes and specks around the real line.
+    ctx.strokeStyle = currentColor;
+    ctx.fillStyle = currentColor;
+    ctx.lineCap = 'round';
+    for (let i = 0; i < 4; i++) {
+      ctx.globalAlpha = 0.12 + Math.random() * 0.15;
+      ctx.lineWidth = brushSize * (0.15 + Math.random() * 0.5);
+      ctx.beginPath();
+      ctx.moveTo(x0 + jitter(brushSize * 0.5), y0 + jitter(brushSize * 0.5));
+      ctx.lineTo(x1 + jitter(brushSize * 0.5), y1 + jitter(brushSize * 0.5));
+      ctx.stroke();
+    }
+    // ...and some dusty specks
+    for (let i = 0; i < 6; i++) {
+      ctx.globalAlpha = 0.1 + Math.random() * 0.2;
+      ctx.beginPath();
+      ctx.arc(x1 + jitter(brushSize), y1 + jitter(brushSize),
+              Math.random() * brushSize * 0.12 + 0.4, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  }
+
+  ctx.restore();
+}
+
+/* =====================================================
+   DRAWING WITH FINGER OR MOUSE (pointer events do both)
+   ===================================================== */
+
+let drawing = false;
+let lastX = 0, lastY = 0;
+
+canvas.addEventListener('pointerdown', (e) => {
+  drawing = true;
+  lastX = e.clientX;
+  lastY = e.clientY;
+  canvas.setPointerCapture(e.pointerId);
+  // A dot appears even if you just tap
+  drawSegment(lastX, lastY, lastX + 0.1, lastY + 0.1);
+});
+
+canvas.addEventListener('pointermove', (e) => {
+  if (!drawing) return;
+  drawSegment(lastX, lastY, e.clientX, e.clientY);
+  lastX = e.clientX;
+  lastY = e.clientY;
+});
+
+function endStroke() {
+  if (!drawing) return;
+  drawing = false;
+  takeSnapshot(); // remember this moment for Undo
+}
+canvas.addEventListener('pointerup', endStroke);
+canvas.addEventListener('pointercancel', endStroke);
+
+/* =====================================================
+   THE TOOLBAR — hooking up all the buttons
+   ===================================================== */
+
+// Picking a medium
+document.querySelectorAll('#brushes .toolBtn').forEach((btn) => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('#brushes .toolBtn').forEach(b => b.classList.remove('selected'));
+    btn.classList.add('selected');
+    currentBrush = btn.dataset.brush;
+  });
+});
+
+// Building the color palette dots
+const paletteDiv = document.getElementById('palette');
+PALETTE.forEach((color, i) => {
+  const dot = document.createElement('button');
+  dot.className = 'swatch' + (i === 0 ? ' selected' : '');
+  dot.style.backgroundColor = color;
+  dot.style.color = color; // powers the glow when selected
+  dot.title = color;
+  dot.addEventListener('click', () => {
+    document.querySelectorAll('.swatch').forEach(s => s.classList.remove('selected'));
+    dot.classList.add('selected');
+    currentColor = color;
+  });
+  paletteDiv.appendChild(dot);
+});
+
+// Brush size slider
+document.getElementById('sizeSlider').addEventListener('input', (e) => {
+  brushSize = Number(e.target.value);
+});
+
+// The changeable paper color (art stays put — see the sneaky layer trick above)
+document.getElementById('bgPicker').addEventListener('input', (e) => {
+  bgColor = e.target.value;
+  canvas.style.background = bgColor;
+});
+
+// Undo / Redo
+document.getElementById('undoBtn').addEventListener('click', undo);
+document.getElementById('redoBtn').addEventListener('click', redo);
+
+// Clear — but always ask first! (It's still undo-able, just in case.)
+document.getElementById('clearBtn').addEventListener('click', () => {
+  if (!confirm('Clear the whole canvas? Your art will be gone!')) return;
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  takeSnapshot();
+});
+
+/* =====================================================
+   DOWNLOAD — save it to your photos,
+   signed "by Charlotte" like a real artist.
+   ===================================================== */
+
+function exportArt() {
+  // Build the final picture: paper color + the art + the signature
+  const pic = document.createElement('canvas');
+  pic.width = canvas.width;
+  pic.height = canvas.height;
+  const pctx = pic.getContext('2d');
+
+  // 1. The paper
+  pctx.fillStyle = bgColor;
+  pctx.fillRect(0, 0, pic.width, pic.height);
+
+  // 2. The art
+  pctx.drawImage(canvas, 0, 0);
+
+  // 3. The signature — baked in, bottom-right, like a creator watermark
+  const stamp = '✨ by Charlotte';
+  pctx.font = 'bold 18px -apple-system, "Segoe UI", Helvetica, Arial, sans-serif';
+  pctx.textAlign = 'right';
+  pctx.textBaseline = 'bottom';
+  pctx.fillStyle = 'rgba(0,0,0,0.35)';
+  pctx.fillText(stamp, pic.width - 13, pic.height - 11);   // soft shadow
+  pctx.fillStyle = '#ff2d95';
+  pctx.fillText(stamp, pic.width - 14, pic.height - 12);   // neon pink on top
+
+  return pic.toDataURL('image/png');
+}
+
+document.getElementById('downloadBtn').addEventListener('click', () => {
+  const link = document.createElement('a');
+  link.download = 'neon-studio-by-charlotte.png';
+  link.href = exportArt();
+  link.click();
+});
+
+/* v2 wishlist (Charlotte's, from the design session):
+   - Import a real photo and paint over it
+   - Share button
+   - The 🎮 arcade corner: a silly tap-to-play mini-game for break time
+   - Surface picker: foam, different papers
+   (And NO AI features in the app — Charlotte's call.)                */
+</script>
+</body>
+</html>

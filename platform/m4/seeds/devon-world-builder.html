@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Devon's World (title TBD) — Sky World</title>
+<style>
+  /* Devon's game! Everything lives in this one file so it always just runs. */
+  html,body{ margin:0; height:100%; background:#0A1024; display:grid; place-items:center;
+    font-family:system-ui,sans-serif; }
+  #stage{ position:relative; }
+  canvas{ display:block; border-radius:12px; width:min(97vw, 960px, 155vh); height:auto; }
+  /* The big message banner (chest, death, victory) */
+  #banner{ position:absolute; left:50%; top:18%; transform:translateX(-50%);
+    background:rgba(10,16,36,.88); color:#FFE9A8; border:2px solid #FFD75E; border-radius:12px;
+    padding:14px 26px; font-size:20px; font-weight:700; text-align:center; white-space:pre-line;
+    opacity:0; transition:opacity .3s; pointer-events:none; max-width:70%; }
+  #banner.show{ opacity:1; }
+</style>
+</head>
+<body>
+<div id="stage">
+  <canvas id="game" width="960" height="600"></canvas>
+  <div id="banner"></div>
+</div>
+
+<script>
+// ============================================================
+//  DEVON'S WORLD (real name TBD — Devon's still deciding)
+//  Level 1: THE SKY WORLD
+//  Zazamar died in the war. Ninjas carried him to the Lake of
+//  Resurrection. He woke up here, on a floating island...
+// ============================================================
+
+const canvas = document.getElementById('game');
+const ctx = canvas.getContext('2d');
+const banner = document.getElementById('banner');
+
+// ---------- THE ISLAND ----------
+// The island is a big oval floating in the sky.
+// Anything outside the oval is... a very long fall.
+const ISLAND = { x: 480, y: 300, rx: 400, ry: 230 };
+
+function onIsland(x, y) {
+  const dx = (x - ISLAND.x) / ISLAND.rx;
+  const dy = (y - ISLAND.y) / ISLAND.ry;
+  return dx * dx + dy * dy <= 1;
+}
+
+// ---------- THE GAME STATE ----------
+// Everything important about the game lives in this one object.
+const SPAWN = { x: 250, y: 300 };   // where Zazamar wakes up (the Lake spot)
+
+const game = {
+  state: 'play',        // 'play' | 'falling' | 'won'
+  hearts: 3,            // Zazamar's health (half hearts allowed)
+  maxHearts: 3,
+  fragments: 0,         // Devon's rule: 5 fragments = 1 full heart
+  earnedHearts: 0,      // full hearts made from fragments — the gate eats these
+  stamina: 100,
+  hasTunic: false,      // true after opening the chest
+  fallTimer: 0,
+  hurtTimer: 0,         // brief "ouch" invincibility after a spirit touches you
+  player: { x: SPAWN.x, y: SPAWN.y, facing: 0 },  // facing = angle for the sword swing
+  attack: { active: false, timer: 0, angle: 0 },
+  mouse: { x: 480, y: 300 },
+  spirits: [],
+  drops: [],            // heart fragments lying on the ground
+  time: 0,
+};
+window.game = game;     // handy hook so we can peek at the game from the console
+
+// The chest (near spawn) and the gate (far end of the island)
+const CHEST = { x: 320, y: 230, opened: false };
+const GATE  = { x: 820, y: 300 };
+
+// ---------- SPIRITS ----------
+// Ghostly wisps that drift toward Zazamar. Two hits pops one
+// into a heart fragment. They respawn so you can keep training.
+function makeSpirit(x, y) {
+  return { x, y, hp: 2, flash: 0, wobble: Math.random() * 6.28, dead: false, respawn: 0 };
+}
+function spawnSpirits() {
+  game.spirits = [
+    makeSpirit(600, 180), makeSpirit(650, 420),
+    makeSpirit(500, 460), makeSpirit(560, 300),
+  ];
+}
+spawnSpirits();
+
+// ---------- BANNER MESSAGES ----------
+let bannerTimeout = null;
+function say(text, ms = 2600) {
+  banner.textContent = text;
+  banner.classList.add('show');
+  clearTimeout(bannerTimeout);
+  if (ms > 0) bannerTimeout = setTimeout(() => banner.classList.remove('show'), ms);
+}
+
+// ---------- CONTROLS ----------
+const keys = {};
+addEventListener('keydown', e => { keys[e.key.toLowerCase()] = true; });
+addEventListener('keyup',   e => { keys[e.key.toLowerCase()] = false; });
+canvas.addEventListener('mousemove', e => {
+  const r = canvas.getBoundingClientRect();
+  game.mouse.x = (e.clientX - r.left) * (canvas.width / r.width);
+  game.mouse.y = (e.clientY - r.top) * (canvas.height / r.height);
+});
+canvas.addEventListener('mousedown', () => swing());
+
+// Click = attack toward the mouse (Devon's rule)
+function swing() {
+  if (game.state !== 'play' || game.attack.active) return;
+  const p = game.player;
+  const a = Math.atan2(game.mouse.y - p.y, game.mouse.x - p.x);
+  game.attack = { active: true, timer: 12, angle: a };
+  p.facing = a;
+  // Check every spirit: close enough + roughly in front of the swing = HIT
+  for (const s of game.spirits) {
+    if (s.dead) continue;
+    const d = Math.hypot(s.x - p.x, s.y - p.y);
+    if (d < 70) {
+      const toward = Math.atan2(s.y - p.y, s.x - p.x);
+      let diff = Math.abs(toward - a);
+      if (diff > Math.PI) diff = 2 * Math.PI - diff;
+      if (diff < 1.1) hitSpirit(s, a);
+    }
+  }
+}
+window.swing = swing;   // testing hook
+
+function hitSpirit(s, angle) {
+  s.hp -= 1;
+  s.flash = 8;
+  s.x += Math.cos(angle) * 22;   // knockback
+  s.y += Math.sin(angle) * 22;
+  if (s.hp <= 0) {
+    s.dead = true;
+    s.respawn = 300;             // comes back after ~5 seconds so you can grind
+    game.drops.push({ x: s.x, y: s.y, t: 0 });   // drop a heart fragment!
+  }
+}
+
+// ---------- RESPAWN (the Lake of Resurrection) ----------
+function respawn(message) {
+  const p = game.player;
+  p.x = SPAWN.x; p.y = SPAWN.y;
+  game.hearts = game.maxHearts;
+  game.stamina = 100;
+  game.state = 'play';
+  game.fallTimer = 0;
+  say(message || 'The Lake of Resurrection brings you back…');
+}
+
+// ---------- UPDATE (runs 60 times a second) ----------
+function update() {
+  game.time++;
+  const p = game.player;
+
+  if (game.state === 'falling') {
+    // Devon's rule: you CAN jump off the island. The fall kills you.
+    game.fallTimer++;
+    if (game.fallTimer > 70) respawn('You fell from the Sky World…\nThe Lake of Resurrection brings you back.');
+    return;
+  }
+  if (game.state === 'won') return;
+
+  // --- movement: WASD + arrow keys, Shift to sprint ---
+  let mx = 0, my = 0;
+  if (keys['w'] || keys['arrowup'])    my -= 1;
+  if (keys['s'] || keys['arrowdown'])  my += 1;
+  if (keys['a'] || keys['arrowleft'])  mx -= 1;
+  if (keys['d'] || keys['arrowright']) mx += 1;
+
+  const moving = mx !== 0 || my !== 0;
+  const sprinting = keys['shift'] && moving && game.stamina > 0;
+  const speed = sprinting ? 4.2 : 2.4;
+
+  if (moving) {
+    const len = Math.hypot(mx, my);
+    p.x += (mx / len) * speed;
+    p.y += (my / len) * speed;
+  }
+
+  // --- stamina: you can't run forever ---
+  if (sprinting) game.stamina = Math.max(0, game.stamina - 0.9);
+  else           game.stamina = Math.min(100, game.stamina + 0.35);
+
+  // --- stepping off the edge = the long fall ---
+  if (!onIsland(p.x, p.y)) {
+    game.state = 'falling';
+    game.fallTimer = 0;
+    return;
+  }
+
+  // --- the chest: walk into it, get the tunic (and pants) ---
+  if (!CHEST.opened && Math.hypot(p.x - CHEST.x, p.y - CHEST.y) < 34) {
+    CHEST.opened = true;
+    game.hasTunic = true;
+    say('You got the tunic (and pants)!');
+  }
+
+  // --- attack swing timer ---
+  if (game.attack.active && --game.attack.timer <= 0) game.attack.active = false;
+
+  // --- spirits drift toward Zazamar ---
+  if (game.hurtTimer > 0) game.hurtTimer--;
+  for (const s of game.spirits) {
+    if (s.dead) {
+      if (--s.respawn <= 0) {   // a new spirit drifts in from a random spot
+        const a = Math.random() * 6.28;
+        Object.assign(s, makeSpirit(ISLAND.x + Math.cos(a) * 280, ISLAND.y + Math.sin(a) * 160));
+      }
+      continue;
+    }
+    if (s.flash > 0) s.flash--;
+    s.wobble += 0.06;
+    const d = Math.hypot(p.x - s.x, p.y - s.y);
+    if (d > 1) {
+      s.x += ((p.x - s.x) / d) * 0.8 + Math.cos(s.wobble) * 0.4;
+      s.y += ((p.y - s.y) / d) * 0.8 + Math.sin(s.wobble) * 0.4;
+    }
+    // touching a spirit costs half a heart
+    if (d < 24 && game.hurtTimer === 0) {
+      game.hearts -= 0.5;
+      game.hurtTimer = 50;
+      if (game.hearts <= 0) { respawn(); return; }
+    }
+  }
+
+  // --- collect heart fragments ---
+  for (const drop of game.drops) {
+    drop.t++;
+    if (Math.hypot(p.x - drop.x, p.y - drop.y) < 26) {
+      drop.taken = true;
+      game.fragments++;
+    }
+  }
+  game.drops = game.drops.filter(d => !d.taken);
+
+  // --- Devon's economy: 5 fragments = 1 full heart ---
+  checkFragments();
+
+  // --- the gate: it hungers for a heart ---
+  if (Math.hypot(p.x - GATE.x, p.y - GATE.y) < 40) {
+    if (game.earnedHearts >= 1) {
+      game.earnedHearts -= 1;   // the gate eats the heart
+      game.state = 'won';
+      say('The gate opens…\nLevel 2: the Main World — coming in v2!', 0);
+    } else if (game.time % 90 === 0) {
+      say('The gate hungers for 1 full heart.\nBeat 5 spirits to make one!', 1600);
+    }
+  }
+}
+
+function checkFragments() {
+  while (game.fragments >= 5) {
+    game.fragments -= 5;
+    game.earnedHearts += 1;
+    game.hearts = Math.min(game.maxHearts, game.hearts + 1);   // it heals you too
+    say('5 fragments become ONE FULL HEART!');
+  }
+}
+window.checkFragments = checkFragments;   // testing hook
+
+// ============================================================
+//  DRAWING — everything you see
+// ============================================================
+function draw() {
+  const W = canvas.width, H = canvas.height;
+
+  // --- the sky far below the island ---
+  const sky = ctx.createLinearGradient(0, 0, 0, H);
+  sky.addColorStop(0, '#7EC8F2'); sky.addColorStop(1, '#3F7FBF');
+  ctx.fillStyle = sky; ctx.fillRect(0, 0, W, H);
+
+  // drifting clouds (they slide slowly so the island feels like it's floating)
+  ctx.fillStyle = 'rgba(255,255,255,.75)';
+  for (let i = 0; i < 6; i++) {
+    const cx = ((game.time * 0.25) + i * 190) % (W + 200) - 100;
+    const cy = 80 + (i * 97) % 460;
+    ctx.beginPath();
+    ctx.ellipse(cx, cy, 70, 20, 0, 0, 6.28);
+    ctx.ellipse(cx + 40, cy - 10, 45, 16, 0, 0, 6.28);
+    ctx.fill();
+  }
+
+  // --- the island: dirt underside, then grass on top ---
+  ctx.fillStyle = '#7A5230';   // dirt edge
+  ctx.beginPath(); ctx.ellipse(ISLAND.x, ISLAND.y + 10, ISLAND.rx, ISLAND.ry, 0, 0, 6.28); ctx.fill();
+  ctx.fillStyle = '#5BA83C';   // grass
+  ctx.beginPath(); ctx.ellipse(ISLAND.x, ISLAND.y, ISLAND.rx - 8, ISLAND.ry - 8, 0, 0, 6.28); ctx.fill();
+  ctx.fillStyle = 'rgba(255,255,255,.10)';   // little grass patches
+  for (let i = 0; i < 14; i++) {
+    ctx.beginPath();
+    ctx.ellipse(ISLAND.x + Math.cos(i * 2.4) * 300, ISLAND.y + Math.sin(i * 1.7) * 160, 26, 10, 0, 0, 6.28);
+    ctx.fill();
+  }
+
+  // the little lake where Zazamar woke up (the Lake of Resurrection's echo)
+  ctx.fillStyle = '#4FA8D8';
+  ctx.beginPath(); ctx.ellipse(SPAWN.x - 60, SPAWN.y + 60, 46, 24, 0, 0, 6.28); ctx.fill();
+
+  drawGate();
+  drawChest();
+  for (const d of game.drops) drawFragment(d);
+  for (const s of game.spirits) if (!s.dead) drawSpirit(s);
+  drawPlayer();
+  drawHUD();
+  drawMinimap();
+
+  if (game.state === 'won') {   // golden glow when the gate opens
+    ctx.fillStyle = 'rgba(255,215,94,.18)'; ctx.fillRect(0, 0, W, H);
+  }
+}
+
+function drawGate() {
+  const g = GATE;
+  ctx.fillStyle = '#6B6B78';                       // stone frame
+  ctx.fillRect(g.x - 34, g.y - 60, 12, 88);
+  ctx.fillRect(g.x + 22, g.y - 60, 12, 88);
+  ctx.fillRect(g.x - 34, g.y - 72, 68, 14);
+  ctx.fillStyle = game.state === 'won' ? '#FFE9A8' : '#2A2440';   // the doorway
+  ctx.fillRect(g.x - 22, g.y - 58, 44, 86);
+  // the heart-price label floating above the gate
+  ctx.fillStyle = 'rgba(10,16,36,.75)';
+  ctx.fillRect(g.x - 92, g.y - 108, 184, 24);
+  ctx.fillStyle = '#FFD75E'; ctx.font = 'bold 13px system-ui'; ctx.textAlign = 'center';
+  ctx.fillText('The gate hungers for 1 ❤', g.x, g.y - 91);
+}
+
+function drawChest() {
+  const c = CHEST;
+  ctx.fillStyle = c.opened ? '#8A6B42' : '#A8763E';
+  ctx.fillRect(c.x - 18, c.y - 12, 36, 26);
+  ctx.fillStyle = '#6E4A22';
+  ctx.fillRect(c.x - 18, c.y - 12, 36, 8);
+  ctx.fillStyle = '#FFD75E';
+  ctx.fillRect(c.x - 3, c.y - 6, 6, 8);           // the lock
+  if (c.opened) {                                  // lid flipped open
+    ctx.fillStyle = '#6E4A22'; ctx.fillRect(c.x - 18, c.y - 22, 36, 6);
+  }
+}
+
+function drawFragment(d) {
+  // a shiny quarter-heart shard, gently bobbing
+  const bob = Math.sin((game.time + d.t) * 0.1) * 3;
+  ctx.save(); ctx.translate(d.x, d.y + bob);
+  ctx.fillStyle = '#FF5C7A';
+  ctx.beginPath();
+  ctx.moveTo(0, 8); ctx.lineTo(-7, -2); ctx.lineTo(-3, -7);
+  ctx.lineTo(0, -3); ctx.lineTo(3, -7); ctx.lineTo(7, -2);
+  ctx.closePath(); ctx.fill();
+  ctx.fillStyle = 'rgba(255,255,255,.6)'; ctx.fillRect(-3, -4, 3, 3);
+  ctx.restore();
+}
+
+function drawSpirit(s) {
+  // enemy look is TBD (Devon's call) — for now: a ghostly wisp
+  const bob = Math.sin(s.wobble * 2) * 4;
+  ctx.save(); ctx.translate(s.x, s.y + bob);
+  ctx.fillStyle = s.flash > 0 ? 'rgba(255,255,255,.95)' : 'rgba(190,225,255,.8)';
+  ctx.beginPath(); ctx.arc(0, 0, 14, Math.PI, 0);   // round head
+  ctx.lineTo(14, 12);
+  for (let i = 2; i >= -2; i--) ctx.lineTo(i * 7, 12 + (i % 2 === 0 ? 6 : 0));  // wavy tail
+  ctx.closePath(); ctx.fill();
+  ctx.fillStyle = '#20304C';                         // spooky eyes
+  ctx.fillRect(-8, -4, 5, 6); ctx.fillRect(3, -4, 5, 6);
+  ctx.restore();
+}
+
+function drawPlayer() {
+  const p = game.player;
+  ctx.save(); ctx.translate(p.x, p.y);
+
+  if (game.state === 'falling') {   // shrink + fade as Zazamar falls into the sky
+    const t = game.fallTimer / 70;
+    ctx.scale(1 - t * 0.85, 1 - t * 0.85);
+    ctx.globalAlpha = 1 - t * 0.9;
+  }
+  if (game.hurtTimer > 0 && game.time % 8 < 4) ctx.globalAlpha *= 0.4;   // ouch-blink
+
+  // the sword swing arc
+  if (game.attack.active) {
+    ctx.strokeStyle = 'rgba(255,255,255,.9)'; ctx.lineWidth = 6;
+    ctx.beginPath(); ctx.arc(0, 0, 34, game.attack.angle - 0.9, game.attack.angle + 0.9); ctx.stroke();
+    ctx.strokeStyle = '#C8D6E8'; ctx.lineWidth = 3;
+    ctx.beginPath(); ctx.moveTo(0, 0);
+    ctx.lineTo(Math.cos(game.attack.angle) * 34, Math.sin(game.attack.angle) * 34); ctx.stroke();
+  }
+
+  // chunky top-down Zazamar: tunic body + head + hair
+  ctx.fillStyle = game.hasTunic ? '#2E8B3D' : '#8E8E9E';   // GREEN once he has the tunic!
+  ctx.fillRect(-11, -8, 22, 22);                            // body (tunic)
+  ctx.fillStyle = game.hasTunic ? '#1F6B2E' : '#6E6E7E';
+  ctx.fillRect(-11, 8, 22, 6);                              // pants peeking out
+  ctx.fillStyle = '#F0C29A';
+  ctx.beginPath(); ctx.arc(0, -12, 9, 0, 6.28); ctx.fill(); // head
+  ctx.fillStyle = '#4A2F1A';
+  ctx.beginPath(); ctx.arc(0, -15, 8, Math.PI, 0); ctx.fill(); // hair
+  ctx.restore();
+}
+
+// ---------- HUD: hearts top-left, fragments, stamina bottom ----------
+function drawHUD() {
+  // hearts
+  for (let i = 0; i < game.maxHearts; i++) {
+    const fill = Math.max(0, Math.min(1, game.hearts - i));   // 1, 0.5 or 0
+    drawHeart(26 + i * 30, 26, fill);
+  }
+  // fragment counter — Devon's rule right on screen
+  ctx.fillStyle = 'rgba(10,16,36,.6)'; ctx.fillRect(14, 44, 210, 24);
+  ctx.fillStyle = '#FFE9A8'; ctx.font = 'bold 13px system-ui'; ctx.textAlign = 'left';
+  ctx.fillText('Fragments: ' + game.fragments + ' / 5  (5 = 1 full ❤)', 22, 61);
+  if (game.earnedHearts > 0) {
+    ctx.fillStyle = '#FF9CB0';
+    ctx.fillText('Gate hearts ready: ' + game.earnedHearts, 22, 82);
+  }
+  // stamina bar along the bottom — you can't run forever
+  const bw = 300, bx = (canvas.width - bw) / 2, by = canvas.height - 26;
+  ctx.fillStyle = 'rgba(10,16,36,.6)'; ctx.fillRect(bx - 4, by - 4, bw + 8, 18);
+  ctx.fillStyle = game.stamina < 25 ? '#E8563F' : '#7EE07E';
+  ctx.fillRect(bx, by, bw * (game.stamina / 100), 10);
+  ctx.fillStyle = '#EAF1FF'; ctx.font = '11px system-ui'; ctx.textAlign = 'center';
+  ctx.fillText('STAMINA (hold Shift to sprint)', canvas.width / 2, by - 8);
+}
+
+function drawHeart(x, y, fill) {
+  ctx.save(); ctx.translate(x, y);
+  heartPath(); ctx.fillStyle = '#3A2430'; ctx.fill();          // empty heart behind
+  if (fill > 0) {                                              // filled part (half or full)
+    ctx.save();
+    ctx.beginPath(); ctx.rect(-12, -12, 24 * fill, 26); ctx.clip();
+    heartPath(); ctx.fillStyle = '#FF3B5C'; ctx.fill();
+    ctx.restore();
+  }
+  ctx.restore();
+}
+function heartPath() {
+  ctx.beginPath();
+  ctx.moveTo(0, 10);
+  ctx.bezierCurveTo(-14, -2, -10, -14, 0, -6);
+  ctx.bezierCurveTo(10, -14, 14, -2, 0, 10);
+  ctx.closePath();
+}
+
+// ---------- MINIMAP (bottom-left, Devon's spec) ----------
+function drawMinimap() {
+  const mw = 150, mh = 96, mx = 14, my = canvas.height - mh - 14;
+  ctx.fillStyle = 'rgba(10,16,36,.72)'; ctx.fillRect(mx, my, mw, mh);
+  ctx.strokeStyle = 'rgba(255,255,255,.4)'; ctx.strokeRect(mx, my, mw, mh);
+  const sx = x => mx + (x / canvas.width) * mw;
+  const sy = y => my + (y / canvas.height) * mh;
+  ctx.fillStyle = '#5BA83C';   // island outline
+  ctx.beginPath();
+  ctx.ellipse(sx(ISLAND.x), sy(ISLAND.y), (ISLAND.rx / canvas.width) * mw, (ISLAND.ry / canvas.height) * mh, 0, 0, 6.28);
+  ctx.fill();
+  ctx.fillStyle = '#FFD75E'; ctx.fillRect(sx(CHEST.x) - 2, sy(CHEST.y) - 2, 4, 4);  // chest
+  ctx.fillStyle = '#C9B6FF'; ctx.fillRect(sx(GATE.x) - 2, sy(GATE.y) - 3, 4, 6);    // gate
+  ctx.fillStyle = '#FFFFFF';                                                         // YOU
+  ctx.beginPath(); ctx.arc(sx(game.player.x), sy(game.player.y), 3, 0, 6.28); ctx.fill();
+  ctx.fillStyle = 'rgba(255,255,255,.6)'; ctx.font = '9px system-ui'; ctx.textAlign = 'left';
+  ctx.fillText('SKY WORLD  (full map: v2)', mx + 6, my + 12);
+}
+
+// ---------- THE GAME LOOP ----------
+function loop() {
+  update();
+  draw();
+  requestAnimationFrame(loop);
+}
+// testing hook: fast-forward the game n frames (works even in a background tab)
+window.step = n => { for (let i = 0; i < n; i++) update(); draw(); };
+say('Zazamar wakes in the Sky World…\nA voice calls to you. Find the chest!', 3400);
+loop();
+</script>
+</body>
+</html>

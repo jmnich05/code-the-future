@@ -105,6 +105,11 @@
   status = 200
 
 [[redirects]]
+  from = "/api/studio-iterate"
+  to = "/.netlify/functions/studio-iterate"
+  status = 200
+
+[[redirects]]
   from = "/api/image"
   to = "/.netlify/functions/image"
   status = 200
@@ -127,4 +132,9 @@
 [[redirects]]
   from = "/api/checkout"
   to = "/.netlify/functions/checkout"
+  status = 200
+
+[[redirects]]
+  from = "/api/ads-ops"
+  to = "/.netlify/functions/ads-ops"
   status = 200

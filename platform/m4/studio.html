@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex">
+<link rel="icon" type="image/svg+xml" href="/platform/assets/logo-icon-tile.svg">
+<title>Iteration Studio — Module 4</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap');
+:root{ --display:'Space Grotesk',sans-serif; --body:'Plus Jakarta Sans',system-ui,sans-serif; --mono:'JetBrains Mono',monospace;
+  --purple:#9B7BFF; --teal:#26C7D1; --green:#3FD08A; --amber:#FFC44D; --coral:#FF7452; --ink:#EAF1FF; --sub:#9fb6e6; }
+*{ box-sizing:border-box; margin:0; }
+body{ font-family:var(--body); color:var(--ink); min-height:100vh; padding-bottom:60px;
+  background:radial-gradient(120% 60% at 85% -5%, rgba(155,123,255,.18), transparent 55%), linear-gradient(170deg,#101a3c,#0A1024 55%,#070C1A); }
+.wrap{ max-width:1180px; margin:0 auto; padding:18px 16px; }
+.top{ display:flex; align-items:center; gap:12px; flex-wrap:wrap; margin-bottom:14px; }
+.top .logo{ display:flex; align-items:center; gap:8px; font-family:var(--display); font-weight:700; }
+.top .logo img{ width:28px; height:28px; }
+.top .logo span{ color:var(--teal); }
+.top .who{ margin-left:auto; display:flex; align-items:center; gap:10px; font-size:.9rem; color:var(--sub); }
+.top .who .av{ width:34px; height:34px; border-radius:10px; overflow:hidden; }
+.top .who .av svg{ width:100%; height:100%; display:block; }
+.ask{ font-family:var(--display); font-weight:700; font-size:.85rem; text-decoration:none; color:#06122b;
+  background:linear-gradient(120deg,#FFD479,#FFB320); border-radius:999px; padding:8px 15px; }
+h1{ font-family:var(--display); font-size:1.5rem; line-height:1.15; margin-bottom:2px; }
+.sub{ color:var(--sub); font-size:.93rem; }
+
+/* day rail */
+.days{ display:flex; gap:8px; margin:16px 0 6px; flex-wrap:wrap; }
+.day{ flex:1; min-width:120px; text-align:left; background:rgba(255,255,255,.05); border:1.5px solid rgba(127,227,255,.2);
+  border-radius:14px; padding:10px 12px; }
+.day .n{ font-family:var(--mono); font-size:10px; letter-spacing:.14em; color:var(--sub); }
+.day .t{ font-family:var(--display); font-weight:700; font-size:.92rem; margin-top:2px; }
+.day.done{ border-color:rgba(63,208,138,.5); background:rgba(63,208,138,.09); }
+.day.done .t::after{ content:" ✓"; color:var(--green); }
+.day.now{ border-color:var(--amber); background:rgba(255,196,77,.1); box-shadow:0 0 0 3px rgba(255,196,77,.15); }
+.day.locked{ opacity:.45; }
+
+.grid{ display:grid; grid-template-columns:1.15fr .85fr; gap:16px; align-items:start; margin-top:14px; }
+@media(max-width:940px){ .grid{ grid-template-columns:1fr; } }
+.panel{ background:rgba(255,255,255,.05); border:1.5px solid rgba(127,227,255,.22); border-radius:18px; overflow:hidden; }
+.ph{ display:flex; align-items:center; gap:10px; padding:12px 15px; border-bottom:1px solid rgba(255,255,255,.08);
+  font-family:var(--mono); font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:#7ef0e6; }
+.ph .vtag{ margin-left:auto; font-weight:700; color:var(--amber); }
+.stage{ background:#05070f; }
+.stage iframe{ width:100%; height:520px; border:0; display:block; background:#05070f; }
+.stagebar{ display:flex; gap:8px; align-items:center; padding:10px 14px; border-top:1px solid rgba(255,255,255,.08); flex-wrap:wrap; }
+.btn{ font-family:var(--display); font-weight:700; font-size:.88rem; cursor:pointer; border:none; border-radius:999px;
+  padding:9px 16px; color:#06122b; background:linear-gradient(120deg,#9fb6ff,#9B7BFF); }
+.btn.green{ background:linear-gradient(120deg,#9BF5C7,#3FD08A); color:#04331f; }
+.btn.ghost{ background:rgba(255,255,255,.1); color:#fff; }
+.btn:disabled{ opacity:.45; cursor:not-allowed; }
+.btn.big{ font-size:1.05rem; padding:14px 26px; width:100%; }
+
+.body{ padding:14px 15px; }
+.qa{ margin-bottom:14px; }
+.qa label{ display:block; font-family:var(--display); font-weight:700; font-size:.95rem; margin-bottom:5px; }
+.qa .hint{ color:var(--sub); font-size:.82rem; margin-bottom:6px; }
+.qa textarea{ width:100%; min-height:66px; resize:vertical; font-family:var(--body); font-size:.95rem; color:#fff;
+  background:rgba(255,255,255,.07); border:1.5px solid rgba(127,227,255,.3); border-radius:12px; padding:10px 12px; outline:none; }
+.qa textarea:focus{ border-color:var(--purple); }
+.teach{ background:rgba(155,123,255,.12); border:1.5px solid rgba(155,123,255,.4); border-radius:14px; padding:12px 14px; margin-bottom:14px; font-size:.93rem; line-height:1.5; }
+.teach b{ color:#fff; }
+.note{ font-size:.84rem; color:var(--sub); margin-top:8px; line-height:1.5; }
+.warn{ background:rgba(255,196,77,.12); border:1.5px solid rgba(255,196,77,.42); border-radius:12px; padding:10px 12px; font-size:.88rem; margin-top:10px; }
+.err{ background:rgba(255,116,82,.14); border:1.5px solid rgba(255,116,82,.5); border-radius:12px; padding:10px 12px; font-size:.9rem; margin-top:10px; }
+
+.hist{ display:flex; flex-direction:column; gap:7px; padding:12px 15px; }
+.hrow{ display:flex; align-items:center; gap:10px; background:rgba(255,255,255,.05); border:1px solid rgba(127,227,255,.18);
+  border-radius:11px; padding:8px 11px; font-size:.88rem; }
+.hrow b{ font-family:var(--mono); color:var(--amber); }
+.hrow .when{ color:var(--sub); font-size:.78rem; }
+.hrow button{ margin-left:auto; font-size:.78rem; padding:5px 11px; }
+.hrow.cur{ border-color:rgba(63,208,138,.5); background:rgba(63,208,138,.09); }
+
+.busy{ position:fixed; inset:0; z-index:90; background:rgba(5,8,20,.9); display:none; place-items:center; text-align:center; padding:20px; }
+.busy.on{ display:grid; }
+.busy .big{ font-size:3rem; animation:pulse 1.5s ease-in-out infinite; }
+@keyframes pulse{ 50%{ opacity:.4; transform:scale(.95);} }
+.busy h2{ font-family:var(--display); font-size:1.4rem; margin:10px 0 6px; }
+.busy p{ color:var(--sub); max-width:44ch; }
+.steps{ font-family:var(--mono); font-size:.82rem; color:#7ef0e6; margin-top:14px; line-height:2; }
+.gate{ max-width:520px; margin:70px auto; text-align:center; background:rgba(255,255,255,.05);
+  border:1.5px solid rgba(127,227,255,.22); border-radius:20px; padding:34px; }
+.gate h2{ font-family:var(--display); margin-bottom:8px; }
+.gate p{ color:var(--sub); }
+.pick{ display:grid; gap:9px; margin-top:16px; }
+.pick button{ text-align:left; font-family:var(--display); font-weight:700; background:rgba(255,255,255,.06);
+  border:1.5px solid rgba(127,227,255,.25); color:#fff; border-radius:13px; padding:12px 14px; cursor:pointer; }
+</style>
+</head>
+<body>
+<div class="wrap" id="app">
+  <div class="gate" id="gate"><h2>🛠️ Iteration Studio</h2><p>Loading your project…</p></div>
+</div>
+
+<div class="busy" id="busy">
+  <div>
+    <div class="big" id="busyEmoji">🛠️</div>
+    <h2 id="busyTitle">Building your new version…</h2>
+    <p id="busyMsg">The AI is reading your answers and editing your code. This takes about a minute — don't close the page!</p>
+    <div class="steps" id="busySteps"></div>
+  </div>
+</div>
+
+<script src="/platform/lib/config.js"></script>
+<script src="/platform/lib/avatar.js"></script>
+<script type="module">
+import { CTFDB } from "/platform/lib/ctf-db.js";
+
+// ===========================================================================
+// The five days. Each day teaches one real software idea and asks pointed
+// questions. {app} is swapped for the kid's own project name.
+// ===========================================================================
+const DAYS = [
+  { n:1, title:"Play & Notice", emoji:"🔍",
+    teach:"Real builders don't start by adding stuff — they start by <b>watching</b>. Today you play your own {app} like someone who's never seen it, and notice what's missing, boring, or confusing. Noticing is a skill. It's the whole job.",
+    qs:[
+      { q:"Play it for 2 minutes. What's the FIRST thing you wished it did?", hint:"The thing you reached for and it wasn't there." },
+      { q:"What part got boring or too easy?", hint:"Be honest — it's your game, nobody's feelings get hurt." },
+      { q:"Was anything confusing? Would a friend know what to do?", hint:"Think about someone playing it for the first time." },
+      { q:"What's ONE small thing that would make it feel better right away?", hint:"A sound, a color, a message, a bigger button…" }
+    ]},
+  { n:2, title:"Add the Fun", emoji:"🎉",
+    teach:"Today you add <b>one big new feature</b>. Not five — one. Real teams ship one thing at a time so that when something breaks, they know exactly what caused it. Choose the feature that makes your {app} the most fun.",
+    qs:[
+      { q:"What's the ONE new thing you want to add today?", hint:"Describe it like you're explaining it to a friend." },
+      { q:"How does it work? Walk me through it step by step.", hint:"What does the player do, and what happens back?" },
+      { q:"When should it happen — always, or only sometimes?", hint:"e.g. 'every 10 points', 'when you press E', 'only on level 2'" },
+      { q:"How will you know it's working?", hint:"What will you see on the screen if it worked?" }
+    ]},
+  { n:3, title:"Bug Hunt", emoji:"🐛",
+    teach:"A <b>bug</b> is when the code does exactly what you said instead of what you meant. Every coder makes them — the skill is <b>describing</b> them well. Today you're a bug reporter: what happened, what you expected, and how to make it happen again.",
+    qs:[
+      { q:"What's something that doesn't work right?", hint:"Even something small and annoying counts." },
+      { q:"What did you EXPECT to happen instead?", hint:"This is the most useful sentence a bug reporter writes." },
+      { q:"How do you make it happen again? Step by step.", hint:"'Move left, then press space twice, then…'" },
+      { q:"Anything else that feels broken or unfair?", hint:"Too hard? Too fast? Something you can walk through?" }
+    ]},
+  { n:4, title:"Make It Yours", emoji:"🎨",
+    teach:"Two people can build the same game and only one feels like <b>yours</b>. Today is personality: colors, sounds, a title screen, the little touches nobody asked for. This is taste — the part AI can't decide for you.",
+    qs:[
+      { q:"What should the title screen say and look like?", hint:"Your game's name, your colors, your style." },
+      { q:"What colors or mood do you want?", hint:"Neon? Spooky? Sunny? Name real colors if you can." },
+      { q:"What sounds or effects should happen, and when?", hint:"A beep on a point, a rumble on a hit, a victory jingle…" },
+      { q:"What's one silly or personal detail that makes it YOURS?", hint:"An inside joke, your pet's name, a secret message…" }
+    ]},
+  { n:5, title:"Ship It", emoji:"🚀",
+    teach:"Shipping means saying <b>'this is good, and I'm putting my name on it.'</b> Today: last fixes, clear instructions so anyone can play, and your credit on the screen. Then it's real, and it's done, and it's yours.",
+    qs:[
+      { q:"What's the LAST thing that needs fixing or polishing?", hint:"One or two things, the ones that bug you most." },
+      { q:"How do you explain your app to someone in one sentence?", hint:"This goes on the screen so players know what to do." },
+      { q:"How should your name appear on it?", hint:"'by Adam', 'made by pixel nova', your call." },
+      { q:"What should happen when someone wins or finishes?", hint:"The celebration. Make it feel good." }
+    ]}
+];
+
+// Projects. first_name → project. Kids can also pick if we can't tell.
+const PROJECTS = [
+  { slug:"adam-space-shooter",  name:"🚀 Space Shooter",  owner:"Adam",      seedLabel:"v2" },
+  { slug:"charlotte-art-studio",name:"🎨 Neon Studio",    owner:"Charlotte", seedLabel:"v1", alt:["char"] },
+  { slug:"devon-world-builder", name:"🏰 World Builder",  owner:"Devon",     seedLabel:"v1" }
+];
+
+const $ = id => document.getElementById(id);
+const esc = s => String(s==null?"":s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const app = $("app");
+let state = null, project = null, me = { name:"Builder", first:"", avatar:{} };
+
+// Day 1 is Monday of the build week. Change START to move the schedule.
+const START = "2026-07-27";
+function todayDay(){
+  const d0 = new Date(START + "T00:00:00");
+  const now = new Date(); now.setHours(0,0,0,0);
+  const diff = Math.floor((now - d0) / 86400000);
+  return Math.max(1, Math.min(5, diff + 1));
+}
+
+// ---------------------------------------------------------------- storage
+// One widget_responses row per project: { project, versions[], features[], days{} }
+const wid = p => "m4:" + p;
+async function loadState(slug){
+  const r = await CTFDB.getWidgetResponse(wid(slug));          // { response, is_complete }
+  return (r && r.response && r.response.versions) ? r.response : null;
+}
+async function saveState(){
+  await CTFDB.saveWidgetResponse(wid(project.slug), {
+    response: state, isComplete: state.versions.length >= 6,
+    module: "module-04-build-your-own", track: "kids"
+  });
+}
+
+// ---------------------------------------------------------------- boot
+(async function boot(){
+  await CTFDB.init();
+  if(!CTFDB.enabled){ gate("🔌 Can't connect", "Refresh the page, or ask Mr. Jon for help."); return; }
+
+  try{ const p = await CTFDB.getProfile(); if(p && p.display_name) me.name = p.display_name; if(p && p.avatar) me.avatar = p.avatar; }catch(e){}
+  try{ const pi = await CTFDB.getPrivateIdentity(); if(pi && pi.first_name) me.first = String(pi.first_name).trim(); }catch(e){}
+
+  // which project is theirs?
+  const q = new URLSearchParams(location.search).get("p");
+  const byFirst = PROJECTS.find(p =>
+    p.owner.toLowerCase() === me.first.toLowerCase() ||
+    (p.alt||[]).includes(me.first.toLowerCase()) ||
+    p.owner.toLowerCase() === String(me.name).toLowerCase());
+  project = PROJECTS.find(p => p.slug === q) || byFirst || null;
+  if(!project){ return chooser(); }
+  await open();
+})();
+
+function chooser(){
+  app.innerHTML = '<div class="gate"><h2>🛠️ Iteration Studio</h2><p>Which project is yours?</p><div class="pick">' +
+    PROJECTS.map(p => '<button data-s="'+p.slug+'">'+p.name+' — '+p.owner+'</button>').join('') +
+    '</div><p class="note" style="margin-top:14px">Not seeing yours? Ask Mr. Jon.</p></div>';
+  app.querySelectorAll(".pick button").forEach(b => b.onclick = async () => {
+    project = PROJECTS.find(p => p.slug === b.dataset.s); await open();
+  });
+}
+function gate(t, m){ app.innerHTML = '<div class="gate"><h2>'+esc(t)+'</h2><p>'+esc(m)+'</p></div>'; }
+
+async function open(){
+  state = await loadState(project.slug);
+  if(!state || !state.versions || !state.versions.length){
+    // first visit — seed with the build they made with Mr. Jon
+    const res = await fetch("/platform/m4/seeds/" + project.slug + ".html");
+    if(!res.ok){ gate("Hmm", "Couldn't load your project. Tell Mr. Jon."); return; }
+    const html = await res.text();
+    state = {
+      project: project.slug,
+      versions: [{ v:1, label:project.seedLabel, html, at:new Date().toISOString(), changelog:["The version you built with Mr. Jon"] }],
+      features: [], days: {}
+    };
+    await saveState();
+  }
+  render();
+}
+
+const cur = () => state.versions[state.versions.length - 1];
+const dayDone = n => !!(state.days && state.days[n]);
+
+function render(){
+  const d = todayDay();
+  const day = DAYS[d-1];
+  const v = cur();
+  const built = dayDone(d);
+
+  app.innerHTML = `
+  <div class="top">
+    <div class="logo"><img src="/platform/assets/logo-icon-tile.svg" alt="">Code the <span>Future</span></div>
+    <div class="who">
+      <span class="av">${window.CTFAvatar ? CTFAvatar.render(Object.keys(me.avatar||{}).length?me.avatar:CTFAvatar.DEFAULT) : ""}</span>
+      <span>${esc(me.first || me.name)}</span>
+      <a class="ask" href="/platform/board.html#chat">💬 Ask Mr. Jon</a>
+    </div>
+  </div>
+
+  <h1>${project.name} — Iteration Studio</h1>
+  <p class="sub">Five days. Five versions. Every one of them your call.</p>
+
+  <div class="days">
+    ${DAYS.map(x => `<div class="day ${dayDone(x.n)?'done':''} ${x.n===d?'now':''} ${x.n>d?'locked':''}">
+      <div class="n">DAY ${x.n}${x.n>d?' · LOCKED':''}</div><div class="t">${x.emoji} ${x.title}</div></div>`).join("")}
+  </div>
+
+  <div class="grid">
+    <div>
+      <div class="panel">
+        <div class="ph">▶ Your app, right now <span class="vtag">${esc(v.label)}</span></div>
+        <div class="stage"><iframe id="frame" sandbox="allow-scripts allow-pointer-lock" title="Your app"></iframe></div>
+        <div class="stagebar">
+          <button class="btn ghost" id="reload">↻ Restart</button>
+          <button class="btn ghost" id="full">⛶ Full screen</button>
+          <span class="note" style="margin:0 0 0 auto">Click inside to play</span>
+        </div>
+      </div>
+      <div class="panel" style="margin-top:14px">
+        <div class="ph">🕘 Your versions</div>
+        <div class="hist" id="hist"></div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="ph">${day.emoji} Day ${d} · ${esc(day.title)}</div>
+      <div class="body" id="dayBody"></div>
+    </div>
+  </div>`;
+
+  // the app itself
+  const f = $("frame");
+  f.srcdoc = v.html;
+  $("reload").onclick = () => { f.srcdoc = cur().html; };
+  $("full").onclick = () => { const w = window.open(""); w.document.write(cur().html); w.document.close(); };
+
+  renderHist();
+  renderDay(d, day, built);
+}
+
+function renderHist(){
+  $("hist").innerHTML = state.versions.map((x,i) => {
+    const isCur = i === state.versions.length - 1;
+    return `<div class="hrow ${isCur?'cur':''}"><b>${esc(x.label)}</b>
+      <span>${esc((x.changelog&&x.changelog[0])||"")}</span>
+      <span class="when">${new Date(x.at).toLocaleDateString(undefined,{weekday:'short'})}</span>
+      ${isCur ? '<span class="when" style="margin-left:auto">playing now</span>'
+              : '<button class="btn ghost" data-i="'+i+'">Go back to this</button>'}</div>`;
+  }).reverse().join("");
+  $("hist").querySelectorAll("button[data-i]").forEach(b => b.onclick = async () => {
+    const i = +b.dataset.i;
+    if(!confirm("Go back to " + state.versions[i].label + "? Your newer versions stay in the list.")) return;
+    const copy = { ...state.versions[i], v: state.versions.length+1,
+      label: "v" + (state.versions.length+1), at: new Date().toISOString(),
+      changelog: ["Went back to " + state.versions[i].label] };
+    state.versions.push(copy); await saveState(); render();
+  });
+}
+
+function renderDay(d, day, built){
+  const body = $("dayBody");
+  if(built){
+    const done = state.days[d];
+    body.innerHTML = `<div class="teach">✅ <b>Day ${d} is built!</b> Play it on the left — that's your new version.</div>
+      <p class="sub"><b>What you asked for today:</b></p>
+      <ul style="margin:8px 0 0 18px;color:var(--sub);font-size:.9rem;line-height:1.7">
+        ${(done.answers||[]).map(a=>`<li>${esc(a.a)}</li>`).join("")}</ul>
+      <div class="note">One build per day — that's on purpose. Real teams think first and ship once.
+      ${d<5?"Come back tomorrow for Day "+(d+1)+": "+DAYS[d].title+".":"That's all five days. You shipped it. 🚀"}</div>
+      ${d<5?"":'<div class="warn" style="margin-top:12px">🏆 Your app is finished. Show it to somebody today.</div>'}`;
+    return;
+  }
+  const teach = day.teach.replace(/\{app\}/g, project.name.replace(/^\S+\s/, ""));
+  body.innerHTML = `<div class="teach">${teach}</div>
+    ${day.qs.map((q,i)=>`<div class="qa"><label>${i+1}. ${esc(q.q)}</label>
+      <div class="hint">${esc(q.hint)}</div>
+      <textarea id="q${i}" maxlength="700" placeholder="Type your answer…"></textarea></div>`).join("")}
+    <button class="btn green big" id="build">🛠️ Build my Day ${d} version</button>
+    <div class="note">You get <b>one build today</b>. Take your time on the answers — that's where the thinking goes.</div>
+    <div id="msg"></div>`;
+
+  $("build").onclick = () => doBuild(d, day);
+}
+
+const BUSY_STEPS = [
+  "Reading your answers…", "Opening your code…", "Making the changes…",
+  "Checking nothing broke…", "Almost there…"
+];
+function busy(on, title){
+  $("busy").classList.toggle("on", on);
+  if(!on) return;
+  if(title) $("busyTitle").textContent = title;
+  let i = 0; $("busySteps").textContent = BUSY_STEPS[0];
+  clearInterval(window.__bt);
+  window.__bt = setInterval(()=>{ i = Math.min(i+1, BUSY_STEPS.length-1); $("busySteps").textContent = BUSY_STEPS[i]; }, 9000);
+}
+
+async function doBuild(d, day){
+  const answers = day.qs.map((q,i) => ({ q:q.q, a: ($("q"+i).value||"").trim() })).filter(a => a.a);
+  if(answers.length < 2){ $("msg").innerHTML = '<div class="err">Answer at least two questions first — the AI needs your ideas to work with!</div>'; return; }
+  // keep it kid-safe on the way in
+  if(window.CTFFilter && CTFFilter.isClean){
+    for(const a of answers){ if(!CTFFilter.isClean(a.a)){ $("msg").innerHTML = '<div class="err">Let\'s keep it kind — try rewording that one.</div>'; return; } }
+  }
+  $("build").disabled = true; $("msg").innerHTML = "";
+  busy(true, "Building your Day " + d + " version…");
+  try{
+    const r = await fetch("/api/studio-iterate", {
+      method:"POST", headers:{ "Content-Type":"application/json" },
+      body: JSON.stringify({
+        project: project.slug, day: d, dayTitle: day.title, name: me.first || me.name,
+        answers, current: cur().html, features: state.features || []
+      })
+    });
+    const data = await r.json();
+    if(!r.ok || !data.html){
+      busy(false); $("build").disabled = false;
+      $("msg").innerHTML = '<div class="err">'+esc(data.error||"That didn't work.")+
+        ' <button class="btn ghost" id="retry" style="margin-left:8px">Try once more</button></div>';
+      const rt = $("retry"); if(rt) rt.onclick = () => doBuild(d, day);
+      return;
+    }
+    const nv = state.versions.length + 1;
+    state.versions.push({ v:nv, label:"v"+nv, html:data.html, at:new Date().toISOString(),
+      changelog: answers.map(a => a.a) });
+    if(state.versions.length > 8) state.versions.splice(0, state.versions.length - 8);
+    state.features = (state.features||[]).concat(answers.map(a => a.a)).slice(-30);
+    state.days = state.days || {}; state.days[d] = { at:new Date().toISOString(), answers };
+    await saveState();
+    busy(false);
+    render();
+    window.scrollTo({ top:0, behavior:"smooth" });
+  }catch(e){
+    busy(false); $("build").disabled = false;
+    $("msg").innerHTML = '<div class="err">Something went wrong. Check your internet and try again.</div>';
+  }
+}
+</script>
+<script src="/platform/lib/filter.js"></script>
+</body>
+</html>
