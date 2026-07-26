@@ -176,6 +176,14 @@ function todayDay(){
   const diff = Math.floor((now - d0) / 86400000);
   return Math.max(1, Math.min(5, diff + 1));
 }
+// True before the build week actually opens. Day 1 is clamped as the floor
+// above, so without this a kid previewing the Studio the night before would
+// spend their one Day 1 build early and find it gone in the morning.
+function beforeStart(){
+  const d0 = new Date(START + "T00:00:00");
+  const now = new Date(); now.setHours(0,0,0,0);
+  return now < d0;
+}
 
 // ---------------------------------------------------------------- storage
 // One widget_responses row per project: { project, versions[], features[], days{} }
@@ -334,11 +342,15 @@ function renderDay(d, day, built){
     ${day.qs.map((q,i)=>`<div class="qa"><label>${i+1}. ${esc(q.q)}</label>
       <div class="hint">${esc(q.hint)}</div>
       <textarea id="q${i}" maxlength="700" placeholder="Type your answer…"></textarea></div>`).join("")}
-    <button class="btn green big" id="build">🛠️ Build my Day ${d} version</button>
-    <div class="note">You get <b>one build today</b>. Take your time on the answers — that's where the thinking goes.</div>
+    <button class="btn green big" id="build"${beforeStart()?" disabled":""}>🛠️ Build my Day ${d} version</button>
+    ${beforeStart()
+      ? `<div class="warn" style="margin-top:12px">👀 <b>Sneak peek!</b> Day 1 opens Monday morning.
+         Play your app and read through the questions — nothing gets used up tonight.
+         Jot your best ideas on paper, and your one Day 1 build will be waiting in the morning.</div>`
+      : `<div class="note">You get <b>one build today</b>. Take your time on the answers — that's where the thinking goes.</div>`}
     <div id="msg"></div>`;
 
-  $("build").onclick = () => doBuild(d, day);
+  if(!beforeStart()) $("build").onclick = () => doBuild(d, day);
 }
 
 const BUSY_STEPS = [
@@ -355,6 +367,7 @@ function busy(on, title){
 }
 
 async function doBuild(d, day){
+  if(beforeStart()){ $("msg").innerHTML = '<div class="err">Day 1 opens Monday morning — your build is saved for then!</div>'; return; }
   const answers = day.qs.map((q,i) => ({ q:q.q, a: ($("q"+i).value||"").trim() })).filter(a => a.a);
   if(answers.length < 2){ $("msg").innerHTML = '<div class="err">Answer at least two questions first — the AI needs your ideas to work with!</div>'; return; }
   // keep it kid-safe on the way in
