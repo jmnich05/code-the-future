@@ -214,6 +214,15 @@ async function saveState(){
     response: state, isComplete: state.versions.length >= 6,
     module: "module-04-build-your-own", track: "kids"
   });
+  // Mirror a plain day count so the missions map can light up the bridge
+  // without needing to know which project belongs to which kid.
+  try{
+    const days = Object.keys(state.days || {}).length;
+    await CTFDB.saveWidgetResponse("m4progress", {
+      response: { days, project: project.slug, at: new Date().toISOString() },
+      isComplete: days >= 5, module: "module-04-build-your-own", track: "kids"
+    });
+  }catch(e){}
 }
 
 // ---------------------------------------------------------------- boot

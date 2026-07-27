@@ -198,18 +198,12 @@ const ROUTES = {
     label:"Module 4 · Build Your Own", badge:"kids-mod4-", studio:true, player:"m4/studio.html",
     map:"assets/bigfour-bridge-map.png", alt:"Illustrated map of the Big Four Bridge from Louisville to Jeffersonville", welcome:"The Big Four Bridge",
     stops:[
-      {t:"The Plan",icon:"📝",place:"Waterfront Park",x:10,y:80},
-      {t:"The Canvas",icon:"🖼️",place:"The Spiral Ramp",x:17,y:64},
-      {t:"The Star",icon:"⭐",place:"Bridge Gate",x:27,y:52},
-      {t:"Make It Move",icon:"🕹️",place:"First Tower",x:37,y:45},
-      {t:"The Goal",icon:"🎯",place:"The High Arch",x:47,y:42},
-      {t:"Keep Score",icon:"🔢",place:"Mid-Span",x:57,y:42},
-      {t:"Make It React",icon:"🔊",place:"Second Tower",x:67,y:43},
-      {t:"Dress It Up",icon:"🎨",place:"The Far Arch",x:75,y:43},
-      {t:"Level Up",icon:"⬆️",place:"Indiana Landing",x:83,y:41},
-      {t:"The Welcome",icon:"🏁",place:"Jeffersonville",x:91,y:29},
-      {t:"Bug Hunt",icon:"🐛",place:"Colgate Clock",x:88,y:16},
-      {t:"Ship & Show",icon:"🏆",place:"Riverfront Stage",x:80,y:67},
+      {t:"Day 1 · Play & Notice",icon:"🔍",place:"Waterfront Park",x:12,y:78},
+      {t:"Day 2 · Add the Fun",icon:"🎉",place:"The Spiral Ramp",x:25,y:57},
+      {t:"Day 3 · Bug Hunt",icon:"🐛",place:"First Tower",x:41,y:44},
+      {t:"Day 4 · Make It Yours",icon:"🎨",place:"Mid-Span",x:58,y:42},
+      {t:"Day 5 · Ship It",icon:"🚀",place:"Second Tower",x:75,y:43},
+      {t:"Demo Day · Saturday",icon:"🏆",place:"Jeffersonville",x:89,y:27},
     ]
   }
 };
@@ -236,9 +230,20 @@ function countDone(badges, prefix){
 function stopHref(R, n){ return R.studio ? (R.player + (R.player.indexOf('?')>-1?'&':'?') + 'mission=' + n) : R.player; }
 
 async function loadProgress(){
-  if (qs.has("demo")) { done = Math.max(0, Math.min(12, parseInt(qs.get("demo"),10)||0)); return; }
-  if (ROUTES[MODULE].studio) {                       // Module 4 — the Build Studio tracks its own checkpoint progress
-    try { done = Math.max(0, Math.min(12, parseInt(localStorage.getItem('ctf:m4progress')||'0',10)||0)); } catch(e){ done = 0; }
+  const maxStops = ROUTES[MODULE].stops.length;
+  if (qs.has("demo")) { done = Math.max(0, Math.min(maxStops, parseInt(qs.get("demo"),10)||0)); return; }
+  if (ROUTES[MODULE].studio) {
+    // Module 4 — one stop per day actually built. The Studio writes this after
+    // every build; the old localStorage counter never survived a device change.
+    done = 0;
+    try {
+      await CTFDB.init();
+      if (CTFDB.enabled) {
+        const row = await CTFDB.getWidgetResponse("m4progress");
+        const days = row && row.response && parseInt(row.response.days, 10);
+        if (days > 0) done = Math.min(days, maxStops);
+      }
+    } catch(e){ done = 0; }
     return;
   }
   try {
