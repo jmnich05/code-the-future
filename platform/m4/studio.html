@@ -284,16 +284,24 @@ function offsiteMode(p){
   </div>
 
   <div class="grid">
-    <div class="panel">
-      <div class="ph">▶ Your project</div>
-      <div class="body">
-        <div class="teach">${esc(p.blurb)}</div>
-        <p class="note" style="margin-bottom:12px">Your build is a real website with real shopping in it,
-          so it lives on its own address instead of inside this page.</p>
-        <button class="btn amber big" id="openSite">🛍️ Open my shop ↗</button>
-        <button class="btn ghost big" id="openStudio" style="margin-top:9px">🛠️ Open my Studio ↗</button>
-        <div class="playnote" style="border-top:0;border-radius:12px;margin-top:12px">
-          👉 Both open in a new tab so you get the whole screen. Close the tab to come back here.</div>
+    <div>
+      <div class="panel">
+        <div class="ph">▶ Your shop, right now <span class="vtag">v1</span></div>
+        <div class="stage"><iframe id="frame" src="${p.site}" title="Your shop"></iframe></div>
+        <div class="stagebar">
+          <button class="btn amber big-ish" id="openSite">🛍️ Play it full size</button>
+          <button class="btn ghost" id="reload">↻ Restart</button>
+          <button class="btn ghost" id="openStudio">🛠️ My Studio</button>
+        </div>
+        <div class="playnote">👉 <b>Always tap “🛍️ Play it full size” to test it properly.</b>
+          It opens your shop in its own tab with the whole screen. This little preview window
+          is just a peek — some things won't look or work right in here. Close the tab to come back.</div>
+      </div>
+      <div class="panel" style="margin-top:14px">
+        <div class="ph">💡 What makes yours different</div>
+        <div class="body"><div class="teach">${esc(p.blurb)}</div>
+          <p class="note">Yours is a real website with real shopping in it, so your changes happen
+            in your own Studio instead of this page. Same five days, same questions.</p></div>
       </div>
     </div>
 
@@ -314,6 +322,7 @@ function offsiteMode(p){
 
   $("openSite").onclick = () => window.open(p.site, "_blank", "noopener");
   $("openStudio").onclick = () => window.open(p.studio, "_blank", "noopener");
+  $("reload").onclick = () => { const f = $("frame"); f.src = f.src; };
 }
 
 async function watchMode(slug){
