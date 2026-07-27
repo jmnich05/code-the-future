@@ -176,6 +176,17 @@ function todayDay(){
   const diff = Math.floor((now - d0) / 86400000);
   return Math.max(1, Math.min(5, diff + 1));
 }
+// The day a kid actually works on: the earliest one they haven't built yet,
+// never past today. Kids miss days — a library session, a sick day — and the
+// point is the five steps in order, not the calendar. So a kid who misses
+// Tuesday picks up at Day 2 on Wednesday instead of losing it forever.
+function activeDay(){
+  const today = todayDay();
+  for(let n = 1; n <= today; n++) if(!dayDone(n)) return n;
+  return today;                       // all caught up — today's is done
+}
+function behindBy(){ return todayDay() - activeDay(); }
+
 // True before the build week actually opens. Day 1 is clamped as the floor
 // above, so without this a kid previewing the Studio the night before would
 // spend their one Day 1 build early and find it gone in the morning.
@@ -214,9 +225,82 @@ async function saveState(){
     (p.alt||[]).includes(me.first.toLowerCase()) ||
     p.owner.toLowerCase() === String(me.name).toLowerCase());
   project = PROJECTS.find(p => p.slug === q) || byFirst || null;
+  if(!project && isWatcher()){ return watchMode(PROJECTS[0].slug); }
   if(!project){ return chooser(); }
   await open();
 })();
+
+// Kids sitting this module out. They have no project of their own, so instead
+// of the "which one is yours?" chooser (where they could build on someone
+// else's app in their own copy and think they'd changed it), they get a
+// read-only gallery: play any build, no questions, no build button.
+const WATCHERS = ["elliott", "jackson"];
+function isWatcher(){
+  const f = String(me.first || me.name || "").trim().toLowerCase();
+  return WATCHERS.includes(f);
+}
+
+async function watchMode(slug){
+  const p = PROJECTS.find(x => x.slug === slug) || PROJECTS[0];
+  let html = "";
+  try{
+    const res = await fetch("/platform/m4/seeds/" + p.slug + ".html");
+    if(res.ok) html = await res.text();
+  }catch(e){}
+
+  app.innerHTML = `
+  <div class="top">
+    <div class="logo"><img src="/platform/assets/logo-icon-tile.svg" alt="">Code the <span>Future</span></div>
+    <div class="who">
+      <span class="av">${window.CTFAvatar ? CTFAvatar.render(Object.keys(me.avatar||{}).length?me.avatar:CTFAvatar.DEFAULT) : ""}</span>
+      <span>${esc(me.first || me.name)}</span>
+      <a class="ask" href="/platform/board.html#chat">💬 Ask Mr. Jon</a>
+    </div>
+  </div>
+
+  <h1>🍿 The Arcade</h1>
+  <p class="sub">You're watching this one. Play everything the builders ship this week.</p>
+
+  <div class="days" style="margin-top:16px">
+    ${PROJECTS.map(x => `<div class="day ${x.slug===p.slug?'now':''}" data-w="${x.slug}" style="cursor:pointer">
+      <div class="n">BUILT BY ${x.owner.toUpperCase()}</div>
+      <div class="t">${x.name}</div></div>`).join("")}
+  </div>
+
+  <div class="grid">
+    <div>
+      <div class="panel">
+        <div class="ph">▶ ${esc(p.owner)}'s app <span class="vtag">${esc(p.seedLabel)}</span></div>
+        <div class="stage"><iframe id="frame" sandbox="allow-scripts allow-pointer-lock" title="${esc(p.owner)}'s app"></iframe></div>
+        <div class="stagebar">
+          <button class="btn ghost" id="reload">↻ Restart</button>
+          <button class="btn ghost" id="full">⛶ Full screen</button>
+          <span class="note" style="margin:0 0 0 auto">Click inside to play</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="ph">📅 What's happening this week</div>
+      <div class="body">
+        <div class="teach">Adam, Charlotte and Devon are each improving their app <b>one version a day</b>
+          for five days. Same five steps real software teams use.</div>
+        ${DAYS.map(x => `<div class="qa" style="margin-bottom:10px">
+          <label>${x.emoji} Day ${x.n}: ${esc(x.title)}</label>
+          <div class="hint">${x.n <= todayDay() ? "Happening now or already done" : "Still to come"}</div>
+        </div>`).join("")}
+        <div class="warn">Want to build one of your own next time? Tell Mr. Jon — you'd start
+          by picking your dream app, exactly like they did.</div>
+      </div>
+    </div>
+  </div>`;
+
+  const f = $("frame");
+  if(html) f.srcdoc = html;
+  $("reload").onclick = () => { f.srcdoc = html; };
+  $("full").onclick = () => { if(f.requestFullscreen) f.requestFullscreen(); };
+  app.querySelectorAll("[data-w]").forEach(el => el.onclick = () => watchMode(el.dataset.w));
+}
 
 function chooser(){
   app.innerHTML = '<div class="gate"><h2>🛠️ Iteration Studio</h2><p>Which project is yours?</p><div class="pick">' +
@@ -249,7 +333,8 @@ const cur = () => state.versions[state.versions.length - 1];
 const dayDone = n => !!(state.days && state.days[n]);
 
 function render(){
-  const d = todayDay();
+  const d = activeDay();            // the day they're on, not the calendar's
+  const today = todayDay();
   const day = DAYS[d-1];
   const v = cur();
   const built = dayDone(d);
@@ -268,8 +353,8 @@ function render(){
   <p class="sub">Five days. Five versions. Every one of them your call.</p>
 
   <div class="days">
-    ${DAYS.map(x => `<div class="day ${dayDone(x.n)?'done':''} ${x.n===d?'now':''} ${x.n>d?'locked':''}">
-      <div class="n">DAY ${x.n}${x.n>d?' · LOCKED':''}</div><div class="t">${x.emoji} ${x.title}</div></div>`).join("")}
+    ${DAYS.map(x => `<div class="day ${dayDone(x.n)?'done':''} ${x.n===d?'now':''} ${x.n>today?'locked':''}">
+      <div class="n">DAY ${x.n}${x.n>today?' · LOCKED':dayDone(x.n)?' · DONE':''}</div><div class="t">${x.emoji} ${x.title}</div></div>`).join("")}
   </div>
 
   <div class="grid">
@@ -338,7 +423,12 @@ function renderDay(d, day, built){
     return;
   }
   const teach = day.teach.replace(/\{app\}/g, project.name.replace(/^\S+\s/, ""));
-  body.innerHTML = `<div class="teach">${teach}</div>
+  const behind = behindBy();
+  body.innerHTML = `${behind > 0 ? `<div class="warn">👋 <b>Welcome back!</b> You missed
+      ${behind === 1 ? "a day" : behind + " days"}, so we saved your spot — you're picking up right
+      where you left off at Day ${d}. Nothing is lost. Do this one today, and you can do the next
+      one whenever you're ready.</div>` : ""}
+    <div class="teach">${teach}</div>
     ${day.qs.map((q,i)=>`<div class="qa"><label>${i+1}. ${esc(q.q)}</label>
       <div class="hint">${esc(q.hint)}</div>
       <textarea id="q${i}" maxlength="700" placeholder="Type your answer…"></textarea></div>`).join("")}
