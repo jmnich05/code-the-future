@@ -52,6 +52,12 @@ h1{ font-family:var(--display); font-size:1.5rem; line-height:1.15; margin-botto
 .btn.ghost{ background:rgba(255,255,255,.1); color:#fff; }
 .btn:disabled{ opacity:.45; cursor:not-allowed; }
 .btn.big{ font-size:1.05rem; padding:14px 26px; width:100%; }
+.btn.amber{ background:linear-gradient(120deg,#FFD479,#FFB320); color:#06122b; }
+.btn.big-ish{ font-size:1rem; padding:12px 22px; }
+.btn.amber{ box-shadow:0 0 0 3px rgba(255,196,77,.22); }
+.playnote{ background:rgba(255,196,77,.13); border-top:1.5px solid rgba(255,196,77,.4);
+  padding:10px 14px; font-size:.86rem; line-height:1.5; color:#ffe3a8; }
+.playnote b{ color:#fff; }
 
 .body{ padding:14px 15px; }
 .qa{ margin-bottom:14px; }
@@ -273,10 +279,12 @@ async function watchMode(slug){
         <div class="ph">▶ ${esc(p.owner)}'s app <span class="vtag">${esc(p.seedLabel)}</span></div>
         <div class="stage"><iframe id="frame" sandbox="allow-scripts allow-pointer-lock" title="${esc(p.owner)}'s app"></iframe></div>
         <div class="stagebar">
+          <button class="btn amber big-ish" id="full">⛶ Play it full size</button>
           <button class="btn ghost" id="reload">↻ Restart</button>
-          <button class="btn ghost" id="full">⛶ Full screen</button>
-          <span class="note" style="margin:0 0 0 auto">Click inside to play</span>
         </div>
+        <div class="playnote">👉 <b>Always tap “⛶ Play it full size” to test it properly.</b>
+          It opens your app in its own tab with the whole screen. This little preview window
+          is just a peek — some things won't look or work right in here. Close the tab to come back.</div>
       </div>
     </div>
 
@@ -298,7 +306,7 @@ async function watchMode(slug){
   const f = $("frame");
   if(html) f.srcdoc = html;
   $("reload").onclick = () => { f.srcdoc = html; };
-  $("full").onclick = () => { if(f.requestFullscreen) f.requestFullscreen(); };
+  $("full").onclick = () => { const w = window.open(""); if(w){ w.document.write(html); w.document.close(); } };
   app.querySelectorAll("[data-w]").forEach(el => el.onclick = () => watchMode(el.dataset.w));
 }
 
@@ -363,10 +371,12 @@ function render(){
         <div class="ph">▶ Your app, right now <span class="vtag">${esc(v.label)}</span></div>
         <div class="stage"><iframe id="frame" sandbox="allow-scripts allow-pointer-lock" title="Your app"></iframe></div>
         <div class="stagebar">
+          <button class="btn amber big-ish" id="full">⛶ Play it full size</button>
           <button class="btn ghost" id="reload">↻ Restart</button>
-          <button class="btn ghost" id="full">⛶ Full screen</button>
-          <span class="note" style="margin:0 0 0 auto">Click inside to play</span>
         </div>
+        <div class="playnote">👉 <b>Always tap “⛶ Play it full size” to test it properly.</b>
+          It opens your app in its own tab with the whole screen. This little preview window
+          is just a peek — some things won't look or work right in here. Close the tab to come back.</div>
       </div>
       <div class="panel" style="margin-top:14px">
         <div class="ph">🕘 Your versions</div>
@@ -413,7 +423,8 @@ function renderDay(d, day, built){
   const body = $("dayBody");
   if(built){
     const done = state.days[d];
-    body.innerHTML = `<div class="teach">✅ <b>Day ${d} is built!</b> Play it on the left — that's your new version.</div>
+    body.innerHTML = `<div class="teach">✅ <b>Day ${d} is built!</b> That's your new version on the left —
+      hit <b>⛶ Play full screen</b> to try it out properly.</div>
       <p class="sub"><b>What you asked for today:</b></p>
       <ul style="margin:8px 0 0 18px;color:var(--sub);font-size:.9rem;line-height:1.7">
         ${(done.answers||[]).map(a=>`<li>${esc(a.a)}</li>`).join("")}</ul>
