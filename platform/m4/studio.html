@@ -105,7 +105,7 @@ h1{ font-family:var(--display); font-size:1.5rem; line-height:1.15; margin-botto
   <div>
     <div class="big" id="busyEmoji">🛠️</div>
     <h2 id="busyTitle">Building your new version…</h2>
-    <p id="busyMsg">The AI is reading your answers and editing your code. This takes about a minute — don't close the page!</p>
+    <p id="busyMsg">The AI is reading your answers and editing your code. Big changes can take a few minutes — keep this page open and it'll pop up on its own.</p>
     <div class="steps" id="busySteps"></div>
   </div>
 </div>
@@ -535,7 +535,8 @@ function renderDay(d, day, built){
 
 const BUSY_STEPS = [
   "Reading your answers…", "Opening your code…", "Making the changes…",
-  "Checking nothing broke…", "Almost there…"
+  "Writing the new version…", "Checking nothing broke…",
+  "Still going — big changes take longer…", "Almost there…"
 ];
 function busy(on, title){
   $("busy").classList.toggle("on", on);
@@ -545,6 +546,8 @@ function busy(on, title){
   clearInterval(window.__bt);
   window.__bt = setInterval(()=>{ i = Math.min(i+1, BUSY_STEPS.length-1); $("busySteps").textContent = BUSY_STEPS[i]; }, 9000);
 }
+
+const JOB = () => "m4job:" + project.slug;
 
 async function doBuild(d, day){
   if(beforeStart()){ $("msg").innerHTML = '<div class="err">Day 1 opens Monday morning — your build is saved for then!</div>'; return; }
@@ -556,24 +559,42 @@ async function doBuild(d, day){
   }
   $("build").disabled = true; $("msg").innerHTML = "";
   busy(true, "Building your Day " + d + " version…");
+
+  // A real build can take a couple of minutes, which is far longer than a web
+  // request is allowed to stay open. So we hand the work to a background job
+  // and watch our own job row for the answer.
   try{
-    const r = await fetch("/api/studio-iterate", {
+    await CTFDB.saveWidgetResponse(JOB(), {
+      response:{ status:"running", day, at:new Date().toISOString() }, isComplete:false,
+      module:"module-04-build-your-own", track:"kids"
+    });
+
+    const uid = CTFDB.user && CTFDB.user.id;
+    if(!uid){ throw new Error("no user"); }
+
+    const kick = await fetch("/api/studio-iterate-bg", {
       method:"POST", headers:{ "Content-Type":"application/json" },
       body: JSON.stringify({
-        project: project.slug, day: d, dayTitle: day.title, name: me.first || me.name,
-        answers, current: cur().html, features: state.features || []
+        userId: uid, project: project.slug, day: d, dayTitle: day.title,
+        name: me.first || me.name, answers, current: cur().html, features: state.features || []
       })
     });
-    const data = await r.json();
-    if(!r.ok || !data.html){
+    // 202 = accepted and running. Anything else never started.
+    if(kick.status !== 202 && !kick.ok) throw new Error("start failed " + kick.status);
+
+    const job = await waitForJob(d);
+
+    if(!job || job.status !== "done" || !job.html){
       busy(false); $("build").disabled = false;
-      $("msg").innerHTML = '<div class="err">'+esc(data.error||"That didn't work.")+
+      const why = (job && job.error) || "That took too long. Let's try once more.";
+      $("msg").innerHTML = '<div class="err">'+esc(why)+
         ' <button class="btn ghost" id="retry" style="margin-left:8px">Try once more</button></div>';
       const rt = $("retry"); if(rt) rt.onclick = () => doBuild(d, day);
       return;
     }
+
     const nv = state.versions.length + 1;
-    state.versions.push({ v:nv, label:"v"+nv, html:data.html, at:new Date().toISOString(),
+    state.versions.push({ v:nv, label:"v"+nv, html:job.html, at:new Date().toISOString(),
       changelog: answers.map(a => a.a) });
     if(state.versions.length > 8) state.versions.splice(0, state.versions.length - 8);
     state.features = (state.features||[]).concat(answers.map(a => a.a)).slice(-30);
@@ -584,9 +605,30 @@ async function doBuild(d, day){
     window.scrollTo({ top:0, behavior:"smooth" });
   }catch(e){
     busy(false); $("build").disabled = false;
-    $("msg").innerHTML = '<div class="err">Something went wrong. Check your internet and try again.</div>';
+    $("msg").innerHTML = '<div class="err">Couldn\'t reach the Studio. Check your internet, then try again.'+
+      ' <button class="btn ghost" id="retry" style="margin-left:8px">Try once more</button></div>';
+    const rt = $("retry"); if(rt) rt.onclick = () => doBuild(d, day);
   }
 }
+
+// Poll our own job row. Generous ceiling — the background job may run for
+// minutes, and giving up early is how a finished build gets thrown away.
+async function waitForJob(d, maxMs = 8*60*1000){
+  const t0 = Date.now();
+  let wait = 2500;
+  while(Date.now() - t0 < maxMs){
+    await new Promise(r => setTimeout(r, wait));
+    wait = Math.min(wait + 500, 6000);
+    let row = null;
+    try{ row = await CTFDB.getWidgetResponse(JOB()); }catch(e){ continue; }
+    const j = row && row.response;
+    if(!j) continue;
+    if(j.status === "done" && j.day === d) return j;
+    if(j.status === "error") return j;
+  }
+  return null;
+}
+
 </script>
 <script src="/platform/lib/filter.js"></script>
 </body>

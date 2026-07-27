@@ -29,6 +29,50 @@
   status = 301
   force = true
 
+# Collapse Netlify's extensionless HTML aliases into the canonical URLs used in
+# metadata and the sitemap.
+[[redirects]]
+  from = "/about"
+  to = "/about.html"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/faq"
+  to = "/faq.html"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/older-kids"
+  to = "/older-kids.html"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/young-teens"
+  to = "/young-teens.html"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/older-adults"
+  to = "/older-adults.html"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/privacy"
+  to = "/privacy.html"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/terms"
+  to = "/terms.html"
+  status = 301
+  force = true
+
 [[headers]]
   for = "/*"
   [headers.values]
@@ -109,6 +153,13 @@
   to = "/.netlify/functions/studio-iterate"
   status = 200
 
+# Background variant: Netlify allows these 15 minutes instead of ~30 seconds,
+# which is what a real build actually needs.
+[[redirects]]
+  from = "/api/studio-iterate-bg"
+  to = "/.netlify/functions/studio-iterate-background"
+  status = 200
+
 [[redirects]]
   from = "/api/image"
   to = "/.netlify/functions/image"
@@ -132,6 +183,11 @@
 [[redirects]]
   from = "/api/checkout"
   to = "/.netlify/functions/checkout"
+  status = 200
+
+[[redirects]]
+  from = "/api/checkout-verify"
+  to = "/.netlify/functions/checkout-verify"
   status = 200
 
 [[redirects]]
