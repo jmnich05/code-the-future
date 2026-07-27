@@ -231,6 +231,8 @@ async function saveState(){
     (p.alt||[]).includes(me.first.toLowerCase()) ||
     p.owner.toLowerCase() === String(me.name).toLowerCase());
   project = PROJECTS.find(p => p.slug === q) || byFirst || null;
+  const off = offsite();
+  if(!project && off){ return offsiteMode(off); }
   if(!project && isWatcher()){ return watchMode(PROJECTS[0].slug); }
   if(!project){ return chooser(); }
   await open();
@@ -244,6 +246,74 @@ const WATCHERS = ["elliott", "jackson"];
 function isWatcher(){
   const f = String(me.first || me.name || "").trim().toLowerCase();
   return WATCHERS.includes(f);
+}
+
+// Kids whose build is a real repo living on its own site rather than a single
+// file we can run in here. They still start from Module 4 like everyone else;
+// we just hand them off instead of embedding.
+const OFFSITE = {
+  emery: {
+    name: "🛍️ Made Yours",
+    blurb: "Your shop searches real Shopify stores and finds jewelry and apparel in the colors, sizes and styles someone actually likes.",
+    site: "https://made-yours-emery.netlify.app",
+    studio: "https://made-yours-emery.netlify.app/studio"
+  }
+};
+function offsite(){
+  return OFFSITE[String(me.first || me.name || "").trim().toLowerCase()] || null;
+}
+
+function offsiteMode(p){
+  app.innerHTML = `
+  <div class="top">
+    <div class="logo"><img src="/platform/assets/logo-icon-tile.svg" alt="">Code the <span>Future</span></div>
+    <div class="who">
+      <span class="av">${window.CTFAvatar ? CTFAvatar.render(Object.keys(me.avatar||{}).length?me.avatar:CTFAvatar.DEFAULT) : ""}</span>
+      <span>${esc(me.first || me.name)}</span>
+      <a class="ask" href="/platform/board.html#chat">💬 Ask Mr. Jon</a>
+    </div>
+  </div>
+
+  <h1>${p.name} — Iteration Studio</h1>
+  <p class="sub">Five days. Five versions. Every one of them your call.</p>
+
+  <div class="days">
+    ${DAYS.map(x => `<div class="day ${x.n===todayDay()&&!beforeStart()?'now':''} ${x.n>todayDay()?'locked':''}">
+      <div class="n">DAY ${x.n}${x.n>todayDay()?' · LOCKED':''}</div>
+      <div class="t">${x.emoji} ${x.title}</div></div>`).join("")}
+  </div>
+
+  <div class="grid">
+    <div class="panel">
+      <div class="ph">▶ Your project</div>
+      <div class="body">
+        <div class="teach">${esc(p.blurb)}</div>
+        <p class="note" style="margin-bottom:12px">Your build is a real website with real shopping in it,
+          so it lives on its own address instead of inside this page.</p>
+        <button class="btn amber big" id="openSite">🛍️ Open my shop ↗</button>
+        <button class="btn ghost big" id="openStudio" style="margin-top:9px">🛠️ Open my Studio ↗</button>
+        <div class="playnote" style="border-top:0;border-radius:12px;margin-top:12px">
+          👉 Both open in a new tab so you get the whole screen. Close the tab to come back here.</div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="ph">${DAYS[todayDay()-1].emoji} Day ${todayDay()} · ${esc(DAYS[todayDay()-1].title)}</div>
+      <div class="body">
+        ${beforeStart()
+          ? `<div class="warn">👀 <b>Sneak peek!</b> Day 1 opens Monday morning. Have a play with your
+             shop tonight and jot down what you'd change — nothing gets used up.</div>`
+          : ""}
+        <div class="teach">${DAYS[todayDay()-1].teach.replace(/\{app\}/g, "shop")}</div>
+        ${DAYS[todayDay()-1].qs.map((q,i)=>`<div class="qa">
+          <label>${i+1}. ${esc(q.q)}</label><div class="hint">${esc(q.hint)}</div></div>`).join("")}
+        <div class="note">Answer these in your Studio — that's where your build happens.</div>
+      </div>
+    </div>
+  </div>`;
+
+  $("openSite").onclick = () => window.open(p.site, "_blank", "noopener");
+  $("openStudio").onclick = () => window.open(p.studio, "_blank", "noopener");
 }
 
 async function watchMode(slug){
