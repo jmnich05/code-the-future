@@ -3,10 +3,11 @@
 //
 // Keeps the OpenAI API key SERVER-SIDE. The browser calls /api/ai (redirected
 // here by netlify.toml); the key lives only in Netlify env vars and never
-// reaches the page. Set OPENAI_API_KEY in: Netlify → Site → Environment.
-// Optional: OPENAI_MODEL (default gpt-4o-mini).
+// reaches the page. Set OPENAI_API_KEY in: Netlify -> Site -> Environment.
+// Optional: OPENAI_MODEL (default gpt-5.6-terra).
+//
+// v2 — added structured logging + automatic retry (up to 2 retries w/ backoff)
 // ==========================================================================
-
 const SYSTEM = {
   kids:
     "You are a friendly, encouraging AI helper inside a learning app for children ages " +
@@ -22,69 +23,119 @@ const SYSTEM = {
     "When natural, briefly connect what you are doing to the ideas they just learned: " +
     "learning from patterns, attention, predicting the next token, and that confidence is " +
     "not the same as correctness. Define any term you introduce in one short line."
-  ,musicriff:
-    "You generate beat patterns for a kids' music-making app (ages 8-11). The kid gives a " +
-    "vibe; you reply with ONLY minified JSON on one line, no markdown, no explanation: " +
-    '{"name":"...","emoji":"🎵","drums":{"kick":[16],"snare":[16],"hat":[16],"clap":[16]},"melody":[16]} ' +
-    "Each drums array is exactly 16 entries of 0 or 1 (one bar of 16th notes). melody is " +
-    "exactly 16 integers from -1 to 7 (-1 = rest, 0 = low note up to 7 = high note). Make it " +
-    "GROOVE: kick anchors beats 1/5/9/13-ish, hats keep time, snare on 5 and 13 or a fun " +
-    "variation, melody catchy with some rests. Match the kid's vibe (spooky = sparse minor " +
-    "feel, party = busy and bright). name is a fun kid-safe title under 24 characters that " +
-    "matches their vibe; emoji is one matching kid-safe emoji."
 };
-const MAX_TOKENS = { kids: 220, adults: 400, musicriff: 300 };
+const MAX_TOKENS = { kids: 220, adults: 400 };
+const MAX_RETRIES = 2;
+const RETRY_DELAYS = [1000, 2000];
 
 export default async (req) => {
+  const requestId = crypto.randomUUID().slice(0, 8);
+  const startTime = Date.now();
+
   if (req.method !== "POST") return json({ error: "Method not allowed" }, 405);
 
   const key = process.env.OPENAI_API_KEY;
-  if (!key) return json({ error: "Server is missing OPENAI_API_KEY. Add it in your host's environment variables." }, 500);
+  if (!key) {
+    log(requestId, "error", "OPENAI_API_KEY missing from env");
+    return json({ error: "Server is missing OPENAI_API_KEY." }, 500);
+  }
 
   let body = {};
   try { body = await req.json(); } catch (e) { return json({ error: "Invalid JSON body." }, 400); }
 
-  const mode = ["adults","musicriff"].indexOf(body.mode) > -1 ? body.mode : "kids";
+  const mode = body.mode === "adults" ? "adults" : "kids";
   const prompt = (body.prompt || "").toString().slice(0, 2000).trim();
   if (!prompt) return json({ error: "Please type something first." }, 400);
 
-  // Temperature only honored for adults (the lesson dial); kids stay steady.
   let temperature = 0.7;
-  if (mode === "musicriff") temperature = 0.9;   // variety between riffs
   if (mode === "adults" && typeof body.temperature === "number") {
     temperature = Math.max(0, Math.min(1.2, body.temperature));
   }
 
   const model = process.env.OPENAI_MODEL || "gpt-5.6-terra";
 
-  try {
-    const r = await fetch("https://api.openai.com/v1/chat/completions", {
-      method: "POST",
-      headers: { "Content-Type": "application/json", Authorization: "Bearer " + key },
-      body: JSON.stringify({
-        model,
-        temperature,
-        max_tokens: MAX_TOKENS[mode],
-        messages: [
-          { role: "system", content: SYSTEM[mode] },
-          { role: "user", content: userContent(prompt, body.image) }
-        ]
-      })
-    });
+  log(requestId, "info", "Chat request received", {
+    model, mode, promptLength: prompt.length, temperature
+  });
 
-    if (!r.ok) {
-      const detail = await r.text();
-      return json({ error: "OpenAI request failed (" + r.status + ").", detail: detail.slice(0, 300) }, 502);
+  let lastError = null;
+  for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
+    if (attempt > 0) {
+      const delay = RETRY_DELAYS[attempt - 1] || 2000;
+      log(requestId, "warn", \`Retry attempt \${attempt}/\${MAX_RETRIES} after \${delay}ms\`, {
+        previousError: lastError
+      });
+      await sleep(delay);
     }
-    const data = await r.json();
-    const text = (data.choices && data.choices[0] && data.choices[0].message && data.choices[0].message.content) || "";
-    return json({ text: text, model, temperature });
-  } catch (e) {
-    return json({ error: "Could not reach the AI service.", detail: String(e).slice(0, 200) }, 502);
+
+    try {
+      const attemptStart = Date.now();
+      const r = await fetch("https://api.openai.com/v1/chat/completions", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Authorization: "Bearer " + key },
+        body: JSON.stringify({
+          model, temperature,
+          max_tokens: MAX_TOKENS[mode],
+          messages: [
+            { role: "system", content: SYSTEM[mode] },
+            { role: "user", content: userContent(prompt, body.image) }
+          ]
+        })
+      });
+
+      const latencyMs = Date.now() - attemptStart;
+
+      if (!r.ok) {
+        const detail = await r.text().catch(() => "(no body)");
+        lastError = \`OpenAI \${r.status}: \${detail.slice(0, 300)}\`;
+        log(requestId, "error", "OpenAI API error", {
+          attempt, status: r.status, latencyMs, detail: detail.slice(0, 300)
+        });
+        if (r.status >= 400 && r.status < 500) {
+          return json({ error: "AI request failed (" + r.status + ").", detail: detail.slice(0, 200) }, 502);
+        }
+        continue;
+      }
+
+      const data = await r.json();
+      const text = (data.choices && data.choices[0] && data.choices[0].message && data.choices[0].message.content) || "";
+
+      log(requestId, "info", "Chat succeeded", {
+        attempt, model, latencyMs, totalMs: Date.now() - startTime,
+        responseLength: text.length,
+        finishReason: data.choices[0].finish_reason,
+        tokensUsed: data.usage ? data.usage.total_tokens : "unknown"
+      });
+
+      return json({ text, model, temperature });
+
+    } catch (e) {
+      lastError = String(e).slice(0, 200);
+      log(requestId, "error", "Network/fetch error", {
+        attempt, error: lastError, latencyMs: Date.now() - startTime
+      });
+      continue;
+    }
   }
+
+  log(requestId, "error", "All retries exhausted", {
+    totalMs: Date.now() - startTime, lastError, model
+  });
+  return json({
+    error: "Could not reach the AI service — please try again in a moment.",
+    requestId
+  }, 502);
 };
 
-// optional vision: body.image = data URL (e.g. a kid's canvas drawing)
+function log(requestId, level, message, data = {}) {
+  const entry = { timestamp: new Date().toISOString(), requestId, level, message, ...data };
+  if (level === "error") console.error(JSON.stringify(entry));
+  else if (level === "warn") console.warn(JSON.stringify(entry));
+  else console.log(JSON.stringify(entry));
+}
+
+function sleep(ms) { return new Promise(resolve => setTimeout(resolve, ms)); }
+
 function userContent(prompt, image) {
   if (typeof image === "string" && image.startsWith("data:image/") && image.length < 2_000_000) {
     return [
