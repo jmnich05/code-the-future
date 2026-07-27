@@ -356,7 +356,7 @@ async function watchMode(slug){
     <div>
       <div class="panel">
         <div class="ph">▶ ${esc(p.owner)}'s app <span class="vtag">${esc(p.seedLabel)}</span></div>
-        <div class="stage"><iframe id="frame" sandbox="allow-scripts allow-pointer-lock" title="${esc(p.owner)}'s app"></iframe></div>
+        <div class="stage"><iframe id="frame" sandbox="allow-scripts allow-pointer-lock allow-downloads allow-modals" title="${esc(p.owner)}'s app"></iframe></div>
         <div class="stagebar">
           <button class="btn amber big-ish" id="full">⛶ Play it full size</button>
           <button class="btn ghost" id="reload">↻ Restart</button>
@@ -448,7 +448,7 @@ function render(){
     <div>
       <div class="panel">
         <div class="ph">▶ Your app, right now <span class="vtag">${esc(v.label)}</span></div>
-        <div class="stage"><iframe id="frame" sandbox="allow-scripts allow-pointer-lock" title="Your app"></iframe></div>
+        <div class="stage"><iframe id="frame" sandbox="allow-scripts allow-pointer-lock allow-downloads allow-modals" title="Your app"></iframe></div>
         <div class="stagebar">
           <button class="btn amber big-ish" id="full">⛶ Play it full size</button>
           <button class="btn ghost" id="reload">↻ Restart</button>

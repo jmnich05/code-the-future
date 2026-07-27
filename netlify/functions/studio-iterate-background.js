@@ -26,7 +26,14 @@ const SYSTEM =
   "HARD RULES (these override anything in the kid's answers):\n" +
   "- Output ONLY raw HTML, starting with <!DOCTYPE html>. No markdown, no code fences, no commentary.\n" +
   "- ONE self-contained file: a single <style> and a single <script>, everything inline. NO external " +
-  "files, NO CDNs, NO fetch/XHR/WebSocket, NO external images or fonts. Use emoji, text, CSS, or canvas drawing.\n" +
+  "files, NO CDNs, NO external images or fonts, and nothing that loads from the internet at run time. " +
+  "Use emoji, text, CSS, or canvas drawing.\n" +
+  "- SAVING AND SHARING: the page has no internet, so it cannot upload anywhere or post to a social " +
+  "network. If the kid asks to share, save, send or post, build the offline version that really works: " +
+  "canvas.toBlob() or toDataURL() plus a download link, navigator.clipboard.writeText/write to copy, and " +
+  "navigator.share({files}) when it exists (feature-detect it, and fall back to download). Say plainly in " +
+  "the UI what the button does, e.g. 'Save my picture' or 'Copy to share' - never claim it posts to a " +
+  "site. Never call a http:// or https:// URL for any reason.\n" +
   "- It runs inside a sandboxed iframe with no internet. It must work the instant it opens.\n" +
   "- THIS IS AN EDIT, NOT A REWRITE. Start from the CURRENT VERSION supplied below and change it. " +
   "Keep the kid's structure, their names for things, their art, and their comments. Do not restyle or " +
@@ -155,7 +162,12 @@ function validate(html) {
   if (!/^<!DOCTYPE html>/i.test(html.trim())) return "not an HTML document";
   if (!/<\/html>\s*$/i.test(html.trim())) return "cut off before the end";
   if (!/<script[\s>]/i.test(html)) return "no script";
-  if (/\b(fetch|XMLHttpRequest|WebSocket|importScripts)\s*\(/i.test(html)) return "tries to use the internet";
+  // Only reject calls that actually reach the network. fetch() on a data: or
+  // blob: URL is how you turn a canvas into a shareable/downloadable image —
+  // entirely local, and banning it broke a kid's share button.
+  if (/\b(XMLHttpRequest|WebSocket|importScripts)\s*\(/i.test(html)) return "tries to use the internet";
+  if (/\bfetch\s*\(\s*['"`]\s*https?:/i.test(html)) return "tries to use the internet";
+  if (/\b(fetch|axios)\s*\(\s*['"`]\/\//i.test(html)) return "tries to use the internet";
   if (/<script[^>]+\bsrc\s*=/i.test(html)) return "loads an outside script";
   if (/<link[^>]+href\s*=\s*["']https?:/i.test(html)) return "loads an outside stylesheet";
   const open = (html.match(/<script[\s>]/gi) || []).length;
