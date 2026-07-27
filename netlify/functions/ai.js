@@ -55,7 +55,7 @@ export default async (req) => {
     temperature = Math.max(0, Math.min(1.2, body.temperature));
   }
 
-  const model = process.env.OPENAI_MODEL || "gpt-4o-mini";
+  const model = process.env.OPENAI_MODEL || "gpt-5.6-terra";
 
   try {
     const r = await fetch("https://api.openai.com/v1/chat/completions", {
