@@ -62,7 +62,7 @@ export default async (req) => {
   for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
     if (attempt > 0) {
       const delay = RETRY_DELAYS[attempt - 1] || 2000;
-      log(requestId, "warn", \`Retry attempt \${attempt}/\${MAX_RETRIES} after \${delay}ms\`, {
+      log(requestId, "warn", `Retry attempt ${attempt}/${MAX_RETRIES} after ${delay}ms`, {
         previousError: lastError
       });
       await sleep(delay);
@@ -87,7 +87,7 @@ export default async (req) => {
 
       if (!r.ok) {
         const detail = await r.text().catch(() => "(no body)");
-        lastError = \`OpenAI \${r.status}: \${detail.slice(0, 300)}\`;
+        lastError = `OpenAI ${r.status}: ${detail.slice(0, 300)}`;
         log(requestId, "error", "OpenAI API error", {
           attempt, status: r.status, latencyMs, detail: detail.slice(0, 300)
         });
