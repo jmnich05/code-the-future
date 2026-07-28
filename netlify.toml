@@ -73,12 +73,36 @@
   status = 301
   force = true
 
+# The pre-Studio Module 4 player. A browser holding a cached missions.html
+# still points here, so send it to the real Studio instead of a half-built page.
+[[redirects]]
+  from = "/curriculum/module-04-build-your-own/studio.html"
+  to = "/platform/m4/studio.html"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/curriculum/module-04-build-your-own/studio"
+  to = "/platform/m4/studio.html"
+  status = 301
+  force = true
+
 [[headers]]
   for = "/*"
   [headers.values]
     X-Content-Type-Options = "nosniff"
     Referrer-Policy = "strict-origin-when-cross-origin"
     Permissions-Policy = "camera=(), microphone=(), geolocation=()"
+
+[[headers]]
+  for = "/platform/*"
+  [headers.values]
+    Cache-Control = "no-cache, must-revalidate, max-age=0"
+
+[[headers]]
+  for = "/curriculum/*"
+  [headers.values]
+    Cache-Control = "no-cache, must-revalidate, max-age=0"
 
 [[headers]]
   for = "/platform/assets/*"
