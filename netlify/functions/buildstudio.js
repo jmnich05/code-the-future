@@ -27,6 +27,14 @@ const SYSTEM =
 const MAX_RETRIES = 2;
 const RETRY_DELAYS = [1500, 3000]; // ms backoff per retry
 
+// A build takes 13-30s, and Netlify kills a synchronous function well before two
+// of those fit. Retrying blind guarantees the platform cuts us off mid-flight and
+// the kid gets a raw 502 with no message at all. So we spend a fixed budget: only
+// retry when the time already spent plus a realistic next attempt still fits, and
+// otherwise return a friendly error while we still control the response.
+const BUDGET_MS = Number(process.env.BUILD_BUDGET_MS || 24000);
+const MIN_ATTEMPT_MS = 12000; // floor for "how long will another try take"
+
 export default async (req) => {
   const requestId = crypto.randomUUID().slice(0, 8);
   const startTime = Date.now();
@@ -68,9 +76,20 @@ export default async (req) => {
 
   // Retry loop
   let lastError = null;
+  let lastLatencyMs = 0;
   for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
     if (attempt > 0) {
       const delay = RETRY_DELAYS[attempt - 1] || 3000;
+      const elapsed = Date.now() - startTime;
+      const nextAttemptMs = Math.max(lastLatencyMs, MIN_ATTEMPT_MS);
+
+      if (elapsed + delay + nextAttemptMs > BUDGET_MS) {
+        log(requestId, "warn", "Skipping retry — not enough time budget left", {
+          attempt, elapsed, delay, nextAttemptMs, budgetMs: BUDGET_MS, lastError
+        });
+        break; // fall through to the friendly error below, while we can still send one
+      }
+
       log(requestId, "warn", `Retry attempt ${attempt}/${MAX_RETRIES} after ${delay}ms`, {
         previousError: lastError
       });
@@ -79,16 +98,27 @@ export default async (req) => {
 
     try {
       const attemptStart = Date.now();
-      const r = await fetch("https://api.openai.com/v1/chat/completions", {
-        method: "POST",
-        headers: { Authorization: "Bearer " + key, "Content-Type": "application/json" },
-        body: JSON.stringify({
-          model, max_completion_tokens: 12000,
-          messages: [{ role: "system", content: SYSTEM }, { role: "user", content: user }]
-        })
-      });
+      // Give up while we can still answer, rather than letting the platform kill
+      // the whole invocation and hand the kid an unexplained 502.
+      const ac = new AbortController();
+      const abortTimer = setTimeout(() => ac.abort(), Math.max(1000, BUDGET_MS - (attemptStart - startTime)));
+      let r;
+      try {
+        r = await fetch("https://api.openai.com/v1/chat/completions", {
+          method: "POST",
+          signal: ac.signal,
+          headers: { Authorization: "Bearer " + key, "Content-Type": "application/json" },
+          body: JSON.stringify({
+            model, max_completion_tokens: 12000,
+            messages: [{ role: "system", content: SYSTEM }, { role: "user", content: user }]
+          })
+        });
+      } finally {
+        clearTimeout(abortTimer);
+      }
 
       const latencyMs = Date.now() - attemptStart;
+      lastLatencyMs = latencyMs;
 
       if (!r.ok) {
         const detail = await r.text().catch(() => "(no body)");
@@ -135,28 +165,34 @@ export default async (req) => {
       return json({ html, model });
 
     } catch (e) {
-      lastError = String(e).slice(0, 200);
-      log(requestId, "error", "Network/fetch error", {
+      const aborted = e && e.name === "AbortError";
+      lastError = aborted ? "Attempt aborted — exceeded time budget" : String(e).slice(0, 200);
+      log(requestId, aborted ? "warn" : "error", aborted ? "Attempt aborted on budget" : "Network/fetch error", {
         attempt,
         error: lastError,
-        latencyMs: Date.now() - startTime
+        totalMs: Date.now() - startTime
       });
+      if (aborted) break; // no budget left by definition — answer now
       continue; // retry
     }
   }
 
-  // All retries exhausted
+  // Out of retries or out of budget
   const totalMs = Date.now() - startTime;
-  log(requestId, "error", "All retries exhausted", {
+  const outOfTime = totalMs >= BUDGET_MS - MIN_ATTEMPT_MS;
+  log(requestId, "error", outOfTime ? "Gave up on time budget" : "All retries exhausted", {
     totalMs,
+    budgetMs: BUDGET_MS,
     lastError,
     model,
     idea: idea.slice(0, 100)
   });
   return json({
-    error: "Build Studio had trouble connecting — please try again in a moment.",
+    error: outOfTime
+      ? "That one took too long to build. Try again, or ask for something a little simpler."
+      : "Build Studio had trouble connecting — please try again in a moment.",
     requestId
-  }, 502);
+  }, 503);
 };
 
 // ── Helpers ──────────────────────────────────────────────────────────────
