@@ -166,7 +166,8 @@ const DAYS = [
 const PROJECTS = [
   { slug:"adam-space-shooter",  name:"🚀 Space Shooter",  owner:"Adam",      seedLabel:"v2" },
   { slug:"charlotte-art-studio",name:"🎨 Neon Studio",    owner:"Charlotte", seedLabel:"v1", alt:["char"] },
-  { slug:"devon-world-builder", name:"🏰 World Builder",  owner:"Devon",     seedLabel:"v1" }
+  { slug:"devon-world-builder", name:"🏰 World Builder",  owner:"Devon",     seedLabel:"v1" },
+  { slug:"emery-shopping-app",  name:"🛍️ Shop",          owner:"Emery",     seedLabel:"v1", alt:["emory"] }
 ];
 
 const $ = id => document.getElementById(id);
@@ -379,7 +380,7 @@ async function watchMode(slug){
     <div class="panel">
       <div class="ph">📅 What's happening this week</div>
       <div class="body">
-        <div class="teach">Adam, Charlotte and Devon are each improving their app <b>one version a day</b>
+        <div class="teach">Adam, Charlotte, Devon and Emery are each improving their app <b>one version a day</b>
           for five days. Same five steps real software teams use.</div>
         ${DAYS.map(x => `<div class="qa" style="margin-bottom:10px">
           <label>${x.emoji} Day ${x.n}: ${esc(x.title)}</label>

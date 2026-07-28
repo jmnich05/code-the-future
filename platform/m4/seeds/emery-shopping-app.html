@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Emery's Shop (name TBD) — Shopping App</title>
+<style>
+  /* Emery's shopping app! One file, so it always just opens and runs. */
+  *{ box-sizing:border-box; }
+  html,body{ margin:0; min-height:100%; background:#0A1024; color:#EAF1FF;
+    font-family:system-ui,-apple-system,sans-serif; }
+  body{ padding:16px 14px 40px; }
+  .wrap{ max-width:900px; margin:0 auto; }
+
+  /* ---- Top bar: store name + the cart button ---- */
+  header{ display:flex; align-items:center; gap:12px; margin-bottom:6px; }
+  h1{ font-size:clamp(1.4rem,4.5vw,2.1rem); margin:0; letter-spacing:-.02em; }
+  .tag{ color:#9FB0D0; font-size:14px; margin:2px 0 18px; }
+  #cartBtn{ margin-left:auto; background:#3D74FF; color:#fff; border:0; border-radius:999px;
+    padding:11px 18px; font-size:15px; font-weight:700; cursor:pointer; position:relative; }
+  #cartBtn:active{ transform:scale(.97); }
+  #count{ background:#FF5A38; border-radius:999px; padding:1px 7px; font-size:13px; margin-left:6px; }
+
+  /* ---- The shelf of things for sale ---- */
+  #shelf{ display:grid; gap:12px; grid-template-columns:repeat(auto-fill,minmax(150px,1fr)); }
+  .item{ background:#141C3A; border:1px solid #223056; border-radius:14px; padding:14px; text-align:center; }
+  .pic{ font-size:44px; line-height:1.1; }
+  .nm{ font-weight:700; margin:8px 0 2px; font-size:15px; }
+  .pr{ color:#26C7D1; font-weight:700; margin-bottom:10px; }
+  .add{ width:100%; background:#26C7D1; color:#04222B; border:0; border-radius:10px;
+    padding:9px; font-weight:800; cursor:pointer; font-size:14px; }
+  .add:active{ transform:scale(.97); }
+
+  /* ---- The cart slides in from the side ---- */
+  #cart{ position:fixed; top:0; right:0; bottom:0; width:min(360px,92vw); background:#0E1631;
+    border-left:1px solid #223056; padding:18px; transform:translateX(102%);
+    transition:transform .28s; overflow-y:auto; }
+  #cart.open{ transform:none; }
+  #cart h2{ margin:0 0 14px; font-size:1.15rem; }
+  .row{ display:flex; align-items:center; gap:9px; padding:9px 0; border-bottom:1px solid #1C2748; font-size:14px; }
+  .row .g{ flex:1; }
+  .qty{ background:#223056; color:#EAF1FF; border:0; border-radius:7px; width:28px; height:28px;
+    font-size:16px; cursor:pointer; font-weight:700; }
+  #total{ display:flex; justify-content:space-between; font-size:1.15rem; font-weight:800; margin:16px 0; }
+  .big{ width:100%; border:0; border-radius:11px; padding:13px; font-weight:800; cursor:pointer; font-size:15px; }
+  #pay{ background:#3FD08A; color:#04281A; }
+  #close{ background:#223056; color:#EAF1FF; margin-top:9px; }
+  .empty{ color:#8C9AB8; font-size:14px; padding:14px 0; }
+
+  /* ---- The happy screen after you buy ---- */
+  #done{ position:fixed; inset:0; background:rgba(10,16,36,.95); display:none;
+    place-items:center; text-align:center; padding:22px; }
+  #done.show{ display:grid; }
+  #done .card{ background:#141C3A; border:2px solid #3FD08A; border-radius:18px; padding:28px 24px; max-width:340px; }
+  #done .yay{ font-size:52px; }
+  #sig{ text-align:center; color:#6B7A9C; font-size:13px; margin-top:26px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1 id="storeName"></h1>
+    <button id="cartBtn">🛒 Cart<span id="count">0</span></button>
+  </header>
+  <p class="tag" id="storeTag"></p>
+  <div id="shelf"></div>
+  <div id="sig"></div>
+</div>
+
+<aside id="cart">
+  <h2>Your cart</h2>
+  <div id="lines"></div>
+  <div id="total"><span>Total</span><span id="sum">$0</span></div>
+  <button class="big" id="pay">Check out →</button>
+  <button class="big" id="close">Keep shopping</button>
+</aside>
+
+<div id="done"><div class="card">
+  <div class="yay">🎉</div>
+  <h2 id="doneMsg"></h2>
+  <p id="orderNo" style="color:#9FB0D0;font-size:14px"></p>
+  <button class="big" id="again" style="background:#3D74FF;color:#fff">Shop again</button>
+</div></div>
+
+<script>
+// ==========================================================================
+//  EMERY'S SHOPPING APP  —  v1
+//
+//  Emery: this is YOUR store. Everything you'd want to change first lives
+//  right here in this one box. Change it, hit save, and look at it.
+//  (Real name of the store is still TBD — that's your call.)
+// ==========================================================================
+const STORE = {
+  name: "Emery's Shop",              // ← what your store is called
+  tagline: "Everything good, in one place.",
+  currency: "$",
+  thanks: "Thank you for your order!",  // ← what shoppers see after checkout
+
+  // What your store sells. Add, delete, or change any line.
+  // Format:  { emoji, name, price }
+  items: [
+    { emoji:"👟", name:"Sneakers",    price:45 },
+    { emoji:"🧢", name:"Cap",         price:18 },
+    { emoji:"🎒", name:"Backpack",    price:32 },
+    { emoji:"🕶️", name:"Sunglasses",  price:15 },
+    { emoji:"⌚", name:"Watch",       price:60 },
+    { emoji:"🧦", name:"Cozy socks",  price:8  }
+  ]
+};
+
+// ---- Wiring it up (you can read this, but the box above is the fun part) ----
+const $ = id => document.getElementById(id);
+const cart = [];   // every line the shopper added
+
+$("storeName").textContent = STORE.name;
+$("storeTag").textContent  = STORE.tagline;
+$("sig").textContent       = "🛍️ built by Emery";
+document.title = STORE.name;
+
+const money = n => STORE.currency + n;
+
+// Draw the shelf once, from STORE.items
+STORE.items.forEach((item, i) => {
+  const box = document.createElement("div");
+  box.className = "item";
+  box.innerHTML =
+    '<div class="pic">' + item.emoji + '</div>' +
+    '<div class="nm"></div>' +
+    '<div class="pr">' + money(item.price) + '</div>' +
+    '<button class="add">Add to cart</button>';
+  box.querySelector(".nm").textContent = item.name;   // safe: no HTML injection
+  box.querySelector(".add").onclick = () => addToCart(i);
+  $("shelf").appendChild(box);
+});
+
+function addToCart(i){
+  const item = STORE.items[i];
+  const line = cart.find(l => l.name === item.name);
+  if (line) line.qty++;                                   // already there? one more
+  else cart.push({ name:item.name, emoji:item.emoji, price:item.price, qty:1 });
+  drawCart();
+}
+
+function changeQty(name, by){
+  const line = cart.find(l => l.name === name);
+  if (!line) return;
+  line.qty += by;
+  if (line.qty <= 0) cart.splice(cart.indexOf(line), 1);  // hit zero? drop the line
+  drawCart();
+}
+
+function total(){
+  return cart.reduce((sum, l) => sum + l.price * l.qty, 0);
+}
+
+function drawCart(){
+  const lines = $("lines");
+  lines.innerHTML = "";
+
+  if (!cart.length){
+    const p = document.createElement("p");
+    p.className = "empty";
+    p.textContent = "Nothing in here yet.";
+    lines.appendChild(p);
+  }
+
+  cart.forEach(l => {
+    const row = document.createElement("div");
+    row.className = "row";
+    row.innerHTML =
+      '<span>' + l.emoji + '</span>' +
+      '<span class="g"></span>' +
+      '<button class="qty" data-d="-1">−</button>' +
+      '<b>' + l.qty + '</b>' +
+      '<button class="qty" data-d="1">+</button>' +
+      '<span style="width:52px;text-align:right">' + money(l.price * l.qty) + '</span>';
+    row.querySelector(".g").textContent = l.name;
+    row.querySelectorAll(".qty").forEach(b =>
+      b.onclick = () => changeQty(l.name, Number(b.dataset.d)));
+    lines.appendChild(row);
+  });
+
+  $("sum").textContent   = money(total());
+  $("count").textContent = cart.reduce((n, l) => n + l.qty, 0);
+}
+
+// ---- Opening and closing the cart ----
+$("cartBtn").onclick = () => $("cart").classList.add("open");
+$("close").onclick   = () => $("cart").classList.remove("open");
+
+// ---- Checkout: the moment the order is placed ----
+$("pay").onclick = () => {
+  if (!cart.length) return;                     // nothing to buy, do nothing
+  $("doneMsg").textContent = STORE.thanks;
+  $("orderNo").textContent =
+    "Order #" + Math.floor(1000 + Math.random() * 9000) + " · " + money(total());
+  $("cart").classList.remove("open");
+  $("done").classList.add("show");
+  cart.length = 0;                              // empty the cart for next time
+  drawCart();
+};
+
+$("again").onclick = () => $("done").classList.remove("show");
+
+drawCart();
+
+/* ------------------------------------------------------------------
+   v2 wishlist — Emery, answer these and we build them next:
+
+   1. What does your store ACTUALLY sell? Swap STORE.items for real ones.
+   2. What happens at checkout? Right now it says thanks and gives an
+      order number. Should it ask for a name? Show a delivery day?
+   3. Should anything be on SALE — a lower price with a line through
+      the old one?
+   4. Should shoppers be able to search, or filter by category?
+   5. What's the store's real name, and its colors?
+   ------------------------------------------------------------------ */
+</script>
+</body>
+</html>
