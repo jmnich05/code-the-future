@@ -166,8 +166,10 @@ const DAYS = [
 const PROJECTS = [
   { slug:"adam-space-shooter",  name:"🚀 Space Shooter",  owner:"Adam",      seedLabel:"v2" },
   { slug:"charlotte-art-studio",name:"🎨 Neon Studio",    owner:"Charlotte", seedLabel:"v1", alt:["char"] },
-  { slug:"devon-world-builder", name:"🏰 World Builder",  owner:"Devon",     seedLabel:"v1" },
-  { slug:"emery-shopping-app",  name:"🛍️ Shop",          owner:"Emery",     seedLabel:"v1", alt:["emory"] }
+  { slug:"devon-world-builder", name:"🏰 World Builder",  owner:"Devon",     seedLabel:"v1" }
+  // Emery is NOT here on purpose — her project is a real Shopify-backed site,
+  // so she goes through OFFSITE below. A PROJECTS entry would match first and
+  // silently swallow her offsite mode.
 ];
 
 const $ = id => document.getElementById(id);
@@ -269,6 +271,7 @@ const OFFSITE = {
     studio: "https://made-yours-emery.netlify.app/studio"
   }
 };
+OFFSITE.emory = OFFSITE.emery; // both spellings are in circulation
 function offsite(){
   return OFFSITE[String(me.first || me.name || "").trim().toLowerCase()] || null;
 }
