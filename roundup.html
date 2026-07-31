@@ -133,14 +133,18 @@
   <section class="scene" id="s5">
     <div>
       <div class="logo"><img src="/platform/assets/logo-icon-tile.svg" alt="">Code the <span>Future</span></div>
-      <div class="kicker">Demo Day</div>
-      <h1><span class="grad">See it live.</span></h1>
-      <div class="when">
+      <div class="kicker" id="finaleKicker">Demo Day</div>
+      <h1 id="finaleTitle"><span class="grad">See it live.</span></h1>
+      <div class="when" id="finaleWhen">
         <div class="row">📅 <b>Saturday, August 1</b></div>
         <div class="row">🕙 <b>10:00 – 11:30 AM</b> Eastern</div>
         <div class="row">📍 <b>South Central Public Library</b></div>
       </div>
-      <p class="sub">Bring the family. The builders will take it from there.</p>
+      <p class="sub" id="finaleSub">Bring the family. The builders will take it from there.</p>
+      <p style="margin-top:26px"><a id="enterDemo" href="/platform/m4/demoday.html" hidden
+        style="display:inline-block;font-weight:800;font-size:clamp(1rem,3vw,1.25rem);color:#06122b;text-decoration:none;
+               padding:16px 38px;border-radius:99px;background:linear-gradient(120deg,#FFD75E,var(--amber));
+               box-shadow:0 0 30px rgba(255,179,32,.55)">🏆 ENTER DEMO DAY →</a></p>
     </div>
   </section>
 
@@ -152,6 +156,21 @@
 <script>
 // ---- the trailer sequencer ----
 const SCENES = ["s0","s1","s2","s3","s4","s5"];
+
+// On Demo Day itself the finale flips from "come see it" to "IT'S HAPPENING" —
+// same emailed link, new energy. (?today=1 forces it for testing.)
+const qs = new URLSearchParams(location.search);
+const IS_TODAY = qs.get('today') === '1' ||
+  new Date().toLocaleDateString('en-CA', { timeZone: 'America/New_York' }) >= '2026-08-01';
+if (IS_TODAY){
+  document.getElementById('finaleKicker').textContent = 'IT’S DEMO DAY';
+  document.getElementById('finaleTitle').innerHTML = '<span class="grad">TODAY is the day.</span>';
+  document.getElementById('finaleWhen').innerHTML =
+    '<div class="row">🎉 <b>This morning · 10:00 – 11:30 AM</b></div>' +
+    '<div class="row">📍 <b>South Central Public Library</b></div>';
+  document.getElementById('finaleSub').textContent = 'Four builders. Four reveals. History gets shipped at 10 o’clock.';
+  document.getElementById('enterDemo').hidden = false;   // coaches: straight into the demo platform
+}
 const HOLD   = [0, 4600, 7200, 5200, 5200, 0];   // ms per scene (0 = wait/stay)
 let idx = 0, timer = null, started = false;
 
