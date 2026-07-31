@@ -34,9 +34,9 @@ window.LIVE_SESSION = {
       sub:'Stopped at 7 acres — five soccer fields, instead of a whole forest.' },
     { id:'s1d', type:'slide', e:'🔥',
       kicker:'The pattern — say it with me',
-      title:'AI <b>watched</b>. Humans <b>decided</b>. Firefighters <b>acted</b>.',
-      sub:'The exact loop you learned all summer. Nobody replaced — everybody faster.',
-      ask:'What ELSE should an AI keep watch over — and who makes the final call?' },
+      title:'AI <b>spotted it</b>. Humans <b>decided</b>. Firefighters <b>acted</b>.',
+      sub:'An AI can look at a million trees at once. No human brain can — and no AI can decide alone.',
+      ask:'AI can read more in a minute than we could in a lifetime. What BIG problem would you point that superpower at?' },
 
     // ========================= STORY 2 · THE PAUSE =========================
     // Real, this summer: lawyers in an Australian murder case filed AI-written
