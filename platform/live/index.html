@@ -107,7 +107,7 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 // whatever session the HOST screen is running (m1…m4). The host announces its
 // module on the shared 'live:lobby' presence channel; ?m=N still forces one.
 // ============================================================================
-const DEFAULT_M = '3';                       // newest module — fallback when no host is on yet
+const DEFAULT_M = '4';                       // newest module — fallback when no host is on yet
 const OVERRIDE = (new URLSearchParams(location.search).get('m')||'').replace(/[^0-9]/g,'');
 
 let S = null;                                // the loaded session config

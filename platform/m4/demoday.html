@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" type="image/svg+xml" href="/platform/assets/logo-icon-tile.svg">
+<title>Demo Day — The Grand Finale</title>
+<style>
+  /* The projector page for the demos. One card per builder: the three
+     questions fill the screen while the kid answers out loud, then one
+     button opens their app FULL SCREEN (deluxe mode kicks in automatically). */
+  :root{ --teal:#26C7D1; --blue:#3D74FF; --amber:#FFB320; --coral:#FF5A38; --green:#3FD08A; --purple:#9B7BFF; }
+  *{ box-sizing:border-box; margin:0; }
+  body{ min-height:100vh; font-family:'Plus Jakarta Sans',system-ui,-apple-system,sans-serif; color:#EAF1FF;
+    background:
+      radial-gradient(120% 90% at 82% -10%, rgba(155,123,255,.25), transparent 55%),
+      radial-gradient(120% 90% at 8% 110%, rgba(38,199,209,.25), transparent 55%),
+      linear-gradient(165deg,#101a3c,#0A1024 55%,#070C1A); }
+  .wrap{ max-width:1150px; margin:0 auto; padding:26px 20px 60px; }
+  .logo{ display:flex; align-items:center; gap:10px; font-weight:800; margin-bottom:6px; }
+  .logo img{ width:32px; height:32px; }
+  .logo span{ color:var(--teal); }
+  h1{ font-weight:800; font-size:clamp(2rem,6vw,3.4rem); letter-spacing:-.02em; }
+  h1 em{ font-style:normal; background:linear-gradient(110deg,#9fb6ff,var(--purple) 50%,var(--teal));
+    -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent; }
+  .sub{ color:#9FB0D0; margin:8px 0 26px; max-width:60ch; }
+
+  /* the four builder cards */
+  .kids{ display:grid; grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); gap:16px; }
+  .kid{ background:rgba(14,22,49,.92); border:1px solid rgba(137,200,237,.25); border-radius:18px;
+    overflow:hidden; cursor:pointer; transition:transform .12s, border-color .15s; text-align:left; padding:0; color:inherit; font:inherit; }
+  .kid:hover{ transform:translateY(-3px); border-color:var(--teal); }
+  .kid img{ width:100%; aspect-ratio:3/2; object-fit:cover; object-position:top; display:block; }
+  .kid .meta{ padding:12px 14px 16px; }
+  .kid .nm{ font-weight:800; font-size:1.15rem; }
+  .kid .ttl{ color:var(--teal); font-family:ui-monospace,monospace; font-size:.72rem; letter-spacing:.14em; text-transform:uppercase; margin-top:3px; }
+  .kid .done{ display:none; color:var(--green); font-weight:800; font-size:.8rem; margin-top:6px; }
+  .kid.demoed{ opacity:.55; }
+  .kid.demoed .done{ display:block; }
+
+  /* the interview screen — the three questions, huge */
+  #stagePanel{ display:none; position:fixed; inset:0; z-index:30; background:rgba(7,12,26,.98); padding:34px 22px; overflow:auto; }
+  #stagePanel.on{ display:grid; place-items:center; }
+  .stageInner{ max-width:900px; width:100%; text-align:center; }
+  .nowUp{ font-family:ui-monospace,monospace; letter-spacing:.3em; text-transform:uppercase; color:var(--amber); font-size:clamp(12px,2.4vw,16px); }
+  .stageInner h2{ font-weight:800; font-size:clamp(2.2rem,7vw,4rem); margin:10px 0 26px; letter-spacing:-.02em; }
+  .qcard{ background:rgba(14,22,49,.92); border:1px solid rgba(137,200,237,.3); border-radius:16px;
+    padding:20px 24px; margin:0 0 14px; text-align:left; }
+  .qcard .n{ color:var(--teal); font-family:ui-monospace,monospace; font-size:.8rem; letter-spacing:.2em; }
+  .qcard .q{ font-weight:800; font-size:clamp(1.2rem,3.6vw,1.8rem); margin-top:4px; }
+  .qcard .hint{ color:#9FB0D0; font-size:clamp(.85rem,2.2vw,1rem); margin-top:6px; }
+  .row{ display:flex; gap:12px; justify-content:center; flex-wrap:wrap; margin-top:26px; }
+  .big{ font:800 clamp(1rem,3vw,1.25rem)/1 inherit; border:none; border-radius:99px; cursor:pointer; padding:18px 34px; }
+  .play{ color:#06122b; background:linear-gradient(120deg,#7FE3FF,var(--teal)); box-shadow:0 0 30px rgba(38,199,209,.5); }
+  .ghost{ color:#EAF1FF; background:rgba(255,255,255,.08); border:1px solid rgba(137,200,237,.35); }
+  .note{ margin-top:40px; color:#5B6A8C; font-size:.85rem; text-align:center; }
+  .note code{ color:#9FB0D0; }
+  #confetti{ position:fixed; inset:0; pointer-events:none; z-index:5; }
+</style>
+</head>
+<body>
+<canvas id="confetti"></canvas>
+<div class="wrap">
+  <div class="logo"><img src="/platform/assets/logo-icon-tile.svg" alt="">Code the <span>Future</span></div>
+  <h1>Demo Day: <em>the reveals.</em></h1>
+  <p class="sub">Tap a builder to bring them up. They answer the three questions out loud —
+    then hit <b>PLAY IT FULL SCREEN</b> and let the app do the talking.</p>
+
+  <div class="kids" id="kids"></div>
+
+  <p class="note">Apps open from the Showcase (<code>studentdemos.codethefuture.net</code> — cohort password, enter it once).
+    If a builder shipped a newer version at the session, open their Studio full screen instead. Esc closes the interview screen.</p>
+</div>
+
+<div id="stagePanel">
+  <div class="stageInner">
+    <div class="nowUp">Now presenting</div>
+    <h2 id="stageName"></h2>
+    <div class="qcard"><div class="n">QUESTION 1</div><div class="q">What did I build?</div>
+      <div class="hint">Say it like a headline. One or two sentences — what IS this thing?</div></div>
+    <div class="qcard"><div class="n">QUESTION 2</div><div class="q">Why did I build it?</div>
+      <div class="hint">The real reason. What made YOU pick this idea out of everything you could have made?</div></div>
+    <div class="qcard"><div class="n">QUESTION 3</div><div class="q">What did I learn?</div>
+      <div class="hint">One thing about building, one thing about AI, or one thing about yourself.</div></div>
+    <div class="row">
+      <button class="big play" id="playBtn">▶ PLAY IT FULL SCREEN</button>
+      <button class="big ghost" id="backBtn">← Back to the lineup</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const KIDS = [
+  { name:'Adam',      nick:'pixel nova',      img:'/platform/assets/roundup/adam-pixel-nova-greatwall.jpg',
+    url:'https://studentdemos.codethefuture.net/adam-space-shooter/' },
+  { name:'Charlotte', nick:'baddie',          img:'/platform/assets/roundup/charlotte-baddie-tajmahal.jpg',
+    url:'https://studentdemos.codethefuture.net/charlotte-neon-studio/' },
+  { name:'Devon',     nick:'stickmen unite',  img:'/platform/assets/roundup/devon-stickmen-unite-pyramids.jpg',
+    url:'https://studentdemos.codethefuture.net/devon-zazamar/' },
+  { name:'Emery',     nick:'strawberry',      img:'/platform/assets/roundup/emery-generic-london.jpg',
+    url:'https://made-yours-emery.netlify.app/' }
+];
+let current = null;
+const kidsEl = document.getElementById('kids');
+KIDS.forEach((k, i) => {
+  const b = document.createElement('button');
+  b.className = 'kid'; b.id = 'kid' + i;
+  b.innerHTML = '<img src="' + k.img + '" alt=""><div class="meta"><div class="nm">' + k.name +
+    '</div><div class="ttl">“' + k.nick + '”</div><div class="done">✓ SHIPPED IT</div></div>';
+  b.onclick = () => { current = i;
+    document.getElementById('stageName').textContent = k.name + ' · “' + k.nick + '”';
+    document.getElementById('stagePanel').classList.add('on');
+  };
+  kidsEl.appendChild(b);
+});
+document.getElementById('playBtn').onclick = () => {
+  if (current == null) return;
+  document.getElementById('kid' + current).classList.add('demoed');   // mark them shipped
+  window.open(KIDS[current].url, '_blank', 'noopener');
+  document.getElementById('stagePanel').classList.remove('on');
+  burst();
+};
+document.getElementById('backBtn').onclick = () => document.getElementById('stagePanel').classList.remove('on');
+addEventListener('keydown', e => { if (e.key === 'Escape') document.getElementById('stagePanel').classList.remove('on'); });
+
+// celebration confetti every time someone ships
+const cv = document.getElementById('confetti'), cg = cv.getContext('2d');
+let pieces = [];
+function fit(){ cv.width = innerWidth; cv.height = innerHeight; }
+fit(); addEventListener('resize', fit);
+const COLS = ['#26C7D1','#3D74FF','#FFB320','#FF5A38','#3FD08A','#9B7BFF'];
+function burst(){
+  for (let i = 0; i < 160; i++)
+    pieces.push({ x:Math.random()*cv.width, y:-14-Math.random()*160, vy:2+Math.random()*3, vx:(Math.random()-.5)*1.6,
+                  r:Math.random()*6.28, vr:(Math.random()-.5)*.24, s:5+Math.random()*8,
+                  c:COLS[Math.floor(Math.random()*COLS.length)] });
+}
+(function tick(){
+  cg.clearRect(0,0,cv.width,cv.height);
+  for (const p of pieces){
+    p.x += p.vx; p.y += p.vy; p.r += p.vr;
+    cg.save(); cg.translate(p.x,p.y); cg.rotate(p.r);
+    cg.fillStyle = p.c; cg.fillRect(-p.s/2,-p.s/2,p.s,p.s*.6); cg.restore();
+  }
+  pieces = pieces.filter(p => p.y < cv.height + 20);
+  requestAnimationFrame(tick);
+})();
+</script>
+</body>
+</html>

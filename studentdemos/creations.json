@@ -1,1 +1,6 @@
-[]
+[
+  { "slug": "adam-space-shooter",     "title": "Space Shooter v5",  "by": "Adam · \"pixel nova\"" },
+  { "slug": "charlotte-neon-studio",  "title": "Neon Studio",       "by": "Charlotte · \"baddie\"" },
+  { "slug": "devon-zazamar",          "title": "Zazamar",           "by": "Devon · \"stickmen unite\"" },
+  { "slug": "emery-made-yours",       "title": "made yours.",       "by": "Emery · \"strawberry\"" }
+]

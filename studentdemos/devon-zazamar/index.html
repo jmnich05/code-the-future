@@ -1,0 +1,859 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Zazamar — Devon's World, v3: The Pixel Age</title>
+<style>
+  /* Devon's game! Everything lives in this one file so it always just runs. */
+  html,body{margin:0;height:100%;background:#0A1024;display:grid;place-items:center;font-family:system-ui,sans-serif}
+  #stage{position:relative} canvas{display:block;border-radius:12px;width:min(97vw,960px,155vh);height:auto;image-rendering:pixelated}
+  #banner{position:absolute;left:50%;top:16%;transform:translateX(-50%);background:rgba(10,16,36,.88);color:#FFE9A8;border:2px solid #FFD75E;border-radius:12px;padding:14px 26px;font-size:20px;font-weight:700;text-align:center;white-space:pre-line;opacity:0;transition:opacity .3s;pointer-events:none;max-width:70%}
+  #banner.show{opacity:1}
+  #mapPanel{position:absolute;inset:30px;background:rgba(10,16,36,.95);border:3px solid #FFD75E;border-radius:16px;color:#F7EDCD;padding:18px;display:none;box-shadow:0 0 30px rgba(255,215,94,.35);overflow:auto}
+  #mapPanel.show{display:block} #mapPanel h2{margin:0 0 10px;color:#FFE9A8;font-size:22px}
+  #mapArt{height:170px;border:2px solid #89C8ED;border-radius:12px;position:relative;overflow:hidden}
+  .place{position:absolute;font-weight:800;font-size:13px;text-shadow:1px 1px #0A1024;color:#FFE9A8}
+  .marker{position:absolute;color:#FFEF64;font-size:26px;animation:bob .7s infinite alternate}
+  @keyframes bob{to{transform:translateY(-7px)}}
+  #quests{margin:10px 0 0;padding-left:22px;line-height:1.6;font-size:14px}
+  #mapHint{position:absolute;right:16px;top:16px;color:#BBD5F0;font-size:12px}
+  #scenes{margin-top:10px;border-top:1px solid rgba(255,215,94,.3);padding-top:8px}
+  #scenes b{color:#FFE9A8}
+  .sceneBtn{display:inline-block;margin:5px 6px 0 0;padding:5px 12px;border:1px solid #89C8ED;border-radius:99px;background:none;color:#BDF5FF;font-size:12px;font-weight:700;cursor:pointer}
+  .sceneBtn:hover{background:rgba(137,200,237,.15)}
+  #powerRow{margin-top:8px;font-size:14px;color:#C9E8FF}
+  #cine{position:absolute;inset:0;display:none;pointer-events:none}
+  #cine.show{display:block}
+  #cine .bar{position:absolute;left:0;right:0;height:12%;background:#05060C}
+  #cine .bar.top{top:0}.bar.bot{bottom:0}
+  #cineText{position:absolute;left:50%;bottom:14%;transform:translateX(-50%);width:82%;background:rgba(5,8,20,.85);border:2px solid #89C8ED;border-radius:12px;color:#EAF6FF;padding:12px 18px;font-size:17px;line-height:1.5;white-space:pre-line}
+  #cineWho{color:#FFD75E;font-weight:800;letter-spacing:.06em}
+  #cineSkip{position:absolute;right:16px;top:13%;color:#8FA8CC;font-size:12px;font-weight:700}
+  #choices{position:absolute;left:50%;bottom:15%;transform:translateX(-50%);display:none;flex-direction:column;gap:8px;width:70%}
+  #choices.show{display:flex}
+  .choice{background:rgba(10,16,36,.92);border:2px solid #FFD75E;border-radius:10px;color:#FFE9A8;padding:10px 16px;font-size:15px;font-weight:700;cursor:pointer;text-align:left}
+  .choice:hover{background:rgba(255,215,94,.18)}
+</style>
+</head>
+<body>
+<div id="stage">
+  <canvas id="game" width="960" height="600"></canvas>
+  <div id="banner"></div>
+  <div id="cine"><div class="bar top"></div><div class="bar bot"></div>
+    <div id="cineSkip">Enter: next · Esc: skip</div>
+    <div id="cineText"><span id="cineWho"></span><span id="cineLine"></span></div>
+  </div>
+  <div id="choices"></div>
+  <div id="mapPanel">
+    <div id="mapHint">Press Tab to close</div>
+    <h2 id="mapTitle">🗺 Zazamar's Map</h2>
+    <div id="mapArt"></div>
+    <ul id="quests"></ul>
+    <div id="powerRow"></div>
+    <div id="scenes"><b>📼 Saved cutscenes</b> — tap to rewatch:<div id="sceneList"></div></div>
+  </div>
+</div>
+
+<script>
+// ============================================================
+//  ZAZAMAR — DEVON'S WORLD · v3: THE PIXEL AGE
+//
+//  Mr. Jon asked for FINAL-FANTASY-IV style, so v3 flips the
+//  whole game to retro JRPG:
+//   · top-down EXPLORE mode: chunky pixel tiles, cliffs, paths
+//   · touch a spirit → screen swirl → BATTLE MODE: side view,
+//     enemies on the LEFT, Zazamar on the RIGHT, blue menu
+//     windows, HP, turns, damage numbers — the whole ritual
+//   · bending powers become battle MAGIC (earth/water/air)
+//   · everything from v2 stays: three worlds, the dive,
+//     cutscenes you can rewatch, talking spirits, quests on Tab
+//
+//  ONE FILE, TWO MODES (future builders: keep this switch!):
+//   platform preview → LITE · full screen/published → DELUXE
+// ============================================================
+const params=new URLSearchParams(location.search);
+const DELUXE=params.get('mode')==='lite'?false:params.get('mode')==='full'?true:(window.self===window.top);
+
+const canvas=document.getElementById('game'),ctx=canvas.getContext('2d');
+ctx.imageSmoothingEnabled=false;
+const banner=document.getElementById('banner'),mapPanel=document.getElementById('mapPanel');
+const quests=document.getElementById('quests'),mapArt=document.getElementById('mapArt');
+const cine=document.getElementById('cine'),cineLine=document.getElementById('cineLine'),cineWho=document.getElementById('cineWho');
+const choicesEl=document.getElementById('choices'),sceneList=document.getElementById('sceneList');
+
+// ---------- tiny sound synth ----------
+let AC=null,soundOn=DELUXE;
+function beep(f,d,ty,v,slide){if(!soundOn)return;try{AC=AC||new(window.AudioContext||window.webkitAudioContext)();const o=AC.createOscillator(),g=AC.createGain();o.type=ty||'square';o.frequency.value=f;if(slide)o.frequency.exponentialRampToValueAtTime(Math.max(30,f+slide),AC.currentTime+d);g.gain.value=v||.04;g.gain.exponentialRampToValueAtTime(.0001,AC.currentTime+d);o.connect(g);g.connect(AC.destination);o.start();o.stop(AC.currentTime+d)}catch(e){}}
+const sfx={cursor:()=>beep(880,.05,'square',.03),confirm:()=>beep(660,.09,'square',.04,220),slash:()=>beep(320,.1,'square',.05,-200),hurt:()=>beep(140,.16,'sawtooth',.05,-60),magic:()=>{beep(523,.1,'triangle',.05,300);setTimeout(()=>beep(784,.15,'triangle',.05,200),90)},win:()=>{[523,659,784,1046].forEach((n,i)=>setTimeout(()=>beep(n,.14,'square',.05),i*120))},encounter:()=>beep(200,.35,'sawtooth',.06,300),pick:()=>beep(660,.12,'sine',.05,240),boss:()=>beep(70,.5,'sawtooth',.08,-20),dive:()=>beep(500,.8,'sine',.05,-380)};
+
+// ============================================================
+//  PIXEL ART — every sprite is drawn from these little grids.
+//  Letters are colors. This is exactly how SNES games thought.
+// ============================================================
+const PAL={_:'',k:'#1a1428',w:'#f4ecdc',s:'#f0c29a',h:'#5a3a1e',g:'#2e8b3d',G:'#1f6b2e',r:'#e8563f',b:'#3a5fc8',B:'#22376e',y:'#ffd75e',p:'#b9a2ff',P:'#6a4a9e',e:'#89c8ed',d:'#8a6b42',m:'#20304c',o:'#ff8c42',t:'#4fa8d8'};
+const SPR={
+zaza:[ // Zazamar — hero, faces down (explore) / right rows reused
+'___hhhh_____',
+'__hhhhhh____',
+'__hsshss____',
+'__ssssss____',
+'___smsm_____',
+'___ssss_____',
+'_rrgggg_____',
+'rrggggggrr__',
+'r_gggggg_r__',
+'__GGGGGG____',
+'__GG__GG____',
+'__ss__ss____'],
+ghost:[ // the hooded blue spirit — straight off the reference art
+'___BBBB_____',
+'__BBBBBB____',
+'_BBbbbbBB___',
+'_BbbbbbbB___',
+'_Bbkbbkbb___',
+'_BbbbbbbB___',
+'_BBbbbbBB___',
+'__BbbbbB____',
+'__BbbbbB____',
+'_BBbBBbBB___',
+'_B_bB_bB____',
+'____________'],
+general:[ // the Ghost General — big helm, war colors
+'___kkkkkk___',
+'__kyykkyyk__',
+'__kkkkkkkk__',
+'_kPPPPPPPPk_',
+'_kPkPPPPkPk_',
+'_kPPPPPPPPk_',
+'__kPPPPPPk__',
+'_kkPPPPPPkk_',
+'_k_PPkkPP_k_',
+'___PPkkPP___',
+'__PPk__kPP__',
+'____________'],
+eye:[ // the watcher — round angry critter from the ref art
+'____oooo____',
+'__oooooooo__',
+'_oowwooowoo_',
+'_owkwoowkwo_',
+'_oowwooowoo_',
+'_oooooooooo_',
+'_oorroorroo_',
+'__oooooooo__',
+'___o_oo_o___',
+'____________',
+'____________',
+'____________']
+};
+const SCALE=4;
+const sprCache={};
+function bakeSprite(name,flip){
+  const key=name+(flip?'F':'');
+  if(sprCache[key])return sprCache[key];
+  const rows=SPR[name],c=document.createElement('canvas');
+  c.width=rows[0].length*SCALE;c.height=rows.length*SCALE;
+  const x2=c.getContext('2d');
+  rows.forEach((row,y)=>{[...row].forEach((ch,x)=>{
+    if(ch==='_')return;const col=PAL[ch];if(!col)return;
+    const px=flip?(row.length-1-x):x;
+    x2.fillStyle=col;x2.fillRect(px*SCALE,y*SCALE,SCALE,SCALE);
+  })});
+  sprCache[key]=c;return c;
+}
+function drawSprite(name,x,y,flip,bob){
+  ctx.drawImage(bakeSprite(name,flip),Math.round(x),Math.round(y+(bob||0)));
+}
+
+// ---------- baked 16px terrain tiles (FF overworld texture) ----------
+const T=32; // tile size on screen
+function bakeTile(fn){const c=document.createElement('canvas');c.width=T;c.height=T;fn(c.getContext('2d'));return c}
+function speckle(x2,base,fleck,n){x2.fillStyle=base;x2.fillRect(0,0,T,T);x2.fillStyle=fleck;for(let i=0;i<n;i++){x2.fillRect(((i*53)%T),((i*29+7)%T),3,3)}}
+const TILES={
+  grass:bakeTile(x2=>{speckle(x2,'#4f9c3c','#3f8830',14);x2.fillStyle='#63b04a';for(let i=0;i<8;i++)x2.fillRect((i*41+13)%T,(i*17+5)%T,3,3)}),
+  grass2:bakeTile(x2=>{speckle(x2,'#57a542','#478f34',12);x2.fillStyle='#6dbb52';for(let i=0;i<6;i++)x2.fillRect((i*37+9)%T,(i*23+11)%T,3,3)}),
+  cliff:bakeTile(x2=>{speckle(x2,'#8a6b42','#6e4a22',16);x2.fillStyle='#a8875c';for(let i=0;i<7;i++)x2.fillRect((i*47+5)%T,(i*19+3)%T,4,2);x2.fillStyle='#5a3a1e';x2.fillRect(0,T-4,T,4)}),
+  cliffTop:bakeTile(x2=>{speckle(x2,'#9c7a4e','#7d5c34',14);x2.fillStyle='#c9a877';x2.fillRect(0,0,T,5);x2.fillStyle='#5a3a1e';for(let i=0;i<5;i++)x2.fillRect((i*61+11)%T,8+((i*13)%18),4,3)}),
+  path:bakeTile(x2=>{speckle(x2,'#c9a877','#b08f5e',10);x2.fillStyle='#dbbf94';for(let i=0;i<5;i++)x2.fillRect((i*43+7)%T,(i*31+9)%T,4,3)}),
+  water:bakeTile(x2=>{speckle(x2,'#4fa8d8','#3d8fc0',8);x2.fillStyle='#7fc8ea';x2.fillRect(3,6,10,3);x2.fillRect(17,20,11,3)}),
+  forest:bakeTile(x2=>{speckle(x2,'#2c6e2e','#1f5722',12);x2.fillStyle='#3f8830';x2.beginPath();x2.arc(9,10,7,0,6.28);x2.arc(23,18,8,0,6.28);x2.fill();x2.fillStyle='#57a542';x2.beginPath();x2.arc(7,8,4,0,6.28);x2.arc(21,15,4,0,6.28);x2.fill()}),
+  dark:bakeTile(x2=>{speckle(x2,'#241a3e','#1a1230',12);x2.fillStyle='#342a52';for(let i=0;i<5;i++)x2.fillRect((i*53+9)%T,(i*37+13)%T,3,3)}),
+  darkGlow:bakeTile(x2=>{speckle(x2,'#241a3e','#1a1230',10);x2.fillStyle='#89c8ed';x2.fillRect(13,11,4,4);x2.fillStyle='rgba(137,200,237,.35)';x2.fillRect(9,7,12,12)}),
+  sky:bakeTile(x2=>{speckle(x2,'#7ec8f2','#8fd2f8',6);x2.fillStyle='#ffffff';x2.fillRect(5,8,12,4);x2.fillRect(15,22,10,3)})
+};
+
+// ============================================================
+//  WORLDS — tile grids built once from simple recipes
+// ============================================================
+const WORLDS={
+  sky:   {tw:44,th:28,name:'SKY WORLD'},
+  main:  {tw:100,th:64,name:'MAIN WORLD'},
+  depths:{tw:76,th:50,name:'THE DEPTHS'}
+};
+let worldId='sky';
+const world=()=>WORLDS[worldId];
+const cam={x:0,y:0};
+function hash(x,y){let h=(x*374761393+y*668265263)^(x*y*104729);h=(h^(h>>13))*1274126177;return ((h^(h>>16))>>>0)/4294967295}
+function buildGrid(id){
+  const Wd=WORLDS[id],g=[];
+  for(let y=0;y<Wd.th;y++){const row=[];
+    for(let x=0;x<Wd.tw;x++){
+      let t='grass';
+      if(id==='sky'){
+        const dx=(x-Wd.tw/2)/(Wd.tw/2-2),dy=(y-Wd.th/2)/(Wd.th/2-2),d=dx*dx+dy*dy;
+        if(d>1)t='sky';
+        else if(d>.8)t='cliffTop';
+        else t=hash(x,y)>.5?'grass':'grass2';
+      }else if(id==='main'){
+        const edge=x<2||y<2||x>Wd.tw-3||y>Wd.th-3;
+        if(edge)t='forest';
+        else if(hash(x,y)>.93)t='forest';
+        else t=hash(x,y)>.5?'grass':'grass2';
+      }else{
+        t=hash(x,y)>.9?'darkGlow':'dark';
+      }
+      row.push(t);
+    }g.push(row);
+  }
+  // stamp features
+  const stamp=(tx,ty,w,h,t)=>{for(let y=ty;y<ty+h;y++)for(let x=tx;x<tx+w;x++)if(g[y]&&g[y][x]!==undefined)g[y][x]=t};
+  if(id==='sky'){stamp(8,16,4,3,'water');stamp(20,10,2,10,'path')}
+  if(id==='main'){stamp(26,42,5,4,'water');stamp(76,16,5,4,'water');stamp(6,56,88,2,'path');stamp(48,8,2,50,'path');stamp(16,14,6,5,'cliffTop');stamp(70,44,7,5,'cliffTop')}
+  if(id==='depths'){stamp(36,40,5,3,'water')}
+  return g;
+}
+const GRIDS={sky:buildGrid('sky'),main:buildGrid('main'),depths:buildGrid('depths')};
+function walkable(px,py){
+  const Wd=world(),g=GRIDS[worldId];
+  const tx=Math.floor(px/T),ty=Math.floor(py/T);
+  if(tx<0||ty<0||tx>=Wd.tw||ty>=Wd.th)return false;
+  const t=g[ty][tx];
+  if(worldId==='sky'&&t==='sky')return 'fall';
+  return t!=='forest'&&t!=='water';
+}
+
+// ---------- game state ----------
+const SPAWN={sky:{x:22*T,y:20*T},main:{x:50*T,y:8*T},depths:{x:38*T,y:8*T}};
+const game={
+  state:'play',hp:30,maxHp:30,fragments:0,earnedHearts:0,
+  hasTunic:false,fallTimer:0,player:{x:SPAWN.sky.x,y:SPAWN.sky.y,dir:0,stepT:0},
+  spirits:[],time:0,mapOpen:false,
+  powers:{earth:false,water:false,air:false},
+  quests:{tunic:false,spiritTalk:false,gateOpen:false,boss1:false,depthsSeen:false},
+  seenScenes:[],diveT:0,bossDead:false,swirlT:0
+};
+window.game=game;
+const CHEST={x:13*T,y:9*T,opened:false};
+const GATE={x:33*T,y:13*T};
+const TRANCES={main:[{x:18*T,y:16*T,power:'earth',got:false},{x:77*T,y:17*T,power:'water',got:false}],depths:[{x:60*T,y:12*T,power:'air',got:false}]};
+const DEPTH_HOLE={x:72*T,y:46*T};
+const UPDRAFT={x:10*T,y:8*T};
+
+function makeSpirit(x,y,friendly,kind){return{x,y,friendly:!!friendly,kind:kind||'ghost',dead:false,wob:Math.random()*6.28,talked:false}}
+function populate(){
+  if(worldId==='sky')game.spirits=[makeSpirit(26*T,8*T),makeSpirit(30*T,18*T),makeSpirit(16*T,14*T),makeSpirit(24*T,22*T,true)];
+  else if(worldId==='main')game.spirits=[makeSpirit(30*T,20*T),makeSpirit(60*T,30*T),makeSpirit(40*T,50*T),makeSpirit(80*T,24*T,false,'eye'),makeSpirit(20*T,48*T,false,'eye'),makeSpirit(56*T,14*T,true)];
+  else game.spirits=[makeSpirit(30*T,20*T),makeSpirit(50*T,34*T),makeSpirit(20*T,38*T,false,'eye'),makeSpirit(66*T,30*T,true)];
+}
+
+// ---------- banner ----------
+let bannerTimeout=null;
+function say(text,ms=2600){banner.textContent=text;banner.classList.add('show');clearTimeout(bannerTimeout);if(ms>0)bannerTimeout=setTimeout(()=>banner.classList.remove('show'),ms)}
+
+// ============================================================
+//  CUTSCENES (same saved-and-rewatchable system as v2)
+// ============================================================
+const SCENES={
+  intro:{title:'The Lake of Resurrection',lines:[
+    ['','A war tore through the old country.'],
+    ['','Zazamar fell. The ninjas carried him through the storm…'],
+    ['','…to the Lake of Resurrection, high above the clouds.'],
+    ['ZAZAMAR','Where… am I? The sky? I remember… fire. The war. My village.'],
+    ['','Find the chest. Earn your heart. The gate is waiting.']]},
+  dive:{title:'The Dive',lines:[
+    ['','Zazamar steps through the gate — and the floor is CLOUDS.'],
+    ['ZAZAMAR','WOOOAAAHHH—'],
+    ['','He falls. The wind screams past. And in the wind, he sees it—'],
+    ['ZAZAMAR','The war. The burning fields. My friends… I remember EVERYTHING.'],
+    ['','The Main World rushes up to meet him.']]},
+  earth:{title:'The Earth Trance',lines:[
+    ['SPIRIT OF STONE','You carried mountains of grief, warrior. Now carry mountains.'],
+    ['','EARTH BENDING unlocked! In battle, choose BEND → Quake.']]},
+  water:{title:'The Water Trance',lines:[
+    ['SPIRIT OF RAIN','Water heals what war has broken.'],
+    ['','WATER BENDING unlocked! In battle, choose BEND → Heal.']]},
+  air:{title:'The Air Trance',lines:[
+    ['SPIRIT OF STORMS','Rise, Zazamar. You were never meant to stay down here.'],
+    ['','AIR BENDING unlocked! In battle, choose BEND → Gale (hits ALL).']]},
+  boss:{title:'The Ghost General',lines:[
+    ['','The air goes cold. The spirits scatter.'],
+    ['GHOST GENERAL','Zazamar. I led the army that burned your village.'],
+    ['ZAZAMAR','Then you already know why I trained.'],
+    ['','BOSS BATTLE!']]},
+  victory:{title:'The General Falls',lines:[
+    ['GHOST GENERAL','You fight… like someone with something to protect.'],
+    ['ZAZAMAR','I protect what you took. All of it. Everyone.'],
+    ['','The General bows, and fades into light. The Depths are open…']]}
+};
+const cs={on:false,scene:null,line:0,after:null};
+function playScene(id,after){
+  const s=SCENES[id];if(!s)return;
+  cs.on=true;cs.scene=id;cs.line=0;cs.after=after||null;cine.classList.add('show');
+  if(!game.seenScenes.includes(id))game.seenScenes.push(id);
+  showLine();
+}
+function showLine(){const s=SCENES[cs.scene],l=s.lines[cs.line];cineWho.textContent=l[0]?l[0]+':  ':'';cineLine.textContent=l[1]}
+function advanceScene(){cs.line++;const s=SCENES[cs.scene];if(cs.line>=s.lines.length)endScene();else showLine()}
+function endScene(){
+  cine.classList.remove('show');const id=cs.scene,after=cs.after;cs.on=false;cs.scene=null;cs.after=null;
+  if(id==='dive'){worldId='main';const p=game.player;p.x=SPAWN.main.x;p.y=SPAWN.main.y;populate();say('THE MAIN WORLD\nFind the glowing trances. Press Tab for quests.',3200)}
+  if(id==='earth'){game.powers.earth=true;sfx.magic();say('🪨 EARTH BENDING learned!')}
+  if(id==='water'){game.powers.water=true;sfx.magic();say('💧 WATER BENDING learned!')}
+  if(id==='air'){game.powers.air=true;sfx.magic();say('🌪 AIR BENDING learned!')}
+  if(id==='victory'){game.quests.boss1=true;say('The dark hole in the south-east is open. The Depths await.',3200)}
+  if(after)after();
+}
+window.playScene=playScene;
+
+// ============================================================
+//  BATTLE MODE — Final-Fantasy style. Enemies LEFT, hero RIGHT.
+// ============================================================
+const battle={
+  on:false,enemies:[],menu:0,sub:-1,phase:'command',   // command | anim | enemyTurn | win | lose
+  animT:0,animKind:'',animTarget:0,dmgPops:[],logMsg:'',heroX:0,returnSpirit:null,isBoss:false,runnable:true
+};
+const BENDS=[
+  {key:'earth',name:'Quake',cost:0,all:false,dmg:[7,10],col:'#d9a05a'},
+  {key:'water',name:'Heal',cost:0,heal:[8,12],col:'#7fc8ea'},
+  {key:'air',name:'Gale',cost:0,all:true,dmg:[4,6],col:'#cfeaff'}
+];
+function startBattle(enemies,spirit,isBoss){
+  battle.on=true;battle.enemies=enemies;battle.menu=0;battle.sub=-1;battle.phase='command';
+  battle.dmgPops=[];battle.logMsg=isBoss?'The GHOST GENERAL attacks!':'Spirits challenge you!';
+  battle.heroX=0;battle.returnSpirit=spirit||null;battle.isBoss=!!isBoss;battle.runnable=!isBoss;
+  game.state='battle';sfx.encounter();game.swirlT=24;
+}
+function makeEnemy(kind,i,n){
+  const boss=kind==='general';
+  return{kind,name:boss?'Ghost General':(kind==='eye'?'Watcher':'Spirit'),
+    hp:boss?40:(kind==='eye'?12:8),maxHp:boss?40:(kind==='eye'?12:8),
+    x:150+ i*58, y:225+i*72-(n-1)*18, flash:0,dead:false,atk:boss?[5,8]:(kind==='eye'?[3,5]:[2,4])};
+}
+function rand(lo,hi){return lo+Math.floor(Math.random()*(hi-lo+1))}
+function livingEnemies(){return battle.enemies.filter(e=>!e.dead)}
+function heroAttack(targetIdx){
+  battle.phase='anim';battle.animKind='attack';battle.animT=0;battle.animTarget=targetIdx;
+}
+function heroBend(bend,targetIdx){
+  battle.phase='anim';battle.animKind='bend:'+bend.key;battle.animT=0;battle.animTarget=targetIdx;
+}
+function resolveHeroAction(){
+  const live=livingEnemies();
+  if(battle.animKind==='attack'){
+    const e=battle.enemies[battle.animTarget];
+    const crit=Math.random()<.18;
+    const dmg=rand(4,7)*(crit?2:1);
+    e.hp-=dmg;e.flash=10;sfx.slash();
+    battle.dmgPops.push({x:e.x+24,y:e.y-8,txt:dmg+(crit?'!':''),t:0,col:crit?'#ffd75e':'#fff'});
+    battle.logMsg=crit?'CRITICAL HIT!':'Zazamar attacks!';
+    if(e.hp<=0){e.dead=true;e.hp=0}
+  }else if(battle.animKind.startsWith('bend:')){
+    const key=battle.animKind.slice(5),bend=BENDS.find(b=>b.key===key);
+    sfx.magic();
+    if(bend.heal){const h=rand(bend.heal[0],bend.heal[1]);game.hp=Math.min(game.maxHp,game.hp+h);battle.dmgPops.push({x:700,y:300,txt:'+'+h,t:0,col:'#8fe3a5'});battle.logMsg='Water knits Zazamar back together.'}
+    else{
+      const targets=bend.all?livingEnemies():[battle.enemies[battle.animTarget]];
+      targets.forEach(e=>{const d=rand(bend.dmg[0],bend.dmg[1]);e.hp-=d;e.flash=10;battle.dmgPops.push({x:e.x+24,y:e.y-8,txt:''+d,t:0,col:bend.col});if(e.hp<=0){e.dead=true;e.hp=0}});
+      battle.logMsg=bend.key==='earth'?'The ground ERUPTS!':'A blade of wind slices through!';
+    }
+  }
+  if(!livingEnemies().length){battle.phase='win';battle.animT=0;sfx.win()}
+  else{battle.phase='enemyTurn';battle.animT=0}
+}
+function enemyStrike(){
+  const live=livingEnemies();
+  const e=live[Math.floor(Math.random()*live.length)];
+  const dmg=rand(e.atk[0],e.atk[1]);
+  game.hp=Math.max(0,game.hp-dmg);
+  battle.dmgPops.push({x:700,y:300,txt:''+dmg,t:0,col:'#ff8c8c'});
+  battle.logMsg=e.name+' strikes!';sfx.hurt();
+  if(game.hp<=0){battle.phase='lose';battle.animT=0}
+  else battle.phase='command';
+  battle.menu=0;battle.sub=-1;
+}
+function endBattle(won){
+  battle.on=false;game.state='play';game.swirlT=24;
+  if(won){
+    const frag=battle.isBoss?5:livingEnemies.length===0?battle.enemies.length:battle.enemies.length;
+    game.fragments+=battle.enemies.length;
+    while(game.fragments>=5){game.fragments-=5;game.earnedHearts++;say('5 fragments become ONE FULL HEART!')}
+    if(battle.returnSpirit)battle.returnSpirit.dead=true;
+    if(battle.isBoss){game.bossDead=true;playScene('victory')}
+    game.hp=Math.min(game.maxHp,game.hp+4); // a breather after every win
+  }else{
+    const s=SPAWN[worldId];game.player.x=s.x;game.player.y=s.y;game.hp=game.maxHp;
+    say('The Lake of Resurrection brings you back…');
+  }
+}
+// battle input
+function battleKey(k){
+  if(battle.phase==='command'){
+    const opts=battle.sub<0?commandList():bendList();
+    if(k==='arrowup'||k==='w'){battle.menu=(battle.menu+opts.length-1)%opts.length;sfx.cursor()}
+    else if(k==='arrowdown'||k==='s'){battle.menu=(battle.menu+1)%opts.length;sfx.cursor()}
+    else if(k==='enter'||k===' '){
+      sfx.confirm();
+      if(battle.sub<0){
+        const cmd=commandList()[battle.menu];
+        if(cmd==='Fight')heroAttack(battle.enemies.indexOf(livingEnemies()[0]));
+        else if(cmd==='Bend'){battle.sub=0;battle.menu=0}
+        else if(cmd==='Run'){if(battle.runnable){battle.logMsg='Got away safely!';setTimeout(()=>endBattle(false),0);battle.on=false;game.state='play';game.swirlT=24;game.hp=Math.max(1,game.hp)}else battle.logMsg='The General blocks the way!'}
+      }else{
+        const b=bendList()[battle.menu];
+        if(b==='← Back'){battle.sub=-1;battle.menu=0}
+        else{const bend=BENDS.find(x=>x.name===b);heroBend(bend,battle.enemies.indexOf(livingEnemies()[0]))}
+      }
+    }
+    else if(k==='escape'&&battle.sub>=0){battle.sub=-1;battle.menu=0}
+  }else if(battle.phase==='win'&&(k==='enter'||k===' '))endBattle(true);
+  else if(battle.phase==='lose'&&(k==='enter'||k===' '))endBattle(false);
+}
+function commandList(){return['Fight','Bend','Run']}
+function bendList(){const l=BENDS.filter(b=>game.powers[b.key]).map(b=>b.name);l.push('← Back');return l.length>1?l:['← Back']}
+window.startBattle=startBattle;window.makeEnemy=makeEnemy;window.battle=battle;window.battleKey=battleKey;
+
+// ============================================================
+//  TALK (same choice system as v2)
+// ============================================================
+let talkingTo=null;
+function openTalk(s){
+  talkingTo=s;game.state='talk';
+  const opts=worldId==='sky'
+    ?[['Who are you?','We are the sky spirits. The hooded ones test your sword. I only talk.'],
+      ['How do I get off this island?','Feed the gate ONE full heart. Win battles — five fragments make a heart.'],
+      ['(Bow silently)','…A warrior\'s bow. The war taught you respect. It will serve you below.']]
+    :worldId==='main'
+    ?[['What is this place?','The Main World. Your war happened HERE. The trances remember it.'],
+      ['Where are the trances?','One hums in the western rocks. One sleeps by the far lake. Seek the glow.'],
+      ['Tell me about the General.','He waits in the southern cliffs. He KNOWS you.']]
+    :[['What are the Depths?','The world under the world. The war never reached here.'],
+      ['How do I get back up?','The updraft, north-west. Air bending turns it into a highway.'],
+      ['(Say nothing)','…Even down here, silence is an answer.']];
+  choicesEl.innerHTML='';
+  opts.forEach(o=>{
+    const b=document.createElement('button');b.className='choice';b.textContent='» '+o[0];
+    b.onclick=()=>{closeTalk();say('🗨 '+o[1],3400);s.talked=true;game.quests.spiritTalk=true};
+    choicesEl.appendChild(b);
+  });
+  const leave=document.createElement('button');leave.className='choice';leave.textContent='» (Walk away)';
+  leave.onclick=closeTalk;choicesEl.appendChild(leave);
+  choicesEl.classList.add('show');
+}
+function closeTalk(){choicesEl.classList.remove('show');talkingTo=null;game.state='play'}
+
+// ---------- controls ----------
+const keys={};
+addEventListener('keydown',e=>{
+  const k=e.key.toLowerCase();
+  if(cs.on){if(e.key==='Enter'||e.key===' ')advanceScene();if(e.key==='Escape')endScene();e.preventDefault();return}
+  if(game.state==='battle'){battleKey(k);e.preventDefault();return}
+  if(e.key==='Tab'){e.preventDefault();toggleMap();return}
+  if(game.state==='talk'){if(e.key==='Escape')closeTalk();return}
+  keys[k]=true;
+  if(k==='m')soundOn=!soundOn;
+  if(k==='e')tryTalk();
+});
+addEventListener('keyup',e=>keys[e.key.toLowerCase()]=false);
+canvas.addEventListener('mousedown',()=>{if(cs.on)advanceScene()});
+function tryTalk(){
+  const p=game.player;
+  for(const s of game.spirits){if(!s.dead&&s.friendly&&Math.hypot(s.x-p.x,s.y-p.y)<60){openTalk(s);return}}
+}
+
+// ---------- map panel ----------
+function toggleMap(){
+  if(game.state==='battle')return;
+  game.mapOpen=!game.mapOpen;
+  mapPanel.classList.toggle('show',game.mapOpen);
+  if(game.mapOpen)updateQuestMap();
+}
+function updateQuestMap(){
+  document.getElementById('mapTitle').textContent='🗺 '+world().name+' — Zazamar\'s Map';
+  const Wd=world(),art=[];
+  art.push('<div style="position:absolute;inset:0;background:'+(worldId==='depths'?'#150E28':'linear-gradient(#7EC8F2,#3F7FBF)')+'"></div>');
+  if(worldId==='sky')art.push('<div style="position:absolute;left:10%;top:20%;width:74%;height:58%;border-radius:50%;background:#4f9c3c;border:6px solid #8a6b42"></div><div class="place" style="left:16%;top:56%">Lake</div><div class="place" style="left:24%;top:30%">▣ Chest</div><div class="place" style="left:64%;top:42%">▥ Spirit Gate</div>');
+  else if(worldId==='main')art.push('<div style="position:absolute;inset:10% 4% 8% 4%;border-radius:14px;background:#4f9c3c"></div><div class="place" style="left:14%;top:26%">🪨 Earth trance</div><div class="place" style="left:72%;top:28%">💧 Water trance</div><div class="place" style="left:44%;top:50%">👻 General</div><div class="place" style="left:66%;top:72%">⬛ To the Depths</div>');
+  else art.push('<div style="position:absolute;inset:10% 4% 8% 4%;border-radius:14px;background:#241A3E"></div><div class="place" style="left:64%;top:24%">🌪 Storm trance</div><div class="place" style="left:10%;top:18%">⬆ Updraft home</div>');
+  const p=game.player;
+  art.push('<div class="marker" style="left:'+(p.x/(Wd.tw*T)*86+5)+'%;top:'+(p.y/(Wd.th*T)*66+14)+'%">★</div>');
+  mapArt.innerHTML=art.join('');
+  let list='';
+  if(worldId==='sky'){
+    list+=li(game.quests.tunic,'Find the chest — get Zazamar\'s tunic.');
+    list+=li(game.quests.spiritTalk,'TALK to the golden spirit (walk close, press E).');
+    list+=li(game.quests.gateOpen,'Bring 1 full heart to the Spirit Gate, then DIVE.');
+  }else if(worldId==='main'){
+    list+=li(game.powers.earth,'Step into the EARTH trance (western rocks).');
+    list+=li(game.powers.water,'Step into the WATER trance (far lake).');
+    list+=li(game.bossDead,'Defeat the GHOST GENERAL (southern cliffs).');
+    list+=li(game.quests.depthsSeen,'Find the dark hole — descend to the Depths.');
+  }else{
+    list+=li(game.powers.air,'Find the STORM trance — learn air bending.');
+    list+=li(false,'Ride the updraft back to the Main World.');
+  }
+  quests.innerHTML=list;
+  const P=game.powers;
+  document.getElementById('powerRow').innerHTML='<b>Powers:</b> '+(P.earth?'🪨 Quake':'▢ Earth')+' · '+(P.water?'💧 Heal':'▢ Water')+' · '+(P.air?'🌪 Gale':'▢ Air');
+  sceneList.innerHTML=game.seenScenes.map(id=>'<button class="sceneBtn" onclick="playScene(\''+id+'\')">▶ '+SCENES[id].title+'</button>').join('')||' <i>none yet — go make some story!</i>';
+}
+function li(done,text){return '<li>'+(done?'✓ <s style="opacity:.6">'+text+'</s>':'<b>'+text+'</b>')+'</li>'}
+
+// ============================================================
+//  EXPLORE UPDATE
+// ============================================================
+function update(){
+  game.time++;
+  if(game.swirlT>0)game.swirlT--;
+  if(game.mapOpen||cs.on||game.state==='talk')return;
+
+  if(game.state==='battle'){
+    battle.animT++;
+    for(const pop of battle.dmgPops)pop.t++;
+    battle.dmgPops=battle.dmgPops.filter(p=>p.t<46);
+    for(const e of battle.enemies)if(e.flash>0)e.flash--;
+    if(battle.phase==='anim'&&battle.animT>26)resolveHeroAction();
+    if(battle.phase==='enemyTurn'&&battle.animT>34)enemyStrike();
+    return;
+  }
+  if(game.state==='diving'){game.diveT++;if(game.diveT===1)sfx.dive();if(game.diveT>90){game.state='play';playScene('dive')}return}
+  if(game.state==='falling'){game.fallTimer++;if(game.fallTimer>60){const s=SPAWN[worldId];game.player.x=s.x;game.player.y=s.y;game.hp=game.maxHp;game.state='play';game.fallTimer=0;say('You fell…\nThe Lake of Resurrection brings you back.')}return}
+
+  const p=game.player,Wd=world();
+  let mx=0,my=0;
+  if(keys.w||keys.arrowup){my--;p.dir=1}
+  if(keys.s||keys.arrowdown){my++;p.dir=0}
+  if(keys.a||keys.arrowleft){mx--;p.dir=2}
+  if(keys.d||keys.arrowright){mx++;p.dir=3}
+  if(mx||my){
+    const len=Math.hypot(mx,my),sp=3.1;
+    const nx=p.x+mx/len*sp,ny=p.y+my/len*sp;
+    const w1=walkable(nx,p.y);if(w1===true)p.x=nx;else if(w1==='fall'){p.x=nx}
+    const w2=walkable(p.x,ny);if(w2===true)p.y=ny;else if(w2==='fall'){p.y=ny}
+    if(walkable(p.x,p.y)==='fall'){game.state='falling';game.fallTimer=0;return}
+    p.stepT+=.18;
+  }
+  p.x=Math.max(8,Math.min(Wd.tw*T-8,p.x));p.y=Math.max(8,Math.min(Wd.th*T-8,p.y));
+  cam.x=Math.max(0,Math.min(Wd.tw*T-canvas.width,p.x-canvas.width/2));
+  cam.y=Math.max(0,Math.min(Wd.th*T-canvas.height,p.y-canvas.height/2));
+
+  if(worldId==='sky'&&!CHEST.opened&&Math.hypot(p.x-CHEST.x,p.y-CHEST.y)<30){CHEST.opened=true;game.hasTunic=true;game.quests.tunic=true;sfx.pick();say('You got the tunic (and pants)!')}
+
+  const tr=TRANCES[worldId]||[];
+  for(const t of tr){if(!t.got&&Math.hypot(p.x-t.x,p.y-t.y)<40){t.got=true;playScene(t.power);return}}
+
+  if(worldId==='main'&&game.bossDead&&Math.hypot(p.x-DEPTH_HOLE.x,p.y-DEPTH_HOLE.y)<44){
+    worldId='depths';game.quests.depthsSeen=true;p.x=SPAWN.depths.x;p.y=SPAWN.depths.y;populate();say('THE DEPTHS…\nDark. Quiet. Something hums to the east.',3000);return;
+  }
+  if(worldId==='depths'&&Math.hypot(p.x-UPDRAFT.x,p.y-UPDRAFT.y)<44){
+    if(game.powers.air){worldId='main';p.x=SPAWN.main.x;p.y=SPAWN.main.y;populate();say('The updraft hurls you into the sunlight!');return}
+    else if(game.time%80===0)say('The updraft is too weak… (air bending would fix that)',1800);
+  }
+
+  // spirits wander; hostile contact = FF ENCOUNTER
+  for(const s of game.spirits){
+    if(s.dead)continue;
+    s.wob+=.05;
+    if(!s.friendly){s.x+=Math.cos(s.wob)*.7;s.y+=Math.sin(s.wob*.8)*.5;
+      const d=Math.hypot(p.x-s.x,p.y-s.y);
+      if(d<340&&d>26){s.x+=(p.x-s.x)/d*.9;s.y+=(p.y-s.y)/d*.9}
+      if(d<26){
+        const n=worldId==='sky'?rand(1,2):rand(2,3);
+        const kinds=[s.kind];for(let i=1;i<n;i++)kinds.push(Math.random()<.4?'eye':'ghost');
+        startBattle(kinds.map((k,i)=>makeEnemy(k,i,n)),s,false);
+        return;
+      }
+    }
+  }
+
+  // the General's arena (southern cliffs of main)
+  if(worldId==='main'&&game.quests.gateOpen&&!game.bossDead&&Math.hypot(p.x-72*T,p.y-46*T)<150&&!game.seenScenes.includes('boss')){
+    playScene('boss',()=>startBattle([makeEnemy('general',0,1)],null,true));
+    return;
+  }
+
+  // the gate (sky): feed it a heart → THE DIVE
+  if(worldId==='sky'&&Math.hypot(p.x-GATE.x,p.y-GATE.y)<40){
+    if(game.earnedHearts>=1&&!game.quests.gateOpen){
+      game.earnedHearts--;game.quests.gateOpen=true;game.state='diving';game.diveT=0;
+    } else if(!game.quests.gateOpen&&game.time%90===0)say('The gate hungers for 1 full heart.\nWin battles → 5 fragments → 1 heart.',1700);
+  }
+}
+
+// ============================================================
+//  DRAW
+// ============================================================
+const wx=x=>Math.round(x-cam.x),wy=y=>Math.round(y-cam.y);
+function draw(){
+  const W=canvas.width,H=canvas.height;
+  if(game.state==='battle'){drawBattle();drawSwirl();return}
+  if(game.state==='diving'){drawDive();return}
+
+  // --- tiles ---
+  const Wd=world(),g=GRIDS[worldId];
+  const x0=Math.floor(cam.x/T),y0=Math.floor(cam.y/T);
+  for(let ty=y0;ty<=y0+Math.ceil(H/T);ty++){
+    for(let tx=x0;tx<=x0+Math.ceil(W/T);tx++){
+      if(ty<0||tx<0||ty>=Wd.th||tx>=Wd.tw)continue;
+      ctx.drawImage(TILES[g[ty][tx]],tx*T-cam.x,ty*T-cam.y);
+    }
+  }
+  // cliff shadow under the sky island edge
+  if(worldId==='sky'){
+    for(let ty=y0;ty<=y0+Math.ceil(H/T);ty++)for(let tx=x0;tx<=x0+Math.ceil(W/T);tx++){
+      if(ty<1||tx<0||ty>=Wd.th||tx>=Wd.tw)continue;
+      if(g[ty][tx]==='sky'&&g[ty-1][tx]!=='sky')ctx.drawImage(TILES.cliff,tx*T-cam.x,ty*T-cam.y);
+    }
+  }
+
+  // features
+  if(worldId==='sky'){drawChestPx();drawGatePx()}
+  for(const t of (TRANCES[worldId]||[]))if(!t.got)drawTrancePx(t);
+  if(worldId==='main'&&game.bossDead)drawHolePx();
+  if(worldId==='depths')drawUpdraftPx();
+
+  // spirits
+  for(const s of game.spirits){
+    if(s.dead)continue;
+    const bob=Math.sin(s.wob*2)*3;
+    if(s.friendly){
+      const pu=.5+.5*Math.sin(game.time*.1);
+      ctx.fillStyle='rgba(255,215,94,'+(.18+pu*.2)+')';ctx.beginPath();ctx.arc(wx(s.x)+24,wy(s.y)+24,30+pu*5,0,6.28);ctx.fill();
+      drawSprite('ghost',wx(s.x),wy(s.y),false,bob);
+      ctx.fillStyle='#FFD75E';ctx.font='bold 11px system-ui';ctx.textAlign='center';ctx.fillText('E: talk',wx(s.x)+24,wy(s.y)+58);
+    }else drawSprite(s.kind,wx(s.x),wy(s.y),false,bob);
+  }
+
+  // Zazamar — with a little walk bounce
+  const p=game.player,bob=Math.abs(Math.sin(p.stepT*3))*-3;
+  ctx.fillStyle='rgba(0,0,0,.25)';ctx.beginPath();ctx.ellipse(wx(p.x)+24,wy(p.y)+48,14,5,0,0,6.28);ctx.fill();
+  drawSprite('zaza',wx(p.x),wy(p.y),p.dir===2,bob);
+
+  drawHUD();drawSwirl();
+}
+function drawSwirl(){
+  if(game.swirlT<=0)return;
+  const t=game.swirlT/24;
+  ctx.fillStyle='rgba(5,8,20,'+t+')';
+  for(let i=0;i<8;i++){const r=(1-t)*700+i*40;ctx.beginPath();ctx.arc(canvas.width/2,canvas.height/2,r,0,6.28);ctx.lineWidth=26;ctx.strokeStyle='rgba(5,8,20,'+(t*.9)+')';ctx.stroke()}
+}
+function drawDive(){
+  const W=canvas.width,H=canvas.height,t=game.diveT;
+  const sky=ctx.createLinearGradient(0,0,0,H);sky.addColorStop(0,'#7EC8F2');sky.addColorStop(1,'#3F7FBF');ctx.fillStyle=sky;ctx.fillRect(0,0,W,H);
+  ctx.strokeStyle='rgba(255,255,255,.5)';ctx.lineWidth=3;
+  for(let i=0;i<(DELUXE?40:18);i++){const x=(i*97)%W,len=40+((i*53)%90),y=(i*191+t*26)%(H+len)-len;ctx.globalAlpha=.2+((i*37)%60)/100;ctx.beginPath();ctx.moveTo(x,y);ctx.lineTo(x,y+len);ctx.stroke()}
+  ctx.globalAlpha=1;
+  ctx.fillStyle='rgba(255,255,255,.8)';
+  for(let i=0;i<6;i++){const y=((i*173)-t*7)%(H+80);ctx.beginPath();ctx.ellipse((i*211)%W,y,80,24,0,0,6.28);ctx.fill()}
+  ctx.save();ctx.translate(W/2-24,H/2-24);ctx.rotate(Math.sin(t*.06)*.12);
+  drawSprite('zaza',0,0,false,0);ctx.restore();
+}
+// pixel props
+function drawChestPx(){
+  const x=wx(CHEST.x),y=wy(CHEST.y);
+  ctx.fillStyle=CHEST.opened?'#8A6B42':'#A8763E';ctx.fillRect(x,y,30,22);
+  ctx.fillStyle='#6E4A22';ctx.fillRect(x,y,30,7);ctx.fillStyle='#FFD75E';ctx.fillRect(x+12,y+8,6,7);
+}
+function drawGatePx(){
+  const x=wx(GATE.x),y=wy(GATE.y);
+  ctx.fillStyle='#6B6B78';ctx.fillRect(x-24,y-52,10,72);ctx.fillRect(x+16,y-52,10,72);ctx.fillRect(x-26,y-62,54,12);
+  ctx.fillStyle=game.quests.gateOpen?'#FFE9A8':'#2A2440';ctx.fillRect(x-14,y-50,30,70);
+  ctx.fillStyle='rgba(10,16,36,.75)';ctx.fillRect(x-76,y-92,152,20);ctx.fillStyle='#FFD75E';ctx.font='bold 12px system-ui';ctx.textAlign='center';ctx.fillText('The gate hungers for 1 ❤',x,y-78);
+}
+function drawTrancePx(t){
+  const pu=.5+.5*Math.sin(game.time*.07);
+  const col=t.power==='earth'?'255,180,80':t.power==='water'?'120,200,255':'200,240,255';
+  ctx.fillStyle='rgba('+col+','+(.22+pu*.26)+')';ctx.beginPath();ctx.arc(wx(t.x),wy(t.y),30+pu*8,0,6.28);ctx.fill();
+  ctx.fillStyle='rgba('+col+',.95)';ctx.font='18px system-ui';ctx.textAlign='center';
+  ctx.fillText(t.power==='earth'?'🪨':t.power==='water'?'💧':'🌪',wx(t.x),wy(t.y)+6);
+}
+function drawHolePx(){
+  const pu=.5+.5*Math.sin(game.time*.06);
+  ctx.fillStyle='#0A0614';ctx.beginPath();ctx.ellipse(wx(DEPTH_HOLE.x),wy(DEPTH_HOLE.y),46,24,0,0,6.28);ctx.fill();
+  ctx.strokeStyle='rgba(155,123,255,'+(.4+pu*.4)+')';ctx.lineWidth=4;ctx.beginPath();ctx.ellipse(wx(DEPTH_HOLE.x),wy(DEPTH_HOLE.y),46,24,0,0,6.28);ctx.stroke();
+}
+function drawUpdraftPx(){
+  const u=UPDRAFT,pu=.5+.5*Math.sin(game.time*.08);
+  ctx.strokeStyle='rgba(190,240,255,'+(.3+pu*.3)+')';ctx.lineWidth=3;
+  for(let i=0;i<3;i++){ctx.beginPath();ctx.ellipse(wx(u.x),wy(u.y)-i*16-pu*10,30-i*7,9,0,0,6.28);ctx.stroke()}
+}
+function drawHUD(){
+  drawWindow(10,10,240,64);
+  ctx.fillStyle='#fff';ctx.font='bold 15px monospace';ctx.textAlign='left';
+  ctx.fillText('ZAZAMAR',26,34);
+  ctx.fillText('HP '+game.hp+'/'+game.maxHp,26,56);
+  barPx(120,46,110,10,game.hp/game.maxHp,'#ffd75e');
+  drawWindow(10,canvas.height-56,300,46);
+  ctx.fillStyle='#fff';ctx.font='bold 13px monospace';
+  ctx.fillText('❤ frags '+game.fragments+'/5   hearts '+game.earnedHearts,26,canvas.height-28);
+  ctx.textAlign='right';ctx.fillStyle='rgba(10,16,36,.72)';ctx.fillRect(canvas.width-236,12,224,24);
+  ctx.fillStyle='#EAF1FF';ctx.font='11px system-ui';ctx.fillText('Tab: map · E: talk · M: sound',canvas.width-22,28);
+}
+// FF window chrome: blue gradient, double border, rounded
+function drawWindow(x,y,w,h){
+  const grad=ctx.createLinearGradient(0,y,0,y+h);
+  grad.addColorStop(0,'#2a3d9e');grad.addColorStop(1,'#101b52');
+  ctx.fillStyle=grad;
+  roundRect(x,y,w,h,8);ctx.fill();
+  ctx.strokeStyle='#e8ecff';ctx.lineWidth=3;roundRect(x+1.5,y+1.5,w-3,h-3,7);ctx.stroke();
+  ctx.strokeStyle='#5a6db8';ctx.lineWidth=1.5;roundRect(x+5,y+5,w-10,h-10,5);ctx.stroke();
+}
+function roundRect(x,y,w,h,r){ctx.beginPath();ctx.moveTo(x+r,y);ctx.arcTo(x+w,y,x+w,y+h,r);ctx.arcTo(x+w,y+h,x,y+h,r);ctx.arcTo(x,y+h,x,y,r);ctx.arcTo(x,y,x+w,y,r);ctx.closePath()}
+function barPx(x,y,w,h,f,col){
+  ctx.fillStyle='#0a1024';ctx.fillRect(x,y,w,h);
+  ctx.fillStyle=col;ctx.fillRect(x+1,y+1,Math.max(0,(w-2)*f),h-2);
+}
+
+// ============================================================
+//  BATTLE DRAW — the FF screen
+// ============================================================
+function drawBattle(){
+  const W=canvas.width,H=canvas.height;
+  // backdrop: sky band + field, per world
+  const skyG=ctx.createLinearGradient(0,0,0,H*.35);
+  if(worldId==='depths'){skyG.addColorStop(0,'#1A1030');skyG.addColorStop(1,'#241A3E')}
+  else{skyG.addColorStop(0,'#7EC8F2');skyG.addColorStop(1,'#B8E4F8')}
+  ctx.fillStyle=skyG;ctx.fillRect(0,0,W,H*.35);
+  // mountains on the horizon — with snowcaps, like the reference art
+  for(let i=0;i<6;i++){
+    const bx=i*180-40,peakX=i*180+60,peakY=H*.2;
+    ctx.fillStyle=worldId==='depths'?'#150E28':'#5a7fae';
+    ctx.beginPath();ctx.moveTo(bx,H*.35);ctx.lineTo(peakX,peakY);ctx.lineTo(bx+200,H*.35);ctx.closePath();ctx.fill();
+    if(worldId!=='depths'){
+      ctx.fillStyle='#e8f2fa';
+      ctx.beginPath();ctx.moveTo(peakX-22,peakY+18);ctx.lineTo(peakX,peakY);ctx.lineTo(peakX+22,peakY+18);
+      ctx.lineTo(peakX+12,peakY+14);ctx.lineTo(peakX+4,peakY+22);ctx.lineTo(peakX-8,peakY+13);ctx.closePath();ctx.fill();
+    }
+  }
+  const fieldG=ctx.createLinearGradient(0,H*.35,0,H);
+  if(worldId==='depths'){fieldG.addColorStop(0,'#342a52');fieldG.addColorStop(1,'#1a1230')}
+  else{fieldG.addColorStop(0,'#63b04a');fieldG.addColorStop(1,'#3f8830')}
+  ctx.fillStyle=fieldG;ctx.fillRect(0,H*.35,W,H*.65);
+  // grass texture bands — flat green reads as "vector", speckle reads as "SNES"
+  if(worldId!=='depths'){
+    for(let band=0;band<5;band++){
+      const by=H*.38+band*H*.12,sc=1+band*.4;
+      ctx.fillStyle='rgba(47,110,32,.35)';
+      for(let i=0;i<48;i++){const sx=((i*211+band*97)%W);ctx.fillRect(sx,by+((i*67)%40),3*sc,2*sc)}
+      ctx.fillStyle='rgba(150,220,110,.3)';
+      for(let i=0;i<30;i++){const sx=((i*173+band*151)%W);ctx.fillRect(sx,by+((i*41)%40),2*sc,3*sc)}
+    }
+  }
+  // battle path swoosh
+  ctx.fillStyle=worldId==='depths'?'rgba(137,200,237,.12)':'rgba(219,191,148,.5)';
+  ctx.beginPath();ctx.ellipse(W/2,H*.62,W*.42,H*.16,0,0,6.28);ctx.fill();
+
+  // enemies (LEFT) — with a subtle idle bob
+  battle.enemies.forEach((e,i)=>{
+    if(e.dead)return;
+    const bob=Math.sin(game.time*.06+i)*3;
+    const scale=e.kind==='general'?2:1.4;
+    ctx.save();ctx.translate(e.x,e.y+bob);ctx.scale(scale,scale);
+    ctx.fillStyle='rgba(0,0,0,.3)';ctx.beginPath();ctx.ellipse(24,52,17,5,0,0,6.28);ctx.fill();
+    if(e.flash>0&&e.flash%4<2){ctx.globalAlpha=.4}
+    ctx.drawImage(bakeSprite(e.kind,true),0,0);
+    ctx.restore();
+  });
+
+  // Zazamar (RIGHT), lunging when attacking
+  let hx=W-240,hy=H*.44;
+  if(battle.phase==='anim'&&battle.animKind==='attack'){
+    const t=battle.animT/26;
+    hx=W-240-Math.sin(t*Math.PI)*(W-460);
+  }
+  ctx.save();ctx.translate(hx,hy);ctx.scale(1.8,1.8);
+  ctx.fillStyle='rgba(0,0,0,.3)';ctx.beginPath();ctx.ellipse(24,52,15,5,0,0,6.28);ctx.fill();
+  ctx.drawImage(bakeSprite('zaza',true),0,0);
+  // his sword, drawn and ready — angled forward like a fighter's idle stance
+  const swordBob=Math.sin(game.time*.08)*1.5;
+  ctx.save();ctx.translate(2,26+swordBob);ctx.rotate(-.55);
+  ctx.fillStyle='#c8d6e8';ctx.fillRect(-20,-2,20,3.5);          // blade
+  ctx.fillStyle='#eef4ff';ctx.fillRect(-20,-2,20,1.4);          // edge shine
+  ctx.fillStyle='#8a6b42';ctx.fillRect(0,-3.5,4,7);             // guard
+  ctx.fillStyle='#5a3a1e';ctx.fillRect(4,-2,6,3.5);             // grip
+  ctx.restore();
+  // sword slash flash
+  if(battle.phase==='anim'&&battle.animKind==='attack'&&battle.animT>8&&battle.animT<18){
+    ctx.strokeStyle='#fff';ctx.lineWidth=3;ctx.beginPath();ctx.arc(-6,20,26,2.4,4.4);ctx.stroke();
+  }
+  ctx.restore();
+  // bend effect
+  if(battle.phase==='anim'&&battle.animKind.startsWith('bend:')&&battle.animT>6&&battle.animT<24){
+    const key=battle.animKind.slice(5),bend=BENDS.find(b=>b.key===key);
+    ctx.fillStyle=bend.col;ctx.globalAlpha=.5+.4*Math.sin(battle.animT);
+    if(key==='earth'){for(let i=0;i<5;i++)ctx.fillRect(90+i*60,H*.5-((battle.animT-6)*4)%60,22,34)}
+    else if(key==='air'){ctx.beginPath();ctx.ellipse(240,H*.5,180,60,-.2,0,6.28);ctx.fill()}
+    else{ctx.beginPath();ctx.arc(hx+40,hy+40,50+battle.animT*2,0,6.28);ctx.fill()}
+    ctx.globalAlpha=1;
+  }
+  // damage pops
+  for(const pop of battle.dmgPops){
+    ctx.fillStyle=pop.col;ctx.font='bold '+(20-pop.t*.15)+'px monospace';ctx.textAlign='center';
+    ctx.fillText(pop.txt,pop.x,pop.y-pop.t*1.2);
+  }
+
+  // --- the FF windows ---
+  drawWindow(W/2-220,14,440,44);
+  ctx.fillStyle='#fff';ctx.font='bold 16px monospace';ctx.textAlign='center';
+  ctx.fillText(battle.logMsg,W/2,42);
+
+  // enemy roster (bottom LEFT)
+  drawWindow(14,H-150,300,136);
+  ctx.font='bold 15px monospace';ctx.textAlign='left';
+  const byName={};
+  battle.enemies.forEach(e=>{if(!e.dead){byName[e.name]=byName[e.name]||0;byName[e.name]++}});
+  let ly=H-120;
+  Object.keys(byName).forEach(n=>{ctx.fillStyle='#fff';ctx.fillText(n,34,ly);ctx.textAlign='right';ctx.fillText(''+byName[n],290,ly);ctx.textAlign='left';ly+=26});
+  if(!Object.keys(byName).length){ctx.fillStyle='#8fe3a5';ctx.fillText('— cleared —',34,ly)}
+
+  // party status (bottom RIGHT)
+  drawWindow(W-420,H-150,406,136);
+  ctx.fillStyle='#fff';ctx.font='bold 15px monospace';ctx.textAlign='left';
+  ctx.fillText('Zazamar',W-396,H-116);
+  ctx.textAlign='right';ctx.fillText(game.hp+'/'+game.maxHp,W-180,H-116);
+  barPx(W-160,H-128,130,12,game.hp/game.maxHp,game.hp<game.maxHp*.3?'#e8563f':'#ffd75e');
+  ctx.textAlign='left';ctx.fillStyle='#9fb6e6';ctx.font='12px monospace';
+  ctx.fillText(game.hasTunic?'Tunic of the Sky':'Traveler\'s clothes',W-396,H-92);
+
+  // command menu (middle LEFT, above roster) — or win/lose text
+  if(battle.phase==='command'){
+    const opts=battle.sub<0?commandList():bendList();
+    const mh=opts.length*30+24;
+    drawWindow(14,H-160-mh,190,mh);
+    opts.forEach((o,i)=>{
+      ctx.fillStyle=i===battle.menu?'#ffd75e':'#fff';
+      ctx.font='bold 16px monospace';ctx.textAlign='left';
+      ctx.fillText((i===battle.menu?'▶ ':'  ')+o,32,H-160-mh+30+i*30);
+    });
+  }else if(battle.phase==='win'){
+    drawWindow(W/2-180,H*.34,360,74);
+    ctx.fillStyle='#ffd75e';ctx.font='bold 22px monospace';ctx.textAlign='center';
+    ctx.fillText('VICTORY!',W/2,H*.34+32);
+    ctx.fillStyle='#fff';ctx.font='13px monospace';
+    ctx.fillText('+'+battle.enemies.length+' fragments  ·  Enter to continue',W/2,H*.34+56);
+  }else if(battle.phase==='lose'){
+    drawWindow(W/2-200,H*.34,400,74);
+    ctx.fillStyle='#ff8c8c';ctx.font='bold 20px monospace';ctx.textAlign='center';
+    ctx.fillText('Zazamar falls…',W/2,H*.34+32);
+    ctx.fillStyle='#fff';ctx.font='13px monospace';
+    ctx.fillText('The Lake will bring you back — press Enter',W/2,H*.34+56);
+  }
+}
+
+function loop(){update();draw();requestAnimationFrame(loop)}
+window.step=n=>{for(let i=0;i<n;i++)update();draw()};
+populate();
+playScene('intro');
+loop();
+</script>
+</body>
+</html>

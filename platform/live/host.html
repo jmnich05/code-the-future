@@ -148,7 +148,7 @@ h1{ font-family:var(--display); font-weight:700; font-size:clamp(2rem,4.5vw,3.4r
 <script src="/platform/lib/avatar.js"></script>
 <script>
   // default = the CURRENT session's module (kids just type /platform/live/)
-  var _m = (new URLSearchParams(location.search).get('m')||'3').replace(/[^0-9]/g,'')||'2';
+  var _m = (new URLSearchParams(location.search).get('m')||'4').replace(/[^0-9]/g,'')||'4';
   document.write('<script src="config-m'+_m+'.js"><\/script>');
 </script>
 <script type="module">
@@ -162,7 +162,7 @@ document.getElementById('sess').textContent = S.title;
 // module switcher — add each module here as its config-mN.js ships. Clicking
 // reloads the host in that room; the lobby announcement makes every kid
 // device hop over automatically.
-const SESSIONS = ['1','2','3'];
+const SESSIONS = ['1','2','3','4'];
 const _cur = (S.id||'m1').replace(/\D/g,'')||'1';
 document.getElementById('modsw').innerHTML = SESSIONS.map(n=>
   '<a href="?m='+n+'" class="'+(n===_cur?'on':'')+'">M'+n+'</a>').join('');

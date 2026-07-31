@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Coach Notes · DEMO DAY — Code the Future</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap');
+:root{ --display:'Space Grotesk',sans-serif; --body:'Plus Jakarta Sans',system-ui,sans-serif; --mono:'JetBrains Mono',monospace;
+  --purple:#9B7BFF; --teal:#26C7D1; --green:#3FD08A; --amber:#FFC44D; --coral:#FF7452; --ink:#EAF1FF; --sub:#9fb6e6; }
+*{ box-sizing:border-box; margin:0; }
+body{ font-family:var(--body); color:var(--ink); line-height:1.55; padding:0 0 60px;
+  background:radial-gradient(120% 60% at 85% -5%, rgba(155,123,255,.2), transparent 55%), linear-gradient(170deg,#101a3c,#0A1024 55%,#070C1A); min-height:100vh; }
+.wrap{ max-width:680px; margin:0 auto; padding:18px 14px; }
+.head h1{ font-family:var(--display); font-size:1.45rem; line-height:1.15; margin:4px 0 2px; }
+.kick{ font-family:var(--mono); font-size:11px; letter-spacing:.2em; text-transform:uppercase; color:var(--purple); }
+.head p{ color:var(--sub); font-size:.92rem; }
+nav{ position:sticky; top:0; z-index:50; display:flex; gap:7px; overflow-x:auto; -webkit-overflow-scrolling:touch; scrollbar-width:none;
+  padding:10px 14px; background:rgba(10,16,36,.92); backdrop-filter:blur(10px); border-bottom:1px solid rgba(255,255,255,.1); }
+nav::-webkit-scrollbar{ display:none; }
+nav a{ flex:none; font-family:var(--mono); font-size:11px; letter-spacing:.05em; color:#cfe3ff; text-decoration:none;
+  background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.15); border-radius:999px; padding:7px 12px; }
+h2{ font-family:var(--display); font-size:1.15rem; margin:26px 0 4px; scroll-margin-top:64px; }
+h2 .tm{ font-family:var(--mono); font-size:11px; color:var(--teal); letter-spacing:.06em; display:block; margin-bottom:2px; }
+.card{ background:rgba(255,255,255,.05); border:1.5px solid rgba(127,227,255,.22); border-radius:16px; padding:13px 15px; margin:10px 0; }
+.card.say{ border-color:rgba(63,208,138,.4); background:rgba(63,208,138,.07); }
+.card.why{ border-color:rgba(155,123,255,.4); background:rgba(155,123,255,.08); }
+.card.warn{ border-color:rgba(255,116,82,.45); background:rgba(255,116,82,.08); }
+.lab{ font-family:var(--mono); font-size:10px; letter-spacing:.18em; text-transform:uppercase; margin-bottom:5px; }
+.say .lab{ color:#9BF5C7; } .why .lab{ color:#c9b8ff; } .warn .lab{ color:#ffc9b8; } .card .lab{ color:#7ef0e6; }
+ul{ padding-left:20px; margin:6px 0; } li{ margin:5px 0; }
+b{ color:#fff; }
+.q{ color:#FFD98C; font-weight:700; }
+details{ background:rgba(255,255,255,.05); border:1.5px solid rgba(127,227,255,.22); border-radius:16px; margin:10px 0; overflow:hidden; }
+summary{ cursor:pointer; padding:12px 15px; font-family:var(--display); font-weight:700; font-size:1rem; list-style:none; display:flex; gap:9px; align-items:center; }
+summary::-webkit-details-marker{ display:none; }
+summary .pill{ margin-left:auto; flex:none; font-family:var(--mono); font-size:10px; letter-spacing:.08em; border-radius:999px; padding:4px 9px;
+  background:rgba(63,208,138,.2); color:#9BF5C7; border:1px solid rgba(63,208,138,.5); }
+details > div{ padding:0 15px 13px; border-top:1px solid rgba(255,255,255,.08); }
+details p{ margin:9px 0; font-size:.94rem; }
+.tip{ background:rgba(255,196,77,.1); border:1.5px solid rgba(255,196,77,.35); border-radius:14px; padding:11px 14px; margin:10px 0; font-size:.92rem; }
+.links{ display:flex; flex-wrap:wrap; gap:8px; margin-top:8px; }
+.links a{ font-family:var(--mono); font-size:11px; color:#9BF5C7; text-decoration:none; background:rgba(63,208,138,.1); border:1px solid rgba(63,208,138,.35); border-radius:999px; padding:7px 12px; }
+</style>
+</head>
+<body>
+<nav>
+  <a href="#runsheet">🗺 Run sheet</a><a href="#stories">📰 Stories</a><a href="#answerkey">📡 Answer key</a>
+  <a href="#demos">🎬 Demos</a><a href="#parents">📦 Parents</a>
+</nav>
+<div class="wrap">
+  <div class="head">
+    <div class="kick">Saturday · 10:00–11:30 AM · Final session</div>
+    <h1>🏆 DEMO DAY — Coach Notes &amp; Answer Key</h1>
+    <p>South Central Regional Library · Module 4 finale. Shape: two true stories → 10-question trivia
+       (live scoreboard, PRIZE) → then the main event: <b>the four reveals</b>, each kid presenting and
+       playing their build full screen. Parents in the room. Kleenex optional but recommended.</p>
+    <div class="links">
+      <a href="/platform/live/host.html?m=4">📡 Host screen (opens on M4)</a>
+      <a href="/platform/m4/demoday.html">🎬 Demo launcher</a>
+      <a href="/platform/live/join-qr.html">📱 Printable join QR</a>
+    </div>
+  </div>
+
+  <h2 id="runsheet"><span class="tm">The whole morning at a glance</span>🗺 Run sheet</h2>
+  <div class="card"><div class="lab">Timings · 90 minutes</div>
+    <ul>
+      <li><b>9:45</b> — Tech check (below). Roundup video looping on the projector as families arrive.</li>
+      <li><b>10:00–10:10</b> — Welcome + celebrate. Four weeks in one breath. Kids join the Live Room.</li>
+      <li><b>10:10–10:20</b> — Two true stories (the wow, the pause). Same rhythm as session 3.</li>
+      <li><b>10:20–10:45</b> — 🎮 Trivia: 10 questions, live scoreboard, champion takes the PRIZE.</li>
+      <li><b>10:45–11:20</b> — 🎬 THE REVEALS. ~8 min per kid: three questions out loud, then full screen. Parents cheer.</li>
+      <li><b>11:20–11:30</b> — The send-off: showcase link to parents, certificates/photos, "this is v1 of YOU."</li>
+    </ul></div>
+  <div class="tip">📡 <b>Tech check:</b> projector → <b>host.html</b> (now defaults to M4; M1–M4 chips top-left).
+    Kids join at <b>codethefuture.net/platform/live/</b> or the QR. Tap <b>↺ Scores</b> once before kids arrive.
+    Then open the <b>demo launcher</b> in a second tab and — important — visit
+    <b>studentdemos.codethefuture.net</b> once and enter the cohort password so the demo buttons open instantly later.
+    Emery's opens her real live site; no password needed.</div>
+
+  <h2 id="stories"><span class="tm">Big screen · stages 2–3</span>📰 The two stories — talking points</h2>
+  <div class="card say"><div class="lab">Story 1 · The wow — 🔥 the AI that smelled smoke</div>
+    <ul>
+      <li>Real, this summer: states across the western US put <b>AI cameras</b> on mountaintops. In Arizona's Coconino
+        National Forest one flagged a smudge → <b>human analysts confirmed</b> → crews contained the fire at ~7 acres.</li>
+      <li>Land the pattern hard: <b>AI watched · humans decided · firefighters acted.</b> It's the camp's whole mental
+        model wearing a firefighter helmet.</li>
+      <li>Sources if a parent asks: ABC News wire on western states' AI detection; WBUR On Point, "How AI is helping
+        fight wildfires" (Jul 10, 2026).</li>
+    </ul></div>
+  <div class="card warn"><div class="lab">Story 2 · The pause — 💬 is your chatbot your friend?</div>
+    <ul>
+      <li>Education Week, late July: survey found <b>~1 in 3 minors</b> use AI chatbots for advice about feelings and
+        relationships. And the EU's AI Act transparency rules land <b>Aug 2</b> — chatbots must disclose they're AI.</li>
+      <li>Tone: zero fear-mongering. These four know more than most adults — say that. The line that lands:
+        <span class="q">"An AI predicts words. It can be kind — it can't care."</span></li>
+      <li>Watch for a kid volunteering something personal here. Don't probe in the group; circle back 1:1 and loop parents if needed.</li>
+      <li>If asked "do YOU use AI for feelings, Mr. Jon?" — honest answer wins: for building, constantly; for the big
+        stuff, people. Model it.</li>
+    </ul></div>
+
+  <h2 id="answerkey"><span class="tm">Keep this off the projector 😄</span>📡 Trivia answer key — all 10, with the WHY</h2>
+  <details open><summary>Q1 · What does a LOOP do?<span class="pill">🔁 Repeats steps over and over</span></summary><div>
+    <p><b>Why:</b> loops repeat steps — how a game redraws 60×/second, how every app they demo today keeps running.
+    <span class="q">Ask-back:</span> "Where is the loop in the app YOU built?" (every one of them has an answer — plant this for the demos.)</p></div></details>
+  <details><summary>Q2 · Exact steps for a computer are called…<span class="pill">📋 An algorithm</span></summary><div>
+    <p><b>Why:</b> exact steps, followed exactly — mistakes included. <span class="q">Ask:</span> "What happens if two steps swap places?" (It breaks. Order is everything.)</p></div></details>
+  <details><summary>Q3 · Finding and fixing a mistake is…<span class="pill">🐛 Debugging</span></summary><div>
+    <p><b>Why:</b> every kid in the room did real debugging this week. Name one live if the moment's right —
+    Charlotte watched a single missing function take down half her studio yesterday. One missing piece, half the app dark. That's why builders test.</p></div></details>
+  <details><summary>Q4 · What you type to tell an AI what you want…<span class="pill">💬 A prompt</span></summary><div>
+    <p><b>Why:</b> clear thinking beats fast typing. <span class="q">Ask:</span> "What's ONE word you added to a prompt this week that changed everything?"</p></div></details>
+  <details><summary>Q5 · An AI does what you ___, not what you ___<span class="pill">⌨️ ASK · MEANT</span></summary><div>
+    <p><b>Why:</b> the golden rule of the whole camp. Sloppy goal in, surprise out. Ties story 1 (humans decide) to story 2 (know what the machine is).</p></div></details>
+  <details><summary>Q6 · v1, v2, v3… what's that called?<span class="pill">🔂 Iteration</span></summary><div>
+    <p><b>Why:</b> build → play → notice → improve → ship. They lived it: five days, five versions.
+    <span class="q">Ask:</span> "Which version number are you demoing today?" (Devon's deep in double digits — let him flex.)</p></div></details>
+  <details><summary>Q7 · Why test AI in a sandbox?<span class="pill">🧱 Mistakes stay inside</span></summary><div>
+    <p><b>Why:</b> callback to session 3's escape story — the walls exist because powerful helpers get watched first, trusted second.
+    Their own Studio preview runs in a sandbox too — that's why their apps can't touch the internet in the little window.</p></div></details>
+  <details><summary>Q8 · Who sent the fire trucks?<span class="pill">🧑‍🚒 Humans made the call</span></summary><div>
+    <p><b>Why:</b> straight from story 1 — attention check + the deepest lesson of the summer wearing a helmet.
+    <span class="q">Ask:</span> "In your app, what does the human decide that the AI never should?"</p></div></details>
+  <details><summary>Q9 · Who built today's apps?<span class="pill">🧒 The builders in this room</span></summary><div>
+    <p><b>Why:</b> the room answers in unison or you've done something wrong. 😄 The AI typed fast; every idea and every
+    "no, make it MORE like this" was a kid's. Look at the parents when you read this one.</p></div></details>
+  <details><summary>Q10 · What does it mean to SHIP?<span class="pill">🚀 Release it — done beats perfect</span></summary><div>
+    <p><b>Why:</b> the perfect final question — the answer is what happens next. "In ten minutes, all four of you
+    are officially shipped software builders." Straight into the champion board, prize, DEMOS.</p></div></details>
+
+  <h2 id="demos"><span class="tm">The main event · 10:45</span>🎬 Running the reveals</h2>
+  <div class="card"><div class="lab">Mechanics</div>
+    <ul>
+      <li>Open <b>/platform/m4/demoday.html</b> on the projector. Four cards, poster art, confetti on every ship.</li>
+      <li>Tap a kid → the <b>three questions fill the screen</b> while they answer out loud:
+        <b>What did I build? · Why did I build it? · What did I learn?</b></li>
+      <li>Then <b>▶ PLAY IT FULL SCREEN</b> — opens their real app in its own tab (deluxe mode turns on automatically:
+        full effects and sound). Kid drives. Esc / close tab to come back; their card now says ✓ SHIPPED IT.</li>
+      <li>Suggested order — momentum builds: <b>Adam → Charlotte → Devon → Emery</b>. Adam's arcade action opens hot;
+        Charlotte's trophy is a guaranteed room-wide cheer (3 pipes!); Devon's is the epic; Emery's closer is the
+        stunner — <b>a real store on the real internet</b>, and both features she requested on the platform board are live in it.</li>
+    </ul></div>
+  <div class="card say"><div class="lab">Coaching the three answers</div>
+    <ul>
+      <li>Shy kid? Feed the first sentence: <span class="q">"Charlotte, finish this: I built a…"</span> Then get out of the way.</li>
+      <li>For Q3 ("what did I learn"), accept anything true — "that I can" is a complete answer. Repeat it back louder.</li>
+      <li>If an app hiccups mid-demo, narrate it as the curriculum: <span class="q">"Ladies and gentlemen — a LIVE bug!
+        What do real builders do?"</span> Kids: find it, stay calm, fix one thing. Best possible ending, honestly.</li>
+      <li>If a kid shipped a newer version at the session, open their Studio full screen instead — the launcher note covers it.</li>
+    </ul></div>
+
+  <h2 id="parents"><span class="tm">The send-off · 11:20</span>📦 The parents' package</h2>
+  <div class="card"><div class="lab">What goes home</div>
+    <ul>
+      <li>All four builds live at <b>studentdemos.codethefuture.net</b> — the Showcase. Works on any device, any browser.</li>
+      <li>Password is the <b>cohort number</b> (same one parents used at registration). Any username, then the password.</li>
+      <li>Adam, Charlotte, and Devon's run entirely on-page — sound on, full screen, share freely with grandparents.
+        Emery's card opens her real live shop at <b>made-yours-emery.netlify.app</b> (no password).</li>
+    </ul></div>
+  <div class="card say"><div class="lab">Copy-paste for the follow-up text/email to parents</div>
+    <p>"The demos are yours to keep! 🏆 Every app the kids built is live at
+    <b>studentdemos.codethefuture.net</b> — enter any name plus the cohort number as the password. Play them, share
+    them, let the kids show them off. They built real software this summer, and it's on the real internet."</p></div>
+  <div class="tip">💡 Last beat of the summer, use it: <span class="q">"Every app you saw today is a v-something.
+    Nothing you love is ever finished — and neither are you. You're all v1 of the builders you're becoming.
+    Keep shipping."</span> Then certificates, photos, and let the kids play each other's games until the library kicks you out.</div>
+</div>
+</body>
+</html>
