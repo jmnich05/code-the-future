@@ -16,41 +16,50 @@ window.LIVE_SESSION = {
       sub:'Four weeks. Four builders. Four real apps. Log in and join the room — two true stories, ten questions for the trophy, and then… YOU take the stage.' },
 
     // ========================= STORY 1 · THE WOW =========================
-    // AI wildfire cameras in the western US: the Diamond Fire (Coconino
-    // National Forest, AZ) was spotted by an AI camera watching the treeline,
-    // verified by human analysts, and contained before it passed ~7 acres.
-    // ABC News wire + WBUR On Point (Jul 10, 2026).
-    { id:'story1', type:'story', kicker:'True story · this summer', e:'🔥',
-      title:'The AI that smelled smoke before anyone else',
-      happened:[
-        'Out west, wildfires are one of the scariest things there is. By the time a person sees the smoke, a fire can already be <b>huge</b>.',
-        'So this summer, states like Arizona put <b>AI cameras</b> on mountaintops — watching millions of trees, all day, all night. Nobody can stare at a forest 24/7. A computer can.',
-        'One day a camera in Arizona saw a tiny gray smudge over the forest. The AI said "<b>that could be smoke</b>." Human experts looked — not a cloud, not dust. <b>Fire.</b> Firefighters raced out and stopped it at just <b>7 acres</b> — about 5 soccer fields, instead of a whole forest.'
-      ],
-      means:[
-        'Hear the pattern? <b>The AI watched. The humans decided. The firefighters acted.</b> Nobody was replaced — everybody got faster.',
-        'That is EXACTLY the loop you learned all summer: <b>code handles the loop, AI spots the patterns, humans make the calls.</b>',
-        'The people who built that fire-spotter started exactly where you are right now: with a loop, an idea, and a "what if…"'
-      ],
-      ask:'AI cameras now watch forests for smoke. What ELSE should an AI keep watch over — and who should make the final call?' },
+    // AI wildfire cameras in the western US: an AI camera in Arizona's
+    // Coconino National Forest flagged smoke, human analysts verified, and
+    // crews contained the fire at ~7 acres. ABC News wire + WBUR On Point
+    // (Jul 10, 2026). Told as SLIDES — one visual, one line, Next-paced.
+    { id:'s1a', type:'slide', e:'🔥', img:'/platform/assets/live-m4/fire1.jpg',
+      kicker:'True story · this summer',
+      title:'Fires start <b>small</b>.',
+      sub:'By the time a person spots the smoke… it can already be too late.' },
+    { id:'s1b', type:'slide', e:'🔥', img:'/platform/assets/live-m4/fire2.jpg',
+      kicker:'The western United States · 2026',
+      title:'So AI cameras started watching the forests.',
+      sub:'Millions of trees. All day. All night. No person can do that — a computer can.' },
+    { id:'s1c', type:'slide', e:'🔥', img:'/platform/assets/live-m4/fire3.jpg',
+      kicker:'Arizona · real event',
+      title:'The AI saw a smudge. Humans checked. <b>FIRE.</b>',
+      sub:'Stopped at 7 acres — five soccer fields, instead of a whole forest.' },
+    { id:'s1d', type:'slide', e:'🔥',
+      kicker:'The pattern — say it with me',
+      title:'AI <b>watched</b>. Humans <b>decided</b>. Firefighters <b>acted</b>.',
+      sub:'The exact loop you learned all summer. Nobody replaced — everybody faster.',
+      ask:'What ELSE should an AI keep watch over — and who makes the final call?' },
 
     // ========================= STORY 2 · THE PAUSE =========================
-    // Education Week (late July 2026): survey — 31% of minors use AI chatbots
-    // for advice about feelings/relationships. And the EU's AI Act transparency
-    // rules take effect Aug 2, 2026: chatbots must disclose they are AI.
-    { id:'story2', type:'story', kicker:'Also true · this month', e:'💬', tone:'warn',
-      title:'Is your chatbot your friend?',
-      happened:[
-        'A big survey of kids came out this month. About <b>1 in 3 kids</b> said they talk to AI chatbots for <b>advice about feelings</b> — friendship stuff, crush stuff, real-life stuff.',
-        'Think about that: kids asking a computer program the questions they used to ask a friend, a parent, or a coach.',
-        'And starting <b>this Sunday</b>, a new law kicks in across Europe: every chatbot must <b>tell you it\'s an AI</b> — because sometimes, people honestly can\'t tell anymore.'
-      ],
-      means:[
-        'You four know something most kids don\'t: an AI <b>predicts words</b>. It can be kind, helpful, even funny — but it doesn\'t <b>know</b> you, and it doesn\'t <b>care</b> about you. It can\'t. You learned why.',
-        'AI is an amazing <b>teammate for building things</b> — you proved that this summer. But for the big feelings? Humans. Every time. People who can actually show up for you.',
-        'New law or not, you\'ve got the superpower the law is trying to give everyone else: <b>you know what\'s on the other side of the screen.</b>'
-      ],
-      ask:'Should an AI HAVE to tell you it\'s not a person? Would you want to know — and does knowing change what you\'d share with it?' },
+    // Real, this summer: lawyers in an Australian murder case filed AI-written
+    // documents citing court cases that never existed (Yahoo/AP coverage), and
+    // research (MIT, via Axios) found AI uses MORE confident language when
+    // it's wrong. The camp lesson wearing a courtroom costume: humans verify.
+    { id:'s2a', type:'slide', e:'⚖️', tone:'warn', img:'/platform/assets/live-m4/law1.jpg',
+      kicker:'Also true · this summer',
+      title:'A robot walked into a courtroom…',
+      sub:'Real lawyers, in a REAL trial, let an AI write their court papers. They didn\'t check them.' },
+    { id:'s2b', type:'slide', e:'⚖️', tone:'warn',
+      kicker:'What was in those papers',
+      title:'Court cases that <b>never existed</b>.',
+      sub:'Made-up names. Made-up quotes. The AI invented all of it — and sounded completely sure.' },
+    { id:'s2c', type:'slide', e:'🔍', tone:'warn', img:'/platform/assets/live-m4/law2.jpg',
+      kicker:'Scientists measured it',
+      title:'The wronger AI is… the <b>surer</b> it sounds.',
+      sub:'Wrong answers come out MORE confident than right ones. Let that sink in.' },
+    { id:'s2d', type:'slide', e:'🔍', tone:'warn',
+      kicker:'The rule that saves you',
+      title:'AI <b>predicts</b>. Humans <b>verify</b>.',
+      sub:'The lawyers forgot to check. You four never will — you\'ve been checking all summer.',
+      ask:'An AI tells you something and sounds 100% sure. What do you do BEFORE you trust it?' },
 
     // ===================== TRIVIA · 10 QUESTIONS =====================
     // Grand-finale review across all four modules + their build week.

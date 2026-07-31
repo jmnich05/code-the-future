@@ -318,9 +318,9 @@ function render(){
   else if(s.type==='video'){
     view.innerHTML='<div class="wait">🍿</div><h1>Movie time!</h1><p class="sub">Eyes UP on the big screen — devices down for a few minutes. We\'re watching this one together!</p>';
   }
-  else if(s.type==='story'){
-    view.innerHTML='<div class="wait">'+(s.e||'📰')+'</div><h1>Eyes on the big screen</h1><p class="sub">'+esc(s.title)+'</p>'+
-      (s.ask?'<div class="banner on info">💬 '+esc(s.ask)+'</div>':'')+
+  else if(s.type==='story' || s.type==='slide'){
+    view.innerHTML='<div class="wait">'+(s.e||'📰')+'</div><h1>Eyes on the big screen</h1><p class="sub">'+esc(String(s.title||'').replace(/<[^>]*>/g,''))+'</p>'+
+      (s.ask?'<div class="banner on info">💬 '+esc(String(s.ask).replace(/<[^>]*>/g,''))+'</div>':'')+
       '<p class="sub" style="opacity:.7">Devices down for a minute — this one\'s a real story, and we\'re going to talk about it.</p>';
   }
   else if(s.type==='vote'){
