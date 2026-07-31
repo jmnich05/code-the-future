@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow">
+<link rel="icon" type="image/svg+xml" href="/platform/assets/logo-icon-tile.svg">
+<title>Code the Future — The Roundup</title>
+<style>
+  /* The Demo Day sizzle reel. One page, plays like a trailer.
+     Music = CTFMusic, our own zero-license procedural engine. */
+  :root{ --teal:#26C7D1; --blue:#3D74FF; --amber:#FFB320; --coral:#FF5A38; --green:#3FD08A; --purple:#9B7BFF; }
+  *{ box-sizing:border-box; margin:0; }
+  html,body{ height:100%; }
+  body{ font-family:'Plus Jakarta Sans',system-ui,-apple-system,sans-serif; color:#EAF1FF; overflow:hidden;
+    background:
+      radial-gradient(120% 90% at 82% -10%, rgba(155,123,255,.25), transparent 55%),
+      radial-gradient(120% 90% at 8% 110%, rgba(38,199,209,.25), transparent 55%),
+      linear-gradient(165deg,#101a3c,#0A1024 55%,#070C1A); }
+  #stage{ position:fixed; inset:0; display:grid; place-items:center; }
+  .scene{ position:absolute; inset:0; display:grid; place-items:center; text-align:center; padding:24px;
+    opacity:0; pointer-events:none; transform:scale(.96); transition:opacity .7s, transform .7s; }
+  .scene.on{ opacity:1; pointer-events:auto; transform:none; }
+  .kicker{ font-family:ui-monospace,monospace; font-size:clamp(12px,2.6vw,15px); letter-spacing:.3em;
+    text-transform:uppercase; color:var(--teal); margin-bottom:14px; }
+  h1{ font-weight:800; font-size:clamp(2.2rem,8.5vw,4.6rem); line-height:1.04; letter-spacing:-.02em; }
+  h1 .grad{ background:linear-gradient(110deg,#9fb6ff,var(--purple) 50%,var(--teal));
+    -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent; }
+  .sub{ color:#9FB0D0; font-size:clamp(1rem,3.4vw,1.3rem); margin-top:16px; max-width:34ch; margin-inline:auto; }
+
+  /* intro play button — audio needs a tap anyway, so make the tap the moment */
+  #playBtn{ margin-top:34px; font:800 clamp(1.05rem,3.5vw,1.3rem)/1 inherit; color:#06122b; cursor:pointer;
+    border:none; padding:18px 44px; border-radius:99px; letter-spacing:.04em;
+    background:linear-gradient(120deg,#7FE3FF,var(--teal)); box-shadow:0 0 34px rgba(38,199,209,.55);
+    animation:pulse 1.6s infinite; }
+  @keyframes pulse{ 50%{ transform:scale(1.05); box-shadow:0 0 50px rgba(38,199,209,.8);} }
+
+  .bigline{ font-weight:800; font-size:clamp(1.9rem,7vw,3.6rem); line-height:1.1; letter-spacing:-.02em; }
+  .bigline em{ font-style:normal; color:var(--amber); }
+
+  /* builder profile cards */
+  .cardwrap{ display:flex; gap:clamp(10px,2vw,22px); justify-content:center; flex-wrap:wrap; max-width:1050px; }
+  .kid{ width:clamp(140px,21vw,220px); background:rgba(14,22,49,.9); border:1px solid rgba(137,200,237,.25);
+    border-radius:18px; overflow:hidden; transform:translateY(30px); opacity:0; transition:transform .6s, opacity .6s; }
+  .scene.on .kid{ transform:none; opacity:1; }
+  .kid:nth-child(2){ transition-delay:.15s } .kid:nth-child(3){ transition-delay:.3s } .kid:nth-child(4){ transition-delay:.45s }
+  .kid img{ width:100%; aspect-ratio:2/3; object-fit:cover; display:block; }
+  .kid .emcard{ width:100%; aspect-ratio:2/3; display:grid; place-items:center; background:#f7f3ea; color:#1b1b1d; }
+  .kid .emcard .mark{ font-family:Georgia,'Times New Roman',serif; font-weight:700; font-size:clamp(1.2rem,3vw,1.8rem); }
+  .kid .emcard .mark i{ color:#ff765f; font-style:normal; }
+  .kid .emcard .chips{ display:flex; gap:6px; margin-top:12px; }
+  .kid .emcard .chips span{ width:16px; height:16px; border-radius:5px; display:block; }
+  .kid .meta{ padding:10px 12px 14px; }
+  .kid .nm{ font-weight:800; font-size:clamp(.95rem,2.4vw,1.1rem); }
+  .kid .ttl{ color:var(--teal); font-family:ui-monospace,monospace; font-size:clamp(.65rem,1.8vw,.75rem);
+    letter-spacing:.14em; text-transform:uppercase; margin-top:4px; }
+
+  .lock{ font-size:clamp(3rem,10vw,5rem); }
+  .classified{ display:inline-block; margin-top:18px; padding:10px 22px; border:3px dashed var(--coral);
+    border-radius:12px; color:var(--coral); font-family:ui-monospace,monospace; font-weight:700;
+    letter-spacing:.24em; font-size:clamp(.9rem,3vw,1.2rem); transform:rotate(-3deg); }
+
+  .when{ margin-top:26px; display:grid; gap:10px; justify-items:center; }
+  .when .row{ background:rgba(14,22,49,.9); border:1px solid rgba(137,200,237,.3); border-radius:99px;
+    padding:12px 26px; font-weight:700; font-size:clamp(.95rem,3vw,1.15rem); }
+  .when .row b{ color:var(--amber); }
+
+  #skip{ position:fixed; right:16px; bottom:14px; background:none; border:none; color:#44507a;
+    font:700 11px ui-monospace,monospace; letter-spacing:.16em; cursor:pointer; }
+  #confetti{ position:fixed; inset:0; pointer-events:none; }
+  .logo{ display:flex; align-items:center; justify-content:center; gap:10px; font-weight:800;
+    font-size:clamp(1rem,3vw,1.2rem); margin-bottom:18px; }
+  .logo img{ width:34px; height:34px; }
+  .logo span{ color:var(--teal); }
+</style>
+</head>
+<body>
+<canvas id="confetti"></canvas>
+<div id="stage">
+
+  <section class="scene on" id="s0">
+    <div>
+      <div class="logo"><img src="/platform/assets/logo-icon-tile.svg" alt="">Code the <span>Future</span></div>
+      <div class="kicker">The Summer Launchpad Roundup</div>
+      <h1>Five weeks.<br><span class="grad">Four builders.</span></h1>
+      <p class="sub">Turn your sound on. This one's worth it.</p>
+      <button id="playBtn">▶ &nbsp;PLAY THE ROUNDUP</button>
+    </div>
+  </section>
+
+  <section class="scene" id="s1">
+    <div>
+      <div class="kicker">This summer, four kids…</div>
+      <p class="bigline">…learned to think in <em>loops</em>,<br>
+        talk to <em>AI</em> like builders,<br>
+        and ship <em>real software</em>.</p>
+    </div>
+  </section>
+
+  <section class="scene" id="s2">
+    <div>
+      <div class="kicker">Meet the builders</div>
+      <div class="cardwrap">
+        <div class="kid"><img src="/platform/assets/roundup/adam-pixel-nova-greatwall.jpg" alt="Adam's builder avatar">
+          <div class="meta"><div class="nm">Adam</div><div class="ttl">“pixel nova”</div></div></div>
+        <div class="kid"><img src="/platform/assets/roundup/charlotte-baddie-tajmahal.jpg" alt="Charlotte's builder avatar">
+          <div class="meta"><div class="nm">Charlotte</div><div class="ttl">“baddie”</div></div></div>
+        <div class="kid"><img src="/platform/assets/roundup/devon-stickmen-unite-pyramids.jpg" alt="Devon's builder avatar">
+          <div class="meta"><div class="nm">Devon</div><div class="ttl">“stickmen unite”</div></div></div>
+        <div class="kid">
+          <div class="emcard"><div>
+            <div class="mark">made yours<i>.</i></div>
+            <div class="chips"><span style="background:#ff765f"></span><span style="background:#7aa7ff"></span><span style="background:#f5cf4f"></span><span style="background:#b9a2ff"></span></div>
+          </div></div>
+          <div class="meta"><div class="nm">Emery</div><div class="ttl">founder, “made yours”</div></div></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="scene" id="s3">
+    <div>
+      <div class="kicker">Five days. Five versions. Their call.</div>
+      <p class="bigline">Every build planned,<br>prompted, tested &amp; shipped<br><em>by the kids themselves.</em></p>
+      <p class="sub">Code handles the loop. AI handles the judgment. Kids make the calls.</p>
+    </div>
+  </section>
+
+  <section class="scene" id="s4">
+    <div>
+      <div class="lock">🔒</div>
+      <p class="bigline">What did they build?</p>
+      <div class="classified">CLASSIFIED&nbsp;·&nbsp;UNTIL&nbsp;SATURDAY</div>
+      <p class="sub">Four final projects. Revealed live, by their builders. No spoilers — not even here.</p>
+    </div>
+  </section>
+
+  <section class="scene" id="s5">
+    <div>
+      <div class="logo"><img src="/platform/assets/logo-icon-tile.svg" alt="">Code the <span>Future</span></div>
+      <div class="kicker">Demo Day</div>
+      <h1><span class="grad">See it live.</span></h1>
+      <div class="when">
+        <div class="row">📅 <b>Saturday, August 1</b></div>
+        <div class="row">🕙 <b>10:00 – 11:30 AM</b> Eastern</div>
+        <div class="row">📍 <b>South Central Public Library</b></div>
+      </div>
+      <p class="sub">Bring the family. The builders will take it from there.</p>
+    </div>
+  </section>
+
+</div>
+<button id="skip" hidden>SKIP ▸▸</button>
+
+<script src="/platform/assets/roundup/music.js"></script>
+<script>
+// ---- the trailer sequencer ----
+const SCENES = ["s0","s1","s2","s3","s4","s5"];
+const HOLD   = [0, 4600, 7200, 5200, 5200, 0];   // ms per scene (0 = wait/stay)
+let idx = 0, timer = null, started = false;
+
+function show(i){
+  idx = i;
+  SCENES.forEach((id, n) => document.getElementById(id).classList.toggle("on", n === i));
+  if (i === SCENES.length - 1) confettiOn = true;   // finale
+  clearTimeout(timer);
+  if (HOLD[i] > 0) timer = setTimeout(() => show(i + 1), HOLD[i]);
+}
+
+document.getElementById("playBtn").onclick = () => {
+  started = true;
+  try{ CTFMusic.setVibe("space"); CTFMusic.start(); }catch(e){}
+  document.getElementById("skip").hidden = false;
+  show(1);
+};
+document.getElementById("skip").onclick = () => show(Math.min(idx + 1, SCENES.length - 1));
+addEventListener("keydown", e => { if (started && (e.key === "ArrowRight" || e.key === " ")) show(Math.min(idx + 1, SCENES.length - 1)); });
+
+// ---- confetti for the finale ----
+const cv = document.getElementById("confetti"), cg = cv.getContext("2d");
+let confettiOn = false, pieces = [];
+function fit(){ cv.width = innerWidth; cv.height = innerHeight; }
+fit(); addEventListener("resize", fit);
+const COLS = ["#26C7D1","#3D74FF","#FFB320","#FF5A38","#3FD08A","#9B7BFF"];
+function tick(){
+  cg.clearRect(0,0,cv.width,cv.height);
+  if (confettiOn && pieces.length < 140 && Math.random() < .4)
+    pieces.push({ x:Math.random()*cv.width, y:-12, vy:1.6+Math.random()*2.4, vx:(Math.random()-.5)*1.4,
+                  r:Math.random()*6.28, vr:(Math.random()-.5)*.2, s:5+Math.random()*7,
+                  c:COLS[Math.floor(Math.random()*COLS.length)] });
+  for (const p of pieces){
+    p.x += p.vx; p.y += p.vy; p.r += p.vr;
+    cg.save(); cg.translate(p.x,p.y); cg.rotate(p.r);
+    cg.fillStyle = p.c; cg.fillRect(-p.s/2,-p.s/2,p.s,p.s*.6); cg.restore();
+  }
+  pieces = pieces.filter(p => p.y < cv.height + 20);
+  requestAnimationFrame(tick);
+}
+tick();
+</script>
+</body>
+</html>
