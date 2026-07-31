@@ -147,6 +147,7 @@
 </div>
 <button id="skip" hidden>SKIP ▸▸</button>
 
+<audio id="theme" src="/platform/assets/roundup/theme.m4a" loop preload="auto"></audio>
 <script src="/platform/assets/roundup/music.js"></script>
 <script>
 // ---- the trailer sequencer ----
@@ -164,7 +165,12 @@ function show(i){
 
 document.getElementById("playBtn").onclick = () => {
   started = true;
-  try{ CTFMusic.setVibe("space"); CTFMusic.start(); }catch(e){}
+  // the real theme song (from our earlier reels); lo-fi engine only as fallback
+  const theme = document.getElementById("theme");
+  theme.volume = 0.9;
+  theme.play().catch(() => {
+    try{ CTFMusic.setVibe("space"); CTFMusic.start(); }catch(e){}
+  });
   document.getElementById("skip").hidden = false;
   show(1);
 };
