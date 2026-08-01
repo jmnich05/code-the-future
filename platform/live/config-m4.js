@@ -116,7 +116,10 @@ window.LIVE_SESSION = {
 
     // ===================== CHAMPION BOARD + HANDOFF =====================
     { id:'board', type:'board', title:'🏆 THE FINAL SCOREBOARD',
-      sub:'Champion takes the prize! Then screens up — it\'s DEMO TIME.' },
+      sub:'Champion takes the prize! Then one last thing before the reveals…' },
+    { id:'premiere', type:'video', title:'🎬 One last thing before the reveals…',
+      src:'/platform/m4/demo-day-final.mp4',
+      sub:'Made this morning. Sound UP.' },
     { id:'end', type:'end', title:'Now the real show begins. 🎬',
       sub:'Four apps. Four builders. Each one answers three questions, then plays it FULL SCREEN.',
       href:'/platform/m4/demoday.html', hrefLabel:'🎬 START THE REVEALS →' }

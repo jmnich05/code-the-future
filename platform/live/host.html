@@ -338,7 +338,10 @@ function render(){
   }
   else if(s.type==='video'){
     html='<div class="kick">'+esc(s.title)+'</div>'+
-      '<div class="vidwrap"><iframe src="https://www.youtube-nocookie.com/embed/'+esc(s.yt)+'?rel=0&modestbranding=1" title="'+esc(s.title)+'" allow="accelerometer; encrypted-media; picture-in-picture" allowfullscreen></iframe></div>'+
+      (s.src
+        // a local file plays right on the host — no YouTube, no ads, no network
+        ? '<video src="'+esc(s.src)+'" controls playsinline style="width:min(86vw,150vh);max-height:68vh;border-radius:16px;box-shadow:0 0 40px rgba(155,123,255,.35);background:#000"></video>'
+        : '<div class="vidwrap"><iframe src="https://www.youtube-nocookie.com/embed/'+esc(s.yt)+'?rel=0&modestbranding=1" title="'+esc(s.title)+'" allow="accelerometer; encrypted-media; picture-in-picture" allowfullscreen></iframe></div>')+
       '<p class="sub">'+esc(s.sub||'')+'</p>';
   }
   else if(s.type==='vote'){
