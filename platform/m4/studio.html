@@ -432,6 +432,26 @@ async function open(){
 const cur = () => state.versions[state.versions.length - 1];
 const dayDone = n => !!(state.days && state.days[n]);
 
+// ---- OPEN STUDIO: after all five days ship, one free build per day until
+// the season ends. Same rules, same pacing — the camp just keeps going.
+const OPEN_END = "2026-09-30";
+const openKey = () => "open:" + new Date().toLocaleDateString("en-CA");
+const allFiveDone = () => [1,2,3,4,5].every(dayDone);
+const openEnded = () => new Date().toLocaleDateString("en-CA") > OPEN_END;
+const inOpenStudio = () => allFiveDone() && !openEnded();
+const OPEN_DAY = {
+  n:5, title:"Open Studio", emoji:"🌱",
+  teach:"Camp shipped. YOUR app didn't stop. Every day until <b>September 30</b> you get " +
+        "<b>one build</b> — same as build week. Play your app first, then tell the AI what's next. " +
+        "Small and real beats big and vague, every time.",
+  qs:[
+    { q:"What's ONE thing you want to add or change today?", hint:"One thing. The smallest version of it." },
+    { q:"How should it work? Walk me through it.", hint:"Step by step, like you're explaining to a friend." },
+    { q:"Anything broken or annoying to fix while we're in there?", hint:"Builders fix as they go." },
+    { q:"What should stay exactly the way it is?", hint:"Protect your favorite part." }
+  ]
+};
+
 function render(){
   const d = activeDay();            // the day they're on, not the calendar's
   const today = todayDay();
@@ -477,7 +497,7 @@ function render(){
     </div>
 
     <div class="panel">
-      <div class="ph">${day.emoji} Day ${d} · ${esc(day.title)}</div>
+      <div class="ph">${built && d===5 && inOpenStudio() ? "🌱 Open Studio · one build a day until Sept 30" : `${day.emoji} Day ${d} · ${esc(day.title)}`}</div>
       <div class="body" id="dayBody"></div>
     </div>
   </div>`;
@@ -513,6 +533,31 @@ function renderHist(){
 
 function renderDay(d, day, built){
   const body = $("dayBody");
+
+  // OPEN STUDIO — all five days shipped, the season's still on
+  if(built && d === 5 && inOpenStudio()){
+    const todays = state.days[openKey()];
+    if(todays){
+      body.innerHTML = `<div class="teach">✅ <b>Today's build is done!</b> That's the newest version on
+        the left — hit <b>⛶ Play full screen</b> to try it.</div>
+        <p class="sub"><b>What you asked for today:</b></p>
+        <ul style="margin:8px 0 0 18px;color:var(--sub);font-size:.9rem;line-height:1.7">
+          ${(todays.answers||[]).map(a=>`<li>${esc(a.a)}</li>`).join("")}</ul>
+        <div class="note">One build per day — same as build week. Come back tomorrow!
+        Open Studio runs until <b>September 30</b>.</div>`;
+      return;
+    }
+    body.innerHTML = `<div class="teach">${OPEN_DAY.teach}</div>
+      ${OPEN_DAY.qs.map((q,i)=>`<div class="qa"><label>${i+1}. ${esc(q.q)}</label>
+        <div class="hint">${esc(q.hint)}</div>
+        <textarea id="q${i}" maxlength="700" placeholder="Type your answer…"></textarea></div>`).join("")}
+      <button class="btn green big" id="build">🌱 Build today's version</button>
+      <div class="note">You get <b>one build today</b>. Take your time on the answers — that's where the thinking goes.</div>
+      <div id="msg"></div>`;
+    $("build").onclick = () => doBuild(5, OPEN_DAY, openKey());
+    return;
+  }
+
   if(built){
     const done = state.days[d];
     body.innerHTML = `<div class="teach">✅ <b>Day ${d} is built!</b> That's your new version on the left —
@@ -522,7 +567,8 @@ function renderDay(d, day, built){
         ${(done.answers||[]).map(a=>`<li>${esc(a.a)}</li>`).join("")}</ul>
       <div class="note">One build per day — that's on purpose. Real teams think first and ship once.
       ${d<5?"Come back tomorrow for Day "+(d+1)+": "+DAYS[d].title+".":"That's all five days. You shipped it. 🚀"}</div>
-      ${d<5?"":'<div class="warn" style="margin-top:12px">🏆 Your app is finished. Show it to somebody today.</div>'}`;
+      ${d<5?"":'<div class="warn" style="margin-top:12px">🏆 Your app is finished. Show it to somebody today.'+
+        (openEnded()?'':' And Open Studio is on — one build a day until <b>Sept 30</b>.')+'</div>'}`;
     return;
   }
   const teach = day.teach.replace(/\{app\}/g, project.name.replace(/^\S+\s/, ""));
@@ -562,7 +608,8 @@ function busy(on, title){
 
 const JOB = () => "m4job:" + project.slug;
 
-async function doBuild(d, day){
+async function doBuild(d, day, storeKey){
+  storeKey = storeKey || d;                       // Open Studio stores under a per-date key
   if(beforeStart()){ $("msg").innerHTML = '<div class="err">Day 1 opens Monday morning — your build is saved for then!</div>'; return; }
   const answers = day.qs.map((q,i) => ({ q:q.q, a: ($("q"+i).value||"").trim() })).filter(a => a.a);
   if(answers.length < 2){ $("msg").innerHTML = '<div class="err">Answer at least two questions first — the AI needs your ideas to work with!</div>'; return; }
@@ -602,7 +649,7 @@ async function doBuild(d, day){
       const why = (job && job.error) || "That took too long. Let's try once more.";
       $("msg").innerHTML = '<div class="err">'+esc(why)+
         ' <button class="btn ghost" id="retry" style="margin-left:8px">Try once more</button></div>';
-      const rt = $("retry"); if(rt) rt.onclick = () => doBuild(d, day);
+      const rt = $("retry"); if(rt) rt.onclick = () => doBuild(d, day, storeKey);
       return;
     }
 
@@ -611,7 +658,7 @@ async function doBuild(d, day){
       changelog: answers.map(a => a.a) });
     if(state.versions.length > 8) state.versions.splice(0, state.versions.length - 8);
     state.features = (state.features||[]).concat(answers.map(a => a.a)).slice(-30);
-    state.days = state.days || {}; state.days[d] = { at:new Date().toISOString(), answers };
+    state.days = state.days || {}; state.days[storeKey] = { at:new Date().toISOString(), answers };
     await saveState();
     busy(false);
     render();
@@ -620,7 +667,7 @@ async function doBuild(d, day){
     busy(false); $("build").disabled = false;
     $("msg").innerHTML = '<div class="err">Couldn\'t reach the Studio. Check your internet, then try again.'+
       ' <button class="btn ghost" id="retry" style="margin-left:8px">Try once more</button></div>';
-    const rt = $("retry"); if(rt) rt.onclick = () => doBuild(d, day);
+    const rt = $("retry"); if(rt) rt.onclick = () => doBuild(d, day, storeKey);
   }
 }
 
