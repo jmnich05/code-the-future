@@ -118,6 +118,7 @@ window.LIVE_SESSION = {
     { id:'board', type:'board', title:'🏆 THE FINAL SCOREBOARD',
       sub:'Champion takes the prize! Then screens up — it\'s DEMO TIME.' },
     { id:'end', type:'end', title:'Now the real show begins. 🎬',
-      sub:'Four apps. Four builders. Each one answers three questions, then plays it FULL SCREEN. Host: open /platform/m4/demoday.html' }
+      sub:'Four apps. Four builders. Each one answers three questions, then plays it FULL SCREEN.',
+      href:'/platform/m4/demoday.html', hrefLabel:'🎬 START THE REVEALS →' }
   ]
 };
