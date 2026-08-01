@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Adam's Space Shooter — v9</title>
+<style>
+html,body{margin:0;height:100%;overflow:hidden;background:#08040d}canvas{display:block;width:100vw;height:100vh}
+.hud,.score,.bars,.cooldown,#wave,.hint,.bossbar,#mode{position:fixed;font-family:system-ui,sans-serif;text-shadow:0 0 8px #ad74d6;color:#c5afd0}
+.hud{left:14px;top:12px;font-size:13px;font-weight:700}.hud b{color:#f5e8ff}.score{right:16px;top:12px;text-align:right;color:#f5e8ff;font:800 26px monospace}.score span{display:block;font:700 11px system-ui;letter-spacing:.16em;color:#c5afd0}
+.bars{left:14px;top:46px;width:min(220px,44vw);font-size:11px;font-weight:700}.bar{margin-bottom:7px}.lbl{display:flex;justify-content:space-between;margin-bottom:3px}.track{height:11px;border:1px solid #72547e;border-radius:99px;overflow:hidden;background:#1b1023;box-shadow:inset 0 0 7px #000}.fill{height:100%;border-radius:99px;transition:width .12s}#shieldFill{background:#b65cc8;box-shadow:0 0 9px #b65cc8}#hullFill{background:#c73e68;box-shadow:0 0 9px #c73e68}#coolFill{background:#8d5de8;box-shadow:0 0 9px #8d5de8}
+.cooldown{left:14px;top:128px;width:min(220px,44vw);font-size:11px;font-weight:700}.cooldown .lbl{color:#e0c2ef}
+#wave{right:16px;top:64px;color:#d98be6;font-size:12px;font-weight:700}.hint{left:50%;bottom:24px;transform:translateX(-50%);text-align:center;color:#d98be6;font-size:14px;font-weight:700;letter-spacing:.08em}.bossbar{display:none;left:50%;top:14px;transform:translateX(-50%);width:min(380px,55vw);text-align:center;color:#ff9cb0;font-size:12px;font-weight:800;letter-spacing:.15em}.bossbar.on{display:block}.bossbar .fill{background:#c73e68}
+.over,.title{display:none;position:fixed;inset:0;place-items:center;text-align:center;background:#08040ddd;color:#f5e8ff;font-family:system-ui}.over.on,.title.on{display:grid}.over button,.title button{border:1px solid #d98be6;border-radius:99px;padding:13px 28px;background:#311340;color:#f5e8ff;font-weight:800;font-size:16px;box-shadow:0 0 18px #8d3d9c}.over p{color:#c5afd0}
+.title{background:radial-gradient(circle at 50% 35%,#30133f 0,#100815 38%,#050308 78%)}.titleBox{padding:34px 48px;border:1px solid #754481;background:#0b0710cc;box-shadow:0 0 35px #5a2567}.title h1{margin:0;color:#f0d8ff;font-family:Georgia,serif;font-size:clamp(38px,8vw,72px);letter-spacing:.08em;text-shadow:0 0 16px #bd65cc}.title p{margin:10px 0 8px;color:#d4a7dd;letter-spacing:.16em;font-size:12px}.title .credit{margin:0 0 20px;color:#8f719a;font-size:11px;letter-spacing:.1em}.title .moon{font-size:36px;margin-bottom:6px}
+#mode{right:14px;bottom:12px;color:#73537c;font-size:10px}
+</style>
+</head>
+<body>
+<canvas id="game"></canvas>
+<div class="hud"><b>ADAM'S SPACE SHOOTER</b> · v9 — catship plasma mission</div>
+<div class="bars">
+<div class="bar"><div class="lbl"><span>SHIELD</span><span id="shieldNum">100</span></div><div class="track"><div class="fill" id="shieldFill"></div></div></div>
+<div class="bar"><div class="lbl"><span>HULL</span><span id="hullNum">100</span></div><div class="track"><div class="fill" id="hullFill"></div></div></div>
+</div>
+<div class="cooldown"><div class="lbl"><span>PLASMA BLASTER</span><span id="coolText">READY!</span></div><div class="track"><div class="fill" id="coolFill"></div></div></div>
+<div class="score"><span>SCORE</span><b id="scoreNum">0</b></div>
+<div id="wave">WAVE 1</div>
+<div class="bossbar" id="bossbar">👾 MOTHERSHIP<div class="track"><div class="fill" id="bossFill"></div></div></div>
+<div class="hint" id="hint">WASD to fly · SPACE fires plasma · M for sound</div>
+<div class="title on" id="title"><div class="titleBox"><div class="moon">🌙</div><h1>SPACE SHOOTER</h1><p>ADAM'S GOTH CATSHIP MISSION</p><p class="credit">by: robot dude</p><button id="start">Start mission</button></div></div>
+<div class="over" id="over"><div><h1>The cat ship is down 🐱</h1><p id="overMsg"></p><button id="again">Fly again</button></div></div>
+<div id="mode">PREVIEW MODE · by: robot dude</div>
+<script>
+// Adam's game v9:
+// · Shield and hull keep regenerating.
+// · Lots more asteroids fly through space.
+// · Plasma has a real cooldown meter.
+// · Every 10 points from a mini alien brings in a mothership!
+// · Better space art and a tougher mission.
+// · A goth title screen makes this space shooter feel like Adam's own.
+// · A defeated mothership gets a ton of fireworks!
+
+const cv=document.getElementById('game'),g=cv.getContext('2d');
+let W,H;function fit(){W=cv.width=innerWidth;H=cv.height=innerHeight}fit();addEventListener('resize',fit);
+const ship={x:160,y:300,vx:0,vy:0,shield:100,hull:100,max:420};
+let keys={},touching=false,bullets=[],enemyShots=[],rocks=[],aliens=[],bits=[],fireworks=[],boss=null;
+let score=0,wave=1,alive=true,started=false,cooldown=0,rockTimer=0,alienTimer=2,muzzle=0;
+const stars=Array.from({length:180},()=>({x:Math.random()*2200,y:Math.random(),s:30+Math.random()*160,z:Math.random()*2+1}));
+let AC,soundOn=true;
+function beep(f,d){if(!soundOn)return;try{AC=AC||new AudioContext();let o=AC.createOscillator(),v=AC.createGain();o.frequency.value=f;v.gain.value=.035;o.connect(v);v.connect(AC.destination);v.gain.exponentialRampToValueAtTime(.001,AC.currentTime+d);o.start();o.stop(AC.currentTime+d)}catch(e){}}
+addEventListener('keydown',e=>{keys[e.key.toLowerCase()]=true;document.getElementById('hint').style.opacity=0;if(e.key===' ')e.preventDefault();if(e.key.toLowerCase()==='m')soundOn=!soundOn});
+addEventListener('keyup',e=>keys[e.key.toLowerCase()]=false);
+cv.addEventListener('touchstart',()=>{touching=true;document.getElementById('hint').style.opacity=0},{passive:true});
+cv.addEventListener('touchend',()=>touching=false);
+cv.addEventListener('touchmove',e=>{let t=e.touches[0];ship.x+=(t.clientX-ship.x)*.18;ship.y+=(t.clientY-ship.y)*.18},{passive:true});
+
+function fire(){
+ bullets.push({x:ship.x+38,y:ship.y-5,vx:900},{x:ship.x+38,y:ship.y+7,vx:900});
+ cooldown=.55;muzzle=.12;beep(650,.07);
+}
+function rock(){
+ let r=15+Math.random()*28;rocks.push({x:W+r,y:45+Math.random()*(H-90),r,vx:-150-Math.random()*170,vy:(Math.random()-.5)*60,hp:r>31?2:1,rot:Math.random()*6,spin:(Math.random()-.5)*2});
+}
+function alien(){
+ aliens.push({x:W+40,y:80+Math.random()*(H-160),vx:-120-Math.random()*70,hp:2,wob:Math.random()*6,gun:1.2+Math.random()*1.5});
+}
+function mother(){
+ boss={x:W+140,y:H/2,hp:24,max:24,gun:1.3,enter:true};
+ document.getElementById('bossbar').classList.add('on');beep(90,.35);
+}
+function sparks(x,y,c,n=12){for(let i=0;i<n;i++){let a=Math.random()*6.28,s=40+Math.random()*180;bits.push({x,y,vx:Math.cos(a)*s,vy:Math.sin(a)*s,life:.4+Math.random()*.5,c})}}
+function firework(x,y){
+ let colors=['#ff5fa2','#f7c6ff','#8fe9ff','#ffd45c','#a987ff','#ffffff'];
+ for(let i=0;i<38;i++){let a=Math.random()*6.28,s=70+Math.random()*270;fireworks.push({x,y,vx:Math.cos(a)*s,vy:Math.sin(a)*s,life:.8+Math.random()*.6,c:colors[Math.floor(Math.random()*colors.length)]})}
+}
+function victoryFireworks(){
+ for(let i=0;i<14;i++)setTimeout(()=>firework(W*.2+Math.random()*W*.65,H*.12+Math.random()*H*.65),i*120);
+}
+function damage(n){
+ if(ship.shield>0)ship.shield=Math.max(0,ship.shield-n);else ship.hull=Math.max(0,ship.hull-n);
+ sparks(ship.x,ship.y,'#ff7452',14);beep(160,.12);
+ if(ship.hull<=0){alive=false;document.getElementById('overMsg').textContent='You scored '+score+'. The cloned Earth is still out there…';document.getElementById('over').classList.add('on')}
+}
+function hitAlien(a){
+ a.hp--;sparks(a.x,a.y,'#b67cff',7);
+ if(a.hp<=0){a.dead=true;score+=10;sparks(a.x,a.y,'#ffb320',24);beep(110,.22);
+   // A mini alien is worth 10 points, so its destruction calls a mothership.
+   if(!boss)mother();
+ }
+}
+function restart(){
+ ship.x=160;ship.y=H/2;ship.vx=ship.vy=0;ship.shield=ship.hull=100;bullets=[];enemyShots=[];rocks=[];aliens=[];bits=[];fireworks=[];boss=null;score=0;wave=1;alive=true;started=true;cooldown=0;rockTimer=0;alienTimer=2;
+ document.getElementById('over').classList.remove('on');document.getElementById('bossbar').classList.remove('on');
+}
+document.getElementById('again').onclick=restart;
+document.getElementById('start').onclick=()=>{started=true;document.getElementById('title').classList.remove('on');};
+
+function drawShip(){
+ g.save();g.translate(ship.x,ship.y);
+ if(ship.shield>0){g.fillStyle='rgba(182,92,200,.08)';g.beginPath();g.ellipse(0,0,50,37,0,0,6.28);g.fill();g.strokeStyle='rgba(206,129,232,.82)';g.lineWidth=2;g.beginPath();g.ellipse(0,0,50,37,0,0,6.28);g.stroke()}
+ let flame=g.createLinearGradient(-65,0,-25,0);flame.addColorStop(0,'rgba(255,106,54,0)');flame.addColorStop(.5,'#ffb320');flame.addColorStop(1,'#fff2bb');g.fillStyle=flame;g.beginPath();g.moveTo(-30,-9);g.lineTo(-67-Math.random()*10,0);g.lineTo(-30,9);g.fill();
+ g.fillStyle='#344158';g.beginPath();g.moveTo(-38,-14);g.lineTo(-16,-27);g.lineTo(28,-22);g.lineTo(46,0);g.lineTo(28,22);g.lineTo(-16,27);g.lineTo(-38,14);g.closePath();g.fill();
+ g.fillStyle='#aebed2';g.beginPath();g.ellipse(0,3,38,22,0,0,6.28);g.fill();
+ let metal=g.createLinearGradient(-28,-15,35,18);metal.addColorStop(0,'#f5fbff');metal.addColorStop(.5,'#b8c8df');metal.addColorStop(1,'#66718e');g.fillStyle=metal;g.beginPath();g.ellipse(3,-1,33,19,0,0,6.28);g.fill();
+ g.fillStyle='#ff75bd';g.beginPath();g.moveTo(-9,-14);g.lineTo(-4,-31);g.lineTo(7,-15);g.moveTo(8,-15);g.lineTo(16,-31);g.lineTo(24,-14);g.fill();
+ g.fillStyle='#ffd6e8';g.beginPath();g.ellipse(7,5,18,11,0,0,6.28);g.fill();
+ let glass=g.createRadialGradient(11,-5,1,11,-5,15);glass.addColorStop(0,'#f8d6ff');glass.addColorStop(.3,'#b65cc8');glass.addColorStop(1,'#48205c');g.fillStyle=glass;g.beginPath();g.ellipse(11,-3,13,9,0,0,6.28);g.fill();
+ g.fillStyle='white';g.beginPath();g.arc(15,-5,3,0,6.28);g.fill();
+ g.strokeStyle='#e8563f';g.lineWidth=3;g.beginPath();g.moveTo(-25,-4);g.lineTo(29,-2);g.stroke();
+ g.strokeStyle='#ffffff';g.lineWidth=1.5;g.beginPath();g.moveTo(29,-3);g.lineTo(43,-6);g.moveTo(29,3);g.lineTo(43,3);g.moveTo(29,7);g.lineTo(43,10);g.stroke();
+ if(muzzle>0){g.fillStyle='rgba(210,150,255,.8)';g.beginPath();g.arc(43,1,18*muzzle*8,0,6.28);g.fill()}g.restore();
+}
+let last=performance.now();
+function loop(now){
+ let dt=Math.min(.05,(now-last)/1000);last=now;
+ if(alive&&started){
+  let ax=(keys.a||keys.arrowleft?-1:0)+(keys.d||keys.arrowright?1:0),ay=(keys.w||keys.arrowup?-1:0)+(keys.s||keys.arrowdown?1:0);
+  ship.vx+=(ax*1400-ship.vx*4.2)*dt;ship.vy+=(ay*1400-ship.vy*4.2)*dt;
+  ship.vx=Math.max(-ship.max,Math.min(ship.max,ship.vx));ship.vy=Math.max(-ship.max,Math.min(ship.max,ship.vy));
+  ship.x=Math.max(50,Math.min(W-50,ship.x+ship.vx*dt));ship.y=Math.max(45,Math.min(H-40,ship.y+ship.vy*dt));
+  ship.shield=Math.min(100,ship.shield+8*dt);ship.hull=Math.min(100,ship.hull+3*dt);
+  cooldown-=dt;if((keys[' ']||touching)&&cooldown<=0)fire();
+  rockTimer-=dt;if(rockTimer<=0){rock();rockTimer=.18} // more asteroids make the mission tougher
+  alienTimer-=dt;if(alienTimer<=0){alien();alienTimer=2.8}
+ }
+ muzzle=Math.max(0,muzzle-dt);
+ bullets.forEach(b=>b.x+=b.vx*dt);bullets=bullets.filter(b=>b.x<W+70);
+ enemyShots.forEach(b=>{b.x+=b.vx*dt;b.y+=b.vy*dt});enemyShots=enemyShots.filter(b=>b.x>-20&&b.y>-20&&b.y<H+20);
+ rocks.forEach(r=>{r.x+=r.vx*dt;r.y+=r.vy*dt;r.rot+=r.spin*dt});rocks=rocks.filter(r=>r.x>-80);
+ aliens.forEach(a=>{a.x+=a.vx*dt;a.wob+=dt;a.gun-=dt;if(a.gun<=0&&a.x>ship.x){let q=Math.atan2(ship.y-a.y,ship.x-a.x);enemyShots.push({x:a.x,y:a.y,vx:Math.cos(q)*330,vy:Math.sin(q)*330});a.gun=1.8}});
+ aliens=aliens.filter(a=>a.x>-70&&!a.dead);
+ if(boss){if(boss.enter){boss.x-=120*dt;if(boss.x<W-150)boss.enter=false}else{boss.y+=Math.sin(now/700)*.5;boss.gun-=dt;if(boss.gun<=0){let q=Math.atan2(ship.y-boss.y,ship.x-boss.x);enemyShots.push({x:boss.x-75,y:boss.y,vx:Math.cos(q)*340,vy:Math.sin(q)*340});boss.gun=1.15}}}
+ for(let b of bullets){
+  for(let r of rocks)if(!b.dead&&(b.x-r.x)**2+(b.y-r.y)**2<r.r*r.r){b.dead=true;if(--r.hp<=0){r.dead=true;score+=2;sparks(r.x,r.y,'#ffb320',15)}}
+  for(let a of aliens)if(!b.dead&&!a.dead&&(b.x-a.x)**2+(b.y-a.y)**2<700){b.dead=true;hitAlien(a)}
+  if(!b.dead&&boss&&(b.x-boss.x)**2/12000+(b.y-boss.y)**2/2500<1){b.dead=true;if(--boss.hp<=0){sparks(boss.x,boss.y,'#ff9cb0',45);firework(boss.x,boss.y);victoryFireworks();score+=20;wave++;boss=null;document.getElementById('bossbar').classList.remove('on');beep(780,.3)}}
+ }
+ bullets=bullets.filter(b=>!b.dead);rocks=rocks.filter(r=>!r.dead);
+ if(alive&&started){
+  for(let b of enemyShots)if((b.x-ship.x)**2+(b.y-ship.y)**2<650){b.dead=true;damage(6)}
+  for(let r of rocks)if((r.x-ship.x)**2+(r.y-ship.y)**2<(r.r+24)**2){r.dead=true;damage(6)}
+  for(let a of aliens)if((a.x-ship.x)**2+(a.y-ship.y)**2<1800){a.dead=true;damage(6)}
+ } enemyShots=enemyShots.filter(b=>!b.dead);
+ bits.forEach(p=>{p.x+=p.vx*dt;p.y+=p.vy*dt;p.life-=dt});bits=bits.filter(p=>p.life>0);
+ fireworks.forEach(p=>{p.x+=p.vx*dt;p.y+=p.vy*dt;p.vy+=130*dt;p.life-=dt});fireworks=fireworks.filter(p=>p.life>0);
+
+ let sky=g.createLinearGradient(0,0,0,H);sky.addColorStop(0,'#1b0824');sky.addColorStop(.5,'#100b1d');sky.addColorStop(1,'#050308');g.fillStyle=sky;g.fillRect(0,0,W,H);
+ let glow=g.createRadialGradient(W*.22,H*.7,5,W*.22,H*.7,H*.6);glow.addColorStop(0,'rgba(116,38,130,.25)');glow.addColorStop(1,'rgba(0,0,0,0)');g.fillStyle=glow;g.fillRect(0,0,W,H);
+ for(let s of stars){if(alive&&started)s.x-=s.s*dt;if(s.x<0)s.x=W;g.fillStyle=s.z>2?'#ffffff':'#d9b7e8';g.fillRect(s.x,s.y*H,s.z,s.z)}
+ g.fillStyle='#29133c';g.beginPath();g.arc(W*.8,H*.22,130,0,6.28);g.fill();
+ g.fillStyle='#48205c';g.beginPath();g.arc(W*.8-35,H*.22-32,58,0,6.28);g.fill();
+ g.fillStyle='#170a29';g.beginPath();g.arc(W*.8+48,H*.22+48,31,0,6.28);g.fill();
+ g.strokeStyle='#b65cc8';g.lineWidth=4;g.beginPath();g.arc(W*.8,H*.22,134,0,6.28);g.stroke();
+ for(let r of rocks){g.save();g.translate(r.x,r.y);g.rotate(r.rot);let stone=g.createRadialGradient(-r.r*.25,-r.r*.3,2,0,0,r.r);stone.addColorStop(0,'#9aa4ba');stone.addColorStop(.55,'#596178');stone.addColorStop(1,'#30374d');g.fillStyle=stone;g.beginPath();for(let i=0;i<8;i++){let a=i*6.28/8,rr=r.r*(.7+(i%2)*.25);i?g.lineTo(Math.cos(a)*rr,Math.sin(a)*rr):g.moveTo(Math.cos(a)*rr,Math.sin(a)*rr)}g.fill();g.fillStyle='#3f465c';g.beginPath();g.arc(-r.r*.22,-r.r*.14,r.r*.22,0,6.28);g.arc(r.r*.28,r.r*.25,r.r*.14,0,6.28);g.fill();g.strokeStyle='#aab5cd';g.lineWidth=1.5;g.stroke();g.restore()}
+ g.save();g.globalCompositeOperation='lighter';for(let b of bullets){g.fillStyle='#d196ff';g.fillRect(b.x-42,b.y-4,52,8);g.fillStyle='white';g.fillRect(b.x-32,b.y-1,42,2)}for(let b of enemyShots){g.fillStyle='#ff6f9f';g.beginPath();g.arc(b.x,b.y,7,0,6.28);g.fill()}g.restore();
+ for(let a of aliens){g.save();g.translate(a.x,a.y+Math.sin(a.wob*4)*8);g.fillStyle='#211b3d';g.beginPath();g.ellipse(0,7,31,14,0,0,6.28);g.fill();let saucer=g.createLinearGradient(0,-12,0,15);saucer.addColorStop(0,'#9b7bd0');saucer.addColorStop(1,'#4b356e');g.fillStyle=saucer;g.beginPath();g.ellipse(0,2,27,12,0,0,6.28);g.fill();g.fillStyle='#7fe3b0';g.beginPath();g.ellipse(0,-5,13,10,0,Math.PI,0);g.fill();g.fillStyle='#1a3141';g.beginPath();g.arc(-5,-5,3,0,6.28);g.arc(5,-5,3,0,6.28);g.fill();g.restore()}
+ if(boss){g.save();g.translate(boss.x,boss.y);g.fillStyle='#1e1834';g.beginPath();g.ellipse(0,7,124,52,0,0,6.28);g.fill();let motherMetal=g.createLinearGradient(0,-44,0,48);motherMetal.addColorStop(0,'#9075cb');motherMetal.addColorStop(.5,'#5b478a');motherMetal.addColorStop(1,'#332650');g.fillStyle=motherMetal;g.beginPath();g.ellipse(0,0,116,46,0,0,6.28);g.fill();g.fillStyle='#b9a2ff';g.beginPath();g.ellipse(0,-23,54,28,0,Math.PI,0);g.fill();g.fillStyle='#47366f';g.fillRect(-92,4,184,8);g.fillStyle='#d196ff';g.beginPath();g.arc(30,4,16,0,6.28);g.fill();g.fillStyle='white';g.beginPath();g.arc(35,0,4,0,6.28);g.fill();g.strokeStyle='#c9b9ff';g.lineWidth=2;g.beginPath();g.ellipse(0,0,116,46,0,0,6.28);g.stroke();g.restore()}
+ g.save();g.globalCompositeOperation='lighter';for(let p of bits){g.globalAlpha=p.life;g.fillStyle=p.c;g.fillRect(p.x,p.y,4,4)}for(let p of fireworks){g.globalAlpha=Math.min(1,p.life*1.6);g.fillStyle=p.c;g.beginPath();g.arc(p.x,p.y,3,0,6.28);g.fill()}g.restore();
+ if(alive)drawShip();
+
+ document.getElementById('shieldFill').style.width=ship.shield+'%';document.getElementById('hullFill').style.width=ship.hull+'%';
+ document.getElementById('shieldNum').textContent=Math.round(ship.shield);document.getElementById('hullNum').textContent=Math.round(ship.hull);
+ document.getElementById('scoreNum').textContent=score;document.getElementById('wave').textContent='WAVE '+wave;
+ let ready=Math.max(0,Math.min(100,(1-cooldown/.55)*100));document.getElementById('coolFill').style.width=ready+'%';document.getElementById('coolText').textContent=cooldown<=0?'READY!':'COOLING…';
+ if(boss)document.getElementById('bossFill').style.width=(boss.hp/boss.max*100)+'%';
+ requestAnimationFrame(loop);
+}
+requestAnimationFrame(loop);
+</script>
+</body>
+</html>

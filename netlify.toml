@@ -87,6 +87,13 @@
   status = 301
   force = true
 
+# Kids' public share links: unguessable slugs, playable by anyone with the
+# link, invisible to search engines.
+[[headers]]
+  for = "/play/*"
+  [headers.values]
+    X-Robots-Tag = "noindex, nofollow"
+
 [[headers]]
   for = "/*"
   [headers.values]

@@ -1,0 +1,727 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Neon Studio — by the goat Charlotte</title>
+<style>
+  /* ============================================
+     NEON STUDIO — designed by Charlotte Nichols
+     A real art studio in the browser.
+     ============================================ */
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body {
+    height: 100%;
+    overflow: hidden;
+    font-family: -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
+    background: #120d1d;
+    touch-action: none;
+  }
+
+  /* ---- The toolbar across the top ---- */
+  #toolbar {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 20;
+    display: flex; flex-wrap: wrap; align-items: center; gap: 8px;
+    padding: 8px 12px;
+    background: rgba(18, 13, 29, 0.96);
+    border-bottom: 1px solid #8d32b8;
+    box-shadow: 0 2px 16px rgba(255, 45, 149, 0.28);
+  }
+  #appTitle {
+    color: #fff; font-weight: 800; font-size: 18px; letter-spacing: 0.5px;
+    margin-right: 6px; user-select: none;
+    background: linear-gradient(90deg, #ff4eb8, #b026ff, #00e5ff);
+    -webkit-background-clip: text; background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  #goatCredit {
+    color: #f5c6ff; font-size: 12px; font-weight: 800;
+    margin-left: -8px; margin-right: 4px; white-space: nowrap;
+  }
+  .toolBtn {
+    border: 2px solid #3d2554; border-radius: 10px;
+    background: #251633; color: #fff; font-size: 14px;
+    padding: 7px 10px; cursor: pointer; user-select: none;
+  }
+  .toolBtn:active { transform: scale(0.95); }
+  .toolBtn.selected {
+    border-color: #ff4eb8; background: #44204f;
+    box-shadow: 0 0 8px rgba(255,78,184,.75);
+  }
+  .toolBtn:disabled { opacity: .35; cursor: default; }
+
+  /* ---- The color palette dots ---- */
+  #palette { display: flex; flex-wrap: wrap; gap: 5px; align-items: center; }
+  .swatch {
+    width: 24px; height: 24px; border-radius: 50%;
+    border: 2px solid rgba(255,255,255,.25); cursor: pointer;
+  }
+  .swatch.selected {
+    border-color: #fff; box-shadow: 0 0 8px currentColor; transform: scale(1.15);
+  }
+  .group { display: flex; align-items: center; gap: 6px; }
+  .label { color: #d1bfdc; font-size: 12px; user-select: none; }
+  #sizeSlider { width: 90px; accent-color: #ff4eb8; }
+  #bgPicker {
+    width: 34px; height: 30px; border: none; border-radius: 8px;
+    background: #2a2440; cursor: pointer; padding: 2px;
+  }
+
+  /* ---- The canvas fills everything under the toolbar ---- */
+  .artLayer {
+    position: fixed; inset: 0; cursor: crosshair; background: transparent;
+  }
+  #artCanvas { background: #fff; }
+
+  /* ---- Little layer buttons ---- */
+  #layerList { display: flex; gap: 4px; align-items: center; }
+  .layerBtn {
+    border: 1px solid #80619a; border-radius: 7px; padding: 4px 6px;
+    color: #eee1f4; background: #211329; font-size: 11px; cursor: pointer;
+  }
+  .layerBtn.selected {
+    color: #fff; border-color: #00e5ff;
+    box-shadow: 0 0 6px rgba(0,229,255,.7);
+  }
+
+  /* ---- Charlotte's arcade corner ---- */
+  #arcade {
+    position: fixed; top: 76px; right: 12px; z-index: 15;
+    width: 196px; padding: 6px; border: 2px solid #b026ff;
+    border-radius: 12px; background: rgba(18,13,29,.96);
+    box-shadow: 0 0 13px rgba(176,38,255,.45); color: #fff; user-select: none;
+  }
+  #arcadeTop {
+    display: flex; align-items: center; justify-content: space-between;
+    font-size: 11px; font-weight: 800; margin: 0 2px 5px;
+  }
+  #gameScore { color: #ffee00; }
+  #miniGame {
+    display: none; width: 180px; height: 120px; border-radius: 7px;
+    background: #4ac5ef; cursor: pointer; touch-action: none;
+  }
+  #gameHint {
+    color: #ead9ff; text-align: center; font-size: 10px; margin-top: 4px;
+  }
+  #openGameBtn { width: 100%; font-size: 12px; padding: 6px; }
+
+  /* When Char clicks the bird button, Flappy Break gets half the screen. */
+  #arcade.playingBig {
+    top: 76px; right: 0; bottom: 0; width: 50vw;
+    border-radius: 12px 0 0 0; padding: 10px;
+  }
+  #arcade.playingBig #miniGame {
+    display: block; width: 100%; height: calc(100% - 38px);
+  }
+  #arcade.playingBig #openGameBtn { display: none; }
+  #arcade.playingBig #gameHint { margin-top: 6px; }
+
+  /* Cookie mode is one huge chocolate chip cookie. Click it to go back. */
+  #cookieScreen {
+    display: none; position: fixed; inset: 0; z-index: 40;
+    overflow: hidden; cursor: pointer;
+    background:
+      radial-gradient(circle at 15% 20%, rgba(255,78,184,.36) 0 2px, transparent 3px),
+      radial-gradient(circle at 85% 18%, rgba(0,229,255,.35) 0 3px, transparent 4px),
+      radial-gradient(circle at 20% 80%, rgba(176,38,255,.32) 0 3px, transparent 4px),
+      radial-gradient(circle at 80% 78%, rgba(255,78,184,.35) 0 2px, transparent 3px),
+      linear-gradient(135deg, #08040d, #22102e 50%, #0b1529);
+  }
+  #cookieScreen::before {
+    content: "🍪";
+    position: absolute; left: 50%; top: 47%;
+    transform: translate(-50%, -50%);
+    font-size: min(72vw, 72vh);
+    line-height: 1;
+    filter: drop-shadow(0 0 14px #ffb347) drop-shadow(0 0 28px #ff4eb8);
+    pointer-events: none;
+  }
+  #cookieScreen::after {
+    content: "CHOCOLATE CHIP COOKIE SCREEN ✦ click the big cookie to go back";
+    position: absolute; left: 50%; bottom: 9%;
+    transform: translateX(-50%);
+    width: 100%;
+    color: #ffe2b7; text-align: center;
+    font-size: clamp(12px, 2vw, 20px); font-weight: 800;
+    letter-spacing: 2px;
+    text-shadow: 0 0 8px #ff4eb8, 0 0 14px #00e5ff;
+    pointer-events: none;
+  }
+  body.cookieMode { background: #08040d; }
+  body.cookieMode #toolbar,
+  body.cookieMode .artLayer,
+  body.cookieMode #arcade,
+  body.cookieMode #signature { display: none; }
+  body.cookieMode #cookieScreen { display: block; }
+
+  /* Three points makes the whole screen a GIANT trophy. */
+  #trophyScreen {
+    display: none; position: fixed; inset: 0; z-index: 50;
+    background: radial-gradient(circle, #4a245f 0%, #150d24 62%, #07040d 100%);
+    cursor: pointer; overflow: hidden;
+  }
+  #trophyScreen::before {
+    content: "🏆";
+    position: absolute; left: 50%; top: 44%;
+    transform: translate(-50%, -50%);
+    font-size: min(76vw, 76vh);
+    filter: drop-shadow(0 0 18px #ffee00) drop-shadow(0 0 42px #ff8c00);
+  }
+  #trophyScreen::after {
+    content: "YOU GOT 3 POINTS! CHAMPION! ✦ click your trophy to go back";
+    position: absolute; left: 50%; bottom: 10%;
+    transform: translateX(-50%);
+    width: 100%; color: #fff6a4; text-align: center;
+    font-size: clamp(15px, 3vw, 28px); font-weight: 900; letter-spacing: 2px;
+    text-shadow: 0 0 10px #ff8c00;
+  }
+  body.trophyMode #toolbar,
+  body.trophyMode .artLayer,
+  body.trophyMode #arcade,
+  body.trophyMode #signature { display: none; }
+  body.trophyMode #trophyScreen { display: block; }
+
+  /* ---- Charlotte's signature, always in the corner ---- */
+  #signature {
+    position: fixed; right: 14px; bottom: 12px; z-index: 9;
+    font-size: 14px; font-weight: 700; color: #ff4eb8;
+    text-shadow: 0 0 6px rgba(255,78,184,.65), 0 1px 2px rgba(0,0,0,.25);
+    pointer-events: none; user-select: none;
+  }
+</style>
+</head>
+<body>
+
+<!-- ======== THE CANVAS ======== -->
+<canvas id="artCanvas" class="artLayer"></canvas>
+
+<!-- ======== THE TOOLBAR ======== -->
+<div id="toolbar">
+  <span id="appTitle">NEON STUDIO</span><span id="goatCredit">by the goat Charlotte 🐐</span>
+
+  <!-- The mediums — each one really feels different -->
+  <div class="group" id="brushes">
+    <button class="toolBtn selected" data-brush="pencil" title="Pencil — thin and hard">✏️ Pencil</button>
+    <button class="toolBtn" data-brush="paint" title="Paint — thick and bold">🖌️ Paint</button>
+    <button class="toolBtn" data-brush="watercolor" title="Watercolor — soft and dreamy">💧 Watercolor</button>
+    <button class="toolBtn" data-brush="charcoal" title="Charcoal — grainy and smudgy">🌑 Charcoal</button>
+    <button class="toolBtn" data-brush="eraser" title="Magic eraser — poof!">🪄 Eraser</button>
+  </div>
+
+  <!-- The color palette -->
+  <div id="palette"></div>
+
+  <div class="group">
+    <span class="label">Size</span>
+    <input type="range" id="sizeSlider" min="2" max="60" value="14">
+  </div>
+
+  <div class="group">
+    <span class="label">Paper</span>
+    <input type="color" id="bgPicker" value="#ffffff" title="Change the canvas color">
+  </div>
+
+  <!-- Layering lets each part of an artwork stay separate -->
+  <div class="group">
+    <span class="label">Layers</span>
+    <div id="layerList"></div>
+    <button class="toolBtn" id="addLayerBtn" title="Add a new clear layer">＋ Layer</button>
+    <button class="toolBtn" id="removeLayerBtn" title="Remove the selected layer">− Layer</button>
+  </div>
+
+  <button class="toolBtn" id="undoBtn" title="Undo">↩️ Undo</button>
+  <button class="toolBtn" id="redoBtn" title="Redo">↪️ Redo</button>
+  <button class="toolBtn" id="clearBtn" title="Start over">🗑️ Clear</button>
+  <button class="toolBtn" id="cookieBtn" title="Turn the whole screen into one big chocolate chip cookie">🍪 Cookie screen</button>
+  <button class="toolBtn" id="musicBtn" title="Turn the Y2K emo background music on or off">♫ Music: Off</button>
+  <button class="toolBtn" id="downloadBtn" title="Save your art as a picture">⬇️ Download</button>
+  <button class="toolBtn" id="shareBtn" title="Open your device share sheet, or download the picture">📤 Share picture</button>
+</div>
+
+<!-- The 🎮 arcade corner: click the button to make it half the screen -->
+<div id="arcade">
+  <div id="arcadeTop"><span>🍪 FLAPPY COOKIE</span><span id="gameScore">Score: 0</span></div>
+  <button class="toolBtn" id="openGameBtn">🍪 Play Flappy Bird</button>
+  <canvas id="miniGame" width="180" height="120" aria-label="Tap to play Flappy Bird style game"></canvas>
+  <div id="gameHint">Click Play, then tap here to flap!</div>
+</div>
+
+<!-- The whole-screen chocolate chip cookie -->
+<div id="cookieScreen" role="button" aria-label="Big chocolate chip cookie. Click to go back to Neon Studio."></div>
+
+<!-- The three-point trophy -->
+<div id="trophyScreen" role="button" aria-label="A giant trophy for getting 3 points. Click to go back."></div>
+
+<!-- Charlotte's signature — always there, like a creator watermark -->
+<div id="signature">✨ by Charlotte</div>
+
+<script>
+/* =====================================================
+   NEON STUDIO — the code
+   Charlotte designed it. This makes it real.
+   ===================================================== */
+
+const canvas = document.getElementById('artCanvas');
+let ctx = canvas.getContext('2d');
+let currentBrush = 'pencil';
+let currentColor = '#ff2d95';
+let brushSize = 14;
+let bgColor = '#ffffff';
+
+/* Extra color-wheel colors for Char's art. */
+const PALETTE = [
+  '#ff2d95','#ff3131','#ff8c00','#ffee00','#b6ff00','#39ff14',
+  '#00ffcc','#00e5ff','#2979ff','#4b38ff','#b026ff','#ff6ec7',
+  '#8b4513','#f5d0a9','#7a7f87','#000000','#ffffff'
+];
+
+/* LAYERS — every layer is its own see-through canvas. */
+let layers = [{ canvas: canvas, ctx: ctx, name: 'Layer 1' }];
+let activeLayer = 0;
+
+function cursorFor(brush) {
+  const pictures = {
+    pencil: "<svg xmlns='http://www.w3.org/2000/svg' width='32' height='32'><path d='M5 27L8 19 23 4l5 5L13 24z' fill='%23ffd85a' stroke='%233d2554' stroke-width='2'/><path d='M23 4l5 5' stroke='%23f6a4bd' stroke-width='4'/><path d='M5 27l5-1-4-4z' fill='%23221b28'/></svg>",
+    paint: "<svg xmlns='http://www.w3.org/2000/svg' width='32' height='32'><path d='M7 27l5-2L26 8l-6-5L7 20z' fill='%23ff77bd' stroke='%233d2554' stroke-width='2'/><path d='M18 5l7 6' stroke='%23a66a3f' stroke-width='5'/><path d='M6 22l6 4-5 2z' fill='%23fff'/></svg>",
+    charcoal: "<svg xmlns='http://www.w3.org/2000/svg' width='32' height='32'><path d='M7 26L22 4l6 4-15 20z' fill='%23363842' stroke='%230b0c10' stroke-width='2'/><path d='M7 26l5-1-3-3z' fill='%23838a91'/></svg>",
+    eraser: "<svg xmlns='http://www.w3.org/2000/svg' width='32' height='32'><path d='M6 23L19 6l8 7-13 15H6z' fill='%23ff9fd0' stroke='%233d2554' stroke-width='2'/><path d='M6 23h8l-3 5H4z' fill='%23fff'/></svg>",
+    watercolor: "<svg xmlns='http://www.w3.org/2000/svg' width='32' height='32'><path d='M16 3C10 12 7 16 7 21a9 9 0 0018 0c0-5-3-9-9-18z' fill='%2300e5ff' stroke='%233d2554' stroke-width='2'/></svg>"
+  };
+  return "url(\"data:image/svg+xml," + pictures[brush] + "\") 5 27, crosshair";
+}
+function setCursor() {
+  layers.forEach(layer => layer.canvas.style.cursor = cursorFor(currentBrush));
+}
+
+function setActiveLayer(number) {
+  activeLayer = number;
+  ctx = layers[activeLayer].ctx;
+  layers.forEach((layer, i) => layer.canvas.style.pointerEvents = i === activeLayer ? 'auto' : 'none');
+  setCursor();
+  showLayers();
+}
+function showLayers() {
+  const list = document.getElementById('layerList');
+  list.innerHTML = '';
+  layers.forEach((layer, i) => {
+    const button = document.createElement('button');
+    button.className = 'layerBtn' + (i === activeLayer ? ' selected' : '');
+    button.textContent = 'L' + (i + 1);
+    button.title = 'Draw on ' + layer.name;
+    button.addEventListener('click', () => setActiveLayer(i));
+    list.appendChild(button);
+  });
+  document.getElementById('removeLayerBtn').disabled = layers.length === 1;
+}
+function addLayer(rememberIt = true) {
+  const newCanvas = document.createElement('canvas');
+  newCanvas.className = 'artLayer';
+  newCanvas.width = canvas.width;
+  newCanvas.height = canvas.height;
+  document.body.insertBefore(newCanvas, document.getElementById('toolbar'));
+  const layer = { canvas: newCanvas, ctx: newCanvas.getContext('2d'), name: 'Layer ' + (layers.length + 1) };
+  layers.push(layer);
+  connectDrawing(layer);
+  setActiveLayer(layers.length - 1);
+  if (rememberIt) takeSnapshot();
+}
+function removeLayer() {
+  if (layers.length === 1) return;
+  layers[activeLayer].canvas.remove();
+  layers.splice(activeLayer, 1);
+  activeLayer = Math.max(0, activeLayer - 1);
+  setActiveLayer(activeLayer);
+  takeSnapshot();
+}
+
+/* The paper color is behind the see-through layers. */
+function sizeCanvas() {
+  layers.forEach((layer) => {
+    const saved = document.createElement('canvas');
+    saved.width = layer.canvas.width;
+    saved.height = layer.canvas.height;
+    if (layer.canvas.width > 0) saved.getContext('2d').drawImage(layer.canvas, 0, 0);
+    layer.canvas.width = window.innerWidth;
+    layer.canvas.height = window.innerHeight;
+    if (saved.width > 0) layer.ctx.drawImage(saved, 0, 0);
+  });
+}
+sizeCanvas();
+window.addEventListener('resize', () => {
+  sizeCanvas();
+  // old snapshots are the old size — start history fresh so undo stays honest
+  if (typeof undoStack !== 'undefined') { undoStack = []; redoStack = []; takeSnapshot(); }
+});
+
+/* UNDO + REDO — the time machine */
+const MAX_SNAPSHOTS = 10;   // full-screen snapshots are big — keep iPads happy
+let undoStack = [];
+let redoStack = [];
+
+function pictureOfLayers() {
+  return { active: activeLayer, layers: layers.map(layer => ({ image: layer.ctx.getImageData(0, 0, canvas.width, canvas.height) })) };
+}
+function takeSnapshot() {
+  undoStack.push(pictureOfLayers());
+  if (undoStack.length > MAX_SNAPSHOTS) undoStack.shift();
+  redoStack = [];
+  updateUndoRedoButtons();
+}
+function restoreSnapshot(snapshot) {
+  while (layers.length > snapshot.layers.length) {
+    layers[layers.length - 1].canvas.remove();
+    layers.pop();
+  }
+  while (layers.length < snapshot.layers.length) addLayer(false);
+  snapshot.layers.forEach((savedLayer, i) => {
+    layers[i].ctx.clearRect(0, 0, canvas.width, canvas.height);
+    layers[i].ctx.putImageData(savedLayer.image, 0, 0);
+  });
+  setActiveLayer(Math.min(snapshot.active, layers.length - 1));
+}
+function undo() {
+  if (undoStack.length < 2) return;
+  redoStack.push(undoStack.pop());
+  restoreSnapshot(undoStack[undoStack.length - 1]);
+  updateUndoRedoButtons();
+}
+function redo() {
+  if (!redoStack.length) return;
+  const next = redoStack.pop();
+  undoStack.push(next);
+  restoreSnapshot(next);
+  updateUndoRedoButtons();
+}
+function updateUndoRedoButtons() {
+  document.getElementById('undoBtn').disabled = undoStack.length < 2;
+  document.getElementById('redoBtn').disabled = redoStack.length === 0;
+}
+setActiveLayer(0);
+takeSnapshot();
+
+/* THE BRUSHES — each medium really feels different */
+function jitter(n) { return (Math.random() - .5) * 2 * n; }
+function drawSegment(x0, y0, x1, y1) {
+  ctx.save();
+  if (currentBrush === 'eraser') {
+    ctx.globalCompositeOperation = 'destination-out';
+    ctx.strokeStyle = 'rgba(0,0,0,1)';
+    ctx.lineWidth = brushSize * 2;
+    ctx.lineCap = 'round';
+    ctx.beginPath(); ctx.moveTo(x0,y0); ctx.lineTo(x1,y1); ctx.stroke();
+  } else if (currentBrush === 'pencil') {
+    ctx.globalAlpha = .95; ctx.strokeStyle = currentColor;
+    ctx.lineWidth = Math.max(1, brushSize * .3); ctx.lineCap = 'round';
+    ctx.beginPath(); ctx.moveTo(x0,y0); ctx.lineTo(x1,y1); ctx.stroke();
+  } else if (currentBrush === 'paint') {
+    ctx.globalAlpha = 1; ctx.strokeStyle = currentColor;
+    ctx.lineWidth = brushSize * 1.4; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+    ctx.beginPath(); ctx.moveTo(x0,y0); ctx.lineTo(x1,y1); ctx.stroke();
+  } else if (currentBrush === 'watercolor') {
+    const dist = Math.hypot(x1-x0, y1-y0);
+    const steps = Math.max(1, Math.floor(dist / 4));
+    for (let i=0; i<=steps; i++) {
+      const x = x0 + (x1-x0)*(i/steps) + jitter(2);
+      const y = y0 + (y1-y0)*(i/steps) + jitter(2);
+      const r = brushSize * (.9 + Math.random()*.5);
+      const blob = ctx.createRadialGradient(x,y,0,x,y,r);
+      blob.addColorStop(0,currentColor); blob.addColorStop(1,'rgba(0,0,0,0)');
+      ctx.globalAlpha = .06; ctx.fillStyle = blob;
+      ctx.beginPath(); ctx.arc(x,y,r,0,Math.PI*2); ctx.fill();
+    }
+  } else if (currentBrush === 'charcoal') {
+    ctx.strokeStyle = currentColor; ctx.fillStyle = currentColor; ctx.lineCap = 'round';
+    for (let i=0;i<4;i++) {
+      ctx.globalAlpha = .12 + Math.random()*.15;
+      ctx.lineWidth = brushSize * (.15 + Math.random()*.5);
+      ctx.beginPath();
+      ctx.moveTo(x0+jitter(brushSize*.5),y0+jitter(brushSize*.5));
+      ctx.lineTo(x1+jitter(brushSize*.5),y1+jitter(brushSize*.5));
+      ctx.stroke();
+    }
+    for (let i=0;i<6;i++) {
+      ctx.globalAlpha = .1 + Math.random()*.2;
+      ctx.beginPath();
+      ctx.arc(x1+jitter(brushSize),y1+jitter(brushSize),Math.random()*brushSize*.12+.4,0,Math.PI*2);
+      ctx.fill();
+    }
+  }
+  ctx.restore();
+}
+
+/* DRAWING WITH FINGER OR MOUSE */
+let drawing = false, lastX = 0, lastY = 0;
+function endStroke() {
+  if (!drawing) return;
+  drawing = false;
+  takeSnapshot();               // every finished stroke becomes an undo step
+}
+function connectDrawing(layer) {
+  layer.canvas.addEventListener('pointerdown', (e) => {
+    if (layer !== layers[activeLayer]) return;
+    drawing = true; lastX = e.clientX; lastY = e.clientY;
+    layer.canvas.setPointerCapture(e.pointerId);
+    drawSegment(lastX,lastY,lastX+.1,lastY+.1);
+  });
+  layer.canvas.addEventListener('pointermove', (e) => {
+    if (!drawing) return;
+    drawSegment(lastX,lastY,e.clientX,e.clientY);
+    lastX=e.clientX; lastY=e.clientY;
+  });
+  layer.canvas.addEventListener('pointerup', endStroke);
+  layer.canvas.addEventListener('pointercancel', endStroke);
+}
+connectDrawing(layers[0]);
+
+/* THE TOOLBAR — hooking up all the buttons */
+document.querySelectorAll('#brushes .toolBtn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('#brushes .toolBtn').forEach(b => b.classList.remove('selected'));
+    btn.classList.add('selected');
+    currentBrush = btn.dataset.brush;
+    setCursor();
+  });
+});
+const paletteDiv = document.getElementById('palette');
+PALETTE.forEach((color, i) => {
+  const dot = document.createElement('button');
+  dot.className = 'swatch' + (i === 0 ? ' selected' : '');
+  dot.style.backgroundColor = color; dot.style.color = color; dot.title = color;
+  dot.addEventListener('click', () => {
+    document.querySelectorAll('.swatch').forEach(s => s.classList.remove('selected'));
+    dot.classList.add('selected'); currentColor = color;
+  });
+  paletteDiv.appendChild(dot);
+});
+document.getElementById('sizeSlider').addEventListener('input', e => brushSize = Number(e.target.value));
+document.getElementById('bgPicker').addEventListener('input', e => {
+  bgColor = e.target.value;
+  document.body.classList.remove('cookieMode');
+  canvas.style.background = bgColor;
+});
+document.getElementById('addLayerBtn').addEventListener('click', () => addLayer());
+document.getElementById('removeLayerBtn').addEventListener('click', removeLayer);
+document.getElementById('undoBtn').addEventListener('click', undo);
+document.getElementById('redoBtn').addEventListener('click', redo);
+/* Tap once to arm, tap again to really clear — works even where popups are blocked. */
+const clearBtn = document.getElementById('clearBtn');
+let clearArmed = null;
+clearBtn.addEventListener('click', () => {
+  if (!clearArmed) {
+    clearBtn.textContent = '🗑️ Really clear?';
+    clearArmed = setTimeout(() => { clearArmed = null; clearBtn.textContent = '🗑️ Clear'; }, 2500);
+    return;
+  }
+  clearTimeout(clearArmed); clearArmed = null; clearBtn.textContent = '🗑️ Clear';
+  layers.forEach(layer => layer.ctx.clearRect(0,0,canvas.width,canvas.height));
+  takeSnapshot();
+});
+
+/* Char's cookie button makes the whole screen one big chocolate chip cookie. */
+document.getElementById('cookieBtn').addEventListener('click', () => {
+  document.body.classList.add('cookieMode');
+});
+document.getElementById('cookieScreen').addEventListener('click', () => {
+  document.body.classList.remove('cookieMode');
+  canvas.style.background = bgColor;
+});
+
+/* Y2K emo music made from little electronic notes — no internet needed. */
+const musicBtn = document.getElementById('musicBtn');
+let musicOn = false;
+let musicContext;
+let musicTimer;
+let musicStep = 0;
+
+function playMusicNote(note, time, length, volume) {
+  const sound = musicContext.createOscillator();
+  const fade = musicContext.createGain();
+  sound.type = 'triangle';
+  sound.frequency.value = note;
+  fade.gain.setValueAtTime(0.001, time);
+  fade.gain.exponentialRampToValueAtTime(volume, time + 0.02);
+  fade.gain.exponentialRampToValueAtTime(0.001, time + length);
+  sound.connect(fade);
+  fade.connect(musicContext.destination);
+  sound.start(time);
+  sound.stop(time + length + 0.03);
+}
+function playY2KBeat() {
+  if (!musicOn) return;
+  const notes = [220, 261.63, 329.63, 293.66, 220, 261.63, 392, 329.63];
+  const now = musicContext.currentTime;
+  playMusicNote(notes[musicStep % notes.length], now, 0.22, 0.045);
+  if (musicStep % 2 === 0) playMusicNote(notes[(musicStep + 4) % notes.length] / 2, now, 0.16, 0.025);
+  musicStep++;
+}
+function toggleMusic() {
+  if (!musicContext) musicContext = new (window.AudioContext || window.webkitAudioContext)();
+  if (musicContext.state === 'suspended') musicContext.resume();
+  musicOn = !musicOn;
+  if (musicOn) {
+    musicBtn.textContent = '♫ Music: On';
+    musicBtn.classList.add('selected');
+    playY2KBeat();
+    musicTimer = setInterval(playY2KBeat, 330);
+  } else {
+    musicBtn.textContent = '♫ Music: Off';
+    musicBtn.classList.remove('selected');
+    clearInterval(musicTimer);
+  }
+}
+musicBtn.addEventListener('click', toggleMusic);
+
+/* DOWNLOAD + SHARE — both make a real picture file. */
+function makePicture() {
+  const pic = document.createElement('canvas');
+  pic.width = canvas.width; pic.height = canvas.height;
+  const pctx = pic.getContext('2d');
+  pctx.fillStyle = bgColor;
+  pctx.fillRect(0,0,pic.width,pic.height);
+  layers.forEach(layer => pctx.drawImage(layer.canvas,0,0));
+  const stamp = '✨ by Charlotte';
+  pctx.font = 'bold 18px -apple-system, "Segoe UI", Helvetica, Arial, sans-serif';
+  pctx.textAlign = 'right'; pctx.textBaseline = 'bottom';
+  pctx.fillStyle = 'rgba(0,0,0,.35)';
+  pctx.fillText(stamp,pic.width-13,pic.height-11);
+  pctx.fillStyle = '#ff2d95';
+  pctx.fillText(stamp,pic.width-14,pic.height-12);
+  return pic;
+}
+function downloadPicture() {
+  const link = document.createElement('a');
+  link.download = 'neon-studio-by-charlotte.png';
+  link.href = makePicture().toDataURL('image/png');
+  link.click();
+}
+document.getElementById('downloadBtn').addEventListener('click', downloadPicture);
+document.getElementById('shareBtn').addEventListener('click', () => {
+  makePicture().toBlob(async blob => {
+    if (!blob) return;
+    const file = new File([blob], 'neon-studio-by-charlotte.png', {type:'image/png'});
+    if (navigator.share && navigator.canShare && navigator.canShare({files:[file]})) {
+      try { await navigator.share({files:[file], title:'Neon Studio art'}); } catch (error) {}
+    } else downloadPicture();
+  }, 'image/png');
+});
+
+/* FLAPPY COOKIE — click its button, then it uses half the screen. */
+const arcade = document.getElementById('arcade');
+const openGameBtn = document.getElementById('openGameBtn');
+const gameCanvas = document.getElementById('miniGame');
+const game = gameCanvas.getContext('2d');
+const gameScore = document.getElementById('gameScore');
+const gameHint = document.getElementById('gameHint');
+
+openGameBtn.addEventListener('click', () => {
+  arcade.classList.add('playingBig');
+  gameHint.textContent = 'Tap the sky to flap! · Tap the title bar to go back to drawing';
+  // match the canvas backing store to its big on-screen size, so the game is
+  // crisp on a projector instead of a stretched 180px bitmap (drawGame's
+  // sx/sy scaling picks the new size up automatically)
+  requestAnimationFrame(() => {
+    gameCanvas.width = gameCanvas.clientWidth;
+    gameCanvas.height = gameCanvas.clientHeight;
+  });
+});
+/* Tap the FLAPPY COOKIE title bar to shrink the game and get the canvas back. */
+document.getElementById('arcadeTop').style.cursor = 'pointer';
+document.getElementById('arcadeTop').addEventListener('click', () => {
+  if (!arcade.classList.contains('playingBig')) return;
+  arcade.classList.remove('playingBig');
+  playing = false;
+  gameHint.textContent = 'Click Play, then tap here to flap!';
+});
+
+let birdY = 55, birdSpeed = 0, pipes = [], score = 0;
+let playing = false, gameOver = false, gameTick = 0;
+
+function startGame() {
+  birdY=55; birdSpeed=-3.7; pipes=[]; score=0; playing=true; gameOver=false; gameTick=0;
+  gameHint.textContent='Tap to flap!';
+  gameScore.textContent='Score: 0';
+}
+function flap() {
+  if (!playing || gameOver) startGame();
+  else birdSpeed = -3.7;
+}
+gameCanvas.addEventListener('pointerdown', e => { e.preventDefault(); flap(); });
+
+function drawCookieBird() {
+  game.fillStyle = '#d99143';
+  game.beginPath(); game.arc(48,birdY,12,0,Math.PI*2); game.fill();
+  game.strokeStyle = '#874717'; game.lineWidth = 1.4;
+  [[43,-5],[51,-7],[55,4],[42,5],[48,8]].forEach(dot => {
+    game.beginPath(); game.arc(dot[0], birdY + dot[1], 1.7, 0, Math.PI * 2); game.stroke();
+  });
+  game.fillStyle='#ff8c00';
+  game.beginPath(); game.moveTo(58,birdY); game.lineTo(70,birdY+4); game.lineTo(58,birdY+8); game.fill();
+  game.fillStyle='#16121f';
+  game.beginPath(); game.arc(52,birdY-4,2.2,0,Math.PI*2); game.fill();
+}
+function drawGame() {
+  const w = gameCanvas.width, h = gameCanvas.height;
+  const sx = w / 180, sy = h / 120;
+  game.clearRect(0,0,w,h);
+  game.save();
+  game.scale(sx,sy);
+  game.fillStyle='#4ac5ef'; game.fillRect(0,0,180,120);
+  game.fillStyle='rgba(255,255,255,.75)';
+  game.beginPath(); game.arc(28,22,9,0,Math.PI*2); game.arc(39,20,11,0,Math.PI*2); game.arc(50,23,8,0,Math.PI*2); game.fill();
+  pipes.forEach(pipe => {
+    game.fillStyle='#39b94a';
+    game.fillRect(pipe.x,0,22,pipe.top);
+    game.fillRect(pipe.x,pipe.top+64,22,120-pipe.top-64);
+    game.fillStyle='#227d32';
+    game.fillRect(pipe.x-3,pipe.top-5,28,6);
+    game.fillRect(pipe.x-3,pipe.top+64,28,6);
+  });
+  drawCookieBird();
+  if (!playing) {
+    game.fillStyle='rgba(22,18,31,.7)'; game.fillRect(0,45,180,27);
+    game.fillStyle='#fff'; game.font='bold 13px sans-serif'; game.textAlign='center';
+    game.fillText(gameOver ? 'Tap for another go!' : 'Tap to fly!',90,63);
+  }
+  game.restore();
+}
+function showTrophy() {
+  playing = false;
+  document.body.classList.add('trophyMode');
+}
+document.getElementById('trophyScreen').addEventListener('click', () => {
+  document.body.classList.remove('trophyMode');
+  gameHint.textContent = 'You won a trophy! Tap for another go.';
+});
+function updateGame() {
+  if (playing) {
+    gameTick++; birdSpeed += .19; birdY += birdSpeed;
+    if (gameTick % 95 === 0) pipes.push({x:185,top:10+Math.random()*36,counted:false});
+    pipes.forEach(pipe => {
+      pipe.x -= 1.35;
+      if (!pipe.counted && pipe.x+22 < 48) {
+        pipe.counted=true; score++; gameScore.textContent='Score: '+score;
+        if (score === 3) showTrophy();
+      }
+      const hitsPipe = 48+10 > pipe.x && 48-10 < pipe.x+22 && (birdY-10 < pipe.top || birdY+10 > pipe.top+64);
+      if (hitsPipe && playing) { playing=false; gameOver=true; gameHint.textContent='Nice try! Tap for another go.'; }
+    });
+    pipes = pipes.filter(pipe => pipe.x > -30);
+    if ((birdY > 108 || birdY < 12) && playing) {
+      playing=false; gameOver=true; gameHint.textContent='Nice try! Tap for another go.';
+    }
+  }
+  drawGame();
+  requestAnimationFrame(updateGame);
+}
+drawGame();
+updateGame();
+
+/* v2 wishlist (Charlotte's, from the design session):
+   - Import a real photo and paint over it
+   - Share button
+   - The 🎮 arcade corner: a silly tap-to-play mini-game for break time
+   - Surface picker: foam, different papers
+   (And NO AI features in the app — Charlotte's call.) */
+</script>
+</body>
+</html>
