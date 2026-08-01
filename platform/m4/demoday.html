@@ -68,8 +68,9 @@
 
   <div class="kids" id="kids"></div>
 
-  <p class="note">Apps open from the Showcase (<code>studentdemos.codethefuture.net</code> — cohort password, enter it once).
-    If a builder shipped a newer version at the session, open their Studio full screen instead. Esc closes the interview screen.</p>
+  <p class="note">Demo copies open inside the platform — your host login covers them, no extra password.
+    If a builder shipped a newer version at the session, open their Studio full screen instead. Esc closes the interview screen.
+    Parents' take-home is the Showcase: <code>studentdemos.codethefuture.net</code> + cohort password.</p>
 </div>
 
 <div id="stagePanel">
@@ -90,13 +91,16 @@
 </div>
 
 <script>
+// Demo copies live INSIDE the platform gate — the host's own login covers
+// them, so no second password mid-show. (Parents' take-home stays on the
+// password-protected Showcase at studentdemos.codethefuture.net.)
 const KIDS = [
   { name:'Adam',      nick:'pixel nova',      img:'/platform/assets/roundup/adam-pixel-nova-greatwall.jpg',
-    url:'https://studentdemos.codethefuture.net/adam-space-shooter/' },
+    url:'/platform/m4/demos/adam.html' },
   { name:'Charlotte', nick:'baddie',          img:'/platform/assets/roundup/charlotte-baddie-tajmahal.jpg',
-    url:'https://studentdemos.codethefuture.net/charlotte-neon-studio/' },
+    url:'/platform/m4/demos/charlotte.html' },
   { name:'Devon',     nick:'stickmen unite',  img:'/platform/assets/roundup/devon-stickmen-unite-pyramids.jpg',
-    url:'https://studentdemos.codethefuture.net/devon-zazamar/' },
+    url:'/platform/m4/demos/devon.html' },
   { name:'Emery',     nick:'strawberry',      img:'/platform/assets/roundup/emery-generic-london.jpg',
     url:'https://made-yours-emery.netlify.app/' }
 ];
