@@ -616,6 +616,13 @@ const gameHint = document.getElementById('gameHint');
 openGameBtn.addEventListener('click', () => {
   arcade.classList.add('playingBig');
   gameHint.textContent = 'Tap the sky to flap! · Tap the title bar to go back to drawing';
+  // match the canvas backing store to its big on-screen size, so the game is
+  // crisp on a projector instead of a stretched 180px bitmap (drawGame's
+  // sx/sy scaling picks the new size up automatically)
+  requestAnimationFrame(() => {
+    gameCanvas.width = gameCanvas.clientWidth;
+    gameCanvas.height = gameCanvas.clientHeight;
+  });
 });
 /* Tap the FLAPPY COOKIE title bar to shrink the game and get the canvas back. */
 document.getElementById('arcadeTop').style.cursor = 'pointer';

@@ -286,6 +286,9 @@ document.getElementById('reset').onclick=(e)=>{ e.currentTarget.blur();
   try{ localStorage.removeItem(SAVEKEY); }catch(err){}
   revealed=false; sync(); render(); };
 addEventListener('keydown',(e)=>{
+  // while the premiere video has focus, the keyboard belongs to the player —
+  // otherwise spacebar would SKIP the video instead of pausing it
+  if(e.target && e.target.tagName==='VIDEO') return;
   if(e.key===' '){ e.preventDefault(); go(1); }
   else if(e.key==='ArrowRight') go(1);
   else if(e.key==='ArrowLeft') go(-1);
@@ -293,11 +296,19 @@ addEventListener('keydown',(e)=>{
 });
 
 // --- render -------------------------------------------------------------------
+let lastRenderKey='';
 function render(){
   const s=S.stages[idx];
   renderLiveSB();
   document.getElementById('pos').textContent=(idx+1)+' / '+S.stages.length;
   document.getElementById('reveal').disabled = !(s.type==='vote' && !revealed);
+  // A kid's phone locking fires a presence sync, which re-renders. On the
+  // video stage a re-render would DESTROY the <video> and restart it from
+  // 0:00 on the projector — so repeat renders of the same video stage stop
+  // here, after the scoreboard/counter refresh but before touching the DOM.
+  const renderKey = s.id + '|' + revealed;
+  if (s.type==='video' && renderKey===lastRenderKey) return;
+  lastRenderKey = renderKey;
   let html='';
   if(s.type==='lobby'){
     html='<div class="kick">'+esc(S.title)+'</div><h1>'+esc(s.title)+'</h1><p class="sub">'+esc(s.sub||'')+'</p>'+
@@ -376,7 +387,7 @@ function render(){
     const medals=['🥇','🥈','🥉','🏅','🏅'];
     html='<div class="kick">'+esc(S.title)+'</div><div class="qe">🏆</div><h1>'+esc(s.title)+'</h1><p class="sub">'+esc(s.sub||'')+'</p>'+
       (top.length?('<div class="lead">'+top.map((p,i)=>'<div class="lrow"><span class="medal">'+medals[i]+'</span><span class="lav">'+av(avatars[p.uid])+'</span>'+esc(p.name)+'<span class="pts">'+p.score+' pts</span></div>').join('')+'</div>'):'')+
-      (s.href?'<p style="margin-top:26px"><a href="'+s.href+'" style="display:inline-block;font-weight:800;font-size:clamp(1.05rem,2.6vw,1.5rem);color:#06122b;text-decoration:none;padding:16px 40px;border-radius:99px;background:linear-gradient(120deg,#FFD75E,#FFB320);box-shadow:0 0 30px rgba(255,179,32,.55)">'+(s.hrefLabel||'Continue →')+'</a></p>':'');
+      (s.href?'<p style="margin-top:26px"><a href="'+s.href+'" target="_blank" rel="noopener" style="display:inline-block;font-weight:800;font-size:clamp(1.05rem,2.6vw,1.5rem);color:#06122b;text-decoration:none;padding:16px 40px;border-radius:99px;background:linear-gradient(120deg,#FFD75E,#FFB320);box-shadow:0 0 30px rgba(255,179,32,.55)">'+(s.hrefLabel||'Continue →')+'</a></p>':'');
   }
   stageEl.innerHTML=html;
   const rp=document.getElementById('reelplay');
