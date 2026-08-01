@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<link rel="icon" type="image/svg+xml" href="/platform/assets/logo-icon-tile.svg">
+<title>Rate the Summer Cohort — Code the Future</title>
+<style>
+  :root{ --teal:#26C7D1; --purple:#9B7BFF; --amber:#FFB320; --green:#3FD08A; }
+  *{ box-sizing:border-box; margin:0; }
+  body{ font-family:'Plus Jakarta Sans',system-ui,-apple-system,sans-serif; color:#EAF1FF; min-height:100vh;
+    padding:30px 16px 60px;
+    background:radial-gradient(120% 90% at 82% -10%, rgba(155,123,255,.22), transparent 55%),
+               radial-gradient(120% 90% at 8% 110%, rgba(38,199,209,.22), transparent 55%),
+               linear-gradient(165deg,#101a3c,#0A1024 55%,#070C1A); }
+  .card{ max-width:560px; margin:0 auto; background:rgba(14,22,49,.92);
+    border:1px solid rgba(137,200,237,.25); border-radius:20px; padding:28px 26px; }
+  .logo{ display:flex; align-items:center; gap:9px; font-weight:800; margin-bottom:14px; }
+  .logo img{ width:30px; height:30px; }
+  .logo span{ color:var(--teal); }
+  h1{ font-weight:800; font-size:clamp(1.5rem,5vw,2rem); letter-spacing:-.02em; }
+  .sub{ color:#9FB0D0; font-size:.95rem; margin:8px 0 22px; line-height:1.55; }
+  label{ display:block; font-weight:700; font-size:.92rem; margin:16px 0 6px; }
+  input[type=text], textarea{ width:100%; font:inherit; color:#fff; background:rgba(255,255,255,.07);
+    border:1.5px solid rgba(137,200,237,.3); border-radius:12px; padding:11px 13px; outline:none; }
+  input:focus, textarea:focus{ border-color:var(--purple); }
+  textarea{ min-height:110px; resize:vertical; }
+  .hint{ color:#5B6A8C; font-size:.8rem; margin-top:4px; }
+
+  /* the stars */
+  .stars{ display:flex; flex-direction:row-reverse; justify-content:flex-end; gap:4px; }
+  .stars input{ display:none; }
+  .stars label{ font-size:2.2rem; margin:0; cursor:pointer; color:#3a4569; transition:color .1s, transform .1s; }
+  .stars label:hover, .stars label:hover ~ label,
+  .stars input:checked ~ label{ color:var(--amber); }
+  .stars label:hover{ transform:scale(1.15); }
+
+  .consent{ display:flex; gap:10px; align-items:flex-start; margin-top:18px;
+    background:rgba(63,208,138,.08); border:1.5px solid rgba(63,208,138,.35); border-radius:12px; padding:12px; }
+  .consent input{ margin-top:3px; width:18px; height:18px; accent-color:var(--green); }
+  .consent span{ font-size:.86rem; color:#C9E8D8; line-height:1.5; }
+  button{ margin-top:22px; width:100%; font:800 1.05rem/1 inherit; color:#06122b; cursor:pointer; border:none;
+    padding:16px; border-radius:99px; background:linear-gradient(120deg,#7FE3FF,var(--teal));
+    box-shadow:0 0 24px rgba(38,199,209,.45); }
+  button:active{ transform:scale(.99); }
+  .thanks{ display:none; text-align:center; padding:30px 10px; }
+  .thanks .big{ font-size:3.4rem; }
+  .thanks h2{ font-weight:800; margin:10px 0 8px; }
+  .thanks p{ color:#9FB0D0; }
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="logo"><img src="/platform/assets/logo-icon-tile.svg" alt="">Code the <span>Future</span></div>
+
+  <form id="reviewForm" name="parent-review" method="POST" data-netlify="true" netlify-honeypot="bot-field">
+    <input type="hidden" name="form-name" value="parent-review">
+    <p style="display:none"><label>Don't fill this out: <input name="bot-field"></label></p>
+    <input type="hidden" name="cohort" value="Summer Launchpad 2026">
+
+    <h1>How was the summer? ⭐</h1>
+    <p class="sub">Two minutes, straight from the heart — your words help the next family
+      find us. Thank you for trusting us with your builders.</p>
+
+    <label>Your rating</label>
+    <div class="stars">
+      <input type="radio" id="s5" name="rating" value="5" required><label for="s5" title="5 stars">★</label>
+      <input type="radio" id="s4" name="rating" value="4"><label for="s4" title="4 stars">★</label>
+      <input type="radio" id="s3" name="rating" value="3"><label for="s3" title="3 stars">★</label>
+      <input type="radio" id="s2" name="rating" value="2"><label for="s2" title="2 stars">★</label>
+      <input type="radio" id="s1" name="rating" value="1"><label for="s1" title="1 star">★</label>
+    </div>
+
+    <label for="quote">In your own words</label>
+    <textarea id="quote" name="testimonial" required
+      placeholder="What did the summer mean to your builder? What surprised you at Demo Day?"></textarea>
+
+    <label for="pname">Your name</label>
+    <input type="text" id="pname" name="parent_name" required placeholder="e.g. Meg H.">
+    <div class="hint">However you'd like it to appear — first name and last initial is perfect.</div>
+
+    <label for="kname">Your builder's first name <span style="color:#5B6A8C;font-weight:400">(optional)</span></label>
+    <input type="text" id="kname" name="builder_name" placeholder="e.g. Adam">
+
+    <div class="consent">
+      <input type="checkbox" id="ok" name="permission_to_publish" value="yes">
+      <span><b>Yes, you may publish this</b> — my words and the name I wrote above may appear as a
+        testimonial on codethefuture.net. (Leave unchecked and we'll keep your feedback private —
+        it still helps us improve.)</span>
+    </div>
+
+    <button type="submit">Send it 🚀</button>
+  </form>
+
+  <div class="thanks" id="thanks">
+    <div class="big">💜</div>
+    <h2>Thank you!</h2>
+    <p>That means the world to two coaches who just watched four kids ship real software.<br>
+       See you at the next cohort.</p>
+  </div>
+</div>
+
+<script>
+// Submit via fetch so the thank-you appears without leaving the page.
+document.getElementById('reviewForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const form = e.target;
+  const body = new URLSearchParams(new FormData(form)).toString();
+  try{
+    await fetch('/', { method:'POST', headers:{'Content-Type':'application/x-www-form-urlencoded'}, body });
+    form.style.display = 'none';
+    document.getElementById('thanks').style.display = 'block';
+  }catch(err){
+    form.submit();   // network hiccup? fall back to a normal page-nav submit
+  }
+});
+</script>
+</body>
+</html>
