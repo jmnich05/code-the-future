@@ -333,6 +333,21 @@ function render(){
       (s.ask?'<div class="sask">💬 '+esc(s.ask)+'</div>':'')+
     '</div>';
   }
+  else if(s.type==='quote'){
+    // a read-aloud moment: one serious quote, big serif, room lights down.
+    html='<div style="position:absolute;inset:0;overflow:hidden;text-align:left">'+
+      '<div style="position:absolute;inset:0;background:radial-gradient(90% 70% at 50% 30%, rgba(155,123,255,.16), transparent 65%),linear-gradient(170deg,#0d1430,#0A1024 55%,#070C1A)"></div>'+
+      '<div style="position:absolute;inset:0;display:grid;place-items:center;padding:5vh 7vw">'+
+        '<div style="max-width:58ch">'+
+          (s.kicker?'<div style="font-family:var(--mono,monospace);letter-spacing:.28em;text-transform:uppercase;color:#7EF0E6;font-size:clamp(11px,1.4vw,16px);margin-bottom:2.6vh">'+esc(s.kicker)+'</div>':'')+
+          '<div style="font-family:Georgia,\'Times New Roman\',serif;font-style:italic;font-size:clamp(1.05rem,2.35vw,1.75rem);line-height:1.62;color:#EAF1FF">'+
+            '<span style="color:#9B7BFF;font-size:1.6em;line-height:0;vertical-align:-.25em">&ldquo;</span> '+s.text+
+            ' <span style="color:#9B7BFF;font-size:1.6em;line-height:0;vertical-align:-.35em">&rdquo;</span></div>'+
+          (s.by?'<div style="margin-top:3vh;font-weight:800;color:#FFD98C;font-size:clamp(1rem,2vw,1.4rem)">&mdash; '+esc(s.by)+'</div>':'')+
+          (s.byNote?'<div style="margin-top:.6vh;color:#5B6A8C;font-size:clamp(.8rem,1.5vw,1rem)">'+esc(s.byNote)+'</div>':'')+
+        '</div>'+
+      '</div></div>';
+  }
   else if(s.type==='slide'){
     // big-screen story SLIDE: one full-bleed visual, one headline, one line.
     // Built for a room of kids looking UP, not reading. Next-button paced.

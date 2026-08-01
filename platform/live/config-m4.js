@@ -15,6 +15,16 @@ window.LIVE_SESSION = {
     { id:'lobby', type:'lobby', title:'DEMO DAY, Future Builders! 🏆',
       sub:'Four weeks. Four builders. Four real apps. Log in and join the room — two true stories, ten questions for the trophy, and then… YOU take the stage.' },
 
+    // ==================== THE OPENING QUOTE ====================
+    // From Pacing the Frontier (pacingthefrontier.com) — the 2026 coalition
+    // of AI leaders arguing for the OPTION to slow down so governance can
+    // catch up. Jon reads it aloud; it frames why this program exists.
+    { id:'quote', type:'quote', e:'🧭',
+      kicker:'Why we\'re all in this room · read by Mr. Jon',
+      text:'In the span of four years, we have gone from people having their first experience of an AI that could understand language, to AI that is performing superhuman feats of software engineering, making frontier math breakthroughs, and accelerating scientific research. Progress has shown no signs of slowing down and by default it is in the interest of individual corporations and countries to push the accelerator all the way down, even if it is in humanity\'s best interest for the future to not arrive all at once. Society has spent longer than we can remember developing the laws, institutions and technology to govern and oversee human intelligence; it would be good to have the option to spend any time at all doing the same for artificial intelligence.',
+      by:'Shantanu Jain',
+      byNote:'Pacing the Frontier — pacingthefrontier.com · a 2026 coalition of AI leaders' },
+
     // ========================= STORY 1 · THE WOW =========================
     // AI wildfire cameras in the western US: an AI camera in Arizona's
     // Coconino National Forest flagged smoke, human analysts verified, and
