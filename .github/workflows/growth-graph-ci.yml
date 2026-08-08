@@ -1,0 +1,75 @@
+name: Growth graph CI
+
+on:
+  pull_request:
+    paths:
+      - ".github/workflows/growth-graph-ci.yml"
+      - ".gitignore"
+      - "netlify.toml"
+      - "PROJECT_CHARTER.md"
+      - "*.html"
+      - "robots.txt"
+      - "site-pages.css"
+      - "sitemap.xml"
+      - "admin/**"
+      - "assets/**"
+      - "buildlab/**"
+      - "curriculum/**"
+      - "docs/graph/**"
+      - "netlify/edge-functions/**"
+      - "netlify/functions/**"
+      - "ops/growth-graph/**"
+      - "platform/**"
+      - "play/**"
+      - "scripts/build-public-site.mjs"
+      - "studentdemos/**"
+  push:
+    branches:
+      - main
+    paths:
+      - ".github/workflows/growth-graph-ci.yml"
+      - ".gitignore"
+      - "netlify.toml"
+      - "PROJECT_CHARTER.md"
+      - "*.html"
+      - "robots.txt"
+      - "site-pages.css"
+      - "sitemap.xml"
+      - "admin/**"
+      - "assets/**"
+      - "buildlab/**"
+      - "curriculum/**"
+      - "docs/graph/**"
+      - "netlify/edge-functions/**"
+      - "netlify/functions/**"
+      - "ops/growth-graph/**"
+      - "platform/**"
+      - "play/**"
+      - "scripts/build-public-site.mjs"
+      - "studentdemos/**"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: growth-graph-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ops/growth-graph
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: ops/growth-graph/package-lock.json
+      - run: npm ci
+      - run: node ../../scripts/build-public-site.mjs
+      - run: npm run typecheck
+      - run: npm test
+      - run: npm audit --omit=dev --audit-level=high

@@ -1,0 +1,123 @@
+{
+  "schema_version": "code-the-future.growth-evidence.v1",
+  "producer": {
+    "adapter": "code-the-future.growth-capture-adapter",
+    "version": "1.0.0",
+    "mode": "synthetic_fixture"
+  },
+  "evidence_id": "evidence:social:instagram",
+  "lane": "organic_social",
+  "source": "instagram_insights",
+  "captured_at": "2026-08-08T15:30:00-04:00",
+  "fresh_through": "2026-08-08",
+  "data_state": "complete",
+  "redaction_status": "synthetic",
+  "account_id": "synthetic-instagram-account",
+  "platform": "instagram",
+  "payload": {
+    "follower_snapshots": [
+      {
+        "recorded_at": "2026-08-08T08:00:00-04:00",
+        "followers": 100,
+        "paid_influence": "none"
+      },
+      {
+        "recorded_at": "2026-08-08T15:00:00-04:00",
+        "followers": 105,
+        "paid_influence": "none"
+      }
+    ],
+    "posts": [
+      {
+        "post_id": "ig-post-1",
+        "published_at": "2026-08-01T10:00:00-04:00",
+        "format": "carousel",
+        "hook": "Build with AI, not around it",
+        "call_to_action": "Follow for the next build",
+        "publishing_window": "weekday-morning",
+        "reach": 500,
+        "profile_visits": 40,
+        "new_follows": 8,
+        "shares": 12,
+        "saves": 18,
+        "substantive_comments": 6,
+        "unfollows": 0,
+        "hides": 0,
+        "reports": 0,
+        "paid_status": "organic",
+        "experiment_id": "experiment:welcome-hook",
+        "arm": "operator-proof",
+        "controlled_variable": "hook",
+        "asset_refs": ["asset:ig-safe"]
+      },
+      {
+        "post_id": "ig-post-2",
+        "published_at": "2026-08-02T10:00:00-04:00",
+        "format": "carousel",
+        "hook": "Kids can build real AI workflows",
+        "call_to_action": "Follow for the next build",
+        "publishing_window": "weekday-morning",
+        "reach": 450,
+        "profile_visits": 35,
+        "new_follows": 6,
+        "shares": 9,
+        "saves": 15,
+        "substantive_comments": 5,
+        "unfollows": 0,
+        "hides": 0,
+        "reports": 0,
+        "paid_status": "organic",
+        "experiment_id": "experiment:welcome-hook",
+        "arm": "operator-proof",
+        "controlled_variable": "hook",
+        "asset_refs": ["asset:ig-safe"]
+      },
+      {
+        "post_id": "ig-post-3",
+        "published_at": "2026-08-03T10:00:00-04:00",
+        "format": "carousel",
+        "hook": "Code handles the loop",
+        "call_to_action": "Follow for the next build",
+        "publishing_window": "weekday-morning",
+        "reach": 600,
+        "profile_visits": 50,
+        "new_follows": 10,
+        "shares": 14,
+        "saves": 22,
+        "substantive_comments": 8,
+        "unfollows": 0,
+        "hides": 0,
+        "reports": 0,
+        "paid_status": "organic",
+        "experiment_id": "experiment:welcome-hook",
+        "arm": "operator-proof",
+        "controlled_variable": "hook",
+        "asset_refs": ["asset:ig-safe"]
+      }
+    ],
+    "assets": [
+      {
+        "asset_id": "asset:ig-safe",
+        "artifact_path": "asset-instagram.txt",
+        "content_sha256": "f95b7abb430bdc4e88123e0ff56b538184703f9d9f93b42fc4b7cb0bb04679d7",
+        "byte_length": 32,
+        "subject_classification": "child_or_unknown",
+        "media_kinds": ["image"],
+        "consent_refs": ["consent:ig-guardian"]
+      }
+    ],
+    "consents": [
+      {
+        "consent_id": "consent:ig-guardian",
+        "asset_id": "asset:ig-safe",
+        "subject_basis": "guardian",
+        "allowed_channels": ["instagram"],
+        "allowed_media": ["image"],
+        "evidence_reference": "synthetic-consent-ledger:ig",
+        "granted_at": "2026-07-01T12:00:00-04:00",
+        "revocation_checked_at": "2026-08-08T15:20:00-04:00",
+        "expires_at": "2026-10-31T23:59:59-04:00"
+      }
+    ]
+  }
+}

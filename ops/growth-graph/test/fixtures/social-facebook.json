@@ -1,0 +1,102 @@
+{
+  "schema_version": "code-the-future.growth-evidence.v1",
+  "producer": {
+    "adapter": "code-the-future.growth-capture-adapter",
+    "version": "1.0.0",
+    "mode": "synthetic_fixture"
+  },
+  "evidence_id": "evidence:social:facebook",
+  "lane": "organic_social",
+  "source": "facebook_insights",
+  "captured_at": "2026-08-08T15:31:00-04:00",
+  "fresh_through": "2026-08-08",
+  "data_state": "complete",
+  "redaction_status": "synthetic",
+  "account_id": "synthetic-facebook-account",
+  "platform": "facebook",
+  "payload": {
+    "follower_snapshots": [
+      {
+        "recorded_at": "2026-08-08T08:00:00-04:00",
+        "followers": 200,
+        "paid_influence": "none"
+      },
+      {
+        "recorded_at": "2026-08-08T15:00:00-04:00",
+        "followers": 203,
+        "paid_influence": "none"
+      }
+    ],
+    "posts": [
+      {
+        "post_id": "fb-post-1",
+        "published_at": "2026-08-01T11:00:00-04:00",
+        "format": "image",
+        "reach": 300,
+        "profile_visits": 20,
+        "new_follows": 3,
+        "shares": 6,
+        "saves": 4,
+        "substantive_comments": 5,
+        "unfollows": 0,
+        "hides": 0,
+        "reports": 0,
+        "paid_status": "organic",
+        "experiment_id": "experiment:facebook-proof",
+        "arm": "classroom-proof",
+        "controlled_variable": "format",
+        "asset_refs": ["asset:fb-safe"]
+      },
+      {
+        "post_id": "fb-post-2",
+        "published_at": "2026-08-02T11:00:00-04:00",
+        "format": "image",
+        "reach": 320,
+        "profile_visits": 21,
+        "new_follows": 3,
+        "shares": 7,
+        "saves": 5,
+        "substantive_comments": 4,
+        "unfollows": 0,
+        "hides": 0,
+        "reports": 0,
+        "paid_status": "organic",
+        "experiment_id": "experiment:facebook-proof",
+        "arm": "classroom-proof",
+        "controlled_variable": "format",
+        "asset_refs": ["asset:fb-safe"]
+      },
+      {
+        "post_id": "fb-post-3",
+        "published_at": "2026-08-03T11:00:00-04:00",
+        "format": "image",
+        "reach": 340,
+        "profile_visits": 22,
+        "new_follows": 4,
+        "shares": 8,
+        "saves": 5,
+        "substantive_comments": 6,
+        "unfollows": 0,
+        "hides": 0,
+        "reports": 0,
+        "paid_status": "organic",
+        "experiment_id": "experiment:facebook-proof",
+        "arm": "classroom-proof",
+        "controlled_variable": "format",
+        "asset_refs": ["asset:fb-safe"]
+      }
+    ],
+    "assets": [
+      {
+        "asset_id": "asset:fb-safe",
+        "artifact_path": "asset-facebook.txt",
+        "content_sha256": "df1c4a1183b2be6ec97ffc62aed476767b797aa9bf937f845cc2f365e12d1a3f",
+        "byte_length": 31,
+        "subject_classification": "no_person",
+        "media_kinds": ["image"],
+        "consent_refs": []
+      }
+    ],
+    "consents": []
+  }
+}

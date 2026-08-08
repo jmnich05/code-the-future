@@ -1,0 +1,65 @@
+{
+  "schema_version": "code-the-future.growth-evidence.v1",
+  "producer": {
+    "adapter": "code-the-future.growth-capture-adapter",
+    "version": "1.0.0",
+    "mode": "synthetic_fixture"
+  },
+  "evidence_id": "evidence:gsc:property",
+  "lane": "search_console",
+  "source": "search_console",
+  "captured_at": "2026-08-08T15:33:00-04:00",
+  "fresh_through": "2026-08-05",
+  "data_state": "complete",
+  "redaction_status": "synthetic",
+  "property_id": "sc-domain:codethefuture.net",
+  "property_url": "https://codethefuture.net/",
+  "payload": {
+    "dimensions": ["date", "query", "page", "country", "device"],
+    "date_window": {
+      "start": "2026-07-01",
+      "end": "2026-08-05"
+    },
+    "rows": [
+      {
+        "date": "2026-08-05",
+        "query": "kids coding camp louisville",
+        "page": "https://codethefuture.net/",
+        "country": "USA",
+        "device": "MOBILE",
+        "clicks": 10,
+        "impressions": 200,
+        "position": 8.2
+      },
+      {
+        "date": "2026-08-04",
+        "query": "code the future",
+        "page": "https://codethefuture.net/",
+        "country": "USA",
+        "device": "DESKTOP",
+        "clicks": 25,
+        "impressions": 40,
+        "position": 1.1
+      }
+    ],
+    "page_inventory": [
+      {
+        "url": "https://codethefuture.net/",
+        "public_enrollment_page": true,
+        "indexable": true,
+        "canonical_url": "https://codethefuture.net/",
+        "robots_allowed": true
+      },
+      {
+        "url": "https://codethefuture.net/platform/",
+        "public_enrollment_page": false,
+        "indexable": false,
+        "canonical_url": "https://codethefuture.net/platform/",
+        "robots_allowed": false
+      }
+    ],
+    "generate_lead_events": 2,
+    "successful_form_responses": 2,
+    "verified_purchases": 1
+  }
+}

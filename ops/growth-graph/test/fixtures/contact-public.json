@@ -1,0 +1,44 @@
+{
+  "schema_version": "code-the-future.growth-evidence.v1",
+  "producer": {
+    "adapter": "code-the-future.growth-capture-adapter",
+    "version": "1.0.0",
+    "mode": "synthetic_fixture"
+  },
+  "evidence_id": "evidence:contact:public",
+  "lane": "contact_discovery",
+  "source": "public_web",
+  "captured_at": "2026-08-08T15:32:00-04:00",
+  "fresh_through": "2026-08-08",
+  "data_state": "complete",
+  "redaction_status": "synthetic",
+  "account_or_collection_id": "synthetic-louisville-public-web",
+  "payload": {
+    "history_complete": true,
+    "records": [
+      {
+        "record_id": "contact-record:library",
+        "organization_name": "Synthetic Louisville Learning Library",
+        "contact_label": "Public programs desk",
+        "public_contact_channel": "https://example.org/programs/contact",
+        "source_url": "https://example.org/programs/coding",
+        "source_type": "library",
+        "group_rules_captured": false,
+        "geography": "Louisville, Kentucky",
+        "verified_at": "2026-08-08T14:00:00-04:00",
+        "permission_basis": "public_org_channel",
+        "subject_type": "organization",
+        "source_visibility": "public",
+        "contains_minor_data": false,
+        "do_not_contact": false,
+        "mission_fit": 5,
+        "louisville_relevance": 5,
+        "parent_community_access": 4,
+        "actionability": 4,
+        "identity_hint": "synthetic-learning-library"
+      }
+    ],
+    "prior_identity_fingerprints": [],
+    "do_not_contact_identity_fingerprints": []
+  }
+}

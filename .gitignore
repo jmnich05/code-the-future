@@ -14,10 +14,17 @@ dist/
 build/
 .next/
 .netlify/
+public-dist/
+.public-dist-*/
+
+# Local graph runtime state and generated projection
+.state/
+PROJECT_STATE.md
 
 # OS / editor
 .DS_Store
 *.log
+.playwright-cli/
 .idea/
 .vscode/
 
