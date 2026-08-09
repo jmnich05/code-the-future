@@ -22,7 +22,11 @@ import {
   intakeCaptureBundle,
   type CaptureIntakeResult,
 } from "./artifacts.js";
-import { analyzeGrowthPortfolio } from "./domain.js";
+import {
+  analyzeGrowthPortfolio,
+  fingerprintNormalizedContactIdentity,
+  normalizeContactIdentity,
+} from "./domain.js";
 import {
   GrowthLedger,
   buildPortfolioCommitInput,
@@ -39,12 +43,19 @@ import {
 } from "./observer.js";
 import { writeProjectState, type ProjectStateLane } from "./project-state.js";
 import {
+  projectCalendarDate,
+  projectDateIsWithinWindow,
+} from "./project-policy.js";
+import {
   GRAPH_STATE_SCHEMA_VERSION,
   APPROVAL_PACKAGE_SCHEMA_VERSION,
   CONSENT_REVOCATION_CHECK_MAX_AGE_MS,
+  CONTACT_APPROVAL_EVIDENCE_MAX_AGE_MS,
+  CURRENT_METRIC_DEFINITION_VERSION,
   ApprovalPackageSchema,
   GrowthGraphStateSchema,
   HumanReviewSchema,
+  IsoInstantSchema,
   approvalPackageHash,
   StrategyProposalSchema as CanonicalStrategyProposalSchema,
   type EvalFinding,
@@ -58,9 +69,9 @@ import {
 } from "./schema.js";
 
 export const GRAPH_VERSION = "growth_portfolio_shadow_v1";
-export const POLICY_VERSION = "1.0.0";
+export const POLICY_VERSION = "1.1.0";
 export const PROMPT_VERSION = "ctf-growth-prompts-v2";
-export const METRIC_DEFINITION_VERSION = "ctf-growth-metrics-v1";
+export const METRIC_DEFINITION_VERSION = CURRENT_METRIC_DEFINITION_VERSION;
 export const TOOL_VERSION = "ctf-growth-tools-v1";
 export const NODE_VERSION = "22";
 export const MAXIMUM_PROVIDER_STARTS_PER_CALL = 3;
@@ -540,9 +551,19 @@ export function createActionDraft(
   intake: CaptureIntakeResult,
   draftedAt: string,
 ): StrategyProposal {
+  const draftedAtInstant = IsoInstantSchema.parse(draftedAt);
+  const opportunity = analysis.opportunities[0];
   const evidenceRefs = [
     ...new Set(
-      [...strategy.rationale, ...strategy.risks].map((claim) => claim.evidenceId),
+      [
+        ...[...strategy.rationale, ...strategy.risks].map(
+          (claim) => claim.evidenceId,
+        ),
+        ...(opportunity?.kind === "contact_discovery" &&
+        opportunity.selected_evidence_id
+          ? [opportunity.selected_evidence_id]
+          : []),
+      ],
     ),
   ];
   const measurementWindowDays: Record<GrowthLane, number> = {
@@ -559,8 +580,16 @@ export function createActionDraft(
         arm: strategy.proposedArm,
       }),
     ).slice(0, 24)}`;
-  const opportunity = analysis.opportunities[0];
-  const scheduledAt = new Date(Date.parse(draftedAt) + 24 * 60 * 60 * 1_000).toISOString();
+  const scheduledDelayHours =
+    opportunity?.kind === "social_experiment" ? 12 : 24;
+  const scheduledAt = new Date(
+    Date.parse(draftedAtInstant) + scheduledDelayHours * 60 * 60 * 1_000,
+  ).toISOString();
+  const actionFallsWithinObjectiveWindow =
+    projectDateIsWithinWindow(
+      projectCalendarDate(scheduledAt),
+      intake.bundle.objective_window,
+    );
   let approvalScope: ApprovalScope | undefined;
   if (opportunity?.kind === "social_experiment") {
     const intakenEvidence = intake.evidence
@@ -572,6 +601,29 @@ export function createActionDraft(
           entry.artifact.account_id === opportunity.account_id,
       );
     const artifact = intakenEvidence?.artifact;
+    const capturedMetaIdentity =
+      artifact?.lane === "organic_social" && "meta_identity" in artifact
+        ? artifact.meta_identity
+        : undefined;
+    const completeMetaIdentity =
+      capturedMetaIdentity?.asset_id &&
+      capturedMetaIdentity.page_id &&
+      capturedMetaIdentity.business_portfolio_id
+        ? {
+            asset_id: capturedMetaIdentity.asset_id,
+            page_id: capturedMetaIdentity.page_id,
+            business_portfolio_id: capturedMetaIdentity.business_portfolio_id,
+          }
+        : undefined;
+    const syntheticLegacyFacebookEvidence =
+      artifact?.lane === "organic_social" &&
+      artifact.schema_version === "code-the-future.growth-evidence.v1" &&
+      artifact.producer.mode === "synthetic_fixture" &&
+      artifact.redaction_status === "synthetic";
+    const hasPublisherIdentity =
+      opportunity.platform !== "facebook" ||
+      completeMetaIdentity !== undefined ||
+      syntheticLegacyFacebookEvidence;
     const anchorPost =
       artifact?.lane === "organic_social"
         ? artifact.payload.posts.find(
@@ -622,7 +674,7 @@ export function createActionDraft(
       }
       const requiredBasis =
         asset.subject_classification === "adult_only" ? "adult" : "guardian";
-      const checkAtMs = Date.parse(draftedAt);
+      const checkAtMs = Date.parse(draftedAtInstant);
       const publishingAtMs = Date.parse(scheduledAt);
       const consent = asset.consent_refs
         .map((consentId) =>
@@ -641,7 +693,7 @@ export function createActionDraft(
             asset.media_kinds.every((kind) => candidate.allowed_media.includes(kind)) &&
             Date.parse(candidate.granted_at) <= checkAtMs &&
             Date.parse(candidate.revocation_checked_at) <= checkAtMs &&
-            checkAtMs - Date.parse(candidate.revocation_checked_at) <=
+            publishingAtMs - Date.parse(candidate.revocation_checked_at) <=
               CONSENT_REVOCATION_CHECK_MAX_AGE_MS &&
             (!candidate.expires_at || Date.parse(candidate.expires_at) > publishingAtMs) &&
             (!candidate.revoked_at || Date.parse(candidate.revoked_at) > publishingAtMs),
@@ -660,7 +712,7 @@ export function createActionDraft(
               ...(consent.expires_at ? { expires_at: consent.expires_at } : {}),
               ...(consent.revoked_at ? { revoked_at: consent.revoked_at } : {}),
               non_revoked_checked_at: consent.revocation_checked_at,
-              authorization_evaluated_at: draftedAt,
+              authorization_evaluated_at: draftedAtInstant,
             }
           : {
               authorization_basis: "consent_registry",
@@ -673,7 +725,7 @@ export function createActionDraft(
               ...(consent.expires_at ? { expires_at: consent.expires_at } : {}),
               ...(consent.revoked_at ? { revoked_at: consent.revoked_at } : {}),
               non_revoked_checked_at: consent.revocation_checked_at,
-              authorization_evaluated_at: draftedAt,
+              authorization_evaluated_at: draftedAtInstant,
             };
       return [
         {
@@ -682,22 +734,33 @@ export function createActionDraft(
         },
       ];
     });
+    const explicitlySupportedZeroAssetPost =
+      opportunity.platform === "facebook" && anchorPost?.format === "text";
+    const hasCompleteAssetCoverage =
+      assetArtifacts !== undefined &&
+      assetArtifacts.length === anchorPost?.asset_refs.length &&
+      (assetArtifacts.length > 0 || explicitlySupportedZeroAssetPost);
     if (
       anchorPost &&
-      assetArtifacts &&
-      assetArtifacts.length === anchorPost.asset_refs.length
+      hasCompleteAssetCoverage &&
+      hasPublisherIdentity &&
+      actionFallsWithinObjectiveWindow
     ) {
       const utm = `utm_source=${opportunity.platform}&utm_medium=organic_social&utm_campaign=ctf_growth_60d&utm_content=${proposalId}`;
       approvalScope = {
         lane: "organic_social",
         platform: opportunity.platform,
         account_id: opportunity.account_id,
+        ...(completeMetaIdentity ? { meta_identity: completeMetaIdentity } : {}),
         action: "publish",
         content_hash: hash(
           canonicalJson({
             draftContent: strategy.draftContent,
             callToAction: strategy.callToAction,
             audience: strategy.audience,
+            anchorPostId: anchorPost.post_id,
+            postFormat: anchorPost.format,
+            metaIdentity: completeMetaIdentity ?? null,
             assetArtifacts: assetArtifacts as unknown as JsonValue,
             utm,
             publishingAt: scheduledAt,
@@ -714,19 +777,41 @@ export function createActionDraft(
       };
     }
   } else if (opportunity?.kind === "contact_discovery" && opportunity.destination) {
-    const intakenEvidence = intake.evidence
-      .filter((entry) => opportunity.evidence_refs.includes(entry.artifact.evidence_id))
-      .find((entry) => entry.artifact.lane === "contact_discovery");
+    const selectedEvidenceMatches = opportunity.selected_evidence_id
+      ? intake.evidence.filter(
+          (entry) =>
+            entry.artifact.lane === "contact_discovery" &&
+            entry.artifact.evidence_id === opportunity.selected_evidence_id,
+        )
+      : [];
+    const intakenEvidence =
+      selectedEvidenceMatches.length === 1
+        ? selectedEvidenceMatches[0]
+        : undefined;
     const artifact = intakenEvidence?.artifact;
-    const record =
+    const matchingRecords =
       artifact?.lane === "contact_discovery"
-        ? artifact.payload.records.find(
+        ? artifact.payload.records.filter(
             (candidate) => candidate.record_id === opportunity.record_id,
           )
-        : undefined;
-    const groupAdminRecord =
-      record?.source_type === "public_group_admin" ||
-      record?.subject_type === "public_group_admin";
+        : [];
+    const record = matchingRecords.length === 1 ? matchingRecords[0] : undefined;
+    const exactRecordBinding =
+      record !== undefined &&
+      opportunity.selected_evidence_id !== undefined &&
+      opportunity.evidence_refs.includes(opportunity.selected_evidence_id) &&
+      record.record_id === opportunity.record_id &&
+      record.organization_name === opportunity.organization_name &&
+      record.source_url === opportunity.source_url &&
+      record.public_contact_channel === opportunity.destination &&
+      fingerprintNormalizedContactIdentity(normalizeContactIdentity(record)) ===
+        opportunity.identity_fingerprint &&
+      record.source_type === "public_group_admin" &&
+      record.subject_type === "public_group_admin" &&
+      record.permission_basis === "public_group_admin_channel" &&
+      record.source_visibility === "public" &&
+      !record.contains_minor_data &&
+      !record.do_not_contact;
     const groupRulesArtifact = record
       ? intake.groupRulesArtifacts.find(
           (candidate) =>
@@ -734,10 +819,18 @@ export function createActionDraft(
             candidate.recordId === record.record_id,
         )
       : undefined;
+    const sendAtMs = Date.parse(scheduledAt);
+    const recordVerifiedAtMs = Date.parse(record?.verified_at ?? "");
+    const groupRulesCapturedAtMs = Date.parse(
+      record?.group_rules_captured_at ?? "",
+    );
     const explicitlyRequestsGroupPost =
-      record?.source_type === "public_group_admin" &&
-      record.subject_type === "public_group_admin" &&
-      record.permission_basis === "public_group_admin_channel" &&
+      exactRecordBinding &&
+      record !== undefined &&
+      Number.isFinite(recordVerifiedAtMs) &&
+      recordVerifiedAtMs <= sendAtMs &&
+      sendAtMs - recordVerifiedAtMs <=
+        CONTACT_APPROVAL_EVIDENCE_MAX_AGE_MS &&
       strategy.requiredApprovals.includes("join_or_post_group") &&
       record.group_rules_captured &&
       opportunity.group_rules_captured &&
@@ -750,23 +843,20 @@ export function createActionDraft(
         groupRulesArtifact?.immutableArtifact.sha256 &&
       record.group_rules_byte_length === groupRulesArtifact?.byteLength &&
       record.group_rules_captured_at === groupRulesArtifact?.capturedAt &&
+      Number.isFinite(groupRulesCapturedAtMs) &&
+      groupRulesCapturedAtMs <= sendAtMs &&
+      sendAtMs - groupRulesCapturedAtMs <=
+        CONTACT_APPROVAL_EVIDENCE_MAX_AGE_MS &&
       record.group_rules_url === groupRulesArtifact?.sourceUrl;
-    const action = groupAdminRecord
-      ? explicitlyRequestsGroupPost
-        ? "group_post"
-        : undefined
-      : /(?:^mailto:|@)/u.test(opportunity.destination)
-          ? "email"
-          : /^https?:\/\//u.test(opportunity.destination)
-            ? "contact_form"
-            : "direct_message";
-    if (action) {
+    const action = explicitlyRequestsGroupPost ? "group_post" : undefined;
+    if (action && actionFallsWithinObjectiveWindow) {
       approvalScope = {
         lane: "contact_discovery",
         action,
         destination: opportunity.destination,
         source_url: opportunity.source_url,
         identity_fingerprint: opportunity.identity_fingerprint,
+        record_verified_at: record!.verified_at,
         draft_hash: hash(strategy.draftContent),
         audience: strategy.audience,
         send_at: scheduledAt,
@@ -845,6 +935,7 @@ function validateApprovalPackage(work: LaneWorkState): StrategyEvaluation {
       scope.platform === "instagram" ? "publish_instagram" : "publish_facebook";
     if (!required.has(platformApproval)) missing.push(platformApproval);
   } else if (scope.lane === "contact_discovery") {
+    if (!scope.record_verified_at) missing.push("fresh_contact_record_verification");
     if (!required.has("send_outreach")) missing.push("send_outreach");
     if (scope.action === "group_post" && !required.has("join_or_post_group")) {
       missing.push("join_or_post_group");
@@ -865,11 +956,115 @@ function validateApprovalPackage(work: LaneWorkState): StrategyEvaluation {
       };
 }
 
+export function resolveDraftForHumanReview(
+  draft: StrategyProposal,
+  reviewedAt: string,
+  objectiveWindow: { start: string; end: string },
+): {
+  draft: StrategyProposal;
+  approvalExpiresAt?: string;
+  expired: boolean;
+  outsideObjectiveWindow: boolean;
+} {
+  const reviewedAtInstant = IsoInstantSchema.parse(reviewedAt);
+  const scope = draft.approval_scope;
+  const approvalExpiresAt =
+    scope?.lane === "organic_social"
+      ? scope.publishing_at
+      : scope?.lane === "contact_discovery"
+        ? scope.send_at
+        : scope?.lane === "search_console"
+          ? scope.deploy_at
+          : undefined;
+  const outsideObjectiveWindow =
+    approvalExpiresAt !== undefined &&
+    !projectDateIsWithinWindow(
+      projectCalendarDate(approvalExpiresAt),
+      objectiveWindow,
+    );
+  if (
+    draft.readiness !== "approval_ready" ||
+    !scope ||
+    approvalExpiresAt === undefined ||
+    (Date.parse(reviewedAtInstant) < Date.parse(approvalExpiresAt) &&
+      !outsideObjectiveWindow)
+  ) {
+    return {
+      draft,
+      ...(approvalExpiresAt ? { approvalExpiresAt } : {}),
+      expired: false,
+      outsideObjectiveWindow,
+    };
+  }
+  const { approval_scope: _expiredScope, ...proposalOnly } = draft;
+  return {
+    draft: CanonicalStrategyProposalSchema.parse({
+      ...proposalOnly,
+      readiness: "not_approval_ready",
+    }),
+    expired: Date.parse(reviewedAtInstant) >= Date.parse(approvalExpiresAt),
+    outsideObjectiveWindow,
+  };
+}
+
+export function projectPersistedReviewForRuntime(
+  review: HumanReview,
+  projectedAt: string,
+  objectiveWindow: { start: string; end: string },
+): HumanReview {
+  const projectedAtInstant = IsoInstantSchema.parse(projectedAt);
+  if (review.review_kind !== "external_action_approval") return review;
+  const approvalPackage = review.approval_package;
+  const expiry =
+    "approval_expires_at" in approvalPackage
+      ? approvalPackage.approval_expires_at
+      : undefined;
+  const remainsActionable =
+    approvalPackage.schema_version === APPROVAL_PACKAGE_SCHEMA_VERSION &&
+    expiry !== undefined &&
+    Date.parse(projectedAtInstant) < Date.parse(expiry) &&
+    projectDateIsWithinWindow(projectCalendarDate(expiry), objectiveWindow);
+  if (remainsActionable) return review;
+
+  const { approval_scope: _historicalScope, ...proposalOnly } =
+    approvalPackage.proposal;
+  const safeProposal = CanonicalStrategyProposalSchema.parse({
+    ...proposalOnly,
+    readiness: "not_approval_ready",
+  });
+  const packageWithoutExpiry = { ...approvalPackage } as Record<string, unknown>;
+  delete packageWithoutExpiry.approval_expires_at;
+  const safePackage = ApprovalPackageSchema.parse({
+    ...packageWithoutExpiry,
+    review_kind: "proposal_review",
+    proposal: safeProposal,
+    required_approvals: ["proposal_review"],
+  });
+  return HumanReviewSchema.parse({
+    ...review,
+    review_kind: "proposal_review",
+    approval_hash: approvalPackageHash(safePackage),
+    approval_package: safePackage,
+  });
+}
+
 export function createInitialGrowthRun(
   input: InitialGrowthRunInput,
   now = new Date(),
 ): GrowthWorkflowState {
-  const startedAt = input.startedAt ?? now.toISOString();
+  const startedAt = IsoInstantSchema.parse(input.startedAt ?? now.toISOString());
+  const objectiveWindow = input.objectiveWindow ?? {
+    start: "2026-08-08",
+    end: "2026-10-07",
+  };
+  if (
+    !projectDateIsWithinWindow(
+      projectCalendarDate(startedAt),
+      objectiveWindow,
+    )
+  ) {
+    throw new RangeError("Project run date falls outside the objective window");
+  }
   const canonical = GrowthGraphStateSchema.parse({
     schema_version: GRAPH_STATE_SCHEMA_VERSION,
     graph_version: GRAPH_VERSION,
@@ -882,10 +1077,7 @@ export function createInitialGrowthRun(
     thread_id: input.runId,
     idempotency_key: input.idempotencyKey,
     trigger_kind: input.triggerKind ?? "manual",
-    objective_window: input.objectiveWindow ?? {
-      start: "2026-08-08",
-      end: "2026-10-07",
-    },
+    objective_window: objectiveWindow,
     metric_definition_version:
       input.metricDefinitionVersion ?? METRIC_DEFINITION_VERSION,
     runtime_manifest_hash:
@@ -1250,9 +1442,18 @@ export function createGrowthWorkflow(options: GrowthWorkflowOptions) {
       if (!verifiedTransaction) {
         throw new Error("Committed duplicate transaction failed canonical readback");
       }
-      const proposals = (snapshot?.experiments ?? []).map((experiment) =>
-        CanonicalStrategyProposalSchema.parse(experiment.payload),
-      );
+      let proposals = (snapshot?.experiments ?? []).map((experiment) => {
+        const current = CanonicalStrategyProposalSchema.safeParse(
+          experiment.payload,
+        );
+        if (current.success) return current.data;
+        const raw = experiment.payload as Record<string, unknown>;
+        const { approval_scope: _legacyScope, ...proposalOnly } = raw;
+        return CanonicalStrategyProposalSchema.parse({
+          ...proposalOnly,
+          readiness: "not_approval_ready",
+        });
+      });
       const evals = (snapshot?.evals ?? []).map((evaluation) => ({
         eval_id: evaluation.evalId,
         proposal_id: evaluation.proposalId,
@@ -1262,8 +1463,10 @@ export function createGrowthWorkflow(options: GrowthWorkflowOptions) {
         repair_count: evaluation.repairCount,
         evidence_refs: evaluation.evidenceRefs,
       }));
+      const projectedAt = now().toISOString();
       const reviews = (snapshot?.reviews ?? []).map((review) =>
-        HumanReviewSchema.parse({
+        projectPersistedReviewForRuntime(
+          HumanReviewSchema.parse({
           review_id: review.reviewId,
           proposal_id: review.proposalId,
           lane: review.lane,
@@ -1272,7 +1475,20 @@ export function createGrowthWorkflow(options: GrowthWorkflowOptions) {
           approval_hash: review.approvalHash,
           approval_package: review.approvalPackage,
           requested_at: review.requestedAt,
-        }),
+          }),
+          projectedAt,
+          state.canonical.objective_window,
+        ),
+      );
+      const projectedReviewProposals = new Map(
+        reviews.map((review) => [
+          review.proposal_id,
+          CanonicalStrategyProposalSchema.parse(review.approval_package.proposal),
+        ]),
+      );
+      proposals = proposals.map(
+        (proposal) =>
+          projectedReviewProposals.get(proposal.proposal_id) ?? proposal,
       );
       const errors = (snapshot?.errors ?? []).map((error) => ({
         error_id: error.errorId,
@@ -1737,8 +1953,15 @@ export function createGrowthWorkflow(options: GrowthWorkflowOptions) {
     ) {
       throw new Error("Human review requires a passed local draft");
     }
+    const requestedAt = now().toISOString();
+    const reviewResolution = resolveDraftForHumanReview(
+      work.draft,
+      requestedAt,
+      state.canonical.objective_window,
+    );
+    const reviewDraft = reviewResolution.draft;
     const reviewKind =
-      work.draft.readiness === "approval_ready" && work.draft.approval_scope
+      reviewDraft.readiness === "approval_ready" && reviewDraft.approval_scope
         ? "external_action_approval"
         : "proposal_review";
     const draftKind =
@@ -1752,7 +1975,7 @@ export function createGrowthWorkflow(options: GrowthWorkflowOptions) {
       schema_version: APPROVAL_PACKAGE_SCHEMA_VERSION,
       evidence_mode: evidenceMode(state.intake) === "synthetic" ? "synthetic" : "real",
       review_kind: reviewKind,
-      proposal: work.draft,
+      proposal: reviewDraft,
       draft_content: {
         kind: draftKind,
         content: work.strategy.draftContent,
@@ -1783,6 +2006,10 @@ export function createGrowthWorkflow(options: GrowthWorkflowOptions) {
                   ? "send"
                   : "merge_deploy",
             ],
+      ...(reviewKind === "external_action_approval" &&
+      reviewResolution.approvalExpiresAt
+        ? { approval_expires_at: reviewResolution.approvalExpiresAt }
+        : {}),
       external_action_status: "not_executed",
     });
     const approvalHash = approvalPackageHash(approvalPackage);
@@ -1794,10 +2021,11 @@ export function createGrowthWorkflow(options: GrowthWorkflowOptions) {
       status: "awaiting_review",
       approval_hash: approvalHash,
       approval_package: approvalPackage,
-      requested_at: state.startedAt,
+      requested_at: requestedAt,
     });
     const replacement: LaneWorkState = {
       ...work,
+      draft: reviewDraft,
       status: "awaiting_review",
     };
     const laneWork = replaceLaneWork(state, replacement);
@@ -1807,12 +2035,15 @@ export function createGrowthWorkflow(options: GrowthWorkflowOptions) {
       proposalId: review.proposal_id,
       lane: review.lane,
       reviewKind: review.review_kind,
+      approvalExpired: reviewResolution.expired,
+      outsideObjectiveWindow: reviewResolution.outsideObjectiveWindow,
       externalActionStatus: "not_executed",
     });
     return finishNode(state, "human_review", {
       laneWork,
       currentLane,
       canonical: canonicalUpdate(state, {
+        proposals: replaceProposal(state.canonical.proposals, reviewDraft),
         reviews: state.canonical.reviews.some(
           (entry) => entry.review_id === review.review_id,
         )

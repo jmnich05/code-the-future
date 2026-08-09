@@ -1,0 +1,67 @@
+{
+  "schema_version": "code-the-future.growth-evidence.v1.1",
+  "producer": {
+    "adapter": "code-the-future.growth-capture-adapter",
+    "version": "1.1.0",
+    "mode": "synthetic_fixture"
+  },
+  "evidence_id": "evidence:gsc:summary",
+  "lane": "search_console",
+  "source": "search_console",
+  "captured_at": "2026-08-08T15:46:00-04:00",
+  "fresh_through": "2026-08-06",
+  "data_state": "top_rows",
+  "redaction_status": "synthetic",
+  "property_id": "https://codethefuture.net/",
+  "property_url": "https://codethefuture.net/",
+  "payload": {
+    "grain": "separate_dimension_tables",
+    "date_window": {
+      "start": "2026-07-10",
+      "end": "2026-08-06"
+    },
+    "totals": {
+      "clicks": 1,
+      "impressions": 72,
+      "ctr_rate": 0.014,
+      "average_position": 30.9
+    },
+    "tables": {
+      "dates": {
+        "coverage": "partial",
+        "rows": [
+          { "date": "2026-08-06", "clicks": 0, "impressions": 4 },
+          { "date": "2026-07-25", "clicks": 1, "impressions": 6 }
+        ]
+      },
+      "queries": {
+        "coverage": "partial",
+        "rows": [
+          { "query": "code to the future", "clicks": 0, "impressions": 17 },
+          { "query": "coding for kids louisville ky", "clicks": 0, "impressions": 1 }
+        ]
+      },
+      "pages": {
+        "coverage": "complete",
+        "rows": [
+          { "page": "https://codethefuture.net/", "clicks": 1, "impressions": 40 },
+          { "page": "https://codethefuture.net/about.html", "clicks": 0, "impressions": 6 }
+        ]
+      },
+      "countries": {
+        "coverage": "complete",
+        "rows": [
+          { "country": "United States", "clicks": 1, "impressions": 27 },
+          { "country": "Nepal", "clicks": 0, "impressions": 13 }
+        ]
+      },
+      "devices": {
+        "coverage": "complete",
+        "rows": [
+          { "device": "DESKTOP", "clicks": 1, "impressions": 68 },
+          { "device": "MOBILE", "clicks": 0, "impressions": 4 }
+        ]
+      }
+    }
+  }
+}

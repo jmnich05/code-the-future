@@ -19,6 +19,10 @@ Given one immutable, evidence-backed growth capture bundle, produce:
 
 The slice is complete only when it can resume after forced interruption, reject privacy-unsafe or stale evidence, avoid duplicate observations and proposals on replay, and explain every terminal state.
 
+Project time is `America/New_York`. Date-only provider exports, freshness, KPI
+windows, idempotency-day buckets, and the inclusive 60-day objective boundary
+must all use that calendar rather than UTC string slicing.
+
 ## Why this is the second graph system
 
 Opportunity Radar proved the durable control-plane pattern: typed capture contracts, immutable evidence, LangGraph checkpoints, an append-only SQLite domain ledger, bounded Agents SDK judgment, an independent eval node, crash-safe replay, generated state, and an inspection-only canvas.
@@ -43,6 +47,9 @@ Included:
 
 - Run identity, lock, idempotency, and runtime-policy hashing.
 - Immutable capture-bundle and evidence-artifact ingestion.
+- Backward-compatible evidence v1.1 attestations for exact-zero versus
+  unavailable Meta fields, independent Search Console dimension tables, and
+  GA4 property/event evidence.
 - Typed, lane-specific source coverage and freshness.
 - Deterministic normalization, deduplication, consent checks, maturity checks, KPI calculations, and baseline gaps.
 - A data-analysis node that creates evidence-grounded opportunity candidates.
@@ -53,6 +60,9 @@ Included:
 - SQLite checkpoints, append-only domain state, read-after-write verification, and immutable artifacts.
 - Generated project state and a static inspection-only canvas.
 - Synthetic/redacted trajectory fixtures for all three lanes.
+- Current approval-package v1.1 expiry bound exactly to social publication,
+  contact send, or SEO deployment time. Legacy v1 packages are audit-readable
+  but never execution-authoritative at runtime.
 
 Excluded from shadow v1:
 
@@ -130,7 +140,11 @@ Analysis:
 
 Output:
 
-- a draft content/experiment package with one changed variable, exact KPI, 72-hour measurement window, repeat/stop/scale rule, privacy result, and approval hash.
+- a draft content/experiment package with one changed variable, exact KPI,
+  72-hour measurement window, repeat/stop/scale rule, privacy result, and
+  approval hash. The deterministic default publication time is 12 hours after
+  drafting, and consent revocation status must still be no more than 24 hours
+  old at that publication time.
 
 ### Contact-discovery lane
 
@@ -150,16 +164,28 @@ Analysis:
 
 Output:
 
-- an approval-ready discovery record and optional outreach draft, never a sent message.
+- a reviewable discovery record and optional outreach draft, never a sent
+  message. Untyped public URLs and email-like strings remain proposal-only in
+  shadow v1; only an exact public-group-admin record with a matching immutable
+  rules capture can produce a `group_post` approval scope. Both the selected
+  record verification and rules capture must be no more than seven days old at
+  the exact scheduled send time.
 
 ### Search Console lane
 
 Inputs:
 
-- Search Console query/page/date exports with property, capture, and freshness metadata;
+- decision-eligible Search Console exports containing exact
+  date/query/page/country/device rows with property, capture, and freshness
+  metadata;
+- separate-dimension Search Console UI summaries as partial evidence only,
+  never as a fabricated cross-product;
 - sitemap and indexing snapshots;
 - public-page inventory and deterministic local SEO checks;
-- GA4 organic lead and verified-purchase evidence when available.
+- independently identified GA4 event, lead, form-response, and
+  verified-purchase evidence when available. Complete GA4 evidence requires a
+  verified web-stream host matching the Search Console site plus freshness and
+  date-window coverage through the same mature analysis window.
 
 Analysis:
 
@@ -221,10 +247,21 @@ Use three layers:
 
 Do not overload learner-platform tables or the existing paid-only `ad_performance_history` table with organic, contact, or Search Console data.
 
+The synthetic pre-release `user_version=1` development ledger is intentionally
+unsupported and must not be migrated or counted. The released PR #8
+`user_version=2` ledger is the backward-compatibility floor for v1.1.
+
 ## Completion oracles
 
 - A trusted-looking filename does not prove consent, sanitization, publication, or performance.
 - A valid zero requires complete verified coverage for that source and window.
+- Evidence validation proves structural safety, hashes, privacy prerequisites,
+  and path confinement; it does not make partial evidence decision-eligible.
+- Meta `viewers` is not `reach`, Meta `follows` is not `new_follows`, and raw
+  `comments` is not `substantive_comments`.
+- Separate Search Console dimension tables must never be joined into invented
+  date/query/page/country/device rows, and a GA4 property ID is never compared
+  to a Search Console property ID.
 - Social publication and performance are platform-specific claims.
 - Contact records count once across sources and only after permission-safe qualification.
 - Search analysis requires query/page grain and mature data; position alone is not success.

@@ -15,17 +15,27 @@ import {
   type LaneStrategyInput,
 } from "../src/assessor.js";
 import { intakeCaptureBundle } from "../src/artifacts.js";
-import { analyzeGrowthPortfolio } from "../src/domain.js";
+import {
+  analyzeGrowthPortfolio,
+  fingerprintNormalizedContactIdentity,
+  normalizeContactIdentity,
+} from "../src/domain.js";
 import { GrowthLedger } from "../src/ledger.js";
 import {
   APPROVAL_PACKAGE_SCHEMA_VERSION,
   ApprovalPackageSchema,
+  HumanReviewSchema,
+  LEGACY_APPROVAL_PACKAGE_SCHEMA_VERSION,
+  StrategyProposalSchema,
   approvalPackageHash,
+  type LaneAnalysis,
 } from "../src/schema.js";
 import {
   createActionDraft,
   createGrowthWorkflow,
   createInitialGrowthRun,
+  projectPersistedReviewForRuntime,
+  resolveDraftForHumanReview,
   type GrowthWorkflowOptions,
   type GrowthWorkflowState,
 } from "../src/workflow.js";
@@ -35,7 +45,7 @@ const fixtureRoot = resolve(
   "fixtures",
 );
 const capturePath = join(fixtureRoot, "capture-bundle.json");
-const startedAt = "2026-08-08T20:00:00.000Z";
+const startedAt = "2026-08-09T19:00:00.000Z";
 
 function sha256(value: string | Uint8Array): string {
   return createHash("sha256").update(value).digest("hex");
@@ -127,10 +137,147 @@ async function initialRun(
     triggerKind: "test",
     startedAt,
     objectiveWindow: { start: "2026-08-08", end: "2026-10-07" },
-    metricDefinitionVersion: "ctf-growth-metrics-v1",
+    metricDefinitionVersion: "ctf-growth-metrics-v1.1",
     modelId: "injected-synthetic-model",
   });
 }
+
+test("initial run requires a strict instant inside the inclusive objective window", () => {
+  const base = {
+    runId: "run:initial-boundary",
+    idempotencyKey: "test:initial-boundary",
+    capturePath,
+    expectedCaptureSha256: "a".repeat(64),
+    triggerKind: "test" as const,
+    objectiveWindow: { start: "2026-08-08", end: "2026-08-09" },
+    metricDefinitionVersion: "ctf-growth-metrics-v1.1",
+  };
+  for (const invalid of [
+    "2026-08-08",
+    "2026-08-08T12:00:00",
+    "August 8, 2026 noon",
+  ]) {
+    assert.throws(() => createInitialGrowthRun({ ...base, startedAt: invalid }));
+  }
+  for (const inside of [
+    "2026-08-08T00:00:00-04:00",
+    "2026-08-09T23:59:59-04:00",
+  ]) {
+    assert.equal(
+      createInitialGrowthRun({ ...base, startedAt: inside }).startedAt,
+      inside,
+    );
+  }
+  for (const outside of [
+    "2026-08-07T23:59:59-04:00",
+    "2026-08-10T00:00:00-04:00",
+  ]) {
+    assert.throws(
+      () => createInitialGrowthRun({ ...base, startedAt: outside }),
+      /outside the objective window/u,
+    );
+  }
+});
+
+test("current Search Console action authority expires at the exact deploy instant", () => {
+  const draftContent =
+    "SEO change specification: update one public page title and description.";
+  const deployAt = "2026-08-20T14:00:00-04:00";
+  const proposal = StrategyProposalSchema.parse({
+    proposal_id: "proposal:seo:expiry-boundary",
+    lane: "search_console",
+    hypothesis: "A parent-intent title can improve qualified clicks.",
+    controlled_variable: "title_meta_alignment",
+    arm: "one-public-page-change",
+    primary_kpi: "nonbrand_parent_intent_gsc_clicks_28d",
+    measurement_window_days: 28,
+    evidence_refs: ["evidence:gsc:property"],
+    readiness: "approval_ready",
+    approval_scope: {
+      lane: "search_console",
+      action: "merge_and_deploy",
+      property_id: "sc-domain:codethefuture.net",
+      page_url: "https://codethefuture.net/",
+      query_cluster: "louisville kids coding camp",
+      change_hash: sha256(draftContent),
+      deploy_target: "production-main",
+      deploy_at: deployAt,
+    },
+    external_action_status: "not_executed",
+  });
+  const packageInput = {
+    schema_version: APPROVAL_PACKAGE_SCHEMA_VERSION,
+    evidence_mode: "synthetic" as const,
+    review_kind: "external_action_approval" as const,
+    proposal,
+    draft_content: {
+      kind: "seo_change_spec" as const,
+      content: draftContent,
+      content_sha256: sha256(draftContent),
+      redaction_status: "synthetic" as const,
+    },
+    maturity_rule: {
+      minimum_age_hours: 0,
+      minimum_comparable_executions_per_arm: 1,
+      measurement_window_days: 28,
+    },
+    comparison_rule: {
+      primary_kpi: proposal.primary_kpi,
+      baseline_reference: "baseline:seo:expiry-boundary",
+      evidence_refs: proposal.evidence_refs,
+    },
+    stop_rules: ["Stop if the exact change or production target differs."],
+    scale_rules: ["Repeat only after mature Search Console evidence."],
+    required_approvals: ["merge_deploy" as const],
+    external_action_status: "not_executed" as const,
+  };
+
+  assert.equal(ApprovalPackageSchema.safeParse(packageInput).success, false);
+  assert.equal(
+    ApprovalPackageSchema.safeParse({
+      ...packageInput,
+      approval_expires_at: "2026-08-20T14:00:01-04:00",
+    }).success,
+    false,
+  );
+  const approvalPackage = ApprovalPackageSchema.parse({
+    ...packageInput,
+    approval_expires_at: deployAt,
+  });
+  const review = HumanReviewSchema.parse({
+    review_id: "review:seo:expiry-boundary",
+    proposal_id: proposal.proposal_id,
+    lane: proposal.lane,
+    review_kind: "external_action_approval",
+    status: "awaiting_review",
+    approval_hash: approvalPackageHash(approvalPackage),
+    approval_package: approvalPackage,
+    requested_at: "2026-08-20T13:00:00-04:00",
+  });
+
+  assert.equal(
+    resolveDraftForHumanReview(
+      proposal,
+      "2026-08-20T13:59:59-04:00",
+      { start: "2026-08-08", end: "2026-10-07" },
+    ).draft.readiness,
+    "approval_ready",
+  );
+  assert.equal(
+    resolveDraftForHumanReview(proposal, deployAt, {
+      start: "2026-08-08",
+      end: "2026-10-07",
+    }).draft.readiness,
+    "not_approval_ready",
+  );
+  assert.equal(
+    projectPersistedReviewForRuntime(review, deployAt, {
+      start: "2026-08-08",
+      end: "2026-10-07",
+    }).review_kind,
+    "proposal_review",
+  );
+});
 
 function workflowOptions(
   directory: string,
@@ -215,8 +362,16 @@ test("shadow portfolio commits three exact review packages without external acti
     );
     const byLane = new Map(final.canonical.reviews.map((review) => [review.lane, review]));
     assert.equal(byLane.get("organic_social")?.review_kind, "external_action_approval");
-    assert.equal(byLane.get("contact_discovery")?.review_kind, "external_action_approval");
+    assert.equal(byLane.get("contact_discovery")?.review_kind, "proposal_review");
     assert.equal(byLane.get("search_console")?.review_kind, "proposal_review");
+    assert.equal(
+      byLane.get("contact_discovery")?.approval_package.proposal.readiness,
+      "not_approval_ready",
+    );
+    assert.equal(
+      byLane.get("contact_discovery")?.approval_package.proposal.approval_scope,
+      undefined,
+    );
     assert.equal(
       byLane.get("search_console")?.approval_package.proposal.readiness,
       "not_approval_ready",
@@ -231,7 +386,7 @@ test("shadow portfolio commits three exact review packages without external acti
         asset_id: "asset:fb-safe",
         evidence_id: "evidence:social:facebook",
         evidence_sha256:
-          "53d7b9528ccf9e0c8b0b97b3d7fd302392ddf477b1a06234155fbabe1e45f1dd",
+          "61ad7daffabda6ffde0730693eb27e6bcd724cba7298a8366233c12c009fd913",
         content_sha256:
           "df1c4a1183b2be6ec97ffc62aed476767b797aa9bf937f845cc2f365e12d1a3f",
         byte_length: 31,
@@ -765,6 +920,385 @@ test("social asset byte-attestation mismatches fail closed before approval", asy
   }
 });
 
+test("zero-asset social approvals fail closed except explicit Facebook text", async () => {
+  const directory = await mkdtemp(join(tmpdir(), "ctf-growth-zero-asset-"));
+  try {
+    const intake = await intakeCaptureBundle({
+      captureBundlePath: capturePath,
+      allowedEvidenceRoot: fixtureRoot,
+      runArtifactRoot: join(directory, "artifacts"),
+      runAt: startedAt,
+      allowSyntheticEvidence: true,
+    });
+    const analysis = analyzeGrowthPortfolio({
+      bundle: intake.bundle,
+      evidence: intake.evidence.map((entry) => entry.artifact),
+      runAt: startedAt,
+    });
+    const socialAnalysis = analysis.lanes.find(
+      (lane) => lane.lane === "organic_social",
+    );
+    if (!socialAnalysis) throw new Error("Social analysis missing");
+
+    const draftFor = (
+      platform: "instagram" | "facebook",
+      format: "text" | "image",
+    ) => {
+      const changedIntake = structuredClone(intake);
+      const evidence = changedIntake.evidence.find(
+        (entry) =>
+          entry.artifact.lane === "organic_social" &&
+          entry.artifact.platform === platform,
+      );
+      if (!evidence || evidence.artifact.lane !== "organic_social") {
+        throw new Error(`${platform} evidence missing`);
+      }
+      const anchorPost = evidence.artifact.payload.posts[0]!;
+      anchorPost.format = format;
+      anchorPost.asset_refs = [];
+      const laneAnalysis = structuredClone(socialAnalysis);
+      laneAnalysis.opportunities = [
+        {
+          candidate_id: `candidate:${platform}:zero-asset`,
+          lane: "organic_social",
+          kind: "social_experiment",
+          summary: `Review the ${platform} ${format} zero-asset boundary.`,
+          score: 80,
+          controlled_variable: "format",
+          evidence_refs: [evidence.artifact.evidence_id],
+          platform,
+          account_id: evidence.artifact.account_id,
+          anchor_post_id: anchorPost.post_id,
+        },
+      ];
+      const strategyInput: LaneStrategyInput = {
+        analysisId: `analysis:${platform}:zero-asset`,
+        lane: "organic_social",
+        eligibility: "eligible",
+        primaryKpi: "organic_net_new_followers_60d_platform_separated",
+        recommendedDecision: "repeat",
+        allowedControlledVariables: ["format"],
+        baselineSummary: `Synthetic ${platform} baseline.`,
+        opportunitySummary: laneAnalysis.opportunities[0]!.summary,
+        sourceCoverageSummary: "complete",
+        maturitySummary: "mature",
+        guardrails: [],
+        evidence: [
+          {
+            id: evidence.artifact.evidence_id,
+            kind: "synthetic_fixture",
+            source: "synthetic_fixture",
+            observedAt: startedAt,
+            summary: `Synthetic ${platform} evidence.`,
+          },
+        ],
+      };
+      return createActionDraft(
+        `run-${platform}-${format}-zero-asset`,
+        strategyInput,
+        passingProposal(strategyInput),
+        laneAnalysis,
+        changedIntake,
+        startedAt,
+      );
+    };
+
+    for (const draft of [
+      draftFor("facebook", "image"),
+      draftFor("instagram", "image"),
+      draftFor("instagram", "text"),
+    ]) {
+      assert.equal(draft.readiness, "not_approval_ready");
+      assert.equal(draft.approval_scope, undefined);
+    }
+
+    const facebookText = draftFor("facebook", "text");
+    assert.equal(facebookText.readiness, "approval_ready");
+    assert.equal(facebookText.approval_scope?.lane, "organic_social");
+    if (facebookText.approval_scope?.lane !== "organic_social") {
+      throw new Error("Facebook text-only approval scope missing");
+    }
+    assert.deepEqual(facebookText.approval_scope.asset_ids, []);
+    assert.deepEqual(facebookText.approval_scope.asset_artifacts, []);
+  } finally {
+    await rm(directory, { recursive: true, force: true });
+  }
+});
+
+test("typed Meta identity is exact-bound into Facebook approval and review hashes", async () => {
+  const directory = await mkdtemp(join(tmpdir(), "ctf-growth-meta-identity-"));
+  try {
+    const intake = await intakeCaptureBundle({
+      captureBundlePath: join(
+        fixtureRoot,
+        "capture-bundle-facebook-typed-v1.1.json",
+      ),
+      allowedEvidenceRoot: fixtureRoot,
+      runArtifactRoot: join(directory, "artifacts"),
+      runAt: startedAt,
+      allowSyntheticEvidence: true,
+    });
+    const analysis = analyzeGrowthPortfolio({
+      bundle: intake.bundle,
+      evidence: intake.evidence.map((entry) => entry.artifact),
+      runAt: startedAt,
+    });
+    const socialAnalysis = analysis.lanes.find(
+      (lane) => lane.lane === "organic_social",
+    );
+    const facebookEvidence = intake.evidence.find(
+      (entry) =>
+        entry.artifact.lane === "organic_social" &&
+        entry.artifact.platform === "facebook",
+    );
+    if (
+      !socialAnalysis ||
+      !facebookEvidence ||
+      facebookEvidence.artifact.lane !== "organic_social" ||
+      !("meta_identity" in facebookEvidence.artifact) ||
+      !facebookEvidence.artifact.meta_identity
+    ) {
+      throw new Error("Typed Facebook evidence missing");
+    }
+    const typedAnalysis = structuredClone(socialAnalysis);
+    typedAnalysis.opportunities = [
+      {
+        candidate_id: "candidate:facebook:typed-meta",
+        lane: "organic_social",
+        kind: "social_experiment",
+        summary: "Repeat the facebook format with exact typed Meta identity.",
+        score: 80,
+        controlled_variable: "format",
+        evidence_refs: [facebookEvidence.artifact.evidence_id],
+        platform: "facebook",
+        account_id: facebookEvidence.artifact.account_id,
+        anchor_post_id: facebookEvidence.artifact.payload.posts[0]!.post_id,
+      },
+    ];
+    const strategyInput: LaneStrategyInput = {
+      analysisId: "analysis:facebook:typed-meta",
+      lane: "organic_social",
+      eligibility: "eligible",
+      primaryKpi: "organic_net_new_followers_60d_platform_separated",
+      recommendedDecision: "repeat",
+      allowedControlledVariables: ["format"],
+      baselineSummary: "Synthetic typed Facebook baseline.",
+      opportunitySummary: typedAnalysis.opportunities[0]!.summary,
+      sourceCoverageSummary: "complete",
+      maturitySummary: "mature",
+      guardrails: [],
+      evidence: [
+        {
+          id: facebookEvidence.artifact.evidence_id,
+          kind: "synthetic_fixture",
+          source: "synthetic_fixture",
+          observedAt: startedAt,
+          summary: "Synthetic typed Facebook evidence.",
+        },
+      ],
+    };
+    const strategy = passingProposal(strategyInput);
+    const original = createActionDraft(
+      "run-facebook-typed-meta",
+      strategyInput,
+      strategy,
+      typedAnalysis,
+      intake,
+      startedAt,
+    );
+    if (original.approval_scope?.lane !== "organic_social") {
+      throw new Error("Typed Facebook approval scope missing");
+    }
+    assert.deepEqual(original.approval_scope.meta_identity, {
+      asset_id: "1211320332069277",
+      page_id: "61592857947154",
+      business_portfolio_id: "1382097470521196",
+    });
+    const publishingAt = original.approval_scope.publishing_at;
+    const justBeforePublishing = new Date(
+      Date.parse(publishingAt) - 1,
+    ).toISOString();
+    const beforeDeadline = resolveDraftForHumanReview(
+      original,
+      justBeforePublishing,
+      intake.bundle.objective_window,
+    );
+    const atDeadline = resolveDraftForHumanReview(
+      original,
+      publishingAt,
+      intake.bundle.objective_window,
+    );
+    const afterDeadline = resolveDraftForHumanReview(
+      original,
+      new Date(Date.parse(publishingAt) + 1).toISOString(),
+      intake.bundle.objective_window,
+    );
+    assert.equal(beforeDeadline.draft.readiness, "approval_ready");
+    assert.equal(beforeDeadline.expired, false);
+    assert.equal(atDeadline.draft.readiness, "not_approval_ready");
+    assert.equal(atDeadline.expired, true);
+    assert.equal(afterDeadline.draft.readiness, "not_approval_ready");
+    assert.equal(afterDeadline.expired, true);
+
+    const finalDayIntake = structuredClone(intake);
+    finalDayIntake.bundle.objective_window.end = "2026-08-09";
+    const lateFinalDay = createActionDraft(
+      "run-facebook-final-day",
+      strategyInput,
+      strategy,
+      typedAnalysis,
+      finalDayIntake,
+      "2026-08-09T20:00:00-04:00",
+    );
+    assert.equal(lateFinalDay.readiness, "not_approval_ready");
+    assert.equal(lateFinalDay.approval_scope, undefined);
+    assert.throws(
+      () =>
+        createActionDraft(
+          "run-facebook-invalid-time",
+          strategyInput,
+          strategy,
+          typedAnalysis,
+          intake,
+          "2026-08-09T19:00:00",
+        ),
+      /Invalid ISO datetime|offset/u,
+    );
+
+    const packageFor = (proposal: typeof original) =>
+      ApprovalPackageSchema.parse({
+        schema_version: APPROVAL_PACKAGE_SCHEMA_VERSION,
+        evidence_mode: "synthetic",
+        review_kind: "external_action_approval",
+        proposal,
+        draft_content: {
+          kind: "social_copy",
+          content: strategy.draftContent,
+          content_sha256: sha256(strategy.draftContent),
+          redaction_status: "synthetic",
+        },
+        maturity_rule: {
+          minimum_age_hours: 72,
+          minimum_comparable_executions_per_arm: 3,
+          measurement_window_days: proposal.measurement_window_days,
+        },
+        comparison_rule: {
+          primary_kpi: proposal.primary_kpi,
+          baseline_reference: "baseline:synthetic-facebook-typed-meta",
+          evidence_refs: proposal.evidence_refs,
+        },
+        stop_rules: [strategy.stopRule],
+        scale_rules: [strategy.scaleRule],
+        required_approvals: ["publish"],
+        approval_expires_at:
+          proposal.approval_scope?.lane === "organic_social"
+            ? proposal.approval_scope.publishing_at
+            : undefined,
+        external_action_status: "not_executed",
+      });
+    const originalPackageHash = approvalPackageHash(packageFor(original));
+
+    for (const field of ["asset_id", "business_portfolio_id"] as const) {
+      const changedIntake = structuredClone(intake);
+      const changedEvidence = changedIntake.evidence.find(
+        (entry) =>
+          entry.artifact.lane === "organic_social" &&
+          entry.artifact.platform === "facebook",
+      );
+      if (
+        !changedEvidence ||
+        changedEvidence.artifact.lane !== "organic_social" ||
+        !("meta_identity" in changedEvidence.artifact) ||
+        !changedEvidence.artifact.meta_identity
+      ) {
+        throw new Error("Changed typed Facebook evidence missing");
+      }
+      changedEvidence.artifact.meta_identity[field] =
+        field === "asset_id"
+          ? "1211320332069278"
+          : "1382097470521197";
+      const changed = createActionDraft(
+        "run-facebook-typed-meta",
+        strategyInput,
+        strategy,
+        typedAnalysis,
+        changedIntake,
+        startedAt,
+      );
+      if (changed.approval_scope?.lane !== "organic_social") {
+        throw new Error(`Changed ${field} approval scope missing`);
+      }
+      assert.notDeepEqual(
+        changed.approval_scope.meta_identity,
+        original.approval_scope.meta_identity,
+      );
+      assert.notEqual(
+        changed.approval_scope.content_hash,
+        original.approval_scope.content_hash,
+      );
+      assert.notEqual(
+        approvalPackageHash(packageFor(changed)),
+        originalPackageHash,
+      );
+    }
+
+    const mismatchedPageIntake = structuredClone(intake);
+    const mismatchedPageEvidence = mismatchedPageIntake.evidence.find(
+      (entry) =>
+        entry.artifact.lane === "organic_social" &&
+        entry.artifact.platform === "facebook",
+    );
+    if (
+      !mismatchedPageEvidence ||
+      mismatchedPageEvidence.artifact.lane !== "organic_social" ||
+      !("meta_identity" in mismatchedPageEvidence.artifact) ||
+      !mismatchedPageEvidence.artifact.meta_identity
+    ) {
+      throw new Error("Mismatched Page evidence missing");
+    }
+    mismatchedPageEvidence.artifact.meta_identity.page_id = "61592857947155";
+    assert.throws(
+      () =>
+        createActionDraft(
+          "run-facebook-typed-meta",
+          strategyInput,
+          strategy,
+          typedAnalysis,
+          mismatchedPageIntake,
+          startedAt,
+        ),
+      /account target equal to its Page ID/u,
+    );
+
+    const incompleteIdentityIntake = structuredClone(intake);
+    const incompleteEvidence = incompleteIdentityIntake.evidence.find(
+      (entry) =>
+        entry.artifact.lane === "organic_social" &&
+        entry.artifact.platform === "facebook",
+    );
+    if (
+      !incompleteEvidence ||
+      incompleteEvidence.artifact.lane !== "organic_social" ||
+      !("meta_identity" in incompleteEvidence.artifact)
+    ) {
+      throw new Error("Incomplete typed Facebook evidence missing");
+    }
+    delete incompleteEvidence.artifact.meta_identity;
+    const incomplete = createActionDraft(
+      "run-facebook-typed-meta",
+      strategyInput,
+      strategy,
+      typedAnalysis,
+      incompleteIdentityIntake,
+      startedAt,
+    );
+    assert.equal(incomplete.readiness, "not_approval_ready");
+    assert.equal(incomplete.approval_scope, undefined);
+  } finally {
+    await rm(directory, { recursive: true, force: true });
+  }
+});
+
 test("social consent details bind the exact approval hash and reject unsafe scope mismatches", async () => {
   const directory = await mkdtemp(join(tmpdir(), "ctf-growth-consent-hash-"));
   try {
@@ -883,7 +1417,7 @@ test("social consent details bind the exact approval hash and reject unsafe scop
     assert.deepEqual(originalAsset.authorization.allowed_media, ["image"]);
     assert.equal(
       originalAsset.authorization.non_revoked_checked_at,
-      "2026-08-08T15:20:00-04:00",
+      "2026-08-09T15:00:00-04:00",
     );
     assert.equal(originalAsset.authorization.authorization_evaluated_at, startedAt);
     assert.equal(originalAsset.authorization.consent_reference_hash.length, 64);
@@ -917,6 +1451,10 @@ test("social consent details bind the exact approval hash and reject unsafe scop
         stop_rules: [strategy.stopRule],
         scale_rules: [strategy.scaleRule],
         required_approvals: ["publish"],
+        approval_expires_at:
+          proposal.approval_scope?.lane === "organic_social"
+            ? proposal.approval_scope.publishing_at
+            : undefined,
         external_action_status: "not_executed",
       });
     assert.notEqual(
@@ -945,6 +1483,64 @@ test("social consent details bind the exact approval hash and reject unsafe scop
     );
     assert.equal(stale.readiness, "not_approval_ready");
     assert.equal(stale.approval_scope, undefined);
+
+    const exactPublishFreshnessBoundaryIntake = structuredClone(intake);
+    const exactPublishFreshnessBoundaryInstagram =
+      exactPublishFreshnessBoundaryIntake.evidence.find(
+        (entry) =>
+          entry.artifact.lane === "organic_social" &&
+          entry.artifact.platform === "instagram",
+      );
+    if (
+      !exactPublishFreshnessBoundaryInstagram ||
+      exactPublishFreshnessBoundaryInstagram.artifact.lane !== "organic_social"
+    ) {
+      throw new Error("Publish-time boundary Instagram evidence missing");
+    }
+    exactPublishFreshnessBoundaryInstagram.artifact.payload.consents[0]!
+      .revocation_checked_at = "2026-08-09T03:00:00-04:00";
+    const exactPublishFreshnessBoundary = createActionDraft(
+      "run-consent-original",
+      strategyInput,
+      strategy,
+      instagramAnalysis,
+      exactPublishFreshnessBoundaryIntake,
+      startedAt,
+    );
+    assert.equal(exactPublishFreshnessBoundary.readiness, "approval_ready");
+    if (exactPublishFreshnessBoundary.approval_scope?.lane !== "organic_social") {
+      throw new Error("Exact publish-time boundary approval scope missing");
+    }
+    assert.equal(
+      exactPublishFreshnessBoundary.approval_scope.publishing_at,
+      "2026-08-10T07:00:00.000Z",
+    );
+
+    const freshAtDraftButStaleAtPublishIntake = structuredClone(intake);
+    const freshAtDraftButStaleAtPublishInstagram =
+      freshAtDraftButStaleAtPublishIntake.evidence.find(
+        (entry) =>
+          entry.artifact.lane === "organic_social" &&
+          entry.artifact.platform === "instagram",
+      );
+    if (
+      !freshAtDraftButStaleAtPublishInstagram ||
+      freshAtDraftButStaleAtPublishInstagram.artifact.lane !== "organic_social"
+    ) {
+      throw new Error("Publish-time-stale Instagram evidence missing");
+    }
+    freshAtDraftButStaleAtPublishInstagram.artifact.payload.consents[0]!
+      .revocation_checked_at = "2026-08-09T02:59:00-04:00";
+    const freshAtDraftButStaleAtPublish = createActionDraft(
+      "run-consent-original",
+      strategyInput,
+      strategy,
+      instagramAnalysis,
+      freshAtDraftButStaleAtPublishIntake,
+      startedAt,
+    );
+    assert.equal(freshAtDraftButStaleAtPublish.readiness, "not_approval_ready");
+    assert.equal(freshAtDraftButStaleAtPublish.approval_scope, undefined);
 
     for (const defect of ["guardian", "platform", "media"] as const) {
       const unsafePackage = structuredClone(packageFor(original));
@@ -984,31 +1580,81 @@ test("public group-admin URLs remain proposal-only until exact group-post rules 
       runAt: startedAt,
       allowSyntheticEvidence: true,
     });
-    const analysis = analyzeGrowthPortfolio({
-      bundle: intake.bundle,
-      evidence: intake.evidence.map((entry) => entry.artifact),
-      runAt: startedAt,
-    });
-    const contactAnalysis = analysis.lanes.find(
-      (lane) => lane.lane === "contact_discovery",
-    );
     const contactEvidence = intake.evidence.find(
       (entry) => entry.artifact.lane === "contact_discovery",
     );
-    if (
-      !contactAnalysis ||
-      !contactEvidence ||
-      contactEvidence.artifact.lane !== "contact_discovery"
-    ) {
+    if (!contactEvidence || contactEvidence.artifact.lane !== "contact_discovery") {
       throw new Error("Contact evidence missing");
     }
     const record = contactEvidence.artifact.payload.records[0]!;
-    const groupAnalysis = structuredClone(contactAnalysis);
-    const opportunity = groupAnalysis.opportunities[0];
-    if (!opportunity || opportunity.kind !== "contact_discovery") {
-      throw new Error("Contact opportunity missing");
+    const lowerScoredEvidence = structuredClone(contactEvidence);
+    if (lowerScoredEvidence.artifact.lane !== "contact_discovery") {
+      throw new Error("Lower-score contact evidence missing");
     }
-    opportunity.summary = "Review the public_group_admin channel as a group-post proposal.";
+    lowerScoredEvidence.declaration.evidence_id = "evidence:contact:lower-public";
+    lowerScoredEvidence.artifact.evidence_id = "evidence:contact:lower-public";
+    const lowerRecord = lowerScoredEvidence.artifact.payload.records[0]!;
+    lowerRecord.record_id = "contact-record:lower-public";
+    lowerRecord.organization_name = "Synthetic Lower-Score Public Program";
+    lowerRecord.public_contact_channel = "https://example.org/lower/contact";
+    lowerRecord.source_url = "https://example.org/lower/program";
+    lowerRecord.source_type = "library";
+    lowerRecord.group_rules_captured = false;
+    delete lowerRecord.group_rules_url;
+    delete lowerRecord.group_rules_artifact_path;
+    delete lowerRecord.group_rules_content_sha256;
+    delete lowerRecord.group_rules_byte_length;
+    delete lowerRecord.group_rules_captured_at;
+    lowerRecord.permission_basis = "public_org_channel";
+    lowerRecord.subject_type = "organization";
+    lowerRecord.mission_fit = 1;
+    lowerRecord.louisville_relevance = 1;
+    lowerRecord.parent_community_access = 1;
+    lowerRecord.actionability = 1;
+    lowerRecord.identity_hint = "synthetic-lower-public";
+
+    const combinedIntake = structuredClone(intake);
+    combinedIntake.evidence = [lowerScoredEvidence, contactEvidence];
+    const selectedEvidenceId = contactEvidence.artifact.evidence_id;
+    const selectedFingerprint = fingerprintNormalizedContactIdentity(
+      normalizeContactIdentity(record),
+    );
+    const groupAnalysis: LaneAnalysis = {
+      lane: "contact_discovery",
+      status: "eligible",
+      decision: "repeat",
+      source_coverage: "complete",
+      issues: [],
+      evidence_refs: [lowerScoredEvidence.artifact.evidence_id, selectedEvidenceId],
+      metrics: [],
+      opportunities: [
+        {
+          candidate_id: "candidate:contact:higher-group-admin",
+          lane: "contact_discovery",
+          kind: "contact_discovery",
+          summary:
+            "Review the higher-scored public_group_admin record from the second artifact.",
+          score: 100,
+          controlled_variable: "discovery_source_lane",
+          evidence_refs: [
+            lowerScoredEvidence.artifact.evidence_id,
+            selectedEvidenceId,
+          ],
+          record_id: record.record_id,
+          selected_evidence_id: selectedEvidenceId,
+          identity_fingerprint: selectedFingerprint,
+          organization_name: record.organization_name,
+          destination: record.public_contact_channel!,
+          source_url: record.source_url,
+          group_rules_captured: true,
+          group_rules_url: record.group_rules_url!,
+        },
+      ],
+    };
+    const opportunity = groupAnalysis.opportunities[0]!;
+    if (opportunity.kind !== "contact_discovery") {
+      throw new Error("Selected contact opportunity missing");
+    }
     const strategyInput: LaneStrategyInput = {
       analysisId: "analysis-public-group-admin",
       lane: "contact_discovery",
@@ -1023,11 +1669,18 @@ test("public group-admin URLs remain proposal-only until exact group-post rules 
       guardrails: [],
       evidence: [
         {
-          id: contactEvidence.artifact.evidence_id,
+          id: lowerScoredEvidence.artifact.evidence_id,
           kind: "synthetic_fixture",
           source: "synthetic_fixture",
           observedAt: startedAt,
-          summary: "Synthetic public group-admin evidence.",
+          summary: "Synthetic lower-score public evidence.",
+        },
+        {
+          id: selectedEvidenceId,
+          kind: "synthetic_fixture",
+          source: "synthetic_fixture",
+          observedAt: startedAt,
+          summary: "Synthetic higher-score public group-admin evidence.",
         },
       ],
     };
@@ -1037,7 +1690,7 @@ test("public group-admin URLs remain proposal-only until exact group-post rules 
       strategyInput,
       ordinaryOutreach,
       groupAnalysis,
-      intake,
+      combinedIntake,
       startedAt,
     );
     assert.equal(withoutExplicitGroupApproval.readiness, "not_approval_ready");
@@ -1047,7 +1700,7 @@ test("public group-admin URLs remain proposal-only until exact group-post rules 
       ...ordinaryOutreach,
       requiredApprovals: ["send_outreach", "join_or_post_group"],
     };
-    const missingRulesIntake = structuredClone(intake);
+    const missingRulesIntake = structuredClone(combinedIntake);
     missingRulesIntake.groupRulesArtifacts = [];
     const withoutRules = createActionDraft(
       "run-group-admin",
@@ -1059,6 +1712,146 @@ test("public group-admin URLs remain proposal-only until exact group-post rules 
     );
     assert.equal(withoutRules.readiness, "not_approval_ready");
 
+    const legacyOpportunity = structuredClone(groupAnalysis) as unknown as LaneAnalysis & {
+      opportunities: Array<{ selected_evidence_id?: string }>;
+    };
+    delete legacyOpportunity.opportunities[0]!.selected_evidence_id;
+    const withoutSelectedEvidence = createActionDraft(
+      "run-group-admin",
+      strategyInput,
+      explicitGroupPost,
+      legacyOpportunity,
+      combinedIntake,
+      startedAt,
+    );
+    assert.equal(withoutSelectedEvidence.readiness, "not_approval_ready");
+    assert.equal(withoutSelectedEvidence.approval_scope, undefined);
+
+    const missingSelectedAnalysis = structuredClone(groupAnalysis);
+    const missingSelectedOpportunity = missingSelectedAnalysis.opportunities[0]!;
+    if (missingSelectedOpportunity.kind !== "contact_discovery") {
+      throw new Error("Missing-selected contact opportunity missing");
+    }
+    missingSelectedOpportunity.selected_evidence_id = "evidence:contact:missing";
+    const zeroSelectedArtifact = createActionDraft(
+      "run-group-admin",
+      strategyInput,
+      explicitGroupPost,
+      missingSelectedAnalysis,
+      combinedIntake,
+      startedAt,
+    );
+    assert.equal(zeroSelectedArtifact.readiness, "not_approval_ready");
+
+    const duplicateSelectedIntake = structuredClone(combinedIntake);
+    duplicateSelectedIntake.evidence.push(structuredClone(contactEvidence));
+    const multipleSelectedArtifacts = createActionDraft(
+      "run-group-admin",
+      strategyInput,
+      explicitGroupPost,
+      groupAnalysis,
+      duplicateSelectedIntake,
+      startedAt,
+    );
+    assert.equal(multipleSelectedArtifacts.readiness, "not_approval_ready");
+
+    const duplicateRecordIntake = structuredClone(combinedIntake);
+    const duplicateRecordEvidence = duplicateRecordIntake.evidence.find(
+      (entry) => entry.artifact.evidence_id === selectedEvidenceId,
+    );
+    if (!duplicateRecordEvidence || duplicateRecordEvidence.artifact.lane !== "contact_discovery") {
+      throw new Error("Selected duplicate-record evidence missing");
+    }
+    duplicateRecordEvidence.artifact.payload.records.push(structuredClone(record));
+    const multipleSelectedRecords = createActionDraft(
+      "run-group-admin",
+      strategyInput,
+      explicitGroupPost,
+      groupAnalysis,
+      duplicateRecordIntake,
+      startedAt,
+    );
+    assert.equal(multipleSelectedRecords.readiness, "not_approval_ready");
+
+    for (const field of ["identity", "source_url", "destination"] as const) {
+      const mismatchedAnalysis = structuredClone(groupAnalysis);
+      const mismatched = mismatchedAnalysis.opportunities[0]!;
+      if (mismatched.kind !== "contact_discovery") {
+        throw new Error("Mismatched contact opportunity missing");
+      }
+      if (field === "identity") {
+        mismatched.identity_fingerprint =
+          "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc";
+      } else if (field === "source_url") {
+        mismatched.source_url = "https://example.org/different-source";
+      } else {
+        mismatched.destination = "https://example.org/different-destination";
+      }
+      const mismatchDraft = createActionDraft(
+        "run-group-admin",
+        strategyInput,
+        explicitGroupPost,
+        mismatchedAnalysis,
+        combinedIntake,
+        startedAt,
+      );
+      assert.equal(
+        mismatchDraft.readiness,
+        "not_approval_ready",
+        `expected ${field} mismatch to fail closed`,
+      );
+    }
+
+    const mismatchedTypeIntake = structuredClone(combinedIntake);
+    const mismatchedTypeEvidence = mismatchedTypeIntake.evidence.find(
+      (entry) => entry.artifact.evidence_id === selectedEvidenceId,
+    );
+    if (!mismatchedTypeEvidence || mismatchedTypeEvidence.artifact.lane !== "contact_discovery") {
+      throw new Error("Selected subject/source mismatch evidence missing");
+    }
+    mismatchedTypeEvidence.artifact.payload.records[0]!.source_type = "library";
+    const mismatchedSubjectSource = createActionDraft(
+      "run-group-admin",
+      strategyInput,
+      explicitGroupPost,
+      groupAnalysis,
+      mismatchedTypeIntake,
+      startedAt,
+    );
+    assert.equal(mismatchedSubjectSource.readiness, "not_approval_ready");
+
+    const lowerPublicAnalysis = structuredClone(groupAnalysis);
+    lowerPublicAnalysis.opportunities = [
+      {
+        ...opportunity,
+        candidate_id: "candidate:contact:lower-public",
+        record_id: lowerRecord.record_id,
+        selected_evidence_id: lowerScoredEvidence.artifact.evidence_id,
+        identity_fingerprint: fingerprintNormalizedContactIdentity(
+          normalizeContactIdentity(lowerRecord),
+        ),
+        organization_name: lowerRecord.organization_name,
+        destination: lowerRecord.public_contact_channel!,
+        source_url: lowerRecord.source_url,
+        group_rules_captured: false,
+      },
+    ];
+    const lowerPublicOpportunity = lowerPublicAnalysis.opportunities[0]!;
+    if (lowerPublicOpportunity.kind !== "contact_discovery") {
+      throw new Error("Lower public contact opportunity missing");
+    }
+    delete lowerPublicOpportunity.group_rules_url;
+    const urlAloneCannotInferContactForm = createActionDraft(
+      "run-lower-public",
+      strategyInput,
+      ordinaryOutreach,
+      lowerPublicAnalysis,
+      combinedIntake,
+      startedAt,
+    );
+    assert.equal(urlAloneCannotInferContactForm.readiness, "not_approval_ready");
+    assert.equal(urlAloneCannotInferContactForm.approval_scope, undefined);
+
     const rulesUrl = record.group_rules_url!;
     opportunity.group_rules_url = "https://example.org/groups/different-rules";
     const mismatchedRules = createActionDraft(
@@ -1066,18 +1859,104 @@ test("public group-admin URLs remain proposal-only until exact group-post rules 
       strategyInput,
       explicitGroupPost,
       groupAnalysis,
-      intake,
+      combinedIntake,
       startedAt,
     );
     assert.equal(mismatchedRules.readiness, "not_approval_ready");
 
     opportunity.group_rules_url = rulesUrl;
+    const exactSevenDayIntake = structuredClone(combinedIntake);
+    const exactSevenDayEvidence = exactSevenDayIntake.evidence.find(
+      (entry) => entry.artifact.evidence_id === selectedEvidenceId,
+    );
+    if (
+      !exactSevenDayEvidence ||
+      exactSevenDayEvidence.artifact.lane !== "contact_discovery"
+    ) {
+      throw new Error("Seven-day boundary contact evidence missing");
+    }
+    const exactSevenDayRecord = exactSevenDayEvidence.artifact.payload.records[0]!;
+    exactSevenDayRecord.verified_at = "2026-08-03T15:00:00-04:00";
+    exactSevenDayRecord.group_rules_captured_at =
+      "2026-08-03T15:00:00-04:00";
+    exactSevenDayIntake.groupRulesArtifacts[0]!.capturedAt =
+      "2026-08-03T15:00:00-04:00";
+    const exactSevenDay = createActionDraft(
+      "run-group-admin",
+      strategyInput,
+      explicitGroupPost,
+      groupAnalysis,
+      exactSevenDayIntake,
+      startedAt,
+    );
+    assert.equal(exactSevenDay.readiness, "approval_ready");
+    if (exactSevenDay.approval_scope?.lane !== "contact_discovery") {
+      throw new Error("Seven-day boundary contact approval scope missing");
+    }
+    assert.equal(exactSevenDay.approval_scope.send_at, "2026-08-10T19:00:00.000Z");
+    assert.equal(
+      exactSevenDay.approval_scope.record_verified_at,
+      "2026-08-03T15:00:00-04:00",
+    );
+    assert.equal(
+      exactSevenDay.approval_scope.group_rules_artifact?.captured_at,
+      "2026-08-03T15:00:00-04:00",
+    );
+
+    const staleVerificationIntake = structuredClone(exactSevenDayIntake);
+    const staleVerificationEvidence = staleVerificationIntake.evidence.find(
+      (entry) => entry.artifact.evidence_id === selectedEvidenceId,
+    );
+    if (
+      !staleVerificationEvidence ||
+      staleVerificationEvidence.artifact.lane !== "contact_discovery"
+    ) {
+      throw new Error("Stale-verification contact evidence missing");
+    }
+    staleVerificationEvidence.artifact.payload.records[0]!.verified_at =
+      "2026-08-03T14:59:00-04:00";
+    const staleVerification = createActionDraft(
+      "run-group-admin",
+      strategyInput,
+      explicitGroupPost,
+      groupAnalysis,
+      staleVerificationIntake,
+      startedAt,
+    );
+    assert.equal(staleVerification.readiness, "not_approval_ready");
+    assert.equal(staleVerification.approval_scope, undefined);
+
+    const staleRulesIntake = structuredClone(exactSevenDayIntake);
+    const staleRulesEvidence = staleRulesIntake.evidence.find(
+      (entry) => entry.artifact.evidence_id === selectedEvidenceId,
+    );
+    if (
+      !staleRulesEvidence ||
+      staleRulesEvidence.artifact.lane !== "contact_discovery"
+    ) {
+      throw new Error("Stale group-rules evidence missing");
+    }
+    staleRulesEvidence.artifact.payload.records[0]!.group_rules_captured_at =
+      "2026-08-03T14:59:00-04:00";
+    staleRulesIntake.groupRulesArtifacts[0]!.capturedAt =
+      "2026-08-03T14:59:00-04:00";
+    const staleRules = createActionDraft(
+      "run-group-admin",
+      strategyInput,
+      explicitGroupPost,
+      groupAnalysis,
+      staleRulesIntake,
+      startedAt,
+    );
+    assert.equal(staleRules.readiness, "not_approval_ready");
+    assert.equal(staleRules.approval_scope, undefined);
+
     const exactGroupPost = createActionDraft(
       "run-group-admin",
       strategyInput,
       explicitGroupPost,
       groupAnalysis,
-      intake,
+      combinedIntake,
       startedAt,
     );
     assert.equal(exactGroupPost.readiness, "approval_ready");
@@ -1086,6 +1965,11 @@ test("public group-admin URLs remain proposal-only until exact group-post rules 
       throw new Error("Exact group-post approval scope missing");
     }
     assert.equal(exactGroupPost.approval_scope.action, "group_post");
+    assert.equal(
+      exactGroupPost.approval_scope.record_verified_at,
+      "2026-08-08T15:20:00-04:00",
+    );
+    assert.equal(exactGroupPost.approval_scope.send_at, "2026-08-10T19:00:00.000Z");
     assert.equal(exactGroupPost.approval_scope.group_rules_url, rulesUrl);
     assert.deepEqual(exactGroupPost.approval_scope.group_rules_artifact, {
       parent_evidence_id: "evidence:contact:group-admin",
@@ -1121,8 +2005,43 @@ test("public group-admin URLs remain proposal-only until exact group-post rules 
       stop_rules: [explicitGroupPost.stopRule],
       scale_rules: [explicitGroupPost.scaleRule],
       required_approvals: ["send"],
+      approval_expires_at: exactGroupPost.approval_scope.send_at,
       external_action_status: "not_executed",
     });
+    for (const defect of [
+      "record_stale",
+      "record_future",
+      "rules_stale",
+      "rules_future",
+    ] as const) {
+      const temporalMismatch = structuredClone(approvalPackage);
+      if (temporalMismatch.schema_version !== APPROVAL_PACKAGE_SCHEMA_VERSION) {
+        throw new Error("Expected current approval package");
+      }
+      const temporalScope = temporalMismatch.proposal.approval_scope;
+      if (
+        temporalScope?.lane !== "contact_discovery" ||
+        !temporalScope.group_rules_artifact
+      ) {
+        throw new Error("Temporal group-post approval scope missing");
+      }
+      if (defect === "record_stale") {
+        temporalScope.record_verified_at = "2026-08-03T14:59:00-04:00";
+      } else if (defect === "record_future") {
+        temporalScope.record_verified_at = "2026-08-10T15:01:00-04:00";
+      } else if (defect === "rules_stale") {
+        temporalScope.group_rules_artifact.captured_at =
+          "2026-08-03T14:59:00-04:00";
+      } else {
+        temporalScope.group_rules_artifact.captured_at =
+          "2026-08-10T15:01:00-04:00";
+      }
+      assert.equal(
+        ApprovalPackageSchema.safeParse(temporalMismatch).success,
+        false,
+        `expected ${defect} to fail the exact send-time freshness gate`,
+      );
+    }
     const changedRules = structuredClone(approvalPackage);
     const changedScope = changedRules.proposal.approval_scope;
     if (
@@ -1150,6 +2069,53 @@ test("public group-admin URLs remain proposal-only until exact group-post rules 
     assert.equal(
       ApprovalPackageSchema.safeParse(missingImmutableRules).success,
       false,
+    );
+
+    const historicalPackage = structuredClone(approvalPackage) as Record<
+      string,
+      any
+    >;
+    historicalPackage.schema_version = LEGACY_APPROVAL_PACKAGE_SCHEMA_VERSION;
+    delete historicalPackage.evidence_mode;
+    delete historicalPackage.approval_expires_at;
+    delete historicalPackage.proposal.approval_scope.record_verified_at;
+    historicalPackage.proposal.approval_scope.group_rules_artifact.captured_at =
+      "2026-08-01T15:20:00-04:00";
+    const parsedHistoricalPackage = ApprovalPackageSchema.parse(
+      historicalPackage,
+    );
+    assert.equal(
+      parsedHistoricalPackage.schema_version,
+      LEGACY_APPROVAL_PACKAGE_SCHEMA_VERSION,
+    );
+    assert.equal("evidence_mode" in parsedHistoricalPackage, false);
+    const storedHistoricalReview = HumanReviewSchema.parse({
+      review_id: "review:historical-pr8-group",
+      proposal_id: parsedHistoricalPackage.proposal.proposal_id,
+      lane: "contact_discovery",
+      review_kind: "external_action_approval",
+      status: "awaiting_review",
+      approval_hash: approvalPackageHash(parsedHistoricalPackage),
+      approval_package: parsedHistoricalPackage,
+      requested_at: "2026-08-08T15:00:00-04:00",
+    });
+    const projectedHistoricalReview = projectPersistedReviewForRuntime(
+      storedHistoricalReview,
+      "2026-08-08T15:00:00-04:00",
+      { start: "2026-08-08", end: "2026-10-07" },
+    );
+    assert.equal(projectedHistoricalReview.review_kind, "proposal_review");
+    assert.equal(
+      projectedHistoricalReview.approval_package.proposal.readiness,
+      "not_approval_ready",
+    );
+    assert.equal(
+      projectedHistoricalReview.approval_package.proposal.approval_scope,
+      undefined,
+    );
+    assert.deepEqual(
+      projectedHistoricalReview.approval_package.required_approvals,
+      ["proposal_review"],
     );
   } finally {
     await rm(directory, { recursive: true, force: true });

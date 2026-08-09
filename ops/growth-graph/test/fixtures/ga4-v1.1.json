@@ -1,0 +1,59 @@
+{
+  "schema_version": "code-the-future.growth-evidence.v1.1",
+  "producer": {
+    "adapter": "code-the-future.growth-capture-adapter",
+    "version": "1.1.0",
+    "mode": "synthetic_fixture"
+  },
+  "evidence_id": "evidence:ga4:property",
+  "lane": "search_console",
+  "source": "ga4",
+  "captured_at": "2026-08-08T15:47:00-04:00",
+  "fresh_through": "2026-08-07",
+  "data_state": "complete",
+  "redaction_status": "synthetic",
+  "property_id": "547164458",
+  "stream": {
+    "state": "verified",
+    "stream_url": "https://codethefuture.net/"
+  },
+  "payload": {
+    "date_window": {
+      "start": "2026-07-09",
+      "end": "2026-08-07"
+    },
+    "traffic_scope": "all_traffic",
+    "event_rows_coverage": "complete",
+    "totals": {
+      "event_count": 4,
+      "total_users": 1,
+      "total_revenue": 0
+    },
+    "events": [
+      { "event_name": "first_visit", "event_count": 1, "total_users": 1 },
+      { "event_name": "page_view", "event_count": 1, "total_users": 1 },
+      { "event_name": "scroll", "event_count": 1, "total_users": 1 },
+      { "event_name": "session_start", "event_count": 1, "total_users": 1 }
+    ],
+    "counts": {
+      "generate_lead": {
+        "state": "observed",
+        "value": 0,
+        "native_field": "generate_lead",
+        "derivation": "complete_event_list_absence"
+      },
+      "successful_form_responses": {
+        "state": "observed",
+        "value": 0,
+        "native_field": "successful_form_responses",
+        "derivation": "complete_event_list_absence"
+      },
+      "verified_purchases": {
+        "state": "observed",
+        "value": 0,
+        "native_field": "purchase",
+        "derivation": "complete_event_list_absence"
+      }
+    }
+  }
+}

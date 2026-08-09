@@ -1,12 +1,12 @@
 {
   "schema_version": "code-the-future.growth-capture-bundle.v1",
   "bundle_id": "bundle:synthetic:full",
-  "created_at": "2026-08-08T15:35:00-04:00",
+  "created_at": "2026-08-09T15:00:00-04:00",
   "objective_window": {
     "start": "2026-08-08",
     "end": "2026-10-07"
   },
-  "metric_definition_version": "ctf-growth-metrics-v1",
+  "metric_definition_version": "ctf-growth-metrics-v1.1",
   "source_runs": [
     {
       "source_run_id": "source-run:instagram",
@@ -14,9 +14,9 @@
       "source": "instagram_insights",
       "account_or_property_id": "synthetic-instagram-account",
       "status": "verified_complete",
-      "started_at": "2026-08-08T15:00:00-04:00",
-      "completed_at": "2026-08-08T15:30:00-04:00",
-      "fresh_through": "2026-08-08",
+      "started_at": "2026-08-09T14:00:00-04:00",
+      "completed_at": "2026-08-09T15:00:00-04:00",
+      "fresh_through": "2026-08-09",
       "data_state": "complete",
       "records_captured": 3,
       "evidence_refs": ["evidence:social:instagram"]
@@ -27,9 +27,9 @@
       "source": "facebook_insights",
       "account_or_property_id": "synthetic-facebook-account",
       "status": "verified_complete",
-      "started_at": "2026-08-08T15:00:00-04:00",
-      "completed_at": "2026-08-08T15:31:00-04:00",
-      "fresh_through": "2026-08-08",
+      "started_at": "2026-08-09T14:00:00-04:00",
+      "completed_at": "2026-08-09T14:31:00-04:00",
+      "fresh_through": "2026-08-09",
       "data_state": "complete",
       "records_captured": 3,
       "evidence_refs": ["evidence:social:facebook"]
@@ -48,6 +48,19 @@
       "evidence_refs": ["evidence:contact:public"]
     },
     {
+      "source_run_id": "source-run:contact-history",
+      "lane": "contact_discovery",
+      "source": "contact_history",
+      "account_or_property_id": "synthetic-contact-history",
+      "status": "verified_complete",
+      "started_at": "2026-08-08T15:00:00-04:00",
+      "completed_at": "2026-08-08T15:32:30-04:00",
+      "fresh_through": "2026-08-08",
+      "data_state": "complete",
+      "records_captured": 0,
+      "evidence_refs": ["evidence:contact:history"]
+    },
+    {
       "source_run_id": "source-run:gsc",
       "lane": "search_console",
       "source": "search_console",
@@ -55,7 +68,7 @@
       "status": "verified_complete",
       "started_at": "2026-08-08T15:00:00-04:00",
       "completed_at": "2026-08-08T15:33:00-04:00",
-      "fresh_through": "2026-08-05",
+      "fresh_through": "2026-08-06",
       "data_state": "complete",
       "records_captured": 2,
       "evidence_refs": ["evidence:gsc:property"]
@@ -67,9 +80,9 @@
       "lane": "organic_social",
       "source": "instagram_insights",
       "artifact_path": "social-instagram.json",
-      "artifact_sha256": "257436789f5c0fac0d86a8d7f3b431ce15aac1b20f7e64844fce5edfaec7b9d6",
-      "captured_at": "2026-08-08T15:30:00-04:00",
-      "fresh_through": "2026-08-08",
+      "artifact_sha256": "dbb0b9883e679f8b9a184af7860cf914eb4578fbeab4cbc4e57b21a27b572adc",
+      "captured_at": "2026-08-09T15:00:00-04:00",
+      "fresh_through": "2026-08-09",
       "data_state": "complete",
       "redaction_status": "synthetic",
       "producer_mode": "synthetic_fixture"
@@ -79,9 +92,9 @@
       "lane": "organic_social",
       "source": "facebook_insights",
       "artifact_path": "social-facebook.json",
-      "artifact_sha256": "53d7b9528ccf9e0c8b0b97b3d7fd302392ddf477b1a06234155fbabe1e45f1dd",
-      "captured_at": "2026-08-08T15:31:00-04:00",
-      "fresh_through": "2026-08-08",
+      "artifact_sha256": "61ad7daffabda6ffde0730693eb27e6bcd724cba7298a8366233c12c009fd913",
+      "captured_at": "2026-08-09T14:31:00-04:00",
+      "fresh_through": "2026-08-09",
       "data_state": "complete",
       "redaction_status": "synthetic",
       "producer_mode": "synthetic_fixture"
@@ -91,8 +104,20 @@
       "lane": "contact_discovery",
       "source": "public_web",
       "artifact_path": "contact-public.json",
-      "artifact_sha256": "cef7b59f3c31a4f01c1065ee8b347d26a61bcd4f33a0170f1989f65eeb51a208",
+      "artifact_sha256": "4e271e8115e5b561558417ab1c8c323e3acdcd95921939c0db6eebeb0dd8c379",
       "captured_at": "2026-08-08T15:32:00-04:00",
+      "fresh_through": "2026-08-08",
+      "data_state": "complete",
+      "redaction_status": "synthetic",
+      "producer_mode": "synthetic_fixture"
+    },
+    {
+      "evidence_id": "evidence:contact:history",
+      "lane": "contact_discovery",
+      "source": "contact_history",
+      "artifact_path": "contact-history.json",
+      "artifact_sha256": "d2093a4d32e2b91638ac12b6a69d1eeffc34513c9ccbe26c89ad95d2b1b7ae01",
+      "captured_at": "2026-08-08T15:32:30-04:00",
       "fresh_through": "2026-08-08",
       "data_state": "complete",
       "redaction_status": "synthetic",
@@ -103,9 +128,9 @@
       "lane": "search_console",
       "source": "search_console",
       "artifact_path": "search-console.json",
-      "artifact_sha256": "cc060ab27a1510e5b0a300ea373cc31658307c98e5d96079531589203d26a2f1",
+      "artifact_sha256": "c2da3fa66335d5f5dd3a7ff7e34e122edf57e98d2a637dfccf21f7a0cd45ea48",
       "captured_at": "2026-08-08T15:33:00-04:00",
-      "fresh_through": "2026-08-05",
+      "fresh_through": "2026-08-06",
       "data_state": "complete",
       "redaction_status": "synthetic",
       "producer_mode": "synthetic_fixture"

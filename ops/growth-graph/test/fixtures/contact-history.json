@@ -1,0 +1,22 @@
+{
+  "schema_version": "code-the-future.growth-evidence.v1",
+  "producer": {
+    "adapter": "code-the-future.growth-capture-adapter",
+    "version": "1.0.0",
+    "mode": "synthetic_fixture"
+  },
+  "evidence_id": "evidence:contact:history",
+  "lane": "contact_discovery",
+  "source": "contact_history",
+  "captured_at": "2026-08-08T15:32:30-04:00",
+  "fresh_through": "2026-08-08",
+  "data_state": "complete",
+  "redaction_status": "synthetic",
+  "account_or_collection_id": "synthetic-contact-history",
+  "payload": {
+    "history_complete": true,
+    "records": [],
+    "prior_identity_fingerprints": [],
+    "do_not_contact_identity_fingerprints": []
+  }
+}

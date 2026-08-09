@@ -12,14 +12,23 @@ import { constants as fsConstants } from "node:fs";
 import { dirname, isAbsolute, relative, resolve } from "node:path";
 
 import {
+  evaluateCodeTheFutureProjectIdentity,
+  isProtectedIndexPath,
+  isSanitizedProtectedPathCategory,
+  projectCalendarDate,
+  projectDateIsWithinWindow,
+} from "./project-policy.js";
+import {
   CaptureBundleSchema,
   CONSENT_REVOCATION_CHECK_MAX_AGE_MS,
+  CURRENT_METRIC_DEFINITION_VERSION,
   type EvidenceArtifact,
   EvidenceArtifactSchema,
   type EvidenceReference,
   type GrowthCaptureBundle,
   type GrowthLane,
   type ImmutableArtifactReference,
+  IsoInstantSchema,
 } from "./schema.js";
 
 const DEFAULT_MAX_ARTIFACT_BYTES = 16 * 1024 * 1024;
@@ -55,6 +64,8 @@ export interface CaptureValidationResult {
   evidenceMode: "real";
   validationScope: "capture_preflight_only";
   countsTowardThreeRunGate: false;
+  runtimeCompatible: boolean;
+  metricDefinitionCompatibility: "current" | "legacy_read_only";
   bundleId: string;
   bundleSha256: string;
   validationHash: string;
@@ -143,6 +154,42 @@ const SECRET_PATTERNS: ReadonlyArray<{ label: string; pattern: RegExp }> = [
     label: "named secret or password",
     pattern:
       /["']?[A-Za-z][A-Za-z0-9_]*(?:_SECRET(?:_KEY)?|_PASSWORD)["']?\s*[=:]\s*(?:"[^"\r\n]{8,}"|'[^'\r\n]{8,}'|[^\s"',;}]{8,})/i,
+  },
+  {
+    label: "credential-bearing JSON key",
+    pattern:
+      /["'](?:access[_-]?token|refresh[_-]?token|id[_-]?token|api[_-]?key|apikey|password|passwd|client[_-]?secret)["']\s*:\s*(?:"[^"\r\n]+"|'[^'\r\n]+'|[^\s,}\]]+)/i,
+  },
+  {
+    label: "authorization credential",
+    pattern:
+      /["']authorization["']\s*:\s*["'](?:bearer|basic)\s+[^"'\r\n]{4,}["']/i,
+  },
+  {
+    label: "bearer credential",
+    pattern: /["']bearer["']\s*:\s*["'][A-Za-z0-9._~+/=-]{8,}["']/i,
+  },
+  {
+    label: "request signature credential",
+    pattern: /["']signature["']\s*:\s*["'][A-Za-z0-9._~+/=-]{16,}["']/i,
+  },
+  {
+    label: "credential-bearing query parameter",
+    pattern:
+      /[?&#](?:access[_-]?token|refresh[_-]?token|id[_-]?token|api[_-]?key|apikey|password|passwd|client[_-]?secret|authorization|bearer|signature)=[^&#\s]+/i,
+  },
+  {
+    label: "credential-bearing URL userinfo",
+    pattern: /\bhttps?:\/\/[^\s/@?#:]+(?::[^\s/@?#]*)?@/i,
+  },
+  {
+    label: "credential assignment",
+    pattern:
+      /(?:^|[\s;,])(?:access[_-]?token|refresh[_-]?token|id[_-]?token|api[_-]?key|apikey|password|passwd|client[_-]?secret|bearer|signature)\s*=\s*(?:"[^"\r\n]{6,}"|'[^'\r\n]{6,}'|[^\s"',;}]{6,})/im,
+  },
+  {
+    label: "bearer authorization",
+    pattern: /\bauthorization\s*:\s*bearer\s+[A-Za-z0-9._~+/-]{8,}/i,
   },
 ];
 
@@ -425,12 +472,154 @@ function assertAttestationMatches(
   }
 }
 
-function parseRunAt(runAt: string): number {
-  const runAtMs = Date.parse(runAt);
-  if (!Number.isFinite(runAtMs)) {
-    throw new ArtifactPolicyError("runAt must be a valid ISO-8601 instant");
+function assertSourceRunMatchesArtifact(
+  bundle: GrowthCaptureBundle,
+  artifact: EvidenceArtifact,
+): void {
+  const matchingRuns = bundle.source_runs.filter((run) =>
+    run.evidence_refs.includes(artifact.evidence_id),
+  );
+  if (matchingRuns.length !== 1) {
+    throw new ArtifactPolicyError(
+      `Evidence ${artifact.evidence_id} must belong to exactly one source run`,
+    );
   }
-  return runAtMs;
+  const sourceRun = matchingRuns[0]!;
+  const artifactAccountOrPropertyId =
+    artifact.lane === "organic_social"
+      ? artifact.account_id
+      : artifact.lane === "contact_discovery"
+        ? artifact.account_or_collection_id
+        : artifact.property_id;
+  if (sourceRun.account_or_property_id !== artifactAccountOrPropertyId) {
+    throw new ArtifactPolicyError(
+      `Source-run identity does not match evidence ${artifact.evidence_id}`,
+    );
+  }
+  const linkedDeclarations = bundle.evidence.filter((declaration) =>
+    sourceRun.evidence_refs.includes(declaration.evidence_id),
+  );
+  if (
+    (sourceRun.status === "verified_complete" || sourceRun.data_state === "complete") &&
+    linkedDeclarations.some((declaration) => declaration.data_state !== "complete")
+  ) {
+    throw new ArtifactPolicyError(
+      `Complete source run references partial evidence ${artifact.evidence_id}`,
+    );
+  }
+  if (
+    sourceRun.evidence_refs.length === 1 &&
+    sourceRun.data_state !== artifact.data_state
+  ) {
+    throw new ArtifactPolicyError(
+      `Source-run data state does not match evidence ${artifact.evidence_id}`,
+    );
+  }
+  const linkedFreshness = linkedDeclarations.map(
+    (declaration) => declaration.fresh_through,
+  );
+  if (sourceRun.evidence_refs.length === 1) {
+    if (sourceRun.fresh_through !== artifact.fresh_through) {
+      throw new ArtifactPolicyError(
+        `Single-evidence source-run freshness must exactly match evidence ${artifact.evidence_id}`,
+      );
+    }
+  } else if (linkedFreshness.some((value) => value === undefined)) {
+    if (sourceRun.fresh_through !== undefined) {
+      throw new ArtifactPolicyError(
+        "A multi-evidence source run cannot claim freshness when linked evidence omits it",
+      );
+    }
+  } else {
+    const conservativeFreshness = [...(linkedFreshness as string[])].sort()[0];
+    if (sourceRun.fresh_through !== conservativeFreshness) {
+      throw new ArtifactPolicyError(
+        "Multi-evidence source-run freshness must equal the oldest linked evidence",
+      );
+    }
+  }
+  const artifactCapturedAtMs = Date.parse(artifact.captured_at);
+  if (
+    artifactCapturedAtMs < Date.parse(sourceRun.started_at) ||
+    (sourceRun.completed_at !== undefined &&
+      artifactCapturedAtMs > Date.parse(sourceRun.completed_at))
+  ) {
+    throw new ArtifactPolicyError(
+      `Evidence capture falls outside source-run timing for ${artifact.evidence_id}`,
+    );
+  }
+}
+
+function parseRunAt(runAt: string): number {
+  const parsed = IsoInstantSchema.safeParse(runAt);
+  if (!parsed.success) {
+    throw new ArtifactPolicyError(
+      "runAt must be an ISO-8601 instant with an explicit UTC offset",
+    );
+  }
+  return Date.parse(parsed.data);
+}
+
+function assertCaptureTimelineBeforeRun(
+  bundle: GrowthCaptureBundle,
+  runAtMs: number,
+): void {
+  if (Date.parse(bundle.created_at) > runAtMs) {
+    throw new ArtifactPolicyError("Capture bundle cannot be created after runAt");
+  }
+  const bundleCreatedAtMs = Date.parse(bundle.created_at);
+  const projectRunDate = projectCalendarDate(runAtMs);
+  const projectBundleDate = projectCalendarDate(bundleCreatedAtMs);
+  if (!projectDateIsWithinWindow(projectRunDate, bundle.objective_window)) {
+    throw new ArtifactPolicyError(
+      "Project run date must fall within the capture objective window",
+    );
+  }
+  for (const sourceRun of bundle.source_runs) {
+    if (Date.parse(sourceRun.started_at) > runAtMs) {
+      throw new ArtifactPolicyError("A capture source run cannot start after runAt");
+    }
+    if (Date.parse(sourceRun.started_at) > bundleCreatedAtMs) {
+      throw new ArtifactPolicyError("A capture source run cannot start after bundle creation");
+    }
+    if (
+      sourceRun.completed_at !== undefined &&
+      Date.parse(sourceRun.completed_at) > runAtMs
+    ) {
+      throw new ArtifactPolicyError("A capture source run cannot complete after runAt");
+    }
+    if (
+      sourceRun.completed_at !== undefined &&
+      Date.parse(sourceRun.completed_at) > bundleCreatedAtMs
+    ) {
+      throw new ArtifactPolicyError(
+        "A capture source run cannot complete after bundle creation",
+      );
+    }
+    if (
+      sourceRun.fresh_through !== undefined &&
+      (sourceRun.fresh_through > projectRunDate ||
+        sourceRun.fresh_through > projectBundleDate)
+    ) {
+      throw new ArtifactPolicyError("Source-run freshness cannot extend after runAt");
+    }
+  }
+  for (const declaration of bundle.evidence) {
+    const declarationCapturedAtMs = Date.parse(declaration.captured_at);
+    const declarationCaptureDate = projectCalendarDate(declarationCapturedAtMs);
+    if (declarationCapturedAtMs > bundleCreatedAtMs) {
+      throw new ArtifactPolicyError("Declared evidence cannot be captured after bundle creation");
+    }
+    if (
+      declaration.fresh_through !== undefined &&
+      (declaration.fresh_through > declarationCaptureDate ||
+        declaration.fresh_through > projectRunDate)
+    ) {
+      throw new ArtifactPolicyError(
+        "Declared evidence freshness cannot extend after capture or runAt",
+      );
+    }
+  }
 }
 
 function assertSocialEvidencePrivacySafe(
@@ -478,6 +667,36 @@ function assertSocialEvidencePrivacySafe(
         `A social asset lacks active ${artifact.platform}-scoped ${requiredBasis} consent; content was not retained`,
       );
     }
+  }
+}
+
+function assertSearchEvidencePrivacySafe(
+  artifact: Extract<EvidenceArtifact, { lane: "search_console" }>,
+): void {
+  const retainedLocations: string[] = [];
+  if (artifact.schema_version === "code-the-future.growth-evidence.v1") {
+    retainedLocations.push(
+      ...artifact.payload.rows.map((row) => row.page),
+      ...artifact.payload.page_inventory.flatMap((page) => [
+        page.url,
+        ...(page.canonical_url ? [page.canonical_url] : []),
+      ]),
+    );
+  } else if (artifact.source === "search_console") {
+    retainedLocations.push(
+      ...artifact.payload.tables.pages.rows.map((row) => row.page),
+    );
+  }
+  if (
+    retainedLocations.some(
+      (location) =>
+        isProtectedIndexPath(location) &&
+        !isSanitizedProtectedPathCategory(location),
+    )
+  ) {
+    throw new ArtifactPolicyError(
+      "Search evidence containing protected learner/admin URL detail is rejected before persistence; the capture adapter must retain category/count summaries only",
+    );
   }
 }
 
@@ -544,6 +763,7 @@ interface PreparedCapture {
 
 interface PrepareCaptureOptions extends CaptureValidationOptions {
   allowSyntheticEvidence: boolean;
+  requireCurrentMetricDefinition?: boolean;
 }
 
 function captureContentHash(input: {
@@ -604,6 +824,14 @@ async function prepareCaptureBundle(
   const bundleBytes = await readBudget.read(bundleFile);
   assertNoSecrets(bundleBytes);
   const bundle = CaptureBundleSchema.parse(parseJson(bundleBytes, "Capture bundle"));
+  if (
+    options.requireCurrentMetricDefinition === true &&
+    bundle.metric_definition_version !== CURRENT_METRIC_DEFINITION_VERSION
+  ) {
+    throw new ArtifactPolicyError(
+      `Shadow runtime requires metric definition ${CURRENT_METRIC_DEFINITION_VERSION}`,
+    );
+  }
   const bundleHash = sha256Bytes(bundleBytes);
   if (
     options.expectedCaptureSha256 !== undefined &&
@@ -612,6 +840,7 @@ async function prepareCaptureBundle(
     throw new ArtifactConflictError("Provided capture SHA-256 does not match the confined file");
   }
   const runAtMs = parseRunAt(options.runAt);
+  assertCaptureTimelineBeforeRun(bundle, runAtMs);
 
   if (
     !options.allowSyntheticEvidence &&
@@ -649,7 +878,31 @@ async function prepareCaptureBundle(
     const artifact = EvidenceArtifactSchema.parse(
       parseJson(artifactBytes, `Evidence ${declaration.evidence_id}`),
     );
+    if (Date.parse(artifact.captured_at) > runAtMs) {
+      throw new ArtifactPolicyError("Evidence cannot be captured after runAt");
+    }
+    if (Date.parse(artifact.captured_at) > Date.parse(bundle.created_at)) {
+      throw new ArtifactPolicyError("Evidence cannot be captured after bundle creation");
+    }
+    const runDate = projectCalendarDate(runAtMs);
+    const artifactCaptureDate = projectCalendarDate(artifact.captured_at);
+    if (
+      artifact.fresh_through !== undefined &&
+      (artifact.fresh_through > artifactCaptureDate ||
+        artifact.fresh_through > runDate)
+    ) {
+      throw new ArtifactPolicyError(
+        "Evidence freshness cannot extend after capture or runAt",
+      );
+    }
     assertAttestationMatches(declaration, artifact);
+    assertSourceRunMatchesArtifact(bundle, artifact);
+    const identityDecision = evaluateCodeTheFutureProjectIdentity(artifact);
+    if (!identityDecision.accepted) {
+      throw new ArtifactPolicyError(
+        `Code the Future project identity rejected for ${artifact.evidence_id}: ${identityDecision.reason ?? "identity policy mismatch"}`,
+      );
+    }
     if (
       !options.allowSyntheticEvidence &&
       (artifact.producer.mode === "synthetic_fixture" ||
@@ -665,6 +918,9 @@ async function prepareCaptureBundle(
     }
     if (artifact.lane === "organic_social") {
       assertSocialEvidencePrivacySafe(artifact, runAtMs);
+    }
+    if (artifact.lane === "search_console") {
+      assertSearchEvidencePrivacySafe(artifact);
     }
     pendingEvidence.push({ declaration, artifact, artifactBytes, artifactHash });
 
@@ -798,12 +1054,18 @@ export async function validateRealCaptureBundle(
       ],
     ),
   ) as CaptureValidationResult["lanes"];
+  const metricDefinitionCompatibility =
+    prepared.bundle.metric_definition_version === CURRENT_METRIC_DEFINITION_VERSION
+      ? "current"
+      : "legacy_read_only";
 
   return {
     status: "valid",
     evidenceMode: "real",
     validationScope: "capture_preflight_only",
     countsTowardThreeRunGate: false,
+    runtimeCompatible: metricDefinitionCompatibility === "current",
+    metricDefinitionCompatibility,
     bundleId: prepared.bundle.bundle_id,
     bundleSha256: prepared.bundleHash,
     validationHash: prepared.validationHash,
@@ -838,6 +1100,7 @@ export async function intakeCaptureBundle(
     allowedEvidenceRoot: options.allowedEvidenceRoot,
     runAt: options.runAt,
     allowSyntheticEvidence: options.allowSyntheticEvidence ?? false,
+    requireCurrentMetricDefinition: true,
     ...(options.maxArtifactBytes === undefined
       ? {}
       : { maxArtifactBytes: options.maxArtifactBytes }),

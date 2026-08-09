@@ -14,7 +14,7 @@
   "redaction_status": "synthetic",
   "account_or_collection_id": "synthetic-louisville-public-web",
   "payload": {
-    "history_complete": true,
+    "history_complete": false,
     "records": [
       {
         "record_id": "contact-record:library",

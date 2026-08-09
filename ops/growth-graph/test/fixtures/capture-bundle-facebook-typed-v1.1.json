@@ -1,0 +1,39 @@
+{
+  "schema_version": "code-the-future.growth-capture-bundle.v1",
+  "bundle_id": "bundle:synthetic:facebook-typed-v1.1",
+  "created_at": "2026-08-08T15:35:00-04:00",
+  "objective_window": {
+    "start": "2026-08-08",
+    "end": "2026-10-07"
+  },
+  "metric_definition_version": "ctf-growth-metrics-v1.1",
+  "source_runs": [
+    {
+      "source_run_id": "source-run:facebook:typed-v1.1",
+      "lane": "organic_social",
+      "source": "facebook_insights",
+      "account_or_property_id": "61592857947154",
+      "status": "verified_complete",
+      "started_at": "2026-08-08T15:00:00-04:00",
+      "completed_at": "2026-08-08T15:31:00-04:00",
+      "fresh_through": "2026-08-08",
+      "data_state": "complete",
+      "records_captured": 3,
+      "evidence_refs": ["evidence:social:facebook:typed"]
+    }
+  ],
+  "evidence": [
+    {
+      "evidence_id": "evidence:social:facebook:typed",
+      "lane": "organic_social",
+      "source": "facebook_insights",
+      "artifact_path": "social-facebook-typed-v1.1.json",
+      "artifact_sha256": "84dc5bd7e30fee0131f755051919b5749bcf19b50f598f9813d490ff9b3f8d69",
+      "captured_at": "2026-08-08T15:31:00-04:00",
+      "fresh_through": "2026-08-08",
+      "data_state": "complete",
+      "redaction_status": "synthetic",
+      "producer_mode": "synthetic_fixture"
+    }
+  ]
+}
