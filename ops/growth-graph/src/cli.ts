@@ -13,7 +13,12 @@ import {
   createOpenAIGrowthStrategyEvaluator,
 } from "./assessor.js";
 import { GrowthLedger } from "./ledger.js";
+import {
+  defaultManualIdempotencyKey,
+  resolveSyntheticRunAt,
+} from "./cli-policy.js";
 import { redactObserverValue } from "./observer.js";
+import { CODE_THE_FUTURE_PROJECT_IDENTITY_POLICY } from "./project-policy.js";
 import { CaptureBundleSchema } from "./schema.js";
 import {
   preparePrivateSqliteFile,
@@ -57,6 +62,7 @@ Options:
   --project-state PATH
   --evidence-root PATH
   --allow-synthetic-evidence  Test fixtures only; rejected by default
+  --run-at INSTANT            Fixed clock for synthetic fixtures only
 
 This command writes local state, ledger, review packages, and a read-only visual
 observer. It never publishes social content, sends outreach, changes Search
@@ -82,6 +88,15 @@ async function main(): Promise<void> {
   }
   process.umask(0o077);
 
+  const allowSyntheticEvidence = process.argv.includes("--allow-synthetic-evidence");
+  if (process.argv.includes("--run-at") && argument("--run-at") === undefined) {
+    throw new Error("--run-at requires an offset-qualified instant");
+  }
+  const syntheticRunAt = resolveSyntheticRunAt(
+    argument("--run-at"),
+    allowSyntheticEvidence,
+  );
+
   const stateRoot = resolve(
     argument("--state-root") ??
       process.env.CODE_THE_FUTURE_GROWTH_STATE_ROOT ??
@@ -93,7 +108,6 @@ async function main(): Promise<void> {
   const evidenceRoot = await realpath(
     resolve(argument("--evidence-root") ?? repositoryRoot),
   );
-  const allowSyntheticEvidence = process.argv.includes("--allow-synthetic-evidence");
   await prepareStateDirectory(stateRoot, { ownerOnly: true });
 
   const graphSources = (await readdir(resolve(packageRoot, "src")))
@@ -133,6 +147,9 @@ async function main(): Promise<void> {
     evaluatorReasoningEffort,
     evidenceRoot,
     allowSyntheticEvidence,
+    syntheticRunAt: syntheticRunAt ?? null,
+    projectIdentityPolicy:
+      CODE_THE_FUTURE_PROJECT_IDENTITY_POLICY as unknown as JsonValue,
     toolVersions: {
       agentsSdk: lockedVersion(packageLock, "@openai/agents"),
       openai: lockedVersion(packageLock, "openai"),
@@ -179,6 +196,9 @@ async function main(): Promise<void> {
     allowSyntheticEvidence,
     policyManifestPaths,
     runtimeManifest,
+    ...(syntheticRunAt
+      ? { now: () => new Date(syntheticRunAt) }
+      : {}),
   };
   const graph = createGrowthWorkflow(workflowOptions);
   const resumeRunId = argument("--resume");
@@ -204,13 +224,23 @@ async function main(): Promise<void> {
       throw new Error("Provided capture SHA-256 does not match the confined file");
     }
     const bundle = CaptureBundleSchema.parse(JSON.parse(captureBytes.toString("utf8")));
-    const startedAt = new Date().toISOString();
+    if (
+      syntheticRunAt &&
+      bundle.evidence.some(
+        (entry) =>
+          entry.producer_mode !== "synthetic_fixture" ||
+          entry.redaction_status !== "synthetic",
+      )
+    ) {
+      throw new Error("--run-at cannot be used with real or mixed evidence");
+    }
+    const startedAt = syntheticRunAt ?? new Date().toISOString();
     const runId =
       argument("--run-id") ??
       `growth-${startedAt.replaceAll(/[:.]/gu, "-")}-${randomUUID().slice(0, 8)}`;
     const idempotencyKey =
       argument("--idempotency-key") ??
-      `manual:${captureSha256}:${startedAt.slice(0, 10)}`;
+      defaultManualIdempotencyKey(captureSha256, startedAt);
     initial = createInitialGrowthRun({
       runId,
       idempotencyKey,

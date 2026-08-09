@@ -14,7 +14,7 @@
   "redaction_status": "synthetic",
   "account_or_collection_id": "synthetic-public-group-admin",
   "payload": {
-    "history_complete": true,
+    "history_complete": false,
     "records": [
       {
         "record_id": "contact-record:public-group-admin",

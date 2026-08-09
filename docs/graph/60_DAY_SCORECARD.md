@@ -55,7 +55,7 @@ A unique record counts only when it is:
 
 - accepted by the evaluator or human reviewer;
 - relevant to Louisville-area parents or community access;
-- verified within seven days;
+- verified within seven days of the exact approved send time;
 - tied to a public provenance URL;
 - deduplicated; and
 - supported by an allowed permission basis.
@@ -92,6 +92,16 @@ Initial experiment families:
 Primary KPI: `nonbrand_parent_intent_gsc_clicks_28d` to public enrollment pages.
 
 The rolling 28-day calculation must use query and page grain, exclude Code the Future brand terms, and apply the graph's mature-data cutoff.
+
+Metric definition `ctf-growth-metrics-v1.1` normalizes each query with Unicode
+NFKC, lowercase, and separator/hyphen folding. It first excludes normalized
+Code the Future brand variants. A remaining query counts as parent intent only
+when it matches at least two of three token families: audience
+(`parent`/`kid`/`child`/`youth`/`teen`/`family`), subject
+(`coding`/`AI`/`STEM`/`computer`/`technology`/`robotics`), and program
+(`camp`/`class`/`club`/`program`/`course`/`workshop`/`lesson`). This rule is
+versioned; changing it requires a new metric-definition version and replay
+review.
 
 Drivers:
 
@@ -156,6 +166,10 @@ sites, so that appearance is not a sound Code the Future growth target.
 - Scale the strongest approved social archetype.
 - Focus discovery on the highest-yield permission-safe sources.
 - Evaluate 28-day Search Console movement and conversion quality.
+
+The last approved action must still occur by 10-07-2026. Its fixed measurement
+window may mature after that date; reporting the tail does not extend action
+authority or the 60-day objective window.
 
 ## Weekly decision rhythm
 

@@ -1,19 +1,24 @@
 {
-  "schema_version": "code-the-future.growth-evidence.v1",
+  "schema_version": "code-the-future.growth-evidence.v1.1",
   "producer": {
     "adapter": "code-the-future.growth-capture-adapter",
-    "version": "1.0.0",
+    "version": "1.1.0",
     "mode": "synthetic_fixture"
   },
-  "evidence_id": "evidence:social:facebook",
+  "evidence_id": "evidence:social:facebook:typed",
   "lane": "organic_social",
   "source": "facebook_insights",
-  "captured_at": "2026-08-09T14:31:00-04:00",
-  "fresh_through": "2026-08-09",
+  "captured_at": "2026-08-08T15:31:00-04:00",
+  "fresh_through": "2026-08-08",
   "data_state": "complete",
   "redaction_status": "synthetic",
-  "account_id": "synthetic-facebook-account",
+  "account_id": "61592857947154",
   "platform": "facebook",
+  "meta_identity": {
+    "asset_id": "1211320332069277",
+    "page_id": "61592857947154",
+    "business_portfolio_id": "1382097470521196"
+  },
   "payload": {
     "follower_snapshots": [
       {
@@ -22,14 +27,14 @@
         "paid_influence": "none"
       },
       {
-        "recorded_at": "2026-08-09T14:00:00-04:00",
+        "recorded_at": "2026-08-08T15:00:00-04:00",
         "followers": 203,
         "paid_influence": "none"
       }
     ],
     "posts": [
       {
-        "post_id": "fb-post-1",
+        "post_id": "fb-typed-post-1",
         "published_at": "2026-08-01T11:00:00-04:00",
         "format": "image",
         "reach": 300,
@@ -42,13 +47,13 @@
         "hides": 0,
         "reports": 0,
         "paid_status": "organic",
-        "experiment_id": "experiment:facebook-proof",
+        "experiment_id": "experiment:facebook-typed-proof",
         "arm": "classroom-proof",
         "controlled_variable": "format",
         "asset_refs": ["asset:fb-safe"]
       },
       {
-        "post_id": "fb-post-2",
+        "post_id": "fb-typed-post-2",
         "published_at": "2026-08-02T11:00:00-04:00",
         "format": "image",
         "reach": 320,
@@ -61,13 +66,13 @@
         "hides": 0,
         "reports": 0,
         "paid_status": "organic",
-        "experiment_id": "experiment:facebook-proof",
+        "experiment_id": "experiment:facebook-typed-proof",
         "arm": "classroom-proof",
         "controlled_variable": "format",
         "asset_refs": ["asset:fb-safe"]
       },
       {
-        "post_id": "fb-post-3",
+        "post_id": "fb-typed-post-3",
         "published_at": "2026-08-03T11:00:00-04:00",
         "format": "image",
         "reach": 340,
@@ -80,7 +85,7 @@
         "hides": 0,
         "reports": 0,
         "paid_status": "organic",
-        "experiment_id": "experiment:facebook-proof",
+        "experiment_id": "experiment:facebook-typed-proof",
         "arm": "classroom-proof",
         "controlled_variable": "format",
         "asset_refs": ["asset:fb-safe"]
@@ -97,6 +102,7 @@
         "consent_refs": []
       }
     ],
-    "consents": []
+    "consents": [],
+    "partial_post_observations": []
   }
 }

@@ -6,7 +6,7 @@
     "start": "2026-08-08",
     "end": "2026-10-07"
   },
-  "metric_definition_version": "ctf-growth-metrics-v1",
+  "metric_definition_version": "ctf-growth-metrics-v1.1",
   "source_runs": [
     {
       "source_run_id": "source-run:group-admin",
@@ -28,7 +28,7 @@
       "lane": "contact_discovery",
       "source": "public_web",
       "artifact_path": "contact-group-admin.json",
-      "artifact_sha256": "b4ea3555220d17cefaa666245385cc80555d6aeb5185bbe2c8304dcfa938a13b",
+      "artifact_sha256": "0e19816437fa1ad62b985433a2840f7653718125f6ee94b00ea650589668dcea",
       "captured_at": "2026-08-08T15:32:00-04:00",
       "fresh_through": "2026-08-08",
       "data_state": "complete",

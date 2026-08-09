@@ -1,0 +1,39 @@
+{
+  "schema_version": "code-the-future.growth-capture-bundle.v1",
+  "bundle_id": "bundle:synthetic:day-zero",
+  "created_at": "2026-08-08T16:00:00-04:00",
+  "objective_window": {
+    "start": "2026-08-08",
+    "end": "2026-10-07"
+  },
+  "metric_definition_version": "ctf-growth-metrics-v1.1",
+  "source_runs": [
+    {
+      "source_run_id": "source-run:gsc:day-zero",
+      "lane": "search_console",
+      "source": "search_console",
+      "account_or_property_id": "sc-domain:codethefuture.net",
+      "status": "verified_complete",
+      "started_at": "2026-08-08T15:00:00-04:00",
+      "completed_at": "2026-08-08T15:33:00-04:00",
+      "fresh_through": "2026-08-06",
+      "data_state": "complete",
+      "records_captured": 2,
+      "evidence_refs": ["evidence:gsc:property"]
+    }
+  ],
+  "evidence": [
+    {
+      "evidence_id": "evidence:gsc:property",
+      "lane": "search_console",
+      "source": "search_console",
+      "artifact_path": "search-console.json",
+      "artifact_sha256": "c2da3fa66335d5f5dd3a7ff7e34e122edf57e98d2a637dfccf21f7a0cd45ea48",
+      "captured_at": "2026-08-08T15:33:00-04:00",
+      "fresh_through": "2026-08-06",
+      "data_state": "complete",
+      "redaction_status": "synthetic",
+      "producer_mode": "synthetic_fixture"
+    }
+  ]
+}

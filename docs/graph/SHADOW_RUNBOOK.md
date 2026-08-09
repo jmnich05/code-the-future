@@ -18,8 +18,26 @@ adapter.
   root.
 - A generated `awaiting_review` record is not approval and does not execute an
   external action.
+- Social drafts use a deterministic publication time 12 hours after drafting.
+  Consent revocation status must be no more than 24 hours old at that exact
+  time; a check already more than 12 hours old at drafting requires recapture.
+- Complete social decision evidence must be captured no more than 24 hours
+  before the logical run, cannot be future-dated, and must bind source and
+  declaration freshness to that project capture date. Older complete captures
+  are observation-only.
 - Synthetic fixtures are accepted only when the explicit
   `--allow-synthetic-evidence` flag is present.
+- Project calendar dates use `America/New_York`. A capture adapter must
+  normalize provider date-only exports into that project calendar before
+  declaring `captured_at`, `fresh_through`, or a metric window; UTC string
+  slicing is not an accepted conversion.
+- Current external-action approval packages are deliberately short-lived. An
+  approval expires at the exact `publishing_at`, `send_at`, or `deploy_at`
+  instant, and runtime projection revalidates that instant and the objective
+  window before presenting the package as actionable.
+- An action may be scheduled only from 08-08-2026 through 10-07-2026,
+  inclusive. Outcome collection and 14/28-day reporting may continue after
+  10-07-2026, but the measurement tail cannot authorize a new action.
 
 The graph branch can run in an isolated worktree whose repository-root
 `.env.local` is intentionally absent, while the credential remains in the
@@ -66,17 +84,26 @@ npm run graph:validate-capture -- \
 
 The capture and every declared evidence, media, and group-rules path must
 resolve inside `--evidence-root`. The validator checks schemas, declaration and
-byte hashes, secret policy, consent scope/freshness, contact privacy, and file
-confinement. Intake also fails closed above 10,000 referenced files or 256 MiB
-of aggregate capture bytes; the per-file limit remains 16 MiB. It always rejects
-synthetic evidence and has no `--allow-synthetic-evidence` option.
+byte hashes, source-run account/property identity, secret policy, consent
+scope/freshness, contact privacy, and file confinement. Intake also fails closed
+above 10,000 referenced files or 256 MiB of aggregate capture bytes; the
+per-file limit remains 16 MiB. It always rejects synthetic evidence and has no
+`--allow-synthetic-evidence` option.
 
 This command does not load `.env.local`, require `OPENAI_API_KEY`, call a model,
 create or modify `.state`, write a ledger/checkpoint, copy evidence, or execute
 an external action. Its JSON output always reports
 `validationScope: "capture_preflight_only"` and
 `countsTowardThreeRunGate: false`; a successful validation is not one of the
-three required committed and verified real-input shadow cycles.
+three required committed and verified real-input shadow cycles. The validator
+also reports `metricDefinitionCompatibility: "current"` with
+`runtimeCompatible: true` for `ctf-growth-metrics-v1.1`. A known archived v1
+metric definition may pass structural preflight, but is labeled
+`legacy_read_only` with `runtimeCompatible: false` and cannot enter the shadow
+runtime. Unrecognized metric-definition identifiers are rejected. It also does
+not promote v1.1 partial Meta observations or separate-dimension Search Console
+summaries into scoring rows. Those artifacts can pass preflight while remaining
+explicitly non-decision-ready.
 
 ## Safe synthetic smoke run
 
@@ -85,14 +112,22 @@ Use a fresh run ID and idempotency key for a new smoke run:
 
 ```bash
 npm run graph:shadow -- \
-  --capture test/fixtures/capture-bundle.json \
+  --capture test/fixtures/capture-bundle-day-zero.json \
   --evidence-root test/fixtures \
   --state-root ../../.state/growth-graph-synthetic \
   --project-state ../../PROJECT_STATE.md \
   --run-id synthetic-smoke-2026-08-08-01 \
   --idempotency-key synthetic-smoke-2026-08-08-01 \
+  --run-at 2026-08-08T23:00:00-04:00 \
   --allow-synthetic-evidence
 ```
+
+`--run-at` is permitted only with explicitly synthetic evidence. It pins the
+synthetic graph clock and is included in the runtime manifest. The day-zero
+fixture intentionally contains only the synthetic Search Console capture;
+social and contact must report honest `baseline_gap` states rather than using
+future-dated rows. Keep `capture-bundle.json` for the fixed-clock, multi-lane
+integration tests dated 08-09-2026.
 
 Successful command output must report:
 
@@ -119,6 +154,7 @@ npm run graph:shadow -- \
   --state-root ../../.state/growth-graph-synthetic \
   --project-state ../../PROJECT_STATE.md \
   --evidence-root test/fixtures \
+  --run-at 2026-08-08T23:00:00-04:00 \
   --allow-synthetic-evidence
 ```
 
@@ -138,6 +174,13 @@ Open these local artifacts after a verified run:
 - `../../.state/growth-graph-synthetic/ledger.sqlite` — canonical append-only
   domain ledger.
 
+The early synthetic development ledger at
+`.state/growth-graph-smoke-20260808-a/ledger.sqlite` has SQLite
+`user_version=1`. It predates the released PR #8 ledger contract and is
+unsupported pre-release state: do not migrate it automatically, replay it, or
+count it toward the three-run gate. Preserve it only as historical development
+evidence. Current PR #8 `user_version=2` ledgers remain readable.
+
 The HTML canvas should contain graph and lane status only. It must have no form,
 button, script, approval, retry, resume, publish, send, deploy, or mutation
 surface.
@@ -155,11 +198,21 @@ Before the first real-input cycle:
 1. reconcile the dirty canonical social, site, SEO, analytics, and ads-ops work;
 2. build the consent-linked social asset manifest without committing raw media;
 3. import platform-specific post IDs, live proof, paid status, follower baselines,
-   and mature insights;
+   and mature insights; retain incomplete Meta detail as v1.1 partial
+   observations with unavailable fields instead of synthetic zeroes;
 4. import permission-safe contact history and do-not-contact fingerprints;
-5. capture one verified Search Console property at query/page/date grain with
-   `fresh_through`; and
-6. review the KPI definitions and authority policy in `PROJECT_CHARTER.md`.
+5. capture one verified Search Console property at exact
+   date/query/page/country/device grain with `fresh_through`; a UI capture of
+   separate dimension tables is useful baseline evidence but does not satisfy
+   this gate;
+6. capture GA4 under its own property identity and event-list coverage; and
+7. review the KPI definitions and authority policy in `PROJECT_CHARTER.md`.
+
+Search and site-inventory adapters must minimize protected learner/admin paths
+before handoff. Exact non-identifying category roots such as `/platform/` may be
+retained for count/category checks; descendants, query strings, fragments,
+userinfo, encoded traversal, and learner-identifying slugs are rejected before
+the graph creates any run or evidence artifact bytes.
 
 Then run `graph:validate-capture` with the final bundle SHA-256 and preserve its
 redacted JSON result alongside the human review record. Validation success does
@@ -173,7 +226,20 @@ explicitly approved phase.
 The contact primary KPI remains deliberately incomplete in shadow v1: a
 deterministically qualified candidate is not an approved record. Reviewed
 decision ingestion and cross-run aggregation are a cutover requirement before
-`approved_qualified_discovery_records_60d` can advance.
+`approved_qualified_discovery_records_60d` can advance. Ordinary public contact
+URLs or email-like strings remain proposal-review only because the v1 evidence
+does not attest a typed delivery channel. A public-group-admin proposal can be
+approval-ready only when it binds the exact selected evidence and record to an
+immutable group-rules capture. The persisted record verification and rules
+capture timestamps must both be no more than seven days old at the exact
+scheduled send time.
+
+Persisted approval records are not evergreen authority. Current v1.1 packages
+must bind their expiry to the exact action instant; legacy v1 packages remain
+structurally readable for audit but are projected as proposal-review only.
+Immediately before any future execution adapter, revalidate expiry, objective
+window, exact draft/scope hash, current consent or contact verification, and
+group rules. Shadow v1 still has no execution adapter.
 
 ## Failure handling
 

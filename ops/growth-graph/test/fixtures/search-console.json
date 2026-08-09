@@ -9,7 +9,7 @@
   "lane": "search_console",
   "source": "search_console",
   "captured_at": "2026-08-08T15:33:00-04:00",
-  "fresh_through": "2026-08-05",
+  "fresh_through": "2026-08-06",
   "data_state": "complete",
   "redaction_status": "synthetic",
   "property_id": "sc-domain:codethefuture.net",
@@ -18,7 +18,7 @@
     "dimensions": ["date", "query", "page", "country", "device"],
     "date_window": {
       "start": "2026-07-01",
-      "end": "2026-08-05"
+      "end": "2026-08-06"
     },
     "rows": [
       {

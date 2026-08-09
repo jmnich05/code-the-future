@@ -8,8 +8,8 @@
   "evidence_id": "evidence:social:instagram",
   "lane": "organic_social",
   "source": "instagram_insights",
-  "captured_at": "2026-08-08T15:30:00-04:00",
-  "fresh_through": "2026-08-08",
+  "captured_at": "2026-08-09T15:00:00-04:00",
+  "fresh_through": "2026-08-09",
   "data_state": "complete",
   "redaction_status": "synthetic",
   "account_id": "synthetic-instagram-account",
@@ -22,7 +22,7 @@
         "paid_influence": "none"
       },
       {
-        "recorded_at": "2026-08-08T15:00:00-04:00",
+        "recorded_at": "2026-08-09T14:00:00-04:00",
         "followers": 105,
         "paid_influence": "none"
       }
@@ -115,7 +115,7 @@
         "allowed_media": ["image"],
         "evidence_reference": "synthetic-consent-ledger:ig",
         "granted_at": "2026-07-01T12:00:00-04:00",
-        "revocation_checked_at": "2026-08-08T15:20:00-04:00",
+      "revocation_checked_at": "2026-08-09T15:00:00-04:00",
         "expires_at": "2026-10-31T23:59:59-04:00"
       }
     ]

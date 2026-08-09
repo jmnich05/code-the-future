@@ -1,0 +1,83 @@
+{
+  "schema_version": "code-the-future.growth-evidence.v1.1",
+  "producer": {
+    "adapter": "code-the-future.growth-capture-adapter",
+    "version": "1.1.0",
+    "mode": "synthetic_fixture"
+  },
+  "evidence_id": "evidence:social:facebook:partial",
+  "lane": "organic_social",
+  "source": "facebook_insights",
+  "captured_at": "2026-08-08T15:45:00-04:00",
+  "fresh_through": "2026-08-08",
+  "data_state": "partial",
+  "redaction_status": "synthetic",
+  "account_id": "synthetic-facebook-account",
+  "platform": "facebook",
+  "payload": {
+    "follower_snapshots": [
+      {
+        "recorded_at": "2026-08-08T15:45:00-04:00",
+        "followers": 203,
+        "paid_influence": "unknown"
+      }
+    ],
+    "posts": [],
+    "assets": [],
+    "consents": [],
+    "partial_post_observations": [
+      {
+        "post_id": "fb-post-1",
+        "platform_content_id": "fb-post-1",
+        "business_suite_content_id": "business-suite-post-1",
+        "publication_time": {
+          "state": "displayed_local_time",
+          "displayed_at": "2026-08-01T11:00:00",
+          "timezone": "unknown",
+          "displayed_text": "Aug 1, 11:00am"
+        },
+        "format": "image",
+        "paid_status": "unknown",
+        "provenance": {
+          "surface": "meta_business_suite_post_insights",
+          "source_url": "https://business.facebook.com/latest/insights/content/",
+          "source_url_precision": "sanitized_surface",
+          "observed_at": "2026-08-08T15:44:00-04:00",
+          "observed_at_basis": "browser_observation",
+          "measurement_basis": "lifetime_through_capture"
+        },
+        "publication_proof": {
+          "url": "https://www.facebook.com/example/posts/fb-post-1",
+          "verification": "authenticated_platform_link"
+        },
+        "asset_attestation_state": "not_ingested",
+        "metrics": {
+          "reach": { "state": "unavailable", "reason": "not_exposed" },
+          "profile_visits": { "state": "unavailable", "reason": "not_exposed" },
+          "new_follows": { "state": "unavailable", "reason": "not_exposed" },
+          "shares": { "state": "observed", "value": 1, "native_field": "shares" },
+          "saves": { "state": "observed", "value": 0, "native_field": "saves" },
+          "substantive_comments": { "state": "unavailable", "reason": "not_exposed" },
+          "unfollows": { "state": "unavailable", "reason": "not_exposed" },
+          "hides": { "state": "unavailable", "reason": "not_exposed" },
+          "reports": { "state": "unavailable", "reason": "not_exposed" }
+        },
+        "supplemental_metrics": {
+          "views": { "state": "observed", "value": 100, "native_field": "views" },
+          "viewers": { "state": "observed", "value": 50, "native_field": "viewers" },
+          "interactions": { "state": "observed", "value": 2, "native_field": "interactions" },
+          "link_clicks": { "state": "unavailable", "reason": "not_exposed" },
+          "follows": { "state": "observed", "value": 0, "native_field": "follows" },
+          "likes_reactions": { "state": "observed", "value": 1, "native_field": "likes_reactions" },
+          "comments": { "state": "observed", "value": 1, "native_field": "comments" },
+          "average_watch_time_seconds": { "state": "unavailable", "reason": "not_applicable" },
+          "total_watch_time_seconds": { "state": "unavailable", "reason": "not_applicable" },
+          "paid_distribution_percent": { "state": "unavailable", "reason": "not_exposed" },
+          "distribution_followers_percent": { "state": "unavailable", "reason": "not_exposed" },
+          "distribution_recommendations_percent": { "state": "unavailable", "reason": "not_exposed" },
+          "distribution_shares_percent": { "state": "unavailable", "reason": "not_exposed" }
+        }
+      }
+    ]
+  }
+}
