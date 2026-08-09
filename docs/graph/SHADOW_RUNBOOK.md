@@ -50,6 +50,34 @@ npm audit --omit=dev --audit-level=high
 
 Do not proceed with a shadow capture if typecheck, tests, or the audit fails.
 
+## Read-only real-capture validation
+
+Validate a prepared real-input bundle before starting a graph run. Use an
+explicit `--run-at` instant so time-bound consent and revocation checks are
+repeatable:
+
+```bash
+npm run graph:validate-capture -- \
+  --capture /absolute/path/capture-bundle.json \
+  --evidence-root /absolute/path/to/smallest-approved-root \
+  --run-at 2026-08-08T16:00:00-04:00 \
+  --sha LOWERCASE_CAPTURE_BUNDLE_SHA256
+```
+
+The capture and every declared evidence, media, and group-rules path must
+resolve inside `--evidence-root`. The validator checks schemas, declaration and
+byte hashes, secret policy, consent scope/freshness, contact privacy, and file
+confinement. Intake also fails closed above 10,000 referenced files or 256 MiB
+of aggregate capture bytes; the per-file limit remains 16 MiB. It always rejects
+synthetic evidence and has no `--allow-synthetic-evidence` option.
+
+This command does not load `.env.local`, require `OPENAI_API_KEY`, call a model,
+create or modify `.state`, write a ledger/checkpoint, copy evidence, or execute
+an external action. Its JSON output always reports
+`validationScope: "capture_preflight_only"` and
+`countsTowardThreeRunGate: false`; a successful validation is not one of the
+three required committed and verified real-input shadow cycles.
+
 ## Safe synthetic smoke run
 
 The fixture contains fabricated records and is not a Code the Future baseline.
@@ -132,6 +160,10 @@ Before the first real-input cycle:
 5. capture one verified Search Console property at query/page/date grain with
    `fresh_through`; and
 6. review the KPI definitions and authority policy in `PROJECT_CHARTER.md`.
+
+Then run `graph:validate-capture` with the final bundle SHA-256 and preserve its
+redacted JSON result alongside the human review record. Validation success does
+not waive any incomplete-data, consent, history, or human-approval gate.
 
 No autonomous live hill-climbing claim is valid until three consecutive
 real-input shadow cycles commit and read back cleanly. Read adapters should be

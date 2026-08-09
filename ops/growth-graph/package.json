@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "graph:shadow": "node --env-file-if-exists=../../.env.local --import tsx/esm src/cli.ts",
+    "graph:validate-capture": "node --import tsx/esm src/validate-capture.ts",
     "test": "node --import tsx/esm --test test/*.test.ts",
     "typecheck": "tsc --noEmit"
   },
