@@ -243,6 +243,11 @@ group rules. Shadow v1 still has no execution adapter.
 
 ## Failure handling
 
+For routine operation, use [`OPERATOR_RUNBOOK.md`](OPERATOR_RUNBOOK.md) and
+`npm run graph:ops -- ...`. Direct `graph:shadow` commands below the cockpit are
+development/debug interfaces; they do not provide scheduled-slot
+reconciliation or the shared operator result envelope.
+
 - A `failed_pending_resume` response means inspect the redacted error and resume
   the same run after repairing the identified local problem.
 - Do not delete state or invent a new idempotency key to bypass a conflict.

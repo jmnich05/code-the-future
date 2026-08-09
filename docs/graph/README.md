@@ -10,6 +10,8 @@ Read in this order:
 4. [`EVAL_BANK.md`](EVAL_BANK.md) — executable and trajectory-level regression cases.
 5. [`SOCIAL_IMPORT_PLAN.md`](SOCIAL_IMPORT_PLAN.md) — reconciliation of the current Meta/Instagram work without committing raw media or inventing publication proof.
 6. [`SHADOW_RUNBOOK.md`](SHADOW_RUNBOOK.md) — local setup, validation, synthetic run, resume, and inspection commands.
+7. [`OPERATOR_RUNBOOK.md`](OPERATOR_RUNBOOK.md) — the stable status, run,
+   catch-up, resume, review, failure, and doctor vocabulary used from Codex.
 
 The TypeScript runtime lives under [`../../ops/growth-graph/`](../../ops/growth-graph/). Runtime state is local and ignored under `.state/`; `PROJECT_STATE.md` and the HTML canvas are generated read-only projections.
 

@@ -766,6 +766,16 @@ interface PrepareCaptureOptions extends CaptureValidationOptions {
   requireCurrentMetricDefinition?: boolean;
 }
 
+export interface CaptureReadOnlyPreflightResult {
+  bundle: GrowthCaptureBundle;
+  bundleSha256: string;
+  validationHash: string;
+  evidenceMode: "real" | "synthetic";
+  evidenceCount: number;
+  assetCount: number;
+  groupRulesArtifactCount: number;
+}
+
 function captureContentHash(input: {
   bundleHash: string;
   evidenceHashes: readonly string[];
@@ -1031,6 +1041,39 @@ async function prepareCaptureBundle(
     pendingAssets,
     pendingGroupRules,
     validationHash,
+  };
+}
+
+/**
+ * Performs the runtime's complete bounded capture policy without creating a
+ * run, copying artifacts, opening a ledger, or calling a model. Operator
+ * reconciliation uses this before it claims an idempotency key or slot.
+ */
+export async function preflightCaptureBundleReadOnly(
+  options: CaptureValidationOptions & {
+    allowSyntheticEvidence: boolean;
+    requireCurrentMetricDefinition?: boolean;
+  },
+): Promise<CaptureReadOnlyPreflightResult> {
+  const prepared = await prepareCaptureBundle(options);
+  const synthetic = prepared.bundle.evidence.every(
+    (item) =>
+      item.producer_mode === "synthetic_fixture" &&
+      item.redaction_status === "synthetic",
+  );
+  if (options.allowSyntheticEvidence && !synthetic) {
+    throw new ArtifactPolicyError(
+      "Explicit synthetic preflight cannot contain real or mixed evidence",
+    );
+  }
+  return {
+    bundle: prepared.bundle,
+    bundleSha256: prepared.bundleHash,
+    validationHash: prepared.validationHash,
+    evidenceMode: synthetic ? "synthetic" : "real",
+    evidenceCount: prepared.pendingEvidence.length,
+    assetCount: prepared.pendingAssets.size,
+    groupRulesArtifactCount: prepared.pendingGroupRules.size,
   };
 }
 

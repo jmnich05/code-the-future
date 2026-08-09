@@ -74,3 +74,45 @@ Personal agents in build:
 - For code/config, provide exact diffs or exact files.
 - Fahrenheit, imperial, US context by default.
 - Dates in writing: MM-DD-YYYY. File names: ISO dates.
+
+## Growth Graph Operator Interaction
+
+Codex is the operator console for the local growth graph. Translate Jon's
+project-level intent into the supported cockpit command before reaching for raw
+graph commands:
+
+- "What happened?" or "Is Code the Future current?" -> run
+  `npm run graph:ops -- status` from `ops/growth-graph/`.
+- "Show me run X" -> run
+  `npm run graph:ops -- status --run-id EXACT_RUN_ID`.
+- "Run it now" -> require a current immutable capture, then run
+  `npm run graph:ops -- run-now --capture ... --evidence-root ...`.
+- "Catch up the cycle my powered-off Mac missed" -> identify only the latest
+  eligible scheduled slot, require a current immutable capture, then run
+  `npm run graph:ops -- catch-up --slot ... --capture ... --evidence-root ...`.
+- "Resume/recover" -> inspect status and run
+  `npm run graph:ops -- resume --run-id EXACT_RUN_ID --evidence-root ...` with
+  the original manifest flags. Never substitute a new run ID or capture.
+- "What needs my review?" -> run `npm run graph:ops -- reviews`.
+- "Show me review X" -> run
+  `npm run graph:ops -- reviews --review-id EXACT_REVIEW_ID`; inspection never
+  records approval or authorizes execution.
+- "Why did it fail?" -> run `npm run graph:ops -- explain-failure`, optionally
+  with `--run-id EXACT_RUN_ID` for one historical run.
+- "Is the local system healthy?" -> run `npm run graph:ops -- doctor`.
+
+Routine operations use this vocabulary. Changes to goals, KPI definitions,
+freshness, privacy, sources, prompts, nodes, models, repair budgets, approval
+authority, or external adapters are versioned code/policy changes with tests and
+human-reviewed Git work; they are never cockpit overrides.
+
+The cockpit is a reconciler and dispatcher, not a new source of truth. Preserve
+this precedence: verified ledger transaction/readback, exact checkpoint,
+immutable artifacts, then generated `PROJECT_STATE.md` and the read-only canvas.
+An older pending review does not freeze a later fresh capture, but it never
+implies approval. This shadow graph and cockpit cannot publish, send, spend,
+merge, deploy, or execute an approval package. Keep every existing human gate.
+Any hash-verified external, delivery, message, application, ATS, publish, send,
+merge, deploy, or non-draft action marker anywhere in the ledger is global
+`uncertain_external_action`: surface that exact run and stop all mutation until
+human reconciliation. A run selector must never hide that boundary.

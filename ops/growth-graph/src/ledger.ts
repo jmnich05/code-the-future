@@ -50,6 +50,12 @@ export interface BeginRunResult {
   run: LedgerRunRecord;
 }
 
+export interface LegacyRunCheckpointAuthority {
+  runId: string;
+  threadId: string;
+  startedAt: string;
+}
+
 export interface LedgerEventInput {
   eventId: string;
   runId: string;
@@ -265,6 +271,11 @@ export interface LedgerRunSnapshot {
   transaction: LedgerTransactionRecord | null;
 }
 
+export type ShadowBoundaryViolationSource =
+  | "consequential_event"
+  | "outbox_status"
+  | "experiment_external_action_status";
+
 export class LedgerConflictError extends Error {
   override name = "LedgerConflictError";
 }
@@ -345,15 +356,19 @@ export class GrowthLedger {
   readonly databasePath: string;
   private readonly database: DatabaseSync;
 
-  constructor(databasePath: string) {
+  constructor(databasePath: string, options: { readOnly?: boolean } = {}) {
     this.databasePath = databasePath === ":memory:" ? databasePath : resolve(databasePath);
-    if (this.databasePath !== ":memory:") {
+    if (this.databasePath !== ":memory:" && !options.readOnly) {
       mkdirSync(dirname(this.databasePath), { recursive: true, mode: 0o700 });
     }
-    this.database = new DatabaseSync(this.databasePath);
+    this.database = options.readOnly
+      ? new DatabaseSync(this.databasePath, { readOnly: true })
+      : new DatabaseSync(this.databasePath);
     this.database.exec("PRAGMA foreign_keys = ON");
-    this.database.exec("PRAGMA journal_mode = WAL");
-    this.database.exec("PRAGMA synchronous = FULL");
+    if (!options.readOnly) {
+      this.database.exec("PRAGMA journal_mode = WAL");
+      this.database.exec("PRAGMA synchronous = FULL");
+    }
     this.database.exec("PRAGMA busy_timeout = 5000");
     const versionRow = this.database.prepare("PRAGMA user_version").get() as SqlRow;
     const version = asNumber(versionRow.user_version, "ledger user_version");
@@ -363,7 +378,10 @@ export class GrowthLedger {
         `Ledger schema ${version} is newer than supported schema ${LEDGER_SCHEMA_VERSION}`,
       );
     }
-    if (version === 0) {
+    if (options.readOnly && version !== LEDGER_SCHEMA_VERSION) {
+      this.database.close();
+      throw new LedgerConflictError(`Unsupported ledger schema version: ${version}`);
+    } else if (version === 0) {
       const tableCountRow = this.database
         .prepare(
           "SELECT count(*) AS count FROM sqlite_master WHERE type = 'table' AND name NOT LIKE 'sqlite_%'",
@@ -378,13 +396,15 @@ export class GrowthLedger {
       this.initialize();
       this.database.exec(`PRAGMA user_version = ${LEDGER_SCHEMA_VERSION}`);
     } else if (version === LEDGER_SCHEMA_VERSION) {
-      this.initialize();
+      if (!options.readOnly) this.initialize();
     } else {
       this.database.close();
       throw new LedgerConflictError(`Unsupported ledger schema version: ${version}`);
     }
     this.validateSchema();
-    if (this.databasePath !== ":memory:") chmodSync(this.databasePath, 0o600);
+    if (this.databasePath !== ":memory:" && !options.readOnly) {
+      chmodSync(this.databasePath, 0o600);
+    }
   }
 
   close(): void {
@@ -648,7 +668,7 @@ export class GrowthLedger {
 
   beginRun(input: LedgerRunInput): BeginRunResult {
     assertNoSecrets(input);
-    const hash = rowHash({
+    const legacySemanticHash = rowHash({
       idempotencyKey: input.idempotencyKey,
       workflowName: input.workflowName,
       policyHash: input.policyHash,
@@ -656,6 +676,7 @@ export class GrowthLedger {
       captureBundleHash: input.captureBundleHash,
       triggerKind: input.triggerKind,
     });
+    const hash = rowHash(input);
     const result = this.database
       .prepare(`
         INSERT INTO runs (
@@ -679,11 +700,42 @@ export class GrowthLedger {
     const byIdempotency = this.database
       .prepare("SELECT * FROM runs WHERE idempotency_key = ?")
       .get(input.idempotencyKey) as SqlRow | undefined;
-    if (byIdempotency && byIdempotency.row_hash === hash) {
-      return {
-        outcome: result.changes === 1 ? "created" : "replayed",
-        run: this.mapRun(byIdempotency),
-      };
+    if (byIdempotency) {
+      const stored = this.mapRun(byIdempotency);
+      const storedFullHash = rowHash(stored);
+      const storedLegacyHash = rowHash({
+        idempotencyKey: stored.idempotencyKey,
+        workflowName: stored.workflowName,
+        policyHash: stored.policyHash,
+        runtimeHash: stored.runtimeHash,
+        captureBundleHash: stored.captureBundleHash,
+        triggerKind: stored.triggerKind,
+      });
+      if (
+        byIdempotency.row_hash !== storedFullHash &&
+        byIdempotency.row_hash !== storedLegacyHash
+      ) {
+        throw new LedgerReadbackError(
+          "Stored run row hash does not match its canonical authority fields",
+        );
+      }
+      const semanticIdentityMatches =
+        input.idempotencyKey === stored.idempotencyKey &&
+        input.workflowName === stored.workflowName &&
+        input.policyHash === stored.policyHash &&
+        input.runtimeHash === stored.runtimeHash &&
+        input.captureBundleHash === stored.captureBundleHash &&
+        input.triggerKind === stored.triggerKind;
+      if (
+        semanticIdentityMatches &&
+        (byIdempotency.row_hash === storedFullHash ||
+          byIdempotency.row_hash === legacySemanticHash)
+      ) {
+        return {
+          outcome: result.changes === 1 ? "created" : "replayed",
+          run: stored,
+        };
+      }
     }
     const byRunId = this.database.prepare("SELECT * FROM runs WHERE run_id = ?").get(input.runId) as
       | SqlRow
@@ -880,6 +932,154 @@ export class GrowthLedger {
     return snapshot;
   }
 
+  verifyCommittedRun(
+    runId: string,
+    legacyAuthority?: LegacyRunCheckpointAuthority,
+  ): LedgerRunSnapshot {
+    this.verifyRunAuthority(runId, legacyAuthority);
+    const transaction = this.readTransactionByRun(runId);
+    if (!transaction) throw new LedgerReadbackError("Committed run is missing");
+    return this.assertReadback(runId, transaction);
+  }
+
+  verifyRunAuthority(
+    runId: string,
+    legacyAuthority?: LegacyRunCheckpointAuthority,
+  ): LedgerRunSnapshot {
+    const runRow = this.database
+      .prepare("SELECT * FROM runs WHERE run_id = ?")
+      .get(runId) as SqlRow | undefined;
+    if (!runRow) throw new LedgerReadbackError("Run authority row is missing");
+    const run = this.mapRun(runRow);
+    const expectedLegacyRunHash = rowHash({
+      idempotencyKey: run.idempotencyKey,
+      workflowName: run.workflowName,
+      policyHash: run.policyHash,
+      runtimeHash: run.runtimeHash,
+      captureBundleHash: run.captureBundleHash,
+      triggerKind: run.triggerKind,
+    });
+    const expectedFullRunHash = rowHash(run);
+    const storedRunHash = asString(runRow.row_hash, "runs row_hash");
+    const legacyAuthorityMatches =
+      storedRunHash === expectedLegacyRunHash &&
+      legacyAuthority?.runId === run.runId &&
+      legacyAuthority.threadId === run.threadId &&
+      legacyAuthority.startedAt === run.startedAt;
+    if (storedRunHash !== expectedFullRunHash && !legacyAuthorityMatches) {
+      throw new LedgerReadbackError(
+        "Stored run row hash does not match its canonical authority fields",
+      );
+    }
+
+    for (const eventRow of this.rows("events", runId)) {
+      if (
+        asString(eventRow.row_hash, "events row_hash") !==
+        rowHash(this.mapEvent(eventRow))
+      ) {
+        throw new LedgerReadbackError(
+          "Stored event row hash does not match its canonical payload",
+        );
+      }
+    }
+    for (const cacheRow of this.rows("model_cache", runId)) {
+      if (
+        asString(cacheRow.row_hash, "model_cache row_hash") !==
+        rowHash(this.mapModelCache(cacheRow))
+      ) {
+        throw new LedgerReadbackError(
+          "Stored model-cache row hash does not match its canonical payload",
+        );
+      }
+    }
+    // This validates every commit-bound row hash even before a transaction is
+    // present, so failure and review classification never trusts mutable bytes.
+    this.contentHashForRun(runId);
+
+    const transactionRow = this.database
+      .prepare("SELECT * FROM transactions WHERE run_id = ?")
+      .get(runId) as SqlRow | undefined;
+    if (transactionRow) {
+      const transaction = this.readTransactionByRun(runId);
+      if (!transaction) {
+        throw new LedgerReadbackError("Transaction authority row is unreadable");
+      }
+      const expectedTransactionHash = rowHash({
+        transactionId: transaction.transactionId,
+        runId: transaction.runId,
+        committedAt: transaction.committedAt,
+        terminalStatus: transaction.terminalStatus,
+        nextSafeAction: transaction.nextSafeAction,
+        commitHash: transaction.commitHash,
+        contentHash: transaction.contentHash,
+        counts: transaction.counts,
+      });
+      if (
+        asString(transactionRow.row_hash, "transactions row_hash") !==
+        expectedTransactionHash
+      ) {
+        throw new LedgerReadbackError(
+          "Stored transaction row hash does not match its canonical payload",
+        );
+      }
+    }
+    const snapshot = this.readRun(runId);
+    if (!snapshot) throw new LedgerReadbackError("Run authority readback is missing");
+    return snapshot;
+  }
+
+  /**
+   * Call only after verifyRunAuthority/verifyCommittedRun for the same run.
+   * CTF v1 is a strict shadow runtime, so any consequential action marker is
+   * an uncertainty boundary rather than proof that an action did or did not
+   * finish.
+   */
+  findShadowBoundaryViolation(
+    runId: string,
+  ): ShadowBoundaryViolationSource | null {
+    const consequentialPrefix =
+      /^(?:external|delivery|message|application|ats|publish|send|merge|deploy)/iu;
+    for (const row of this.rows("events", runId)) {
+      const event = this.mapEvent(row);
+      if (
+        consequentialPrefix.test(event.type) ||
+        consequentialPrefix.test(event.node)
+      ) {
+        return "consequential_event";
+      }
+    }
+    for (const row of this.rows("outbox", runId)) {
+      if (asString(row.status, "outbox status") !== "draft") {
+        return "outbox_status";
+      }
+    }
+    for (const row of this.rows("experiments", runId)) {
+      if (
+        asString(
+          row.external_action_status,
+          "experiment external_action_status",
+        ) !== "not_executed"
+      ) {
+        return "experiment_external_action_status";
+      }
+    }
+    return null;
+  }
+
+  listUncommittedRunIds(): string[] {
+    return (
+      this.database
+        .prepare(`
+          SELECT r.run_id
+          FROM runs r
+          LEFT JOIN transactions t ON t.run_id = r.run_id
+          WHERE t.run_id IS NULL
+          ORDER BY r.rowid
+        `)
+        .all() as SqlRow[]
+    ).map((row) => asString(row.run_id, "run_id"));
+  }
+
   listPendingReviews(): LedgerReviewRecord[] {
     const rows = this.database
       .prepare("SELECT * FROM reviews WHERE status = 'awaiting_review' ORDER BY requested_at, review_id")
@@ -943,8 +1143,31 @@ export class GrowthLedger {
         return rowHash(input);
       }
       case "experiments": {
-        const { runId: _runId, ...input } = this.mapExperiment(row);
-        return rowHash(input);
+        const approvalHash = optionalString(row.approval_hash);
+        return rowHash({
+          experimentId: asString(row.experiment_id, "experiment_id"),
+          idempotencyKey: asString(row.idempotency_key, "idempotency_key"),
+          proposalId: asString(row.proposal_id, "proposal_id"),
+          lane: asString(row.lane, "lane"),
+          hypothesis: asString(row.hypothesis, "hypothesis"),
+          controlledVariable: asString(
+            row.controlled_variable,
+            "controlled_variable",
+          ),
+          arm: asString(row.arm, "arm"),
+          primaryKpi: asString(row.primary_kpi, "primary_kpi"),
+          measurementWindowDays: asNumber(
+            row.measurement_window_days,
+            "measurement_window_days",
+          ),
+          status: asString(row.status, "status"),
+          ...(approvalHash ? { approvalHash } : {}),
+          externalActionStatus: asString(
+            row.external_action_status,
+            "external_action_status",
+          ),
+          payload: parseJson(row.payload_json),
+        });
       }
       case "evals": {
         const { runId: _runId, ...input } = this.mapEval(row);
@@ -957,8 +1180,16 @@ export class GrowthLedger {
       case "errors":
         return rowHash(this.mapError(row));
       case "outbox": {
-        const { runId: _runId, ...input } = this.mapOutbox(row);
-        return rowHash(input);
+        return rowHash({
+          outboxId: asString(row.outbox_id, "outbox_id"),
+          idempotencyKey: asString(row.idempotency_key, "idempotency_key"),
+          lane: asString(row.lane, "lane"),
+          kind: asString(row.kind, "kind"),
+          contentHash: asString(row.content_hash, "content_hash"),
+          status: asString(row.status, "status"),
+          createdAt: asString(row.created_at, "created_at"),
+          payload: parseJson(row.payload_json),
+        });
       }
       default:
         throw new LedgerReadbackError(`Unsupported commit-bound table: ${table}`);
