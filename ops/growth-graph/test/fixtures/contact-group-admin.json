@@ -1,0 +1,49 @@
+{
+  "schema_version": "code-the-future.growth-evidence.v1",
+  "producer": {
+    "adapter": "code-the-future.growth-capture-adapter",
+    "version": "1.0.0",
+    "mode": "synthetic_fixture"
+  },
+  "evidence_id": "evidence:contact:group-admin",
+  "lane": "contact_discovery",
+  "source": "public_web",
+  "captured_at": "2026-08-08T15:32:00-04:00",
+  "fresh_through": "2026-08-08",
+  "data_state": "complete",
+  "redaction_status": "synthetic",
+  "account_or_collection_id": "synthetic-public-group-admin",
+  "payload": {
+    "history_complete": true,
+    "records": [
+      {
+        "record_id": "contact-record:public-group-admin",
+        "organization_name": "Synthetic Louisville Parent Learning Group",
+        "contact_label": "Public group administrator",
+        "public_contact_channel": "https://example.org/groups/admin",
+        "source_url": "https://example.org/groups/learning",
+        "source_type": "public_group_admin",
+        "group_rules_captured": true,
+        "group_rules_url": "https://example.org/groups/rules",
+        "group_rules_artifact_path": "group-rules.txt",
+        "group_rules_content_sha256": "2e475ae220d9b899cae69af9bd6e387309133b7eb64fe8f83320dc450b53818f",
+        "group_rules_byte_length": 91,
+        "group_rules_captured_at": "2026-08-08T15:20:00-04:00",
+        "geography": "Louisville, Kentucky",
+        "verified_at": "2026-08-08T15:20:00-04:00",
+        "permission_basis": "public_group_admin_channel",
+        "subject_type": "public_group_admin",
+        "source_visibility": "public",
+        "contains_minor_data": false,
+        "do_not_contact": false,
+        "mission_fit": 5,
+        "louisville_relevance": 5,
+        "parent_community_access": 5,
+        "actionability": 5,
+        "identity_hint": "synthetic-public-group-admin"
+      }
+    ],
+    "prior_identity_fingerprints": [],
+    "do_not_contact_identity_fingerprints": []
+  }
+}

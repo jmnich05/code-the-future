@@ -1,0 +1,26 @@
+{
+  "name": "@code-the-future/growth-graph",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "graph:shadow": "node --env-file-if-exists=../../.env.local --import tsx/esm src/cli.ts",
+    "test": "node --import tsx/esm --test test/*.test.ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@langchain/langgraph": "1.4.9",
+    "@langchain/langgraph-checkpoint-sqlite": "1.0.3",
+    "@openai/agents": "0.14.3",
+    "openai": "6.49.0",
+    "zod": "4.4.3"
+  },
+  "devDependencies": {
+    "@types/node": "26.2.0",
+    "tsx": "4.23.11",
+    "typescript": "7.0.2"
+  },
+  "engines": {
+    "node": ">=22.5"
+  }
+}
