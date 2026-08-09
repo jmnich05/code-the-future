@@ -18,10 +18,14 @@ import {
   EvidenceArtifactSchema,
   type EvidenceReference,
   type GrowthCaptureBundle,
+  type GrowthLane,
   type ImmutableArtifactReference,
 } from "./schema.js";
 
 const DEFAULT_MAX_ARTIFACT_BYTES = 16 * 1024 * 1024;
+const DEFAULT_MAX_CAPTURE_FILE_COUNT = 10_000;
+const DEFAULT_MAX_CAPTURE_TOTAL_BYTES = 256 * 1024 * 1024;
+const BOUNDED_READ_CHUNK_BYTES = 64 * 1024;
 
 export interface ArtifactWriteResult extends ImmutableArtifactReference {}
 
@@ -32,6 +36,46 @@ export interface CaptureIntakeOptions {
   runAt: string;
   allowSyntheticEvidence?: boolean;
   maxArtifactBytes?: number;
+  maxCaptureFileCount?: number;
+  maxCaptureTotalBytes?: number;
+}
+
+export interface CaptureValidationOptions {
+  captureBundlePath: string;
+  allowedEvidenceRoot: string;
+  runAt: string;
+  expectedCaptureSha256?: string;
+  maxArtifactBytes?: number;
+  maxCaptureFileCount?: number;
+  maxCaptureTotalBytes?: number;
+}
+
+export interface CaptureValidationResult {
+  status: "valid";
+  evidenceMode: "real";
+  validationScope: "capture_preflight_only";
+  countsTowardThreeRunGate: false;
+  bundleId: string;
+  bundleSha256: string;
+  validationHash: string;
+  sourceRunCount: number;
+  evidenceCount: number;
+  assetCount: number;
+  groupRulesArtifactCount: number;
+  lanes: Record<
+    GrowthLane,
+    {
+      sourceRunCount: number;
+      evidenceCount: number;
+    }
+  >;
+  privacyPrerequisites: "passed";
+  schemaValidation: "passed";
+  pathConfinement: "passed";
+  declaredHashes: "passed";
+  modelCalled: false;
+  graphStateModified: false;
+  externalActionStatus: "not_executed";
 }
 
 export interface IntakenEvidence {
@@ -198,33 +242,154 @@ function isInside(root: string, candidate: string): boolean {
   return pathFromRoot === "" || (!pathFromRoot.startsWith("..") && !isAbsolute(pathFromRoot));
 }
 
-async function resolveConfinedRegularFile(root: string, candidate: string): Promise<string> {
+interface ConfinedRegularFile {
+  realPath: string;
+  device: bigint;
+  inode: bigint;
+}
+
+async function resolveConfinedRegularFile(
+  root: string,
+  candidate: string,
+): Promise<ConfinedRegularFile> {
   const resolved = await realpath(candidate);
   if (!isInside(root, resolved)) {
     throw new ArtifactPolicyError("Evidence path escapes the allowed evidence root");
   }
-  const stats = await lstat(resolved);
+  const stats = await lstat(resolved, { bigint: true });
   if (!stats.isFile()) {
     throw new ArtifactPolicyError("Evidence path must resolve to a regular file");
   }
-  return resolved;
+  return { realPath: resolved, device: stats.dev, inode: stats.ino };
 }
 
-async function readBoundedFile(path: string, maxBytes: number): Promise<Buffer> {
-  const handle = await open(path, fsConstants.O_RDONLY | fsConstants.O_NOFOLLOW);
+async function readBoundedFile(
+  file: ConfinedRegularFile,
+  allowedRoot: string,
+  maxBytes: number,
+  remainingCaptureBytes: number,
+  afterInitialStat?: () => Promise<void>,
+): Promise<Buffer> {
+  const handle = await open(
+    file.realPath,
+    fsConstants.O_RDONLY | fsConstants.O_NOFOLLOW,
+  );
   try {
-    const stats = await handle.stat();
+    const stats = await handle.stat({ bigint: true });
     if (!stats.isFile()) throw new ArtifactPolicyError("Evidence is not a regular file");
-    if (stats.size > maxBytes) {
+    if (stats.dev !== file.device || stats.ino !== file.inode) {
+      throw new ArtifactPolicyError(
+        "Evidence identity changed between confinement and open checks",
+      );
+    }
+
+    let postOpenPath: string;
+    try {
+      postOpenPath = await realpath(file.realPath);
+    } catch {
+      throw new ArtifactPolicyError(
+        "Evidence path could not be revalidated after opening",
+      );
+    }
+    if (postOpenPath !== file.realPath || !isInside(allowedRoot, postOpenPath)) {
+      throw new ArtifactPolicyError(
+        "Evidence path changed or escaped after opening",
+      );
+    }
+    const postOpenStats = await lstat(postOpenPath, { bigint: true });
+    if (
+      !postOpenStats.isFile() ||
+      postOpenStats.dev !== stats.dev ||
+      postOpenStats.ino !== stats.ino
+    ) {
+      throw new ArtifactPolicyError(
+        "Evidence identity changed during post-open confinement verification",
+      );
+    }
+
+    if (stats.size > BigInt(maxBytes)) {
       throw new ArtifactPolicyError(`Evidence exceeds the ${maxBytes}-byte intake limit`);
     }
-    const bytes = await handle.readFile();
-    if (bytes.byteLength > maxBytes) {
-      throw new ArtifactPolicyError(`Evidence exceeds the ${maxBytes}-byte intake limit`);
+    if (stats.size > BigInt(remainingCaptureBytes)) {
+      throw new ArtifactPolicyError("Capture exceeds the aggregate byte intake limit");
     }
-    return bytes;
+
+    const initialSize = Number(stats.size);
+    const bytes = Buffer.allocUnsafe(initialSize + 1);
+    await afterInitialStat?.();
+    let offset = 0;
+    while (offset < bytes.byteLength) {
+      const length = Math.min(
+        BOUNDED_READ_CHUNK_BYTES,
+        bytes.byteLength - offset,
+      );
+      const result = await handle.read(bytes, offset, length, null);
+      if (result.bytesRead === 0) break;
+      offset += result.bytesRead;
+    }
+    if (offset > initialSize) {
+      throw new ArtifactPolicyError("Evidence grew during bounded read");
+    }
+    const finalStats = await handle.stat({ bigint: true });
+    if (
+      finalStats.size !== stats.size ||
+      finalStats.mtimeNs !== stats.mtimeNs ||
+      finalStats.ctimeNs !== stats.ctimeNs
+    ) {
+      throw new ArtifactPolicyError("Evidence changed during bounded read");
+    }
+    return bytes.subarray(0, offset);
   } finally {
     await handle.close();
+  }
+}
+
+/** @internal Deterministic mutation hook for bounded-reader regression tests. */
+export async function testOnlyReadBoundedFile(input: {
+  path: string;
+  allowedRoot: string;
+  maxBytes: number;
+  remainingCaptureBytes: number;
+  afterInitialStat: () => Promise<void>;
+}): Promise<Buffer> {
+  const allowedRoot = await realpath(resolve(input.allowedRoot));
+  const file = await resolveConfinedRegularFile(
+    allowedRoot,
+    resolve(input.path),
+  );
+  return readBoundedFile(
+    file,
+    allowedRoot,
+    input.maxBytes,
+    input.remainingCaptureBytes,
+    input.afterInitialStat,
+  );
+}
+
+class CaptureReadBudget {
+  private fileCount = 0;
+  private totalBytes = 0;
+
+  constructor(
+    private readonly allowedRoot: string,
+    private readonly maxArtifactBytes: number,
+    private readonly maxCaptureFileCount: number,
+    private readonly maxCaptureTotalBytes: number,
+  ) {}
+
+  async read(file: ConfinedRegularFile): Promise<Buffer> {
+    if (this.fileCount >= this.maxCaptureFileCount) {
+      throw new ArtifactPolicyError("Capture exceeds the aggregate file-count limit");
+    }
+    const bytes = await readBoundedFile(
+      file,
+      this.allowedRoot,
+      this.maxArtifactBytes,
+      this.maxCaptureTotalBytes - this.totalBytes,
+    );
+    this.fileCount += 1;
+    this.totalBytes += bytes.byteLength;
+    return bytes;
   }
 }
 
@@ -367,23 +532,85 @@ interface PendingGroupRulesArtifact {
   rulesBytes: Buffer;
 }
 
-export async function intakeCaptureBundle(
-  options: CaptureIntakeOptions,
-): Promise<CaptureIntakeResult> {
+interface PreparedCapture {
+  bundle: GrowthCaptureBundle;
+  bundleBytes: Buffer;
+  bundleHash: string;
+  pendingEvidence: PendingEvidence[];
+  pendingAssets: Map<string, PendingAsset>;
+  pendingGroupRules: Map<string, PendingGroupRulesArtifact>;
+  validationHash: string;
+}
+
+interface PrepareCaptureOptions extends CaptureValidationOptions {
+  allowSyntheticEvidence: boolean;
+}
+
+function captureContentHash(input: {
+  bundleHash: string;
+  evidenceHashes: readonly string[];
+  assetHashes: readonly string[];
+  groupRulesHashes: readonly string[];
+}): string {
+  return sha256Bytes(
+    serializeArtifactJson({
+      bundle_sha256: input.bundleHash,
+      evidence_sha256: [...input.evidenceHashes].sort((left, right) =>
+        left.localeCompare(right),
+      ),
+      asset_sha256: [...input.assetHashes].sort((left, right) =>
+        left.localeCompare(right),
+      ),
+      group_rules_sha256: [...input.groupRulesHashes].sort((left, right) =>
+        left.localeCompare(right),
+      ),
+    }),
+  );
+}
+
+async function prepareCaptureBundle(
+  options: PrepareCaptureOptions,
+): Promise<PreparedCapture> {
   const maxArtifactBytes = options.maxArtifactBytes ?? DEFAULT_MAX_ARTIFACT_BYTES;
+  const maxCaptureFileCount =
+    options.maxCaptureFileCount ?? DEFAULT_MAX_CAPTURE_FILE_COUNT;
+  const maxCaptureTotalBytes =
+    options.maxCaptureTotalBytes ?? DEFAULT_MAX_CAPTURE_TOTAL_BYTES;
   if (!Number.isSafeInteger(maxArtifactBytes) || maxArtifactBytes <= 0) {
     throw new ArtifactPolicyError("maxArtifactBytes must be a positive safe integer");
   }
+  if (!Number.isSafeInteger(maxCaptureFileCount) || maxCaptureFileCount <= 0) {
+    throw new ArtifactPolicyError(
+      "maxCaptureFileCount must be a positive safe integer",
+    );
+  }
+  if (!Number.isSafeInteger(maxCaptureTotalBytes) || maxCaptureTotalBytes <= 0) {
+    throw new ArtifactPolicyError(
+      "maxCaptureTotalBytes must be a positive safe integer",
+    );
+  }
 
   const allowedRoot = await realpath(resolve(options.allowedEvidenceRoot));
-  const bundlePath = await resolveConfinedRegularFile(
+  const readBudget = new CaptureReadBudget(
+    allowedRoot,
+    maxArtifactBytes,
+    maxCaptureFileCount,
+    maxCaptureTotalBytes,
+  );
+  const bundleFile = await resolveConfinedRegularFile(
     allowedRoot,
     resolve(options.captureBundlePath),
   );
-  const bundleBytes = await readBoundedFile(bundlePath, maxArtifactBytes);
+  const bundleBytes = await readBudget.read(bundleFile);
   assertNoSecrets(bundleBytes);
   const bundle = CaptureBundleSchema.parse(parseJson(bundleBytes, "Capture bundle"));
   const bundleHash = sha256Bytes(bundleBytes);
+  if (
+    options.expectedCaptureSha256 !== undefined &&
+    options.expectedCaptureSha256 !== bundleHash
+  ) {
+    throw new ArtifactConflictError("Provided capture SHA-256 does not match the confined file");
+  }
   const runAtMs = parseRunAt(options.runAt);
 
   if (
@@ -398,9 +625,8 @@ export async function intakeCaptureBundle(
     );
   }
 
-  // Validate every artifact and all referenced asset bytes before creating the
-  // run directory. A privacy or consent failure must leave no durable copy of
-  // evidence or media, including artifacts that appeared earlier in the bundle.
+  // Validate every artifact and all referenced asset bytes before creating any
+  // run directory. The same read-only pass powers the standalone validator.
   const pendingEvidence: PendingEvidence[] = [];
   const pendingAssets = new Map<string, PendingAsset>();
   const pendingGroupRules = new Map<string, PendingGroupRulesArtifact>();
@@ -408,11 +634,11 @@ export async function intakeCaptureBundle(
     if (isAbsolute(declaration.artifact_path)) {
       throw new ArtifactPolicyError("Evidence artifact_path must be relative to the allowed root");
     }
-    const artifactPath = await resolveConfinedRegularFile(
+    const artifactFile = await resolveConfinedRegularFile(
       allowedRoot,
       resolve(allowedRoot, declaration.artifact_path),
     );
-    const artifactBytes = await readBoundedFile(artifactPath, maxArtifactBytes);
+    const artifactBytes = await readBudget.read(artifactFile);
     assertNoSecrets(artifactBytes);
     const artifactHash = sha256Bytes(artifactBytes);
     if (artifactHash !== declaration.artifact_sha256) {
@@ -447,11 +673,11 @@ export async function intakeCaptureBundle(
         if (isAbsolute(asset.artifact_path)) {
           throw new ArtifactPolicyError("Social asset artifact_path must be relative");
         }
-        const assetPath = await resolveConfinedRegularFile(
+        const assetFile = await resolveConfinedRegularFile(
           allowedRoot,
           resolve(allowedRoot, asset.artifact_path),
         );
-        const assetBytes = await readBoundedFile(assetPath, maxArtifactBytes);
+        const assetBytes = await readBudget.read(assetFile);
         assertNoSecrets(assetBytes);
         const contentSha256 = sha256Bytes(assetBytes);
         if (contentSha256 !== asset.content_sha256 || assetBytes.byteLength !== asset.byte_length) {
@@ -497,11 +723,11 @@ export async function intakeCaptureBundle(
         if (isAbsolute(artifactPath)) {
           throw new ArtifactPolicyError("Group-rules artifact path must be relative");
         }
-        const rulesPath = await resolveConfinedRegularFile(
+        const rulesFile = await resolveConfinedRegularFile(
           allowedRoot,
           resolve(allowedRoot, artifactPath),
         );
-        const rulesBytes = await readBoundedFile(rulesPath, maxArtifactBytes);
+        const rulesBytes = await readBudget.read(rulesFile);
         assertNoSecrets(rulesBytes);
         const contentSha256 = sha256Bytes(rulesBytes);
         if (
@@ -532,6 +758,96 @@ export async function intakeCaptureBundle(
       }
     }
   }
+
+  const validationHash = captureContentHash({
+    bundleHash,
+    evidenceHashes: pendingEvidence.map((item) => item.artifactHash),
+    assetHashes: [...pendingAssets.values()].map((item) => item.contentSha256),
+    groupRulesHashes: [...pendingGroupRules.values()].map(
+      (item) => item.contentSha256,
+    ),
+  });
+  return {
+    bundle,
+    bundleBytes,
+    bundleHash,
+    pendingEvidence,
+    pendingAssets,
+    pendingGroupRules,
+    validationHash,
+  };
+}
+
+export async function validateRealCaptureBundle(
+  options: CaptureValidationOptions,
+): Promise<CaptureValidationResult> {
+  const prepared = await prepareCaptureBundle({
+    ...options,
+    allowSyntheticEvidence: false,
+  });
+  const lanes = Object.fromEntries(
+    (["organic_social", "contact_discovery", "search_console"] as const).map(
+      (lane) => [
+        lane,
+        {
+          sourceRunCount: prepared.bundle.source_runs.filter((run) => run.lane === lane)
+            .length,
+          evidenceCount: prepared.bundle.evidence.filter((item) => item.lane === lane)
+            .length,
+        },
+      ],
+    ),
+  ) as CaptureValidationResult["lanes"];
+
+  return {
+    status: "valid",
+    evidenceMode: "real",
+    validationScope: "capture_preflight_only",
+    countsTowardThreeRunGate: false,
+    bundleId: prepared.bundle.bundle_id,
+    bundleSha256: prepared.bundleHash,
+    validationHash: prepared.validationHash,
+    sourceRunCount: prepared.bundle.source_runs.length,
+    evidenceCount: prepared.pendingEvidence.length,
+    assetCount: prepared.pendingAssets.size,
+    groupRulesArtifactCount: prepared.pendingGroupRules.size,
+    lanes,
+    privacyPrerequisites: "passed",
+    schemaValidation: "passed",
+    pathConfinement: "passed",
+    declaredHashes: "passed",
+    modelCalled: false,
+    graphStateModified: false,
+    externalActionStatus: "not_executed",
+  };
+}
+
+export async function intakeCaptureBundle(
+  options: CaptureIntakeOptions,
+): Promise<CaptureIntakeResult> {
+  const {
+    bundle,
+    bundleBytes,
+    bundleHash,
+    pendingEvidence,
+    pendingAssets,
+    pendingGroupRules,
+    validationHash,
+  } = await prepareCaptureBundle({
+    captureBundlePath: options.captureBundlePath,
+    allowedEvidenceRoot: options.allowedEvidenceRoot,
+    runAt: options.runAt,
+    allowSyntheticEvidence: options.allowSyntheticEvidence ?? false,
+    ...(options.maxArtifactBytes === undefined
+      ? {}
+      : { maxArtifactBytes: options.maxArtifactBytes }),
+    ...(options.maxCaptureFileCount === undefined
+      ? {}
+      : { maxCaptureFileCount: options.maxCaptureFileCount }),
+    ...(options.maxCaptureTotalBytes === undefined
+      ? {}
+      : { maxCaptureTotalBytes: options.maxCaptureTotalBytes }),
+  });
 
   const runArtifactRoot = resolve(options.runArtifactRoot);
   await mkdir(runArtifactRoot, { recursive: true, mode: 0o700 });
@@ -602,27 +918,12 @@ export async function intakeCaptureBundle(
     });
   }
 
-  const intakeHash = sha256Bytes(
-    serializeArtifactJson({
-      bundle_sha256: bundleArtifact.sha256,
-      evidence_sha256: evidence
-        .map((item) => item.immutableArtifact.sha256)
-        .sort((left, right) => left.localeCompare(right)),
-      asset_sha256: assetArtifacts
-        .map((item) => item.contentSha256)
-        .sort((left, right) => left.localeCompare(right)),
-      group_rules_sha256: groupRulesArtifacts
-        .map((item) => item.contentSha256)
-        .sort((left, right) => left.localeCompare(right)),
-    }),
-  );
-
   return {
     bundle,
     bundleArtifact,
     evidence,
     assetArtifacts,
     groupRulesArtifacts,
-    intakeHash,
+    intakeHash: validationHash,
   };
 }
