@@ -10,6 +10,12 @@
   functions = "netlify/functions"
   edge_functions = "netlify/edge-functions"
 
+# These reviewed files intentionally contain the public Supabase project URL.
+# The browser config uses only the anon/public key protected by RLS. Keep secret
+# scanning enabled for every other source and generated file.
+[build.environment]
+  SECRETS_SCAN_OMIT_PATHS = "MEMORY.md,supabase/README.md,platform/lib/config.example.js,platform/lib/config.js"
+
 # Canonical host: keep all public equity on the apex domain Google sees in
 # canonical tags, Open Graph URLs, robots.txt, and sitemap.xml.
 [[redirects]]
