@@ -1,12 +1,25 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<!-- Google tag (GA4) — public marketing site only; not installed in the learner platform. -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-9CX0PM062K"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-9CX0PM062K', {
+    allow_google_signals: false,
+    allow_ad_personalization_signals: false
+  });
+</script>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="icon" type="image/svg+xml" href="/platform/assets/logo-icon-tile.svg">
 <link rel="apple-touch-icon" href="/platform/assets/touch-icon.png">
 <title>Checkout Complete — Code the Future</title>
 <meta name="description" content="Your Code the Future checkout is complete.">
+<meta name="robots" content="noindex, nofollow">
+<meta name="referrer" content="no-referrer">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Plus+Jakarta+Sans:wght@400;600;700;800&family=JetBrains+Mono:wght@600&display=swap" rel="stylesheet">
@@ -53,8 +66,37 @@
     <div class="tiny" id="sessionNote"></div>
   </main>
   <script>
+    window.dataLayer = window.dataLayer || [];
     var id = new URLSearchParams(location.search).get("session_id");
-    if (id) document.getElementById("sessionNote").textContent = "Stripe session: " + id;
+    if (id) {
+      fetch("/api/checkout-verify?session_id=" + encodeURIComponent(id), { credentials: "same-origin" })
+        .then(function (response) { return response.json(); })
+        .then(function (checkout) {
+          if (!checkout.verified) return;
+          document.getElementById("sessionNote").textContent = "Payment verified.";
+          window.dataLayer.push({
+            event: "ctf_purchase_verified",
+            transaction_id: checkout.transactionId,
+            value: checkout.amount,
+            currency: checkout.currency,
+            plan: checkout.plan
+          });
+          gtag("event", "purchase", {
+            transaction_id: checkout.transactionId,
+            value: checkout.amount,
+            currency: checkout.currency,
+            items: [{
+              item_id: checkout.plan,
+              item_name: "Code the Future enrollment",
+              price: checkout.amount,
+              quantity: 1
+            }]
+          });
+        })
+        .catch(function () {
+          document.getElementById("sessionNote").textContent = "";
+        });
+    }
   </script>
 <script>
 // deposit checkouts get their own message (no platform-login promises)

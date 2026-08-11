@@ -3,7 +3,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 
 const root = process.cwd();
-const pages = ['index.html', 'about.html', 'faq.html', 'privacy.html', 'terms.html', '404.html'];
+const pages = ['index.html', 'about.html', 'faq.html', 'privacy.html', 'terms.html', '404.html', 'older-kids.html', 'young-teens.html', 'older-adults.html'];
 let failures = 0;
 
 function assert(condition, message) {
@@ -22,7 +22,29 @@ for (const page of pages) {
   assert(/<meta name="description" content="[^"]{50,}"/.test(html), `${page} has a meta description`);
   assert(/<link rel="canonical" href="https:\/\/codethefuture\.net\//.test(html), `${page} has apex canonical`);
   assert(!/content="[^"]*noindex/i.test(html) || page === '404.html', `${page} is indexable when public`);
+  const measurementIdMatches = html.match(/G-9CX0PM062K/g) || [];
+  assert(measurementIdMatches.length === 2, `${page} includes one configured GA4 tag`);
 }
+
+const checkoutSuccess = fs.readFileSync(path.join(root, 'checkout-success.html'), 'utf8');
+assert(/G-9CX0PM062K/.test(checkoutSuccess), 'checkout success page includes GA4');
+assert(/\/api\/checkout-verify\?session_id=/.test(checkoutSuccess), 'checkout success verifies the Stripe session server-side');
+assert(/gtag\("event", "purchase"/.test(checkoutSuccess), 'verified checkout sends the GA4 purchase event');
+
+const homePage = fs.readFileSync(path.join(root, 'index.html'), 'utf8');
+assert(/gtag\("event", "begin_checkout"/.test(homePage), 'checkout start sends the GA4 begin_checkout event');
+assert(/gtag\("event", "generate_lead"/.test(homePage), 'interest form sends the GA4 generate_lead event');
+
+const platformFiles = [];
+function collectHtml(directory) {
+  for (const entry of fs.readdirSync(directory, { withFileTypes: true })) {
+    const fullPath = path.join(directory, entry.name);
+    if (entry.isDirectory()) collectHtml(fullPath);
+    else if (entry.isFile() && entry.name.endsWith('.html')) platformFiles.push(fullPath);
+  }
+}
+collectHtml(path.join(root, 'platform'));
+assert(platformFiles.every((file) => !/G-9CX0PM062K/.test(fs.readFileSync(file, 'utf8'))), 'GA4 tag is excluded from the learner platform');
 
 const sitemap = fs.readFileSync(path.join(root, 'sitemap.xml'), 'utf8');
 const urls = [...sitemap.matchAll(/<loc>([^<]+)<\/loc>/g)].map((match) => match[1]);

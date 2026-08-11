@@ -1,6 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<!-- Google tag (GA4) — public marketing site only; not installed in the learner platform. -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-9CX0PM062K"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-9CX0PM062K', {
+    allow_google_signals: false,
+    allow_ad_personalization_signals: false
+  });
+</script>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="icon" type="image/svg+xml" href="/platform/assets/logo-icon-tile.svg">
@@ -1009,6 +1020,18 @@
       status.textContent = "Opening secure Stripe checkout…";
       btn.disabled = true;
       btn.textContent = "Sending you to Stripe…";
+      window.dataLayer.push({
+        event: "ctf_checkout_started",
+        plan: checkoutForm.dataset.plan,
+        source_page: location.pathname
+      });
+      gtag("event", "begin_checkout", {
+        currency: "USD",
+        items: [{
+          item_id: checkoutForm.dataset.plan,
+          item_name: "Code the Future enrollment"
+        }]
+      });
       fetch("/api/checkout", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -1083,8 +1106,19 @@
     e.preventDefault();
     var data = new FormData(form);
     fetch("/", { method: "POST", headers: { "Content-Type": "application/x-www-form-urlencoded" }, body: new URLSearchParams(data).toString() })
-      .then(function () { form.classList.add("sent"); })
-      .catch(function () { form.classList.add("sent"); }); // local dev has no Netlify endpoint
+      .then(function (response) {
+        if (!response.ok) throw new Error("Interest form submission failed.");
+        form.classList.add("sent");
+        window.dataLayer.push({ event: "ctf_lead_submitted", source_page: location.pathname });
+        gtag("event", "generate_lead", { method: "website_interest_form" });
+      })
+      .catch(function () {
+        var submit = form.querySelector('button[type="submit"]');
+        if (submit) {
+          submit.disabled = false;
+          submit.textContent = "Please try again";
+        }
+      });
   });
 </script>
 </body>
