@@ -1,5 +1,6 @@
 const root = document.documentElement;
-const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+const reducedMotionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
+let reducedMotion = reducedMotionQuery.matches;
 
 // Preserve old campaign and bookmark URLs from the former one-page site.
 // Fragments cannot be redirected by Netlify, so route them in the browser.
@@ -85,8 +86,12 @@ document.querySelectorAll("[data-track]").forEach((link) => {
 const growthStage = document.querySelector("[data-growth-stage]");
 const growthArt = document.querySelector("[data-growth-art]");
 const growthClose = document.querySelector("[data-growth-close]");
+const growthCanvas = document.querySelector("[data-growth-canvas]");
+let depthRenderer = null;
+let depthRendererInit = null;
 let heroPanX = 0;
 let heroPanY = 0;
+let heroDrift = 0;
 let heroMaxX = 0;
 let heroMaxY = 0;
 let heroExpanded = false;
@@ -119,6 +124,7 @@ function sizeHeroArt() {
   heroMaxY = Math.max(0, (renderHeight - box.height) / 2 - edgeBuffer);
   growthStage.style.setProperty("--hero-render-width", `${renderWidth}px`);
   growthStage.style.setProperty("--hero-render-height", `${renderHeight}px`);
+  depthRenderer?.resize();
   queueHeroPosition();
 }
 
@@ -126,6 +132,7 @@ function paintHeroPosition() {
   if (!growthStage) return;
   growthStage.style.setProperty("--hero-x", `${-heroPanX * heroMaxX}px`);
   growthStage.style.setProperty("--hero-y", `${-heroPanY * heroMaxY}px`);
+  depthRenderer?.setView({ panX: heroPanX, panY: heroPanY, drift: heroDrift, expanded: heroExpanded });
   frame = 0;
 }
 
@@ -139,6 +146,10 @@ function setHeroExpanded(expanded) {
   growthStage.classList.toggle("is-expanded", expanded);
   growthStage.setAttribute("aria-expanded", String(expanded));
   document.body.classList.toggle("hero-exploring", expanded);
+  if (expanded) {
+    heroDrift = 0;
+    growthStage.style.setProperty("--hero-drift-y", "0px");
+  }
   if (!expanded) {
     heroPanX = 0;
     heroPanY = 0;
@@ -152,6 +163,45 @@ function setHeroExpanded(expanded) {
   }
 }
 
+async function initDepthRenderer() {
+  if (
+    reducedMotion ||
+    depthRenderer ||
+    depthRendererInit ||
+    !growthStage ||
+    !growthArt ||
+    !growthCanvas ||
+    !growthStage.dataset.depthSrc
+  ) return;
+
+  depthRendererInit = import("/assets/depth-pan-renderer.js?v=20260822-living")
+    .then(({ mountDepthPanRenderer }) => mountDepthPanRenderer({
+      stage: growthStage,
+      image: growthArt,
+      canvas: growthCanvas,
+      depthUrl: growthStage.dataset.depthSrc,
+      strength: Number(growthStage.dataset.depthStrength),
+      focus: Number(growthStage.dataset.depthFocus),
+    }))
+    .then((renderer) => {
+      if (reducedMotion) {
+        renderer.destroy();
+        return;
+      }
+      depthRenderer = renderer;
+      depthRenderer.setView({ panX: heroPanX, panY: heroPanY, drift: heroDrift, expanded: heroExpanded });
+      depthRenderer.resize();
+    })
+    .catch(() => {
+      growthStage.dataset.depthState = "fallback";
+      growthStage.classList.remove("is-depth-ready");
+      growthCanvas.hidden = true;
+    })
+    .finally(() => {
+      depthRendererInit = null;
+    });
+}
+
 function moveHeroFromPointer(event) {
   if (!growthStage) return;
   const box = growthStage.getBoundingClientRect();
@@ -161,8 +211,19 @@ function moveHeroFromPointer(event) {
 }
 
 if (growthStage && growthArt) {
-  if (growthArt.complete) sizeHeroArt();
-  else growthArt.addEventListener("load", sizeHeroArt, { once: true });
+  growthStage.addEventListener("depthrendererfallback", () => {
+    depthRenderer = null;
+  });
+
+  if (growthArt.complete) {
+    sizeHeroArt();
+    initDepthRenderer();
+  } else {
+    growthArt.addEventListener("load", () => {
+      sizeHeroArt();
+      initDepthRenderer();
+    }, { once: true });
+  }
   window.addEventListener("resize", sizeHeroArt);
   if ("ResizeObserver" in window) {
     const growthObserver = new ResizeObserver(sizeHeroArt);
@@ -196,12 +257,16 @@ if (growthStage && growthArt) {
     growthStage.setPointerCapture(event.pointerId);
   });
 
-  growthStage.addEventListener("pointerup", (event) => {
+  const finishHeroDrag = (event) => {
     if (event.pointerId !== heroPointerId) return;
     heroDragging = false;
     heroPointerId = null;
     growthStage.classList.remove("is-dragging");
-  });
+  };
+
+  growthStage.addEventListener("pointerup", finishHeroDrag);
+  growthStage.addEventListener("pointercancel", finishHeroDrag);
+  growthStage.addEventListener("lostpointercapture", finishHeroDrag);
 
   growthStage.addEventListener("wheel", (event) => {
     event.preventDefault();
@@ -265,9 +330,10 @@ if (!reducedMotion) {
 
       if (growthStage) {
         scroll((progress) => {
-          if (heroExpanded) return;
-          const drift = (progress - 0.5) * 28;
-          growthStage.style.setProperty("--hero-drift-y", `${drift}px`);
+          if (reducedMotion || heroExpanded) return;
+          heroDrift = (progress - 0.5) * 28;
+          growthStage.style.setProperty("--hero-drift-y", `${heroDrift}px`);
+          depthRenderer?.setView({ panX: heroPanX, panY: heroPanY, drift: heroDrift, expanded: false });
         }, { target: growthStage, offset: ["start end", "end start"] });
       }
 
@@ -279,3 +345,18 @@ if (!reducedMotion) {
 } else {
   document.querySelectorAll("[data-reveal]").forEach((element) => element.classList.add("is-visible"));
 }
+
+reducedMotionQuery.addEventListener?.("change", (event) => {
+  reducedMotion = event.matches;
+  if (reducedMotion) {
+    heroDrift = 0;
+    growthStage?.style.setProperty("--hero-drift-y", "0px");
+    depthRenderer?.setActive(false);
+  } else if (depthRenderer) {
+    depthRenderer.setActive(true);
+    depthRenderer.setView({ panX: heroPanX, panY: heroPanY, drift: heroDrift, expanded: heroExpanded });
+    depthRenderer.resize();
+  } else {
+    initDepthRenderer();
+  }
+});
