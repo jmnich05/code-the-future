@@ -50,4 +50,18 @@
 - Each image has explicit dimensions, descriptive non-attributing alt text, lazy loading, and async decoding. The static cards add no inaccessible interaction.
 - Privacy checks found no student names, private demo links, or public routes into the gated showcase in the new gallery markup or images.
 
+## Living illustration iteration
+
+- Reference capture: `/private/tmp/ctf-living-qa-before-1280x800.png` from the current production homepage.
+- Implementation capture: `/private/tmp/ctf-living-qa-after-final-1280x800.png` from the local living-illustration build.
+- Combined comparison surface: `http://127.0.0.1:4178/compare.html`; the reference and implementation were judged together at the same 1280 x 800 viewport and homepage state.
+- Composition, typography, hero dimensions, crop, borders, radius, offset shadow, and surrounding navigation remain aligned with the approved production design. The enhancement changes the rendered depth response without redesigning the page.
+- The generated grayscale depth map is 1536 x 1024, weighs 117,290 bytes, and was produced locally with Tiefling using Depth Anything V2 Small. The source artwork was not uploaded.
+- The Three.js renderer reached the `ready` state with no browser-console errors. Its buffer is capped below 1.8 million pixels and redraws only while visible or easing toward a changed view.
+- Pointer movement was checked from opposing corners in both the standard and expanded hero. The image remains continuous and no black, transparent, or literal artwork edge is exposed.
+- The expanded 1178 x 736 desktop hero was inspected at all four pan extremes. Click, wheel, arrow-key movement, Escape, close-state focus, and the full-screen backdrop continue to work.
+- Mobile was checked at 390 x 844. The canvas resized to the 354 x 441 hero without horizontal page overflow; the image crop stayed complete and the mobile navigation still opened, trapped focus, and closed with Escape.
+- Reduced-motion CSS keeps the canvas hidden and the existing image explorer visible. WebGL2, texture, import, or context failure removes the ready state and retains both the synchronized image and stage background as fallbacks.
+- Static validation passed: `node --check assets/site.js`, `node --check assets/depth-pan-renderer.js`, `node seo-check.mjs`, `node scripts/build-public-site.mjs`, and `git diff --check`.
+
 Final result: passed

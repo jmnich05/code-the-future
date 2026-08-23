@@ -274,6 +274,7 @@ body.hero-exploring::before {
 }
 .hero-growth__art {
   position: absolute;
+  z-index: 0;
   width: var(--hero-render-width, 132%);
   max-width: none;
   height: var(--hero-render-height, 118%);
@@ -285,6 +286,18 @@ body.hero-exploring::before {
   pointer-events: none;
   user-select: none;
 }
+.hero-growth__canvas {
+  position: absolute;
+  z-index: 1;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .28s ease;
+}
+.hero-growth.is-depth-ready .hero-growth__canvas { opacity: 1; }
 .hero-growth__close {
   position: absolute;
   z-index: 3;
@@ -664,4 +677,5 @@ body.hero-exploring::before {
   html { scroll-behavior: auto; }
   *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
   [data-reveal] { opacity: 1; transform: none; }
+  .hero-growth__canvas { display: none !important; }
 }
