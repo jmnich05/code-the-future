@@ -51,6 +51,42 @@
   force = true
 
 [[redirects]]
+  from = "/programs"
+  to = "/programs.html"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/curriculum"
+  to = "/curriculum.html"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/why-ai-now"
+  to = "/why-ai-now.html"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/how-it-works"
+  to = "/how-it-works.html"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/summer-2026"
+  to = "/summer-2026.html"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/enroll"
+  to = "/enroll.html"
+  status = 301
+  force = true
+
+[[redirects]]
   from = "/older-kids"
   to = "/older-kids.html"
   status = 301

@@ -64,7 +64,7 @@ export default async (req) => {
   const form = new URLSearchParams();
   form.set("mode", "payment");
   form.set("success_url", origin + "/checkout-success.html?session_id={CHECKOUT_SESSION_ID}" + (plan === "deposit-august" ? "&plan=deposit" : ""));
-  form.set("cancel_url", origin + "/#checkout");
+  form.set("cancel_url", origin + "/enroll.html#checkout");
   form.set("phone_number_collection[enabled]", "true");
   form.set("billing_address_collection", "auto");
   form.set("allow_promotion_codes", "true");
@@ -73,7 +73,7 @@ export default async (req) => {
     ? "Your $10 holds a seat for Session 2 (starts Sept 28). It's fully credited toward tuition — enrollment details land in your inbox soon."
     : "After checkout, Code the Future will email your camper's login details and cohort next steps.");
 
-  form.set("metadata[program]", "Code the Future Summer 2026");
+  form.set("metadata[program]", "Code the Future 2026");
   form.set("metadata[plan]", plan);
   form.set("metadata[additional_modules]", String(items.additionalModules));
   form.set("metadata[parent_email]", email);

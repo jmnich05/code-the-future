@@ -11,18 +11,24 @@ export const PUBLIC_ROOT_FILES = Object.freeze([
   "404.html",
   "about.html",
   "checkout-success.html",
+  "curriculum.html",
+  "enroll.html",
   "faq.html",
+  "how-it-works.html",
   "index.html",
   "launchpad.html",
   "older-adults.html",
   "older-kids.html",
   "privacy.html",
+  "programs.html",
   "review.html",
   "robots.txt",
   "roundup.html",
   "site-pages.css",
   "sitemap.xml",
+  "summer-2026.html",
   "terms.html",
+  "why-ai-now.html",
   "young-teens.html",
 ]);
 
@@ -60,7 +66,11 @@ export const PUBLIC_RUNTIME_EXTENSIONS = new Set([
   ".woff2",
 ]);
 
-const BLOCKED_RUNTIME_SUFFIXES = [".example.js"];
+const BLOCKED_RUNTIME_SUFFIXES = [
+  ".example.js",
+  "platform/assets/film.mp4",
+  "platform/assets/film-poster.jpg",
+];
 const BLOCKED_RUNTIME_DIRECTORY_NAMES = new Set(["in-person", "netlify", "server"]);
 
 function assertInside(base, candidate, label) {
