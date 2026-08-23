@@ -34,4 +34,20 @@
 - Browser console errors: none observed on tested routes.
 - Automated JavaScript, SEO, build, sitemap, analytics, and whitespace checks passed.
 
+## Summer 2026 gallery iteration
+
+- Reference capture: `/private/tmp/ctf-redesign/summer-2026-before-gallery-focus.jpg`.
+- Implementation captures: `/private/tmp/ctf-redesign/summer-2026-gallery-1265-current.png` and `/private/tmp/ctf-redesign/summer-2026-gallery-second-final-1265.png`.
+- Combined comparison surface: `http://127.0.0.1:4175/compare-summer-gallery.html`.
+- Compared the reference and implementation together at the same 1265 x 720 viewport. Full-page context was also reviewed before and after the change.
+- Composition: the existing section title and anonymous-project framing stay intact; the four text-only cards become a balanced two-by-two visual gallery.
+- Typography: category labels, product names, and descriptions retain the established mono/sans hierarchy and readable line lengths.
+- Color and materials: the dark section, paper borders, rounded corners, and brand-color offset shadows remain consistent with the approved site system.
+- Imagery: all four screenshots are real captures of the cohort builds, use consistent 16:10 crops, and contain no visible learner names.
+- Spacing and alignment: card media and copy share consistent dimensions, internal padding, and row/column gaps on desktop and mobile.
+- The first implementation used an invalid `box-shadow-color` declaration for alternating card accents. It was replaced with explicit valid shadows for all four cards and visually rechecked.
+- Mobile was checked at 390 x 844: the gallery becomes one column, keeps every image and description readable, and introduces no horizontal overflow.
+- Each image has explicit dimensions, descriptive non-attributing alt text, lazy loading, and async decoding. The static cards add no inaccessible interaction.
+- Privacy checks found no student names, private demo links, or public routes into the gated showcase in the new gallery markup or images.
+
 Final result: passed
