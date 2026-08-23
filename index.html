@@ -1,1125 +1,133 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-<!-- Google tag (GA4) — public marketing site only; not installed in the learner platform. -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-9CX0PM062K"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-  gtag('config', 'G-9CX0PM062K', {
-    allow_google_signals: false,
-    allow_ad_personalization_signals: false
-  });
-</script>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<link rel="icon" type="image/svg+xml" href="/platform/assets/logo-icon-tile.svg">
-<link rel="apple-touch-icon" href="/platform/assets/touch-icon.png">
-<title>AI Learning for Kids, Young Teens &amp; Older Adults | Code the Future</title>
-<meta name="description" content="Code the Future builds practical AI literacy across generations in Louisville, with a live program for older kids and expanding tracks for young teens and older adults.">
-<meta name="robots" content="index, follow">
-<link rel="canonical" href="https://codethefuture.net/">
-<meta property="og:type" content="website">
-<meta property="og:title" content="Code the Future — AI Learning Across Generations">
-<meta property="og:description" content="Practical AI learning for older kids, young teens, and older adults in Louisville.">
-<meta property="og:url" content="https://codethefuture.net/">
-<meta property="og:image" content="https://codethefuture.net/platform/assets/fb-share-landscape.png">
-<meta property="og:image:secure_url" content="https://codethefuture.net/platform/assets/fb-share-landscape.png">
-<meta property="og:image:width" content="1200">
-<meta property="og:image:height" content="630">
-<meta property="og:image:alt" content="Code the Future — hands-on AI learning across generations in Louisville. codethefuture.net">
-<meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="https://codethefuture.net/platform/assets/fb-share-landscape.png">
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@graph": [
-    {
-      "@type": "WebSite",
-      "@id": "https://codethefuture.net/#website",
-      "name": "Code the Future",
-      "url": "https://codethefuture.net/",
-      "publisher": { "@id": "https://codethefuture.net/#organization" },
-      "inLanguage": "en-US"
-    },
-    {
-      "@type": "EducationalOrganization",
-      "@id": "https://codethefuture.net/#organization",
-      "name": "Code the Future",
-      "alternateName": "Code the Future AI Camp",
-      "url": "https://codethefuture.net/",
-      "logo": "https://codethefuture.net/platform/assets/logo-icon-tile.svg",
-      "image": "https://codethefuture.net/platform/assets/fb-share-landscape.png",
-      "description": "Practical AI literacy programs for older kids, young teens, and older adults in Louisville, Kentucky. The live founding program serves ages 8-11, with additional tracks in development.",
-      "slogan": "The people who understand AI will build the future.",
-      "foundingDate": "2026",
-      "founder": [
-        { "@type": "Person", "name": "Jon Nichols", "jobTitle": "Co-founder & CEO" },
-        { "@type": "Person", "name": "Kenya Guarnieri", "jobTitle": "Co-founder & Child Psychologist" }
-      ],
-      "address": { "@type": "PostalAddress", "addressLocality": "Louisville", "addressRegion": "KY", "addressCountry": "US" },
-      "areaServed": { "@type": "City", "name": "Louisville, Kentucky" },
-      "audience": [
-        { "@type": "EducationalAudience", "educationalRole": "student", "audienceType": "Older children ages 8-11" },
-        { "@type": "EducationalAudience", "educationalRole": "student", "audienceType": "Young teenagers" },
-        { "@type": "EducationalAudience", "educationalRole": "student", "audienceType": "Older adults" }
-      ]
-    },
-    {
-      "@type": "Course",
-      "@id": "https://codethefuture.net/#ai-literacy-camp",
-      "name": "Code the Future AI Literacy Camp",
-      "description": "A hands-on AI literacy camp for kids ages 8-11 in Louisville, combining weekly in-person labs with game-like online missions.",
-      "provider": { "@id": "https://codethefuture.net/#organization" },
-      "audience": { "@type": "EducationalAudience", "educationalRole": "student", "audienceType": "Children ages 8-11" },
-      "educationalLevel": "Elementary school",
-      "teaches": ["AI literacy", "critical thinking", "digital citizenship", "prompt writing", "creative building with AI"],
-      "courseMode": ["In person", "Online"]
-    },
-    {
-      "@type": "Event",
-      "@id": "https://codethefuture.net/#summer-2026",
-      "name": "Code the Future Founding Cohort · Summer 2026",
-      "description": "A small-group AI literacy program for kids ages 8-11 in Louisville, Kentucky.",
-      "startDate": "2026-07-06",
-      "eventAttendanceMode": "https://schema.org/MixedEventAttendanceMode",
-      "eventStatus": "https://schema.org/EventScheduled",
-      "location": {
-        "@type": "Place",
-        "name": "Louisville Free Public Library",
-        "address": { "@type": "PostalAddress", "addressLocality": "Louisville", "addressRegion": "KY", "addressCountry": "US" }
-      },
-      "organizer": { "@id": "https://codethefuture.net/#organization" },
-      "isAccessibleForFree": false,
-      "url": "https://codethefuture.net/#cohorts"
-    }
-  ]
-}
-</script>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
-<style>
-  :root{
-    --blue:#2A5FF0; --blue-bright:#3D74FF; --teal:#12B2BC; --teal-bright:#26C7D1;
-    --coral:#FF5A38; --amber:#FFB320; --navy:#0A1226; --navy-deep:#070C1A;
-    --ink:#0C1322; --paper:#F6F8FE; --card:#FFFFFF; --line:rgba(12,19,34,.10);
-    --display:"Space Grotesk",sans-serif; --body:"Plus Jakarta Sans",sans-serif; --mono:"JetBrains Mono",monospace;
-  }
-  *{box-sizing:border-box;margin:0;padding:0}
-  html{scroll-behavior:smooth}
-  body{font-family:var(--body);color:var(--ink);background:var(--paper);line-height:1.6;-webkit-font-smoothing:antialiased}
-  img{max-width:100%;display:block}
-  a{color:inherit}
-  .wrap{max-width:1120px;margin:0 auto;padding:0 24px}
-  h1,h2,h3{font-family:var(--display);line-height:1.12;letter-spacing:-.01em}
-  .kicker{font-family:var(--mono);font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;display:inline-flex;align-items:center;gap:8px}
-  .kicker::before{content:"";width:22px;height:2px;background:currentColor;border-radius:2px}
-
-  /* ---- nav ---- */
-  .nav{position:fixed;inset:0 0 auto 0;z-index:50;transition:background .25s,box-shadow .25s}
-  .nav.scrolled{background:rgba(7,12,26,.86);backdrop-filter:blur(14px);box-shadow:0 6px 30px rgba(7,12,26,.35)}
-  .nav-in{display:flex;align-items:center;gap:22px;height:68px;max-width:1120px;margin:0 auto;padding:0 24px}
-  .logo{display:flex;align-items:center;gap:10px;font-family:var(--display);font-weight:700;font-size:18px;color:#fff;text-decoration:none;flex-shrink:0;white-space:nowrap}
-  .logo img{width:36px;height:36px;display:block;flex-shrink:0;filter:drop-shadow(0 2px 8px rgba(0,0,0,.45))}
-  .logo-accent{color:var(--teal-bright)}
-  .nav-links{display:flex;gap:18px;margin-left:auto;min-width:0}
-  .nav-links a{color:rgba(255,255,255,.78);text-decoration:none;font-size:14px;font-weight:600;white-space:nowrap}
-  .nav-links a:hover{color:#fff}
-  .nav-cta{display:flex;gap:10px;margin-left:18px;flex-shrink:0}
-  .btn{display:inline-flex;align-items:center;gap:8px;font-family:var(--display);font-weight:600;font-size:15px;padding:11px 20px;border-radius:999px;text-decoration:none;border:0;cursor:pointer;white-space:nowrap;transition:transform .15s,box-shadow .15s}
-  .btn:hover{transform:translateY(-2px)}
-  .btn-ghost{color:#fff;border:1.5px solid rgba(255,255,255,.35);background:transparent}
-  .btn-ghost:hover{border-color:#fff}
-  .btn-primary{background:linear-gradient(135deg,var(--coral),#FF7A38);color:#fff;box-shadow:0 8px 24px rgba(255,90,56,.35)}
-  .btn-blue{background:linear-gradient(135deg,var(--blue),var(--blue-bright));color:#fff;box-shadow:0 8px 24px rgba(42,95,240,.35)}
-  .btn-big{font-size:17px;padding:15px 30px}
-  @media(max-width:1080px){.nav-links{display:none}.nav-cta{margin-left:auto}}
-
-  /* ---- hero ---- */
-  .hero{position:relative;background:var(--navy-deep);color:#fff;overflow:hidden;padding:140px 0 90px}
-  .hero::before{content:"";position:absolute;inset:0;background:url("platform/assets/hero-louisville.jpg") center 30%/cover no-repeat;opacity:.34}
-  .hero::after{content:"";position:absolute;inset:0;background:
-    radial-gradient(700px 420px at 14% 8%,rgba(42,95,240,.42),transparent 65%),
-    radial-gradient(600px 420px at 88% 90%,rgba(18,178,188,.30),transparent 65%),
-    linear-gradient(180deg,rgba(7,12,26,.72) 0%,rgba(7,12,26,.42) 45%,rgba(7,12,26,.88) 100%)}
-  .hero .wrap{position:relative;z-index:2;display:grid;grid-template-columns:1.05fr .95fr;gap:48px;align-items:center}
-  .pill{display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,.10);border:1px solid rgba(255,255,255,.18);border-radius:999px;padding:7px 16px;font-family:var(--mono);font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;margin-bottom:22px}
-  .pill .dot{width:8px;height:8px;border-radius:50%;background:var(--teal-bright);box-shadow:0 0 12px var(--teal-bright);animation:pulse 2s infinite}
-  @keyframes pulse{50%{opacity:.4}}
-  .hero h1{font-size:clamp(38px,5.2vw,60px);font-weight:700;margin-bottom:18px}
-  .hero h1 .grad{background:linear-gradient(90deg,var(--teal-bright),var(--blue-bright) 55%,#9DB8FF);-webkit-background-clip:text;background-clip:text;color:transparent}
-  .hero p.lede{font-size:18px;color:rgba(255,255,255,.85);max-width:520px;margin-bottom:22px}
-  /* summer-cohort photo — the hero visual.
-     Desktop (>880px): big, in the right column (.hero-side).
-     Mobile/tablet (≤880px): inline between the lede and the CTAs (.hero-shot). */
-  .hero-shot{display:none}
-  .hero-shot img{display:block;width:100%;height:auto;border-radius:16px;border:1px solid rgba(255,255,255,.22);box-shadow:0 22px 55px rgba(0,0,0,.45)}
-  .hero-side img{display:block;width:100%;height:auto;border-radius:20px;border:1px solid rgba(255,255,255,.24);box-shadow:0 30px 80px rgba(0,0,0,.55)}
-  .hero-side .hs-note{margin-top:14px;text-align:center;font-size:13.5px;color:rgba(255,255,255,.72)}
-  @media(max-width:880px){
-    .hero-side{display:none}
-    .hero-shot{display:block;max-width:560px;margin-bottom:24px}
-  }
-  .hero-ctas{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:16px}
-  /* fall-cohort CTA — the one clear ask, on desktop AND mobile */
-  .cta-fall{display:inline-flex;align-items:center;gap:8px;margin-bottom:26px;padding:14px 22px;border-radius:999px;
-    font-family:var(--display);font-weight:700;font-size:16px;text-decoration:none;color:#2a1a00;
-    background:linear-gradient(120deg,#FFD479,#FFB320);box-shadow:0 12px 30px rgba(255,179,32,.35);transition:transform .15s}
-  .cta-fall:hover{transform:translateY(-2px)}
-  .cta-fall b{font-weight:800}
-  .hero-meta{display:flex;gap:22px;flex-wrap:wrap;font-size:13.5px;color:rgba(255,255,255,.72)}
-  .hero-meta b{color:#fff;font-family:var(--display)}
-  /* ---- live sandbox (hero) ---- */
-  .sandbox{background:rgba(255,255,255,.97);border-radius:22px;box-shadow:0 30px 80px rgba(0,0,0,.5);padding:16px 16px 14px;color:var(--ink)}
-  .sb-kick{display:block;font-family:var(--mono);font-size:10.5px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--coral);margin-bottom:9px}
-  .sb-tabs{display:flex;gap:8px;margin-bottom:12px}
-  .sb-tab{flex:1;font-family:var(--display);font-weight:600;font-size:13.5px;cursor:pointer;border:1.5px solid var(--line);background:#fff;border-radius:999px;padding:8px 10px;color:rgba(12,19,34,.65);transition:all .15s}
-  .sb-tab.active{background:linear-gradient(120deg,var(--blue),var(--blue-bright));border-color:transparent;color:#fff;box-shadow:0 6px 18px rgba(42,95,240,.35)}
-  #sbCanvas{width:100%;height:auto;display:block;background:#fff;border:1.5px solid var(--line);border-radius:14px;cursor:crosshair;touch-action:none}
-  .sb-tools{display:flex;align-items:center;gap:8px;margin-top:10px}
-  .sb-color{width:30px;height:30px;border-radius:50%;border:2.5px solid transparent;cursor:pointer;flex:none}
-  .sb-color.sel{border-color:var(--teal-bright);box-shadow:0 0 0 2px #fff inset}
-  .sb-tool{width:34px;height:34px;border-radius:10px;border:1.5px solid var(--line);background:#fff;font-size:15px;cursor:pointer;flex:none}
-  .sb-go{flex:1;font-family:var(--display);font-weight:700;font-size:13.5px;cursor:pointer;color:#fff;border:none;border-radius:999px;padding:10px 8px;background:linear-gradient(120deg,var(--coral),#FF8A38);box-shadow:0 6px 18px rgba(255,90,56,.35)}
-  .sb-go[disabled]{opacity:.55;cursor:default}
-  .sb-status{margin-top:10px;font-size:13px;line-height:1.5;color:rgba(12,19,34,.7);min-height:38px}
-  .sb-status b{color:var(--ink)}
-  .sb-status a{color:var(--blue);font-weight:700}
-  /* mini AI-or-Not */
-  .sb-arc{min-height:300px;display:flex;flex-direction:column}
-  .sb-arc .q{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:6px}
-  .sb-arc .em{font-size:54px;line-height:1.1}
-  .sb-arc .lb{font-family:var(--display);font-weight:700;font-size:16px;max-width:30ch}
-  .sb-arc .hud{font-family:var(--mono);font-size:11px;color:rgba(12,19,34,.55);text-align:center;margin-bottom:6px}
-  .sb-arc .calls{display:flex;gap:8px;margin-top:10px}
-  .sb-arc .call{flex:1;font-family:var(--display);font-weight:700;font-size:14px;cursor:pointer;color:#fff;border:none;border-radius:999px;padding:12px 8px}
-  .sb-arc .call.yes{background:linear-gradient(120deg,var(--blue),var(--teal-bright))}
-  .sb-arc .call.no{background:#3a4358}
-  .sb-arc .why{min-height:40px;font-size:12.5px;line-height:1.45;margin-top:9px;color:rgba(12,19,34,.7);text-align:center}
-  .sb-arc .endcard{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:8px}
-  .sb-arc .endcard .rank{font-family:var(--display);font-weight:700;font-size:22px}
-  .sb-arc .again{font:inherit;font-weight:700;cursor:pointer;color:var(--blue);background:none;border:none}
-
-  /* ---- founders film section ---- */
-  .filmsec{background:var(--navy-deep);color:#fff;padding:88px 0}
-  .filmsec .film{max-width:860px;margin:0 auto}
-  .filmsec .sec-head p{color:rgba(255,255,255,.72)}
-
-  /* video panel */
-  .film{position:relative;border-radius:22px;overflow:hidden;border:1px solid rgba(255,255,255,.18);box-shadow:0 30px 80px rgba(0,0,0,.5);aspect-ratio:16/9;background:#0a1226}
-  .film iframe,.film video{position:absolute;inset:0;width:100%;height:100%;border:0}
-  .film-poster{position:absolute;inset:0;background:url("platform/assets/hero-louisville.jpg") center/cover;opacity:.55}
-  .film-shade{position:absolute;inset:0;background:radial-gradient(circle at 50% 55%,rgba(7,12,26,.10),rgba(7,12,26,.72))}
-  .film-play{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;color:#fff}
-  .film-play .ring{width:84px;height:84px;border-radius:50%;background:rgba(255,255,255,.14);border:1.5px solid rgba(255,255,255,.5);backdrop-filter:blur(6px);display:grid;place-items:center;font-size:30px;animation:breathe 2.6s ease-in-out infinite}
-  @keyframes breathe{50%{transform:scale(1.08);box-shadow:0 0 0 18px rgba(255,255,255,.06)}}
-  .film-play span{font-family:var(--mono);font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.85)}
-  @media(max-width:880px){.hero .wrap{grid-template-columns:1fr}.hero{padding-top:110px}}
-
-  /* ---- trust strip ---- */
-  .trust{background:var(--navy);color:#fff;border-top:1px solid rgba(255,255,255,.08)}
-  .trust .wrap{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;padding:26px 24px}
-  .trust .t{display:flex;gap:12px;align-items:flex-start;font-size:13.5px;color:rgba(255,255,255,.82);line-height:1.45}
-  .trust .t b{display:block;font-family:var(--display);font-size:14.5px;color:#fff;margin-bottom:2px}
-  .trust .ic{font-size:20px;line-height:1.3}
-  @media(max-width:880px){.trust .wrap{grid-template-columns:repeat(2,1fr)}}
-
-  /* ---- sections ---- */
-  section{padding:88px 0}
-  .sec-head{max-width:680px;margin-bottom:46px}
-  .sec-head h2{font-size:clamp(28px,3.6vw,42px);margin:14px 0 14px}
-  .sec-head p{font-size:17px;color:rgba(12,19,34,.72)}
-  .reveal{opacity:0;transform:translateY(22px);transition:opacity .6s ease,transform .6s ease}
-  .reveal.in{opacity:1;transform:none}
-
-  /* why */
-  .why{background:var(--paper)}
-  .why-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
-  .why-card{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:28px;box-shadow:0 10px 30px rgba(12,19,34,.05)}
-  .why-card .em{font-size:34px;margin-bottom:14px}
-  .why-card h3{font-size:19px;margin-bottom:10px}
-  .why-card p{font-size:14.5px;color:rgba(12,19,34,.72)}
-  .creed{margin-top:40px;background:linear-gradient(135deg,var(--navy),#11214a);color:#fff;border-radius:22px;padding:36px 40px;display:flex;align-items:center;gap:26px;flex-wrap:wrap}
-  .creed .q{font-family:var(--display);font-size:clamp(18px,2.4vw,24px);font-weight:600;line-height:1.4;flex:1;min-width:280px}
-  .creed .q em{font-style:normal;color:var(--teal-bright)}
-  .creed .tag{font-family:var(--mono);font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.6)}
-  @media(max-width:880px){.why-grid{grid-template-columns:1fr}}
-
-  /* platform */
-  .platform{background:#fff}
-  .feat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
-  .feat{border:1px solid var(--line);border-radius:20px;padding:26px;background:linear-gradient(180deg,#fff,#FAFBFF);transition:transform .2s,box-shadow .2s}
-  .feat:hover{transform:translateY(-4px);box-shadow:0 18px 44px rgba(42,95,240,.12)}
-  .feat .em{width:52px;height:52px;border-radius:14px;display:grid;place-items:center;font-size:26px;margin-bottom:16px;background:linear-gradient(135deg,rgba(42,95,240,.12),rgba(18,178,188,.12))}
-  .feat h3{font-size:17.5px;margin-bottom:8px}
-  .feat p{font-size:14px;color:rgba(12,19,34,.70)}
-  @media(max-width:880px){.feat-grid{grid-template-columns:1fr 1fr}}
-  @media(max-width:620px){.feat-grid{grid-template-columns:1fr}}
-
-  /* ---- what your child learns (skills) ---- */
-  .learns{background:var(--paper)}
-  .skills-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
-  .skill-card{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:26px;box-shadow:0 10px 30px rgba(12,19,34,.05);
-    border-top:4px solid var(--accent);transition:transform .2s,box-shadow .2s}
-  .skill-card:hover{transform:translateY(-4px);box-shadow:0 18px 44px rgba(12,19,34,.10)}
-  .skill-card .sc-head{display:flex;align-items:center;gap:13px;margin-bottom:12px}
-  .skill-card .sc-ic{width:50px;height:50px;flex:none;border-radius:14px;display:grid;place-items:center;font-size:25px;
-    background:color-mix(in srgb,var(--accent) 14%,#fff)}
-  .skill-card h3{font-size:18px}
-  .skill-card .sc-blurb{font-size:14px;color:rgba(12,19,34,.72);margin-bottom:14px}
-  .skill-card ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}
-  .skill-card li{display:flex;align-items:flex-start;gap:9px;font-size:14px;color:rgba(12,19,34,.82)}
-  .skill-card li .tick{flex:none;width:18px;height:18px;margin-top:1px;border-radius:50%;display:grid;place-items:center;font-size:10px;
-    color:#fff;background:var(--accent)}
-  .learns .foot{margin-top:30px;text-align:center;font-size:15px;color:rgba(12,19,34,.66)}
-  .learns .foot b{color:var(--ink);font-family:var(--display)}
-  @media(max-width:880px){.skills-grid{grid-template-columns:1fr 1fr}}
-  @media(max-width:620px){.skills-grid{grid-template-columns:1fr}}
-
-  /* badge marquee */
-  .badges{margin-top:54px;overflow:hidden;position:relative;padding:10px 0}
-  .badges::before,.badges::after{content:"";position:absolute;top:0;bottom:0;width:90px;z-index:2;pointer-events:none}
-  .badges::before{left:0;background:linear-gradient(90deg,#fff,transparent)}
-  .badges::after{right:0;background:linear-gradient(-90deg,#fff,transparent)}
-  .badge-track{display:flex;gap:26px;width:max-content;animation:scroll 38s linear infinite}
-  @keyframes scroll{to{transform:translateX(-50%)}}
-  .badge-track img{width:108px;height:108px;border-radius:22px;box-shadow:0 10px 26px rgba(12,19,34,.16);transition:transform .2s}
-  .badge-track img:hover{transform:scale(1.1) rotate(-3deg)}
-  .badge-cap{text-align:center;margin-top:18px;font-size:13px;color:rgba(12,19,34,.55);font-family:var(--mono)}
-
-  /* avatars */
-  .buddies{background:var(--navy-deep);color:#fff;position:relative;overflow:hidden}
-  .buddies::before{content:"";position:absolute;inset:0;background:radial-gradient(600px 300px at 80% 20%,rgba(42,95,240,.25),transparent 60%),radial-gradient(500px 300px at 10% 90%,rgba(18,178,188,.18),transparent 60%)}
-  .buddies .wrap{position:relative;z-index:2}
-  .buddies .sec-head p{color:rgba(255,255,255,.72)}
-  .av-row{display:flex;gap:20px;justify-content:center;flex-wrap:wrap}
-  .av{width:108px;border-radius:24px;overflow:hidden;box-shadow:0 14px 36px rgba(0,0,0,.4);transition:transform .2s}
-  .av:hover{transform:translateY(-6px) rotate(2deg)}
-  .av svg{display:block;width:100%;height:auto}
-  .av-all{transform-origin:120px 210px;animation:bob 3.2s ease-in-out infinite}
-  @keyframes bob{0%,100%{transform:translateY(0) scaleY(1)}50%{transform:translateY(-5px) scaleY(1.015)}}
-  .av-eyes{transform-origin:120px 120px;animation:blink 4.6s infinite}
-  @keyframes blink{0%,94%,100%{transform:scaleY(1)}96%,98%{transform:scaleY(.08)}}
-  .av:nth-child(2n) .av-all{animation-delay:-1.1s}.av:nth-child(3n) .av-all{animation-delay:-2.2s}
-  .av:nth-child(2n) .av-eyes{animation-delay:-2s}.av:nth-child(3n) .av-eyes{animation-delay:-3.4s}
-
-  /* in person + psych */
-  .inperson{background:var(--paper)}
-  .split{display:grid;grid-template-columns:1fr 1fr;gap:28px}
-  .big-card{border-radius:24px;padding:38px;position:relative;overflow:hidden}
-  .big-card h3{font-size:24px;margin:12px 0 12px}
-  .big-card p{font-size:15px}
-  .big-card ul{margin:16px 0 0;padding:0;list-style:none}
-  .big-card li{display:flex;gap:10px;font-size:14.5px;margin-bottom:10px;align-items:flex-start}
-  .big-card li::before{content:"✓";font-weight:800;color:var(--teal);font-family:var(--mono)}
-  .card-lib{background:linear-gradient(160deg,#0f1f47,var(--navy));color:#fff}
-  .card-lib p,.card-lib li{color:rgba(255,255,255,.82)}
-  .card-lib .kicker{color:var(--teal-bright)}
-  .card-psy{background:#fff;border:1px solid var(--line);box-shadow:0 14px 40px rgba(12,19,34,.07)}
-  .card-psy .kicker{color:var(--coral)}
-  .card-psy p,.card-psy li{color:rgba(12,19,34,.74)}
-  @media(max-width:880px){.split{grid-template-columns:1fr}}
-
-  /* cohorts */
-  .cohorts{background:#fff}
-  .co-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
-  .co{border:1.5px solid var(--line);border-radius:22px;padding:28px;display:flex;flex-direction:column;gap:10px;position:relative;transition:transform .2s,box-shadow .2s,border-color .2s}
-  .co:hover{transform:translateY(-4px);box-shadow:0 18px 44px rgba(12,19,34,.10);border-color:var(--blue)}
-  .co .status{align-self:flex-start;font-family:var(--mono);font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;border-radius:999px;padding:5px 12px}
-  .st-open{background:rgba(18,178,188,.12);color:#0B7E86}
-  .st-soon{background:rgba(255,179,32,.16);color:#9A6A00}
-  .co h3{font-size:20px}
-  .co .dates{font-family:var(--display);font-weight:600;color:var(--blue);font-size:15px}
-  .co .meta{font-size:13.5px;color:rgba(12,19,34,.65)}
-  .co .seats{margin-top:auto;padding-top:14px;font-size:13px;font-weight:700;color:var(--coral)}
-  .co .btn{justify-content:center;margin-top:10px}
-  .co .btn.wait{border:1.5px solid rgba(12,19,34,.3);color:var(--ink);background:transparent}
-  @media(max-width:880px){.co-grid{grid-template-columns:1fr}}
-
-  /* checkout */
-  .checkout{background:var(--paper)}
-  .checkout-grid{display:grid;grid-template-columns:1fr 1fr;gap:22px;align-items:stretch}
-  .price-card{background:var(--card);border:1.5px solid var(--line);border-radius:24px;padding:30px;box-shadow:0 14px 40px rgba(12,19,34,.07);display:flex;flex-direction:column;gap:14px;position:relative;overflow:hidden}
-  .price-card.best{border-color:rgba(42,95,240,.55);box-shadow:0 22px 60px rgba(42,95,240,.16)}
-  .price-card.best::before{content:"Best value";position:absolute;top:18px;right:-34px;transform:rotate(35deg);background:linear-gradient(120deg,var(--blue),var(--teal-bright));color:#fff;font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:7px 42px}
-  .price-card h3{font-size:23px;padding-right:48px}
-  .price{font-family:var(--display);font-weight:700;font-size:42px;line-height:1;color:var(--blue)}
-  .price small{font-family:var(--body);font-size:15px;color:rgba(12,19,34,.58);font-weight:700}
-  .price-card p{color:rgba(12,19,34,.72);font-size:14.5px}
-  .price-card ul{list-style:none;display:grid;gap:9px;margin:4px 0 2px;padding:0}
-  .price-card li{display:flex;gap:9px;align-items:flex-start;font-size:14px;color:rgba(12,19,34,.82)}
-  .price-card li::before{content:"✓";font-family:var(--mono);font-weight:800;color:var(--teal)}
-  .checkout-form{margin-top:auto;display:grid;gap:12px}
-  .checkout-form .row2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-  .checkout-form label{font-size:13px;font-weight:800;display:grid;gap:6px;color:rgba(12,19,34,.78)}
-  .checkout-form input,.checkout-form select{width:100%;font-family:var(--body);font-size:15px;color:var(--ink);background:#fff;border:1.5px solid var(--line);border-radius:12px;padding:12px 14px;outline:none}
-  .checkout-form input:focus,.checkout-form select:focus{border-color:var(--teal)}
-  .checkout-form .btn{justify-content:center;width:100%}
-  .checkout-note{margin-top:18px;text-align:center;font-size:13px;color:rgba(12,19,34,.58)}
-  .checkout-status{min-height:20px;font-size:13px;line-height:1.45;color:rgba(12,19,34,.68)}
-  .checkout-status.error{color:#B73220;font-weight:700}
-  @media(max-width:880px){.checkout-grid{grid-template-columns:1fr}}
-  @media(max-width:560px){.checkout-form .row2{grid-template-columns:1fr}}
-
-  /* signup form */
-  .signup{background:linear-gradient(160deg,var(--navy-deep),#0e1d44 70%,#0b2d4d);color:#fff;position:relative;overflow:hidden}
-  .signup::before{content:"";position:absolute;inset:0;background:radial-gradient(640px 360px at 85% 10%,rgba(61,116,255,.28),transparent 60%)}
-  .signup .wrap{position:relative;z-index:2;display:grid;grid-template-columns:1fr 1fr;gap:54px;align-items:start}
-  .signup h2{font-size:clamp(28px,3.4vw,40px);margin:14px 0}
-  .signup p{color:rgba(255,255,255,.78);font-size:16px}
-  .signup .kicker{color:var(--teal-bright)}
-  form.lead{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.14);backdrop-filter:blur(10px);border-radius:22px;padding:30px;display:grid;gap:14px}
-  .lead label{font-size:13px;font-weight:700;display:grid;gap:6px}
-  .lead input,.lead select,.lead textarea{width:100%;font-family:var(--body);font-size:15px;color:#fff;background:rgba(7,12,26,.5);border:1px solid rgba(255,255,255,.2);border-radius:12px;padding:12px 14px;outline:none}
-  .lead input:focus,.lead select:focus,.lead textarea:focus{border-color:var(--teal-bright)}
-  .lead select option{color:#0C1322}
-  .lead .row2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
-  .lead .ok{display:none;text-align:center;padding:26px 10px;font-size:17px;line-height:1.5}
-  .lead.sent .ok{display:block}
-  .lead.sent .hideme{display:none}
-  @media(max-width:880px){.signup .wrap{grid-template-columns:1fr}}
-
-  /* ---- audiences ---- */
-  .audiences{background:#fff}
-  .audience-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
-  .audience-card{border:1px solid var(--line);border-radius:22px;padding:28px;background:linear-gradient(180deg,#fff,#FAFBFF);box-shadow:0 12px 34px rgba(12,19,34,.06)}
-  .audience-card .status{display:inline-flex;margin-bottom:18px;border-radius:999px;padding:6px 11px;font-family:var(--mono);font-size:10.5px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;background:rgba(18,178,188,.12);color:#0B7E86}
-  .audience-card .status.soon{background:rgba(255,179,32,.16);color:#8A5D00}
-  .audience-card h3{font-size:21px;margin-bottom:10px}
-  .audience-card p{font-size:14.5px;color:rgba(12,19,34,.7);margin-bottom:18px}
-  .audience-card a{color:var(--blue);font-family:var(--display);font-weight:700;text-decoration:none}
-  @media(max-width:880px){.audience-grid{grid-template-columns:1fr}}
-
-  /* ---- founder ecosystem ---- */
-  .ecosystem{background:var(--paper);padding:70px 0}
-  .ecosystem-card{display:grid;grid-template-columns:1.2fr auto;gap:38px;align-items:center;background:var(--navy-deep);color:#fff;border-radius:24px;padding:40px 44px;box-shadow:0 22px 60px rgba(7,12,26,.18)}
-  .ecosystem-card .kicker{color:var(--teal-bright)}
-  .ecosystem-card h2{font-size:clamp(25px,3vw,36px);margin:12px 0}
-  .ecosystem-card p{max-width:700px;color:rgba(255,255,255,.76)}
-  .ecosystem-card .btn{justify-content:center}
-  @media(max-width:760px){.ecosystem-card{grid-template-columns:1fr;padding:30px 24px}.ecosystem-card .btn{width:100%}}
-
-  /* footer */
-  footer{background:var(--navy-deep);color:rgba(255,255,255,.6);padding:34px 0;font-size:13.5px;border-top:1px solid rgba(255,255,255,.08)}
-  footer .wrap{display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap}
-  footer a{color:rgba(255,255,255,.85);text-decoration:none;font-weight:600}
-
-  /* ---- mobile (<=560px) ---- */
-  @media(max-width:560px){
-    .nav-in{height:60px;gap:8px;padding:0 14px}
-    .logo{font-size:15px;gap:7px;white-space:nowrap}
-    .logo img{width:28px;height:28px}
-    .btn{padding:9px 14px;font-size:13.5px;white-space:nowrap}
-    .btn-big{font-size:15px;padding:13px 22px}
-    .pill{font-size:10px;letter-spacing:.05em;padding:6px 12px}
-    .hero{padding:92px 0 56px}
-    .hero h1{font-size:clamp(30px,9vw,38px)}
-    .hero p.lede{font-size:16px}
-    .hero-ctas .btn-big{width:100%;justify-content:center}
-    .cta-fall{display:block;text-align:center;font-size:15px;padding:14px 16px;line-height:1.45}
-    section{padding:56px 0}
-    .trust .wrap{grid-template-columns:1fr;gap:14px;padding:20px 18px}
-    .creed{padding:24px 22px}
-    .lead .row2{grid-template-columns:1fr}
-    form.lead{padding:20px 16px}
-    .cta-row .btn-big{width:100%;justify-content:center}
-    .sandbox{padding:12px 12px 11px}
-    .sb-tab{font-size:12px;padding:7px 6px}
-    .sb-go{font-size:12.5px}
-    .filmsec{padding:56px 0}
-  }
-</style>
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-9CX0PM062K"></script>
+  <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag('js',new Date());gtag('config','G-9CX0PM062K',{allow_google_signals:false,allow_ad_personalization_signals:false});</script>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>AI Learning for Kids, Young Teens &amp; Older Adults | Code the Future</title>
+  <meta name="description" content="Hands-on AI learning in Louisville for older kids, young teens, and older adults—built around real tools, practical judgment, and the confidence to create.">
+  <meta name="robots" content="index,follow">
+  <link rel="canonical" href="https://codethefuture.net/">
+  <link rel="icon" type="image/svg+xml" href="/platform/assets/logo-icon-tile.svg">
+  <link rel="apple-touch-icon" href="/platform/assets/touch-icon.png">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Code the Future — AI Learning Across Generations">
+  <meta property="og:description" content="The people who understand AI will build the future.">
+  <meta property="og:url" content="https://codethefuture.net/">
+  <meta property="og:image" content="https://codethefuture.net/platform/assets/fb-share-landscape.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="https://codethefuture.net/platform/assets/fb-share-landscape.png">
+  <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebSite","@id":"https://codethefuture.net/#website","name":"Code the Future","url":"https://codethefuture.net/","publisher":{"@id":"https://codethefuture.net/#organization"},"inLanguage":"en-US"},{"@type":"EducationalOrganization","@id":"https://codethefuture.net/#organization","name":"Code the Future","url":"https://codethefuture.net/","logo":"https://codethefuture.net/platform/assets/logo-icon-tile.svg","description":"Practical AI literacy programs for older kids, young teens, and older adults in Louisville, Kentucky.","slogan":"Learn to build what's next.","foundingDate":"2026","founder":[{"@type":"Person","name":"Jon Nichols"},{"@type":"Person","name":"Kenya Guarnieri"}],"address":{"@type":"PostalAddress","addressLocality":"Louisville","addressRegion":"KY","addressCountry":"US"},"areaServed":{"@type":"City","name":"Louisville, Kentucky"}}]}</script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://cdn.jsdelivr.net">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;700&amp;family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,500;1,600&amp;family=Space+Grotesk:wght@500;600;700&amp;display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/assets/site.css?v=20260822a">
+  <script defer src="https://unpkg.com/lucide@0.460.0/dist/umd/lucide.min.js"></script>
+  <script defer src="/assets/site.js?v=20260822a"></script>
 </head>
 <body>
+  <a class="skip-link" href="#main">Skip to content</a>
 
-<nav class="nav" id="nav">
-  <div class="nav-in">
-    <a class="logo" href="/"><img src="/platform/assets/logo-icon-tile.svg" alt="Code the Future logo">Code the <span class="logo-accent">Future</span></a>
-    <div class="nav-links">
-      <a href="#why">Why AI Now</a>
-      <a href="#audiences">Who It's For</a>
-      <a href="#platform">The Platform</a>
-      <a href="#learns">What They Learn</a>
-      <a href="/about.html">About</a>
-      <a href="/faq.html">FAQ</a>
+  <aside class="signal-rail" aria-label="Current programs">
+    <div class="container signal-grid">
+      <a class="signal-card" href="/programs.html" data-track="rail_programs">
+        <span class="signal-label">For families</span><strong>Hands-on AI learning in Louisville</strong><span class="signal-link">Explore →</span>
+      </a>
+      <a class="signal-card" href="/summer-2026.html" data-track="rail_summer_2026">
+        <span class="signal-label">Summer ’26</span><strong>See what our first builders learned and made</strong><span class="signal-link">View cohort →</span>
+      </a>
     </div>
-    <div class="nav-cta">
-      <a class="btn btn-ghost" href="/platform/">Log In</a>
-      <a class="btn btn-primary" href="#audiences">Explore Programs</a>
-    </div>
-  </div>
-</nav>
+  </aside>
 
-<header class="hero">
-  <div class="wrap">
-    <div>
-      <span class="pill"><span class="dot"></span>Louisville · AI learning across generations</span>
-      <h1>The people who understand AI will <span class="grad">build the future.</span></h1>
-      <p class="lede">Code the Future creates hands-on AI learning for <b>older kids, young teens, and older adults</b> — built around real tools, practical judgment, a <b>psychologist-informed curriculum</b>, and the confidence to stay in control.</p>
-      <picture class="hero-shot">
-        <source media="(max-width:560px)" srcset="platform/assets/summer-cohort-26-tall.jpg">
-        <img src="platform/assets/summer-cohort-26-wide.jpg" alt="Coaches Jon and Kenya leading a live Code the Future session at the library — Summer Cohort '26" loading="eager">
-      </picture>
-      <div class="hero-ctas">
-        <a class="btn btn-primary btn-big" href="/older-kids.html">Explore the live kids program</a>
-      </div>
-      <a class="cta-fall" href="#deposit">🚀 Join the fall 2026 cohort — <b>reserve your spot for $10</b> →</a>
-      <div class="hero-meta">
-        <span><b>Ages 8–11</b> enrolling now</span>
-        <span><b>Ages 12–15</b> track forming</span>
-        <span><b>Older adults</b> workshops forming</span>
-      </div>
+  <header class="site-header">
+    <div class="container nav-wrap">
+      <a class="brand" href="/" aria-label="Code the Future home"><img src="/platform/assets/logo-icon-tile.svg" alt="" width="64" height="64">Code the <span>Future</span></a>
+      <nav class="desktop-nav" aria-label="Primary navigation">
+        <a href="/why-ai-now.html">Why AI now</a>
+        <a href="/programs.html">Programs</a>
+        <a href="/curriculum.html">What they learn</a>
+        <a href="/summer-2026.html">Summer ’26</a>
+        <a href="/about.html">About</a>
+        <a class="button button--coral" href="/enroll.html" data-track="nav_enroll">Explore programs</a>
+      </nav>
+      <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="mobile-navigation" aria-label="Open navigation" data-nav-toggle><i data-lucide="menu" data-nav-icon></i></button>
     </div>
-    <!-- hero visual: Summer Cohort '26 session photo (desktop) -->
-    <div class="hero-side reveal in">
-      <img src="platform/assets/summer-cohort-26-wide.jpg" alt="Coaches Jon and Kenya leading a live Code the Future session at the library — Summer Cohort '26" loading="eager">
-      <p class="hs-note">Real coaches, real kids, really building — Saturdays at the library.</p>
-    </div>
-  </div>
-</header>
+    <nav class="mobile-nav" id="mobile-navigation" aria-label="Mobile navigation" data-mobile-nav>
+      <a href="/why-ai-now.html">Why AI now</a><a href="/programs.html">Programs</a><a href="/curriculum.html">What they learn</a><a href="/summer-2026.html">Summer ’26</a><a href="/about.html">About</a><a href="/faq.html">Parent FAQ</a><a href="/platform/">Camper login</a><a href="/enroll.html">Explore programs</a>
+    </nav>
+  </header>
 
-<section class="filmsec" id="filmsec">
-  <div class="wrap">
-    <div class="sec-head reveal" style="margin-left:auto;margin-right:auto;text-align:center;max-width:560px">
-      <span class="kicker" style="color:var(--teal-bright);justify-content:center">Program walkthrough</span>
-      <h2>A walkthrough of the program &amp; platform — from co-founder Jon Nichols.</h2>
-    </div>
-    <div class="film reveal" id="film">
-      <!-- VIDEO SLOT — when Jon's film is ready, set FILM_URL in the script
-           at the bottom of this file (YouTube embed URL or hosted .mp4). -->
-      <div class="film-poster"></div>
-      <div class="film-shade"></div>
-      <div class="film-play">
-        <div class="ring">▶</div>
-        <span>The film — coming soon</span>
-      </div>
-    </div>
-  </div>
-</section>
-
-<div class="trust">
-  <div class="wrap">
-    <div class="t"><span class="ic">🏛️</span><span><b>Hands-on at the library</b>In-person labs in Louisville</span></div>
-    <div class="t"><span class="ic">🧠</span><span><b>Psychologist-informed</b>A child psychologist helps design &amp; review the curriculum</span></div>
-    <div class="t"><span class="ic">🛡️</span><span><b>Kid-safe by design</b>No email needed, filtered chat, staff oversight</span></div>
-    <div class="t"><span class="ic">⚡</span><span><b>Real AI, really used</b>Not videos about AI — the actual tools</span></div>
-  </div>
-</div>
-
-<!-- ============ AUDIENCES ============ -->
-<section class="audiences" id="audiences">
-  <div class="wrap">
-    <div class="sec-head">
-      <span class="kicker" style="color:var(--blue)">AI learning across generations</span>
-      <h2>Different ages. The same need to understand what AI can—and cannot—do.</h2>
-      <p>Code the Future is building hands-on AI literacy for people at pivotal learning moments. Our founding program is live for older kids, with young-teen and older-adult tracks now forming.</p>
-    </div>
-    <div class="audience-grid">
-      <article class="audience-card">
-        <span class="status">Enrolling now</span>
-        <h3>Older kids · ages 8–11</h3>
-        <p>Game-like missions, real AI tools, and small-group Louisville sessions designed to build curiosity, judgment, and confidence.</p>
-        <a href="/older-kids.html">Explore the current program →</a>
-      </article>
-      <article class="audience-card">
-        <span class="status soon">Track forming</span>
-        <h3>Young teens · ages 12–15</h3>
-        <p>A more advanced path focused on responsible AI use, creative building, research judgment, and the changing nature of coding and schoolwork.</p>
-        <a href="/young-teens.html">Explore the young-teen track →</a>
-      </article>
-      <article class="audience-card">
-        <span class="status soon">Track forming</span>
-        <h3>Older adults</h3>
-        <p>Patient, practical workshops for understanding modern AI, using it safely, and applying it to communication, planning, learning, and everyday life.</p>
-        <a href="/older-adults.html">Explore older-adult workshops →</a>
-      </article>
-    </div>
-  </div>
-</section>
-
-<!-- ============ FOUNDERS FILM ============ -->
-
-<section class="why" id="why">
-  <div class="wrap">
-    <div class="sec-head reveal">
-      <span class="kicker" style="color:var(--blue)">Why your kid needs this</span>
-      <h2>Give them a head start on the world they're growing up into.</h2>
-      <p>AI will be woven into nearly everything today's kids grow up to do. They're going to use it either way — the head start is understanding it: knowing how it works, what it's great at, and where it still needs a human.</p>
-    </div>
-    <div class="why-grid">
-      <div class="why-card reveal">
-        <div class="em">🔍</div>
-        <h3>Understand it, don't fear it</h3>
-        <p>Kids learn what AI actually is — pattern-finding, prediction, training — by playing with it directly. Demystified early, it becomes a tool they command, not magic that commands them.</p>
-      </div>
-      <div class="why-card reveal">
-        <div class="em">🧭</div>
-        <h3>Judgment over memorization</h3>
-        <p>When AI can answer any question, the valuable skill is asking great questions, spotting wrong answers, and knowing when to trust the machine. That's exactly what our missions train.</p>
-      </div>
-      <div class="why-card reveal">
-        <div class="em">🚀</div>
-        <h3>Builders, not just users</h3>
-        <p>Every camper finishes with a Big Mission they built themselves with real AI behind it — and the confidence that comes from "I made this," not "I watched this."</p>
-      </div>
-    </div>
-    <div class="creed reveal">
-      <div class="q">"The future isn't something that happens to kids. It's something they get to <em>build</em> — and AI is the most powerful building tool a generation has ever been handed."</div>
-      <div class="tag">Why we exist</div>
-    </div>
-  </div>
-</section>
-
-<section class="platform" id="platform">
-  <div class="wrap">
-    <div class="sec-head reveal">
-      <span class="kicker" style="color:var(--teal)">The killer platform</span>
-      <h2>A learning world kids actually want to log into.</h2>
-      <p>Camp doesn't end when the library session does. Every camper gets a login to our platform — built from scratch for ages 8–11, paced like a great game.</p>
-    </div>
-    <div class="feat-grid">
-      <div class="feat reveal"><div class="em">🎮</div><h3>12 game-like missions</h3><p>Full-screen, one idea at a time — built for busy brains. Kids sort, train, draw, and build their way through every concept. No walls of text, ever.</p></div>
-      <div class="feat reveal"><div class="em">🎨</div><h3>Real AI that really sees</h3><p>Campers draw on a canvas and a real AI guesses their picture. They remix their homepage with AI-generated art. They finish by building with a live AI — the same kind professionals use.</p></div>
-      <div class="feat reveal"><div class="em">🏅</div><h3>Badges &amp; character gear</h3><p>Every mission earns custom badge art plus new gear for their animated character — capes, jetpacks, crowns. Progress kids can see and show off.</p></div>
-      <div class="feat reveal"><div class="em">📅</div><h3>Paced like a real camp</h3><p>Missions unlock in waves across the week, so kids can't binge it all in one sitting — and always have a reason to come back. Parents love this part.</p></div>
-      <div class="feat reveal"><div class="em">💬</div><h3>A safe clubhouse</h3><p>Campers chat with their cohort, see who's online, and cheer each other on — behind a profanity filter, with staff able to see every message. No email or personal info required.</p></div>
-      <div class="feat reveal"><div class="em">🎧</div><h3>Reads aloud &amp; lo-fi beats</h3><p>One tap and every mission reads itself aloud. Another tap starts lo-fi study music kids can remix live — a little taste of generative AI in itself. Accessible for every kind of learner.</p></div>
-    </div>
-    <div class="badges reveal">
-      <div class="badge-track" id="badgeTrack"></div>
-    </div>
-    <p class="badge-cap">↑ actual mission badges campers earn, generated with AI</p>
-  </div>
-</section>
-
-<section class="learns" id="learns">
-  <div class="wrap">
-    <div class="sec-head reveal">
-      <span class="kicker" style="color:var(--blue)">What your child learns</span>
-      <h2>More than AI — the skills that outlast any tool.</h2>
-      <p>AI is the hook. The deeper win is what kids build alongside it: how to think, communicate, act responsibly online, and create. Every skill below is taught and reinforced through a specific mission your camper completes.</p>
-    </div>
-    <div class="skills-grid">
-      <div class="skill-card reveal" style="--accent:#2A5FF0">
-        <div class="sc-head"><div class="sc-ic">🧠</div><h3>AI Literacy</h3></div>
-        <p class="sc-blurb">What AI actually is, how it learns, and where it shows up in the real world.</p>
-        <ul>
-          <li><span class="tick">✓</span>What AI is — rules vs. learning</li>
-          <li><span class="tick">✓</span>How AI sees, reads &amp; writes</li>
-          <li><span class="tick">✓</span>Neural networks &amp; transformers</li>
-          <li><span class="tick">✓</span>AI's strengths, limits &amp; bias</li>
-          <li><span class="tick">✓</span>AI in health, energy &amp; the future of work</li>
-        </ul>
-      </div>
-      <div class="skill-card reveal" style="--accent:#12B2BC">
-        <div class="sc-head"><div class="sc-ic">🔍</div><h3>Critical Thinking</h3></div>
-        <p class="sc-blurb">Solving problems, spotting patterns, and judging whether an answer is right.</p>
-        <ul>
-          <li><span class="tick">✓</span>Problem solving</li>
-          <li><span class="tick">✓</span>Pattern recognition</li>
-          <li><span class="tick">✓</span>Evaluating AI output — is it right?</li>
-          <li><span class="tick">✓</span>Decision-making</li>
-          <li><span class="tick">✓</span>Ethical reasoning — fairness &amp; harm</li>
-        </ul>
-      </div>
-      <div class="skill-card reveal" style="--accent:#FF5A38">
-        <div class="sc-head"><div class="sc-ic">💬</div><h3>Communication</h3></div>
-        <p class="sc-blurb">Explaining ideas clearly, writing great instructions, and working with a team.</p>
-        <ul>
-          <li><span class="tick">✓</span>Explaining ideas clearly</li>
-          <li><span class="tick">✓</span>Writing clear instructions &amp; prompts</li>
-          <li><span class="tick">✓</span>Collaborating with a cohort</li>
-          <li><span class="tick">✓</span>Listening &amp; weighing other views</li>
-        </ul>
-      </div>
-      <div class="skill-card reveal" style="--accent:#7C5CFF">
-        <div class="sc-head"><div class="sc-ic">🛡️</div><h3>Digital Citizenship</h3></div>
-        <p class="sc-blurb">Privacy, fairness, safety, and understanding who controls technology.</p>
-        <ul>
-          <li><span class="tick">✓</span>Online privacy &amp; your data</li>
-          <li><span class="tick">✓</span>Fairness &amp; bias awareness</li>
-          <li><span class="tick">✓</span>Safety &amp; kindness online</li>
-          <li><span class="tick">✓</span>Who controls technology</li>
-        </ul>
-      </div>
-      <div class="skill-card reveal" style="--accent:#FFB320">
-        <div class="sc-head"><div class="sc-ic">🛠️</div><h3>Building &amp; Operator Skills</h3></div>
-        <p class="sc-blurb">Algorithms, debugging, and using real AI tools to design and build helpers.</p>
-        <ul>
-          <li><span class="tick">✓</span>Step-by-step instructions / algorithms</li>
-          <li><span class="tick">✓</span>Debugging &amp; iterating</li>
-          <li><span class="tick">✓</span>Designing an AI helper</li>
-          <li><span class="tick">✓</span>Using real AI tools</li>
-        </ul>
-      </div>
-      <div class="skill-card reveal" style="--accent:#2FBF71">
-        <div class="sc-head"><div class="sc-ic">🎨</div><h3>Creativity</h3></div>
-        <p class="sc-blurb">Making art, designing characters, and inventing solutions to real problems.</p>
-        <ul>
-          <li><span class="tick">✓</span>Making art &amp; remixing with AI</li>
-          <li><span class="tick">✓</span>Designing your own character</li>
-          <li><span class="tick">✓</span>Inventing solutions to real problems</li>
-        </ul>
-      </div>
-    </div>
-    <p class="foot reveal">Each skill is checked off the moment your camper finishes the mission that teaches it — <b>progress you can actually see</b> inside the platform.</p>
-  </div>
-</section>
-
-<section class="buddies">
-  <div class="wrap">
-    <div class="sec-head reveal" style="margin-left:auto;margin-right:auto;text-align:center;max-width:560px">
-      <span class="kicker" style="color:var(--teal-bright);justify-content:center">Their crew</span>
-      <h2>Every camper builds a character.</h2>
-      <p>Pick a color, a face, a vibe — then earn gear mission by mission. They blink. They bounce. They're alive.</p>
-    </div>
-    <div class="av-row" id="avRow"></div>
-  </div>
-</section>
-
-<section class="inperson" id="inperson">
-  <div class="wrap">
-    <div class="sec-head reveal">
-      <span class="kicker" style="color:var(--coral)">More than a screen</span>
-      <h2>Built with real-world care.</h2>
-    </div>
-    <div class="split">
-      <div class="big-card card-lib reveal">
-        <span class="kicker">In person · Louisville</span>
-        <h3>🏛️ Hands-on labs at the public library</h3>
-        <p>The platform is half the story. Campers meet in small groups at the <a href="https://www.lfpl.org" target="_blank" rel="noopener">Louisville Free Public Library</a> for guided, hands-on sessions — together, out loud, with mentors in the room.</p>
-        <ul>
-          <li>Small groups with real mentors, not lecture rows</li>
-          <li>Build days: campers pair up and make things together</li>
-          <li>Demo day finale — families invited to see what kids built</li>
-          <li>A free public space families already know and trust</li>
-        </ul>
-      </div>
-      <div class="big-card card-psy reveal">
-        <span class="kicker">Designed responsibly</span>
-        <h3>🧠 A child psychologist on the team</h3>
-        <p>A practicing child psychologist helps design our curriculum and reviews every module — so the way we teach AI fits how kids ages 8–11 actually think, focus, and build confidence.</p>
-        <ul>
-          <li>Short, satisfying missions matched to real attention spans</li>
-          <li>Feedback designed to build confidence, never shame mistakes</li>
-          <li>Healthy-use pacing: sessions end, kids go play</li>
-          <li>Honest, calm answers to the big questions — at kid level</li>
-        </ul>
-      </div>
-    </div>
-  </div>
-</section>
-
-<section class="cohorts" id="cohorts">
-  <div class="wrap">
-    <div class="sec-head reveal">
-      <span class="kicker" style="color:var(--blue)">2026 Sessions</span>
-      <h2>Upcoming cohorts &amp; openings.</h2>
-      <p>Small cohorts on purpose — every kid gets seen. Each cohort meets for a weekly hands-on 90-minute session at the library and keeps building at home on the platform. Reserve a spot below and we'll coordinate exact session days with your family's schedule.</p>
-    </div>
-    <div class="co-grid" id="coGrid"></div>
-  </div>
-</section>
-
-<section class="checkout" id="deposit" style="padding-bottom:0">
-  <div class="wrap">
-    <article class="price-card best reveal" style="max-width:660px;margin:0 auto">
-      <h3>🚀 Next session starts Sept 28 — hold your seat for $10</h3>
-      <div class="price">$10 <small>deposit · fully credited toward tuition</small></div>
-      <p><b>Capped at 15 builders, and seats are going fast.</b> Ten dollars locks one in for your camper. When fall enrollment opens you get first pick, and the $10 comes right off your tuition.</p>
-      <ul>
-        <li>Starts Monday, Sept 28 · Saturdays 10 AM–12 PM at the public library (Oct 3, 10, 17 + Demo Day Oct 24)</li>
-        <li>Full 4-module program: real AI, real code, a real app of their own</li>
-        <li>100% credited at enrollment — and refundable if plans change</li>
-      </ul>
-      <form class="checkout-form" data-plan="deposit-august">
-        <label>Parent email <input type="email" name="email" required placeholder="you@example.com" autocomplete="email"></label>
-        <div class="row2">
-          <label>Camper first name <input type="text" name="studentFirstName" required placeholder="First name" autocomplete="given-name"></label>
-          <label>Camper last name <input type="text" name="studentLastName" required placeholder="Last name" autocomplete="family-name"></label>
+  <main id="main">
+    <section class="hero">
+      <div class="container hero-grid">
+        <div class="hero-copy" data-reveal>
+          <p class="eyebrow">Louisville · AI learning across generations</p>
+          <h1>The people who understand AI will <em>build the future.</em></h1>
+          <p>Code the Future creates hands-on AI learning for older kids, young teens, and older adults—built around real tools, practical judgment, and the confidence to stay in control.</p>
+          <div class="hero-actions">
+            <a class="button button--coral" href="/programs.html" data-track="hero_programs">Explore programs <i data-lucide="arrow-right"></i></a>
+            <a class="button button--dark" href="/summer-2026.html" data-track="hero_summer_2026">See Summer ’26</a>
+          </div>
+          <p class="hero-note"><i data-lucide="map-pin"></i> Built in Louisville. Designed for curious people who want to make, not just consume.</p>
         </div>
-        <label>How did you hear about us?
-          <select name="heardAbout" required>
-            <option value="" selected disabled>Pick one…</option>
-            <option>Facebook / Instagram</option>
-            <option>Google search</option>
-            <option>Google or Meta ad</option>
-            <option>Friend or family</option>
-            <option>Media</option>
-            <option>Poster</option>
-            <option>Other</option>
-          </select>
-        </label>
-        <button class="btn btn-blue btn-big" type="submit">Hold my seat — $10 →</button>
-        <div class="checkout-status" aria-live="polite"></div>
-      </form>
-    </article>
-  </div>
-</section>
-
-<section class="checkout" id="checkout">
-  <div class="wrap">
-    <div class="sec-head reveal">
-      <span class="kicker" style="color:var(--blue)">Secure checkout</span>
-      <h2>Simple pricing: $75 a module.</h2>
-      <p>Pay online with Stripe. Each module is $75 — or do the whole four-module program for $225 per child and save $75.</p>
-    </div>
-    <div class="checkout-grid">
-      <article class="price-card reveal">
-        <h3>Start with Module 1</h3>
-        <div class="price">$75 <small>per module</small></div>
-        <p>The perfect starting point for a new camper: the first module, platform access, and the cohort experience.</p>
-        <ul>
-          <li>Module 1: What Is AI?</li>
-          <li><strong>A 90-minute hands-on session at the public library</strong> for every module</li>
-          <li>12 game-like missions plus the Big Mission capstone</li>
-          <li>Add more modules any time — $75 each</li>
-        </ul>
-        <form class="checkout-form" data-plan="module-1">
-          <label>Parent email <input type="email" name="email" required placeholder="you@example.com" autocomplete="email"></label>
-          <div class="row2">
-            <label>Student first name <input type="text" name="studentFirstName" required placeholder="First name" autocomplete="given-name"></label>
-            <label>Student last name <input type="text" name="studentLastName" required placeholder="Last name" autocomplete="family-name"></label>
-          </div>
-          <label>How did you hear about us?
-            <select name="heardAbout" required>
-              <option value="" selected disabled>Pick one…</option>
-              <option>Facebook</option>
-              <option>Media</option>
-              <option>Google search</option>
-              <option>AI agent</option>
-              <option>Paid ad</option>
-              <option>Poster</option>
-              <option>Other</option>
-            </select>
-          </label>
-          <label>Add more modules
-            <select name="additionalModules">
-              <option value="0">No add-ons — Module 1 only ($75)</option>
-              <option value="1">Add 1 module — $150 total</option>
-              <option value="2">Add 2 modules — $225 total</option>
-            </select>
-          </label>
-          <button class="btn btn-blue btn-big" type="submit">Pay with Stripe →</button>
-          <div class="checkout-status" aria-live="polite"></div>
-        </form>
-      </article>
-      <article class="price-card best reveal">
-        <h3>All four modules</h3>
-        <div class="price">$225 <small>per child · one-time</small></div>
-        <p>Best value for families who know they want the whole arc. One checkout covers all four modules.</p>
-        <ul>
-          <li>All four modules — the complete program</li>
-          <li><strong>A 90-minute hands-on library session</strong> for every one of the four modules</li>
-          <li>Saves $75 vs. buying each module separately</li>
-          <li>Secure card payment handled by Stripe</li>
-        </ul>
-        <form class="checkout-form" data-plan="all-four">
-          <label>Parent email <input type="email" name="email" required placeholder="you@example.com" autocomplete="email"></label>
-          <div class="row2">
-            <label>Student first name <input type="text" name="studentFirstName" required placeholder="First name" autocomplete="given-name"></label>
-            <label>Student last name <input type="text" name="studentLastName" required placeholder="Last name" autocomplete="family-name"></label>
-          </div>
-          <label>How did you hear about us?
-            <select name="heardAbout" required>
-              <option value="" selected disabled>Pick one…</option>
-              <option>Facebook</option>
-              <option>Media</option>
-              <option>Google search</option>
-              <option>AI agent</option>
-              <option>Paid ad</option>
-              <option>Poster</option>
-              <option>Other</option>
-            </select>
-          </label>
-          <button class="btn btn-primary btn-big" type="submit">Buy all four modules →</button>
-          <div class="checkout-status" aria-live="polite"></div>
-        </form>
-      </article>
-    </div>
-    <p class="checkout-note reveal">After checkout, we'll follow up with your camper's login details and cohort schedule. Your card details never touch this site — Stripe handles the payment page.</p>
-  </div>
-</section>
-
-<section class="ecosystem" id="animo" aria-labelledby="animo-heading">
-  <div class="wrap">
-    <div class="ecosystem-card">
-      <div>
-        <span class="kicker">Another venture from Jon</span>
-        <h2 id="animo-heading">Ready to put AI to work inside a business?</h2>
-        <p>Code the Future builds AI confidence across generations. For professionals and small teams ready to connect company data, deploy agents, and improve real workflows, Jon also leads Ánimo AI Consulting.</p>
+        <button class="hero-growth" type="button" aria-label="Explore an illustrated Louisville future" aria-expanded="false" data-growth-stage>
+          <img class="hero-growth__art" src="/platform/assets/hero-louisville.webp" width="1536" height="1024" alt="An imaginative Louisville skyline where kids, friendly robots, art, and technology share the city" fetchpriority="high" data-growth-art>
+          <span class="hero-growth__close" aria-hidden="true" data-growth-close><i data-lucide="x"></i></span>
+        </button>
       </div>
-      <a class="btn btn-blue btn-big" data-cross-promo="animo" href="https://animoplatform.net/?utm_source=codethefuture&utm_medium=referral&utm_campaign=founder_ecosystem">Explore Ánimo for business →</a>
-    </div>
-  </div>
-</section>
+    </section>
 
-<section class="signup" id="signup">
-  <div class="wrap">
-    <div class="reveal">
-      <span class="kicker">Get on the list</span>
-      <h2>Who wants to learn?</h2>
-      <p>Ask about the current kids program or join the early interest list for young-teen and older-adult learning tracks.</p>
-      <p style="margin-top:18px;font-size:14px">Already enrolled? <a href="/platform/" style="color:var(--teal-bright)">Log in to the platform →</a></p>
-    </div>
-    <form class="lead reveal" name="cohort-interest" method="POST" data-netlify="true" netlify-honeypot="bot-field" id="leadForm">
-      <input type="hidden" name="form-name" value="cohort-interest">
-      <p style="display:none"><label>Don't fill this out: <input name="bot-field"></label></p>
-      <div class="row2 hideme">
-        <label>Your name <input type="text" name="contact_name" required placeholder="Jordan Smith"></label>
-        <label>Email <input type="email" name="email" required placeholder="you@example.com"></label>
+    <section class="proof-strip" aria-label="Program principles">
+      <div class="container proof-grid">
+        <div class="proof-item"><strong>Real tools</strong><span>Guided building, not toy demos</span></div>
+        <div class="proof-item"><strong>Small cohorts</strong><span>Every builder gets seen</span></div>
+        <div class="proof-item"><strong>Kid-safe by design</strong><span>Privacy and judgment first</span></div>
+        <div class="proof-item"><strong>Louisville built</strong><span>Local sessions, lasting skills</span></div>
       </div>
-      <div class="row2 hideme">
-        <label>Learner's age group
-          <select name="learner_age_group" id="audienceSelect" required>
-            <option value="" selected disabled>Pick one…</option>
-            <option>Older kid · age 8</option><option>Older kid · age 9</option><option>Older kid · age 10</option><option>Older kid · age 11</option>
-            <option>Young teen · ages 12–15</option>
-            <option>Older adult</option>
-            <option>Multiple learners / another age</option>
-          </select>
-        </label>
-        <label>Preferred session
-          <select name="session" id="sessionSelect" required>
-            <option value="" selected disabled>Pick one…</option>
-          </select>
-        </label>
+    </section>
+
+    <section class="section section--paper" id="audiences">
+      <div class="container">
+        <div class="section-head" data-reveal>
+          <div class="section-head__copy"><p class="eyebrow">One mission · three starting points</p><h2 class="section-title">Different ages. The same need to <em>understand what AI can—and cannot—do.</em></h2></div>
+          <a class="button button--cream" href="/programs.html">Compare programs</a>
+        </div>
+        <div class="program-grid">
+          <article class="program-card" data-reveal><div class="offer-card__top"><span class="program-card__icon"><i class="icon-lg" data-lucide="blocks"></i></span><span class="tag">Ages 8–11</span></div><h3>Older kids</h3><p>Game-like missions, real AI tools, and small-group Louisville sessions designed to build curiosity, judgment, and confidence.</p><a class="button button--blue" href="/older-kids.html">See the live program</a></article>
+          <article class="program-card" data-reveal><div class="offer-card__top"><span class="program-card__icon"><i class="icon-lg" data-lucide="code-2"></i></span><span class="tag">Ages 12–15</span></div><h3>Young teens</h3><p>A more advanced path for responsible AI use, research judgment, creative building, and the changing nature of coding and schoolwork.</p><a class="button button--cream" href="/young-teens.html">Explore the forming track</a></article>
+          <article class="program-card" data-reveal><div class="offer-card__top"><span class="program-card__icon"><i class="icon-lg" data-lucide="compass"></i></span><span class="tag">Older adults</span></div><h3>Older adults</h3><p>Patient, practical workshops for understanding modern AI, using it safely, and finding useful everyday applications without jargon.</p><a class="button button--cream" href="/older-adults.html">Explore workshops</a></article>
+        </div>
       </div>
-      <label class="hideme">Anything we should know? (optional)
-        <textarea name="message" rows="3" placeholder="Questions, sibling pairs, scheduling notes…"></textarea>
-      </label>
-      <button class="btn btn-primary btn-big hideme" type="submit" style="justify-content:center">Send My Question →</button>
-      <p class="hideme" style="font-size:12px;color:rgba(255,255,255,.55);text-align:center;margin:0">We only use this to contact you about Code the Future. No spam, ever.</p>
-      <div class="ok">🎉 <b>Got it!</b><br>We'll email you back soon. If you're ready now, checkout is right above.</div>
-    </form>
-  </div>
-</section>
+    </section>
 
-<footer>
-  <div class="wrap">
-    <span>© 2026 Code the Future · Louisville, KY</span>
-    <span style="display:flex;gap:14px;flex-wrap:wrap">
-      <a href="/about.html">About</a><a href="/faq.html">FAQ</a><a href="/privacy.html">Privacy</a><a href="/terms.html">Terms</a>
-      <a href="/platform/">Camper Log In</a><a href="#checkout">Check Out</a>
-    </span>
-  </div>
-</footer>
+    <section class="section section--dark" id="why">
+      <div class="container">
+        <div class="section-head" data-reveal><div class="section-head__copy"><p class="eyebrow eyebrow--marigold">Not fear. Not hype. Agency.</p><h2 class="section-title">Understand it. <em>Question it.</em> Build with it.</h2><p class="section-lede">Kids already encounter AI in school, search, games, creative tools, and social platforms. We help them see the system behind the screen—and learn that they can shape what comes next.</p></div></div>
+        <div class="outcome-grid">
+          <article class="outcome-card" data-reveal><i data-lucide="network"></i><h3>Learn how it actually works</h3><p>Patterns, training data, predictions, powerful computers, and the human choices surrounding the technology.</p><span class="micro">Concept before vocabulary</span></article>
+          <article class="outcome-card" data-reveal><i data-lucide="shield-question"></i><h3>Ask the hard questions</h3><p>Wrong answers, bias, privacy, energy, infrastructure, concentrated power, and when a human should stay in charge.</p><span class="micro">Judgment over blind trust</span></article>
+          <article class="outcome-card" data-reveal><i data-lucide="hammer"></i><h3>Become a builder</h3><p>Make games, tools, art, and working software that feed curiosity and solve a problem—not another hour of passive scrolling.</p><span class="micro">Creation over consumption</span></article>
+        </div>
+        <div class="lede-actions"><a class="button button--dark" href="/why-ai-now.html">Why this matters now <i data-lucide="arrow-right"></i></a><a class="button button--coral" href="/curriculum.html">See what they learn</a></div>
+      </div>
+    </section>
 
-<script src="platform/lib/avatar.js"></script>
-<script>
-  /* =====================================================================
-     EDIT ME — Jon: update these as real dates/openings are locked in.
-     ===================================================================== */
-  var FILM_URL = "https://www.youtube-nocookie.com/embed/zUs5lakiMRM?start=6"; // walkthrough from co-founder Jon Nichols (starts at 0:06)
-  var COHORTS = [
-    { name: "July Session · Founding Cohort", dates: "In progress — launched July 6, 2026", meta: "Weekly 90-minute hands-on session at the public library + missions at home · ages 8–11",
-      seats: "Enrollment closed — our founding crew is mid-journey", status: "In progress", cta: "none" },
-    { name: "Session 2 · Fall", dates: "Starts Mon, Sept 28 · Saturday library sessions 10 AM–12 PM: Oct 3, 10, 17 + Demo Day Oct 24", meta: "Same full program: 4 modules, weekly hands-on library session + missions at home · ages 8–11",
-      seats: "Capped at 15 builders — seats are going fast", status: "Reserve now · $10", cta: "deposit" },
-    { name: "November Session", dates: "Dates coming soon", meta: "Full 4-module program · ages 8–11 · Louisville",
-      seats: "Join the waitlist — you'll hear first", status: "Waitlist", cta: "waitlist" },
-    { name: "Fall AI Club", dates: "After school · dates coming soon", meta: "Weekly after-school club · platform + monthly meetup · ages 8–11",
-      seats: "Join the waitlist — you'll hear first", status: "Waitlist", cta: "waitlist" }
-  ];
-  /* ===================================================================== */
+    <section class="section" id="summer-2026">
+      <div class="container story-grid">
+        <div data-reveal><p class="eyebrow">Founding cohort · Summer 2026</p><h2 class="section-title">Four weeks. Four builders. <em>Things they could actually show.</em></h2><p class="section-lede">Students learned loops, spoke to AI like builders, tested their ideas, and shipped software. Every project began with curiosity and ended with something real.</p><div class="project-list"><span class="project-chip">Space Shooter v9</span><span class="project-chip">Neon Studio</span><span class="project-chip">Zazamar</span><span class="project-chip">made yours.</span></div><div class="lede-actions"><a class="button button--blue" href="/summer-2026.html">See the cohort story</a></div></div>
+        <figure class="media-frame media-frame--wide" data-reveal><picture><source media="(max-width:720px)" srcset="/platform/assets/summer-cohort-26-tall.webp"><img src="/platform/assets/summer-cohort-26-wide.webp" width="1600" height="900" alt="Code the Future co-founders leading the Summer 2026 cohort in a Louisville library classroom" loading="lazy"></picture><figcaption class="media-frame__label">Summer cohort ’26 · Louisville</figcaption></figure>
+      </div>
+    </section>
 
-  // film embed (only when Jon sets FILM_URL)
-  if (FILM_URL) {
-    var film = document.getElementById("film");
-    film.innerHTML = FILM_URL.indexOf(".mp4") > -1
-      ? '<video src="' + FILM_URL + '" controls playsinline preload="metadata" poster="/platform/assets/film-poster.jpg"></video>'
-      : '<iframe src="' + FILM_URL + '" title="Walkthrough of the program and platform from Co-Founder Jon Nichols" allow="accelerometer; autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>';
-  }
+    <section class="section section--paper">
+      <div class="container"><div class="cta-block" data-reveal><div><p class="eyebrow">Start with the right program</p><h2>Learn to build what’s next.</h2><p>Explore the live ages 8–11 program or join the interest list for young teens and older adults.</p></div><a class="button button--dark" href="/enroll.html" data-track="home_final_enroll">Explore programs <i data-lucide="arrow-right"></i></a></div></div>
+    </section>
+  </main>
 
-  // cohort cards + form session options
-  var grid = document.getElementById("coGrid");
-  var sel = document.getElementById("sessionSelect");
-  COHORTS.forEach(function (c) {
-    var d = document.createElement("div");
-    d.className = "co reveal";
-    var open = c.cta === "deposit";
-    var btn = c.cta === "none"
-      ? ''
-      : c.cta === "deposit"
-        ? '<a class="btn btn-blue" href="#deposit" data-session="' + c.name + '">Hold my seat — $10 →</a>'
-        : '<a class="btn wait" href="#signup" data-session="' + c.name + '">Join the waitlist</a>';
-    d.innerHTML =
-      '<span class="status ' + (open ? "st-open" : "st-soon") + '">' + c.status + "</span>" +
-      "<h3>" + c.name + "</h3>" +
-      '<div class="dates">' + c.dates + "</div>" +
-      '<div class="meta">' + c.meta + "</div>" +
-      '<div class="seats">' + c.seats + "</div>" + btn;
-    grid.appendChild(d);
-    if (c.cta !== "none") {
-      var o = document.createElement("option");
-      o.textContent = c.name + " — " + c.dates;
-      sel.appendChild(o);
-    }
-  });
-  var any = document.createElement("option");
-  any.textContent = "Not sure yet — tell me about all of them";
-  sel.appendChild(any);
-  ["Young teen track · ages 12–15", "Older adult AI workshops"].forEach(function (label) {
-    var option = document.createElement("option");
-    option.textContent = label;
-    sel.appendChild(option);
-  });
-  var requestedAudience = new URLSearchParams(location.search).get("audience");
-  if (requestedAudience === "teen" || requestedAudience === "adult") {
-    var requestedLabel = requestedAudience === "adult" ? "Older adult AI workshops" : "Young teen track · ages 12–15";
-    for (var si = 0; si < sel.options.length; si++) {
-      if (sel.options[si].textContent === requestedLabel) { sel.selectedIndex = si; break; }
-    }
-    var audienceField = document.getElementById("audienceSelect");
-    if (audienceField) audienceField.value = requestedAudience === "adult" ? "Older adult" : "Young teen · ages 12–15";
-  }
-  grid.addEventListener("click", function (e) {
-    var a = e.target.closest("[data-session]");
-    if (!a) return;
-    var want = a.getAttribute("data-session");
-    for (var i = 0; i < sel.options.length; i++)
-      if (sel.options[i].textContent.indexOf(want) === 0) { sel.selectedIndex = i; break; }
-  });
-  document.querySelectorAll("[data-audience-interest]").forEach(function (link) {
-    link.addEventListener("click", function () {
-      var interest = link.getAttribute("data-audience-interest");
-      for (var i = 0; i < sel.options.length; i++) {
-        if (sel.options[i].textContent === interest) { sel.selectedIndex = i; break; }
-      }
-      var audience = document.getElementById("audienceSelect");
-      if (audience) audience.value = interest.indexOf("Older adult") === 0 ? "Older adult" : "Young teen · ages 12–15";
-    });
-  });
-
-  // Cross-site attribution: UTMs are captured by Ánimo GA4; this event is ready
-  // for Code the Future analytics when a site-wide tag is added.
-  window.dataLayer = window.dataLayer || [];
-  document.querySelectorAll("[data-cross-promo]").forEach(function (link) {
-    link.addEventListener("click", function () {
-      var eventData = { event: "cross_promo_click", destination: link.getAttribute("data-cross-promo"), source_site: "codethefuture" };
-      window.dataLayer.push(eventData);
-      if (typeof window.gtag === "function") window.gtag("event", "cross_promo_click", eventData);
-    });
-  });
-
-  // Stripe checkout — secret key stays server-side in /api/checkout.
-  document.querySelectorAll(".checkout-form").forEach(function (checkoutForm) {
-    checkoutForm.addEventListener("submit", function (e) {
-      e.preventDefault();
-      var btn = checkoutForm.querySelector("button[type='submit']");
-      var status = checkoutForm.querySelector(".checkout-status");
-      var email = checkoutForm.querySelector("input[name='email']");
-      var first = checkoutForm.querySelector("input[name='studentFirstName']");
-      var last = checkoutForm.querySelector("input[name='studentLastName']");
-      var heard = checkoutForm.querySelector("select[name='heardAbout']");
-      var addOns = checkoutForm.querySelector("select[name='additionalModules']");
-      var original = btn.textContent;
-      status.classList.remove("error");
-      status.textContent = "Opening secure Stripe checkout…";
-      btn.disabled = true;
-      btn.textContent = "Sending you to Stripe…";
-      window.dataLayer.push({
-        event: "ctf_checkout_started",
-        plan: checkoutForm.dataset.plan,
-        source_page: location.pathname
-      });
-      gtag("event", "begin_checkout", {
-        currency: "USD",
-        items: [{
-          item_id: checkoutForm.dataset.plan,
-          item_name: "Code the Future enrollment"
-        }]
-      });
-      fetch("/api/checkout", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          plan: checkoutForm.dataset.plan,
-          customerEmail: email ? email.value : "",
-          studentFirstName: first ? first.value : "",
-          studentLastName: last ? last.value : "",
-          heardAbout: heard ? heard.value : "",
-          additionalModules: addOns ? addOns.value : 0
-        })
-      })
-        .then(function (r) { return r.json().then(function (d) { return { ok: r.ok, d: d }; }); })
-        .then(function (res) {
-          if (res.ok && res.d.url) {
-            window.location.href = res.d.url;
-            return;
-          }
-          throw new Error(res.d && res.d.error ? res.d.error : "Checkout could not start.");
-        })
-        .catch(function (err) {
-          status.classList.add("error");
-          status.textContent = err.message || "Checkout could not start. Please try again.";
-          btn.disabled = false;
-          btn.textContent = original;
-        });
-    });
-  });
-
-  // badge marquee (12 badges, doubled for a seamless loop)
-  var track = document.getElementById("badgeTrack");
-  var imgs = "";
-  for (var r = 0; r < 2; r++) for (var n = 1; n <= 12; n++)
-    imgs += '<img src="platform/assets/badges/badge-' + n + '.png" alt="Mission ' + n + ' completion badge — Code the Future AI camp" loading="lazy">';
-  track.innerHTML = imgs;
-
-  // living avatar crew
-  var crew = [
-    { bg: "sky", color: "blue", face: "happy", acc: "cape" },
-    { bg: "mint", color: "teal", face: "surprised", acc: "headphones" },
-    { bg: "peach", color: "coral", face: "wink", acc: "crown" },
-    { bg: "lilac", color: "violet", face: "star", acc: "jetpack" },
-    { bg: "sun", color: "amber", face: "cool", acc: "antenna" },
-    { bg: "sky", color: "green", face: "happy", acc: "wizard" }
-  ];
-  var row = document.getElementById("avRow");
-  crew.forEach(function (c) {
-    var d = document.createElement("div");
-    d.className = "av reveal";
-    d.innerHTML = window.CTFAvatar ? window.CTFAvatar.render(c) : "";
-    row.appendChild(d);
-  });
-
-  // nav scroll state
-  var nav = document.getElementById("nav");
-  addEventListener("scroll", function () { nav.classList.toggle("scrolled", scrollY > 24); }, { passive: true });
-
-  // scroll reveals — anything already in the viewport (deep links, mid-page loads)
-  // shows immediately; only below-the-fold content waits for the observer
-  var io = new IntersectionObserver(function (es) {
-    es.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add("in"); io.unobserve(e.target); } });
-  }, { threshold: 0.12 });
-  document.querySelectorAll(".reveal").forEach(function (el) {
-    var r = el.getBoundingClientRect();
-    if (r.top < innerHeight && r.bottom > 0) el.classList.add("in");
-    else io.observe(el);
-  });
-
-  // AJAX form submit (Netlify Forms) with friendly success state
-  var form = document.getElementById("leadForm");
-  form.addEventListener("submit", function (e) {
-    e.preventDefault();
-    var data = new FormData(form);
-    fetch("/", { method: "POST", headers: { "Content-Type": "application/x-www-form-urlencoded" }, body: new URLSearchParams(data).toString() })
-      .then(function (response) {
-        if (!response.ok) throw new Error("Interest form submission failed.");
-        form.classList.add("sent");
-        window.dataLayer.push({ event: "ctf_lead_submitted", source_page: location.pathname });
-        gtag("event", "generate_lead", { method: "website_interest_form" });
-      })
-      .catch(function () {
-        var submit = form.querySelector('button[type="submit"]');
-        if (submit) {
-          submit.disabled = false;
-          submit.textContent = "Please try again";
-        }
-      });
-  });
-</script>
+  <footer class="site-footer">
+    <div class="container"><div class="footer-grid"><div class="footer-brand"><a class="brand" href="/"><img src="/platform/assets/logo-icon-dark.svg" alt="" width="64" height="64">Code the <span>Future</span></a><p>Hands-on AI learning for older kids, young teens, and older adults. Built in Louisville, Kentucky.</p></div><div class="footer-col"><h2>Learn</h2><ul><li><a href="/programs.html">Programs</a></li><li><a href="/curriculum.html">What they learn</a></li><li><a href="/why-ai-now.html">Why AI now</a></li></ul></div><div class="footer-col"><h2>Families</h2><ul><li><a href="/summer-2026.html">Summer 2026</a></li><li><a href="/how-it-works.html">How it works</a></li><li><a href="/faq.html">Parent FAQ</a></li></ul></div><div class="footer-col"><h2>Company</h2><ul><li><a href="/about.html">About</a></li><li><a href="/enroll.html">Enroll or ask</a></li><li><a href="https://animoplatform.net/?utm_source=codethefuture&amp;utm_medium=referral&amp;utm_campaign=founder_ecosystem">Ánimo for business</a></li><li><a href="/platform/">Camper login</a></li></ul></div></div><div class="footer-bottom"><span>© <span data-year></span> Code the Future · Louisville, Kentucky</span><em>Learn to build what’s next.</em></div></div>
+  </footer>
 </body>
 </html>

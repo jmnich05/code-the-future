@@ -3,7 +3,22 @@ import fs from 'node:fs';
 import path from 'node:path';
 
 const root = process.cwd();
-const pages = ['index.html', 'about.html', 'faq.html', 'privacy.html', 'terms.html', '404.html', 'older-kids.html', 'young-teens.html', 'older-adults.html'];
+const pages = [
+  'index.html',
+  'programs.html',
+  'older-kids.html',
+  'young-teens.html',
+  'older-adults.html',
+  'curriculum.html',
+  'why-ai-now.html',
+  'how-it-works.html',
+  'summer-2026.html',
+  'enroll.html',
+  'about.html',
+  'faq.html',
+  'privacy.html',
+  'terms.html',
+];
 let failures = 0;
 
 function assert(condition, message) {
@@ -21,19 +36,24 @@ for (const page of pages) {
   assert(/<title>[^<]{15,}<\/title>/.test(html), `${page} has a meaningful title`);
   assert(/<meta name="description" content="[^"]{50,}"/.test(html), `${page} has a meta description`);
   assert(/<link rel="canonical" href="https:\/\/codethefuture\.net\//.test(html), `${page} has apex canonical`);
-  assert(!/content="[^"]*noindex/i.test(html) || page === '404.html', `${page} is indexable when public`);
+  assert(!/content="[^"]*noindex/i.test(html), `${page} is indexable when public`);
   const measurementIdMatches = html.match(/G-9CX0PM062K/g) || [];
   assert(measurementIdMatches.length === 2, `${page} includes one configured GA4 tag`);
 }
+
+const notFoundPage = fs.readFileSync(path.join(root, '404.html'), 'utf8');
+assert(/<meta name="robots" content="noindex,follow">/.test(notFoundPage), '404 page stays out of the search index');
 
 const checkoutSuccess = fs.readFileSync(path.join(root, 'checkout-success.html'), 'utf8');
 assert(/G-9CX0PM062K/.test(checkoutSuccess), 'checkout success page includes GA4');
 assert(/\/api\/checkout-verify\?session_id=/.test(checkoutSuccess), 'checkout success verifies the Stripe session server-side');
 assert(/gtag\("event", "purchase"/.test(checkoutSuccess), 'verified checkout sends the GA4 purchase event');
 
-const homePage = fs.readFileSync(path.join(root, 'index.html'), 'utf8');
-assert(/gtag\("event", "begin_checkout"/.test(homePage), 'checkout start sends the GA4 begin_checkout event');
-assert(/gtag\("event", "generate_lead"/.test(homePage), 'interest form sends the GA4 generate_lead event');
+const enrollmentScript = fs.readFileSync(path.join(root, 'assets/enroll.js'), 'utf8');
+assert(/sendAnalyticsEvent\("begin_checkout"/.test(enrollmentScript), 'checkout start sends the GA4 begin_checkout event');
+assert(/sendAnalyticsEvent\("generate_lead"/.test(enrollmentScript), 'interest form sends the GA4 generate_lead event');
+assert(/event: "ctf_checkout_started"/.test(enrollmentScript), 'checkout start also sends the Code the Future data-layer event');
+assert(/event: "ctf_lead_submitted"/.test(enrollmentScript), 'interest form also sends the Code the Future data-layer event');
 
 const platformFiles = [];
 function collectHtml(directory) {
@@ -48,7 +68,7 @@ assert(platformFiles.every((file) => !/G-9CX0PM062K/.test(fs.readFileSync(file, 
 
 const sitemap = fs.readFileSync(path.join(root, 'sitemap.xml'), 'utf8');
 const urls = [...sitemap.matchAll(/<loc>([^<]+)<\/loc>/g)].map((match) => match[1]);
-for (const expected of ['https://codethefuture.net/', 'https://codethefuture.net/about.html', 'https://codethefuture.net/faq.html', 'https://codethefuture.net/privacy.html', 'https://codethefuture.net/terms.html']) {
+for (const expected of pages.map((page) => page === 'index.html' ? 'https://codethefuture.net/' : `https://codethefuture.net/${page}`)) {
   assert(urls.includes(expected), `sitemap includes ${expected}`);
 }
 assert(!urls.some((u) => u.includes('/platform/') || u.includes('/curriculum/') || u.includes('/docs/')), 'sitemap excludes gated/private sections');
