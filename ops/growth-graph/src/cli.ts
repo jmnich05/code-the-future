@@ -1,7 +1,8 @@
 import { createHash, randomUUID } from "node:crypto";
-import { readdir, readFile, realpath } from "node:fs/promises";
+import { lstat, readdir, readFile, realpath } from "node:fs/promises";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
+import { DatabaseSync } from "node:sqlite";
 
 import { SqliteSaver } from "@langchain/langgraph-checkpoint-sqlite";
 
@@ -15,11 +16,12 @@ import {
 import { GrowthLedger } from "./ledger.js";
 import {
   defaultManualIdempotencyKey,
+  validateTriggerIdentity,
   resolveSyntheticRunAt,
 } from "./cli-policy.js";
 import { redactObserverValue } from "./observer.js";
 import { CODE_THE_FUTURE_PROJECT_IDENTITY_POLICY } from "./project-policy.js";
-import { CaptureBundleSchema } from "./schema.js";
+import { CaptureBundleSchema, IsoInstantSchema } from "./schema.js";
 import {
   preparePrivateSqliteFile,
   prepareStateDirectory,
@@ -58,6 +60,9 @@ Resume:
 Options:
   --run-id ID
   --idempotency-key KEY
+  --trigger-kind manual|scheduled
+  --trigger-ref OFFSET_QUALIFIED_SLOT
+  --started-at INSTANT          Internal operator binding; not a backdate control
   --state-root PATH
   --project-state PATH
   --evidence-root PATH
@@ -97,11 +102,58 @@ async function main(): Promise<void> {
     allowSyntheticEvidence,
   );
 
+  if (
+    process.argv.includes("--started-at") &&
+    argument("--started-at") === undefined
+  ) {
+    throw new Error("--started-at requires an offset-qualified instant");
+  }
+  const requestedStartedAt = argument("--started-at")
+    ? IsoInstantSchema.parse(argument("--started-at"))
+    : undefined;
+  const resumeRunId = argument("--resume");
+  if (requestedStartedAt && resumeRunId) {
+    throw new Error("--started-at is not accepted for resume");
+  }
+  if (
+    requestedStartedAt &&
+    (!argument("--run-id") ||
+      !argument("--idempotency-key") ||
+      !argument("--trigger-kind"))
+  ) {
+    throw new Error(
+      "--started-at requires explicit run, idempotency, and trigger identity",
+    );
+  }
+
   const stateRoot = resolve(
     argument("--state-root") ??
       process.env.CODE_THE_FUTURE_GROWTH_STATE_ROOT ??
       join(repositoryRoot, ".state", "growth-graph"),
   );
+  const requestedStartedAtAgeMs = requestedStartedAt
+    ? Date.now() - Date.parse(requestedStartedAt)
+    : 0;
+  const requestedStartedAtIsCurrent =
+    requestedStartedAt !== undefined &&
+    requestedStartedAtAgeMs >= -5_000 &&
+    requestedStartedAtAgeMs <= 5 * 60 * 1_000;
+  if (
+    requestedStartedAt &&
+    !syntheticRunAt &&
+    !requestedStartedAtIsCurrent
+  ) {
+    try {
+      const stats = await lstat(join(stateRoot, "ledger.sqlite"));
+      if (!stats.isFile() || stats.isSymbolicLink()) {
+        throw new Error("Existing ledger authority is unsafe");
+      }
+    } catch {
+      throw new Error(
+        "An older --started-at is allowed only for an existing exact pre-checkpoint owner",
+      );
+    }
+  }
   const projectStatePath = resolve(
     argument("--project-state") ?? join(repositoryRoot, "PROJECT_STATE.md"),
   );
@@ -109,6 +161,31 @@ async function main(): Promise<void> {
     resolve(argument("--evidence-root") ?? repositoryRoot),
   );
   await prepareStateDirectory(stateRoot, { ownerOnly: true });
+  const operatorLockPath = await preparePrivateSqliteFile(
+    join(stateRoot, "operator-lock.sqlite"),
+  );
+  const operatorLock = new DatabaseSync(operatorLockPath);
+  try {
+    operatorLock.exec(`
+      PRAGMA busy_timeout = 0;
+      CREATE TABLE IF NOT EXISTS lock_contract (
+        singleton INTEGER PRIMARY KEY CHECK (singleton = 1)
+      ) STRICT;
+    `);
+    // The graph child owns this independent SQLite write reservation for its
+    // entire lifetime. The OS releases it on crash, while it remains held if a
+    // wrapper process dies, avoiding PID-file reclaim and unlink races.
+    operatorLock.exec("BEGIN IMMEDIATE");
+  } catch (error) {
+    operatorLock.close();
+    if (
+      (error as { code?: unknown }).code === "SQLITE_BUSY" ||
+      /database is locked|SQLITE_BUSY/iu.test(String(error))
+    ) {
+      throw new Error("Graph execution lock is busy");
+    }
+    throw error;
+  }
 
   const graphSources = (await readdir(resolve(packageRoot, "src")))
     .filter((name) => name.endsWith(".ts"))
@@ -201,7 +278,6 @@ async function main(): Promise<void> {
       : {}),
   };
   const graph = createGrowthWorkflow(workflowOptions);
-  const resumeRunId = argument("--resume");
   let initial: GrowthWorkflowState | null = null;
   let threadId: string;
 
@@ -234,20 +310,79 @@ async function main(): Promise<void> {
     ) {
       throw new Error("--run-at cannot be used with real or mixed evidence");
     }
-    const startedAt = syntheticRunAt ?? new Date().toISOString();
+    const startedAt =
+      requestedStartedAt ?? syntheticRunAt ?? new Date().toISOString();
     const runId =
       argument("--run-id") ??
       `growth-${startedAt.replaceAll(/[:.]/gu, "-")}-${randomUUID().slice(0, 8)}`;
     const idempotencyKey =
       argument("--idempotency-key") ??
       defaultManualIdempotencyKey(captureSha256, startedAt);
+    const requestedTriggerKind = argument("--trigger-kind") ?? "manual";
+    const triggerReference = argument("--trigger-ref");
+    const triggerKind = validateTriggerIdentity({
+      triggerKind: requestedTriggerKind,
+      ...(triggerReference ? { triggerReference } : {}),
+      idempotencyKey,
+      projectId: "code-the-future",
+      graphVersion: GRAPH_VERSION,
+    });
+    if (
+      triggerKind === "manual" &&
+      idempotencyKey.startsWith("manual:") &&
+      idempotencyKey !== defaultManualIdempotencyKey(captureSha256, startedAt)
+    ) {
+      throw new Error(
+        "Manual idempotency key does not match the capture and started-at date",
+      );
+    }
+    if (requestedStartedAt && syntheticRunAt && requestedStartedAt !== syntheticRunAt) {
+      throw new Error("Synthetic --started-at must equal the explicit --run-at");
+    }
+    const existingStartedAtOwner = requestedStartedAt
+      ? ledger.readRun(runId)
+      : null;
+    if (
+      requestedStartedAt &&
+      !syntheticRunAt &&
+      (existingStartedAtOwner || !requestedStartedAtIsCurrent)
+    ) {
+      const owner = ledger.verifyRunAuthority(runId);
+      const uncommittedRunIds = ledger.listUncommittedRunIds();
+      const saved = await graph.getState({
+        configurable: { thread_id: runId },
+        recursionLimit: 100,
+      });
+      const expectedPolicyHash = createHash("sha256")
+        .update(`${POLICY_VERSION}:${GRAPH_VERSION}`)
+        .digest("hex");
+      if (
+        owner.transaction ||
+        uncommittedRunIds.length !== 1 ||
+        uncommittedRunIds[0] !== runId ||
+        owner.run.runId !== runId ||
+        owner.run.threadId !== runId ||
+        owner.run.idempotencyKey !== idempotencyKey ||
+        owner.run.workflowName !== GRAPH_VERSION ||
+        owner.run.policyHash !== expectedPolicyHash ||
+        owner.run.runtimeHash !== runtimeManifestHash ||
+        owner.run.captureBundleHash !== captureSha256 ||
+        owner.run.startedAt !== startedAt ||
+        owner.run.triggerKind !== triggerKind ||
+        Boolean((saved.values as GrowthWorkflowState | undefined)?.canonical?.run_id)
+      ) {
+        throw new Error(
+          "Older started-at does not match the single uncommitted pre-checkpoint owner",
+        );
+      }
+    }
     initial = createInitialGrowthRun({
       runId,
       idempotencyKey,
       capturePath,
       expectedCaptureSha256: captureSha256,
       runtimeManifestHash,
-      triggerKind: "manual",
+      triggerKind,
       startedAt,
       objectiveWindow: bundle.objective_window,
       metricDefinitionVersion: bundle.metric_definition_version,
@@ -316,6 +451,8 @@ async function main(): Promise<void> {
   } finally {
     checkpointer.db.close();
     ledger.close();
+    operatorLock.exec("ROLLBACK");
+    operatorLock.close();
   }
 }
 

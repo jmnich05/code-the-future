@@ -5,6 +5,10 @@
   "type": "module",
   "scripts": {
     "graph:shadow": "node --env-file-if-exists=../../.env.local --import tsx/esm src/cli.ts",
+    "graph:ops": "node --import tsx/esm src/operator-cli.ts",
+    "graph:status": "npm run --silent graph:ops -- status",
+    "graph:reviews": "npm run --silent graph:ops -- reviews",
+    "graph:doctor": "npm run --silent graph:ops -- doctor",
     "graph:validate-capture": "node --import tsx/esm src/validate-capture.ts",
     "test": "node --import tsx/esm --test test/*.test.ts",
     "typecheck": "tsc --noEmit"

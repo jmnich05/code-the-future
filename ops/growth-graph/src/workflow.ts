@@ -2430,6 +2430,11 @@ export function createGrowthWorkflow(options: GrowthWorkflowOptions) {
       completedAt,
     );
     await writeObserverProjection(options.paths.observerDirectory, projection);
+    event(state, "finalize", "portfolio.finalized", {
+      transactionId: state.persistence.transactionId,
+      projectionStatus: "written",
+      completedAt,
+    });
     return finishNode(state, "finalize", {
       status,
       completedAt,
