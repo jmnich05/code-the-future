@@ -125,6 +125,6 @@ const requestedAudience = new URLSearchParams(window.location.search).get("audie
 if (requestedAudience === "teen" || requestedAudience === "adult") {
   const audience = document.getElementById("interest-audience");
   const program = document.getElementById("interest-session");
-  if (audience) audience.value = requestedAudience === "adult" ? "Older adult" : "Young teen · ages 12–15";
-  if (program) program.value = requestedAudience === "adult" ? "Older adult AI workshops" : "Young teen track · ages 12–15";
+  if (audience) audience.value = requestedAudience === "adult" ? "Adult" : "Young teen · ages 12–15";
+  if (program) program.value = requestedAudience === "adult" ? "Adult AI workshops" : "Young teen track · ages 12–15";
 }

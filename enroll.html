@@ -23,10 +23,10 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="preconnect" href="https://cdn.jsdelivr.net">
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;700&amp;family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,500;1,600&amp;family=Space+Grotesk:wght@500;600;700&amp;display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/assets/site.css?v=20260822a">
+  <link rel="stylesheet" href="/assets/site.css?v=20260823-qa">
   <script defer src="https://unpkg.com/lucide@0.460.0/dist/umd/lucide.min.js"></script>
-  <script defer src="/assets/site.js?v=20260822a"></script>
-  <script defer src="/assets/enroll.js?v=20260822a"></script>
+  <script defer src="/assets/site.js?v=20260823-qa"></script>
+  <script defer src="/assets/enroll.js?v=20260823-qa"></script>
 </head>
 <body>
   <a class="skip-link" href="#main">Skip to content</a>
@@ -37,7 +37,7 @@
   </header>
   <nav class="breadcrumb" aria-label="Breadcrumb"><div class="container"><ol><li><a href="/">Home</a></li><li aria-hidden="true"><i data-lucide="chevron-right"></i></li><li aria-current="page">Explore programs</li></ol></div></nav>
 
-  <main id="main">
+  <main id="main" tabindex="-1">
     <section class="page-hero"><div class="container page-hero-grid"><div data-reveal><p class="eyebrow">Fall 2026 · Louisville</p><h1 class="page-title">Choose the way your builder <em>gets started.</em></h1><p class="section-lede">Hold a fall seat for $10, begin with one $75 module, or take the complete four-module journey for $225.</p><div class="lede-actions"><a class="button button--coral" href="#deposit">Hold a seat</a><a class="button button--cream" href="#interest">Ask a question</a></div></div><aside class="page-kicker" data-reveal><strong>Fall schedule</strong><p>Journey begins Monday, September 28. Library sessions: Saturdays October 3, 10, and 17. Demo Day: October 24.</p><a class="button button--dark" href="/faq.html">Read the parent FAQ</a></aside></div></section>
 
     <section class="proof-strip" aria-label="Enrollment facts"><div class="container proof-grid"><div class="proof-item"><strong>$10 deposit</strong><span>Fully credited toward tuition</span></div><div class="proof-item"><strong>$75 module</strong><span>Start with one focused module</span></div><div class="proof-item"><strong>$225 journey</strong><span>All four modules · save $75</span></div><div class="proof-item"><strong>15 builders</strong><span>Small cohort by design</span></div></div></section>
@@ -89,11 +89,11 @@
 
     <section class="section section--dark legacy-anchor" id="interest">
       <div class="container page-hero-grid">
-        <div data-reveal><p class="eyebrow eyebrow--marigold">Not ready to check out?</p><h2 class="page-title page-title--light">Ask a question or <em>join an interest list.</em></h2><p class="section-lede">Tell us who wants to learn. We can help with the current ages 8–11 program or keep you informed as young-teen and older-adult tracks take shape.</p></div>
+        <div data-reveal><p class="eyebrow eyebrow--marigold">Not ready to check out?</p><h2 class="page-title page-title--light">Ask a question or <em>join an interest list.</em></h2><p class="section-lede">Tell us who wants to learn. We can help with the current ages 8–11 program or keep you informed as young-teen and adult tracks take shape.</p></div>
         <form class="lead-form" name="cohort-interest" method="POST" data-netlify="true" netlify-honeypot="bot-field" id="leadForm" data-reveal>
           <input type="hidden" name="form-name" value="cohort-interest"><p hidden><label>Do not fill this out: <input name="bot-field"></label></p>
           <div class="form-row"><label for="interest-name">Your name<input id="interest-name" type="text" name="contact_name" required placeholder="Jordan Smith" autocomplete="name"></label><label for="interest-email">Email<input id="interest-email" type="email" name="email" required placeholder="you@example.com" autocomplete="email"></label></div>
-          <div class="form-row"><label for="interest-audience">Learner’s age group<select id="interest-audience" name="learner_age_group" required><option value="" selected disabled>Pick one…</option><option>Older kid · age 8</option><option>Older kid · age 9</option><option>Older kid · age 10</option><option>Older kid · age 11</option><option>Young teen · ages 12–15</option><option>Older adult</option><option>Multiple learners / another age</option></select></label><label for="interest-session">Preferred program<select id="interest-session" name="session" required><option value="" selected disabled>Pick one…</option><option>Fall 2026 · ages 8–11</option><option>Young teen track · ages 12–15</option><option>Older adult AI workshops</option><option>Not sure yet</option></select></label></div>
+          <div class="form-row"><label for="interest-audience">Learner’s age group<select id="interest-audience" name="learner_age_group" required><option value="" selected disabled>Pick one…</option><option>Older kid · age 8</option><option>Older kid · age 9</option><option>Older kid · age 10</option><option>Older kid · age 11</option><option>Young teen · ages 12–15</option><option>Adult</option><option>Multiple learners / another age</option></select></label><label for="interest-session">Preferred program<select id="interest-session" name="session" required><option value="" selected disabled>Pick one…</option><option>Fall 2026 · ages 8–11</option><option>Young teen track · ages 12–15</option><option>Adult AI workshops</option><option>Not sure yet</option></select></label></div>
           <label for="interest-message">Anything we should know? <span>(optional)</span><textarea id="interest-message" name="message" rows="4" placeholder="Questions, sibling pairs, scheduling notes…"></textarea></label>
           <button class="button button--coral" type="submit">Send my question <i data-lucide="arrow-right"></i></button><div class="form-status" aria-live="polite"></div>
           <p class="form-note">We only use this information to contact you about Code the Future.</p>
@@ -103,6 +103,6 @@
     </section>
   </main>
 
-  <footer class="site-footer"><div class="container"><div class="footer-grid"><div class="footer-brand"><a class="brand" href="/"><img src="/platform/assets/logo-icon-dark.svg" alt="" width="64" height="64">Code the <span>Future</span></a><p>Hands-on AI learning for older kids, young teens, and older adults. Built in Louisville, Kentucky.</p></div><div class="footer-col"><h2>Learn</h2><ul><li><a href="/programs.html">Programs</a></li><li><a href="/curriculum.html">What they learn</a></li><li><a href="/why-ai-now.html">Why AI now</a></li></ul></div><div class="footer-col"><h2>Families</h2><ul><li><a href="/summer-2026.html">Summer 2026</a></li><li><a href="/how-it-works.html">How it works</a></li><li><a href="/faq.html">Parent FAQ</a></li></ul></div><div class="footer-col"><h2>Company</h2><ul><li><a href="/about.html">About</a></li><li><a href="/enroll.html">Enroll or ask</a></li><li><a href="/privacy.html">Privacy</a></li><li><a href="/platform/">Camper login</a></li></ul></div></div><div class="footer-bottom"><span>© <span data-year></span> Code the Future · Louisville, Kentucky</span><em>Learn to build what’s next.</em></div></div></footer>
+  <footer class="site-footer"><div class="container"><div class="footer-grid"><div class="footer-brand"><a class="brand" href="/"><img src="/platform/assets/logo-icon-dark.svg" alt="" width="64" height="64">Code the <span>Future</span></a><p>Hands-on AI learning for older kids, young teens, and adults. Built in Louisville, Kentucky.</p></div><div class="footer-col"><h2>Learn</h2><ul><li><a href="/programs.html">Programs</a></li><li><a href="/curriculum.html">What they learn</a></li><li><a href="/why-ai-now.html">Why AI now</a></li></ul></div><div class="footer-col"><h2>Families</h2><ul><li><a href="/summer-2026.html">Summer 2026</a></li><li><a href="/how-it-works.html">How it works</a></li><li><a href="/faq.html">Parent FAQ</a></li></ul></div><div class="footer-col"><h2>Company</h2><ul><li><a href="/about.html">About</a></li><li><a href="/enroll.html">Enroll or ask</a></li><li><a href="/privacy.html">Privacy</a></li><li><a href="/platform/">Camper login</a></li></ul></div></div><div class="footer-bottom"><span>© <span data-year></span> Code the Future · Louisville, Kentucky</span><em>Learn to build what’s next.</em></div></div></footer>
 </body>
 </html>

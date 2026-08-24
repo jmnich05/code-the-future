@@ -26,6 +26,7 @@ document.querySelectorAll("[data-year]").forEach((node) => {
 const navToggle = document.querySelector("[data-nav-toggle]");
 const mobileNav = document.querySelector("[data-mobile-nav]");
 const mobileNavLinks = mobileNav ? [...mobileNav.querySelectorAll("a")] : [];
+mobileNav?.setAttribute("aria-hidden", "true");
 
 function renderIcons() {
   if (window.lucide?.createIcons) window.lucide.createIcons({ attrs: { "aria-hidden": "true" } });
@@ -37,6 +38,7 @@ function closeMenu({ restoreFocus = false } = {}) {
   if (!navToggle || !mobileNav) return;
   navToggle.setAttribute("aria-expanded", "false");
   navToggle.setAttribute("aria-label", "Open navigation");
+  mobileNav.setAttribute("aria-hidden", "true");
   mobileNav.classList.remove("is-open");
   document.body.classList.remove("menu-open");
   const icon = navToggle.querySelector("[data-nav-icon]");
@@ -49,6 +51,7 @@ navToggle?.addEventListener("click", () => {
   const willOpen = navToggle.getAttribute("aria-expanded") !== "true";
   navToggle.setAttribute("aria-expanded", String(willOpen));
   navToggle.setAttribute("aria-label", willOpen ? "Close navigation" : "Open navigation");
+  mobileNav?.setAttribute("aria-hidden", String(!willOpen));
   mobileNav?.classList.toggle("is-open", willOpen);
   document.body.classList.toggle("menu-open", willOpen);
   const icon = navToggle.querySelector("[data-nav-icon]");
